@@ -1,0 +1,6 @@
+[install]
+saveTextLockfile = true
+# Ignora versões de pacotes publicadas há menos de 24h (proteção da cadeia de dependências).
+minimumReleaseAge = 86400
+# Exceção para a config base do Vite usada neste projeto.
+minimumReleaseAgeExcludes = ["@lovable.dev/vite-tanstack-config"]
