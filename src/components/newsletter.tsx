@@ -39,14 +39,19 @@ export function Newsletter({ compact = false }: { compact?: boolean }) {
           _subject: "Nova subscrição da newsletter — Uffa Store",
           _template: "table",
           _captcha: "false",
-          Email: email,
+          email: email,
+          _replyto: email,
           Idioma: languageNames[language],
           Origem: compact ? "Rodapé do site" : "Página inicial",
           Página: window.location.href,
           Data: new Date().toLocaleString("pt-PT", { timeZone: "Europe/Lisbon" }),
         }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json().catch(() => null);
+      // O FormSubmit responde 200 mesmo quando falha; temos de ler o campo "success".
+      if (!res.ok || (data && String(data.success) === "false")) {
+        throw new Error(data?.message ?? `HTTP ${res.status}`);
+      }
       toast.success(messages[language].ok);
       setEmail("");
     } catch {
