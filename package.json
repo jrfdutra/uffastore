@@ -12,7 +12,8 @@
     "format": "prettier --write ."
   },
   "overrides": {
-    "rolldown": "1.2.1"
+    "rolldown": "1.2.1",
+    "@tanstack/router-core": "1.171.35"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

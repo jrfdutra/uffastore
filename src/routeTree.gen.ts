@@ -13,7 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ConfirmacaoRouteImport } from './routes/confirmacao'
+import { Route as OperacoesRouteImport } from './routes/operacoes'
 import { Route as RastreioRouteImport } from './routes/rastreio'
+import { Route as VerificarRouteImport } from './routes/verificar'
 import { Route as ProdutoProductIdRouteImport } from './routes/produto.$productId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -36,9 +38,19 @@ const ConfirmacaoRoute = ConfirmacaoRouteImport.update({
   path: '/confirmacao',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OperacoesRoute = OperacoesRouteImport.update({
+  id: '/operacoes',
+  path: '/operacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RastreioRoute = RastreioRouteImport.update({
   id: '/rastreio',
   path: '/rastreio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerificarRoute = VerificarRouteImport.update({
+  id: '/verificar',
+  path: '/verificar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProdutoProductIdRoute = ProdutoProductIdRouteImport.update({
@@ -52,7 +64,9 @@ export interface FileRoutesByFullPath {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
+  '/operacoes': typeof OperacoesRoute
   '/rastreio': typeof RastreioRoute
+  '/verificar': typeof VerificarRoute
   '/produto/$productId': typeof ProdutoProductIdRoute
 }
 export interface FileRoutesByTo {
@@ -60,7 +74,9 @@ export interface FileRoutesByTo {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
+  '/operacoes': typeof OperacoesRoute
   '/rastreio': typeof RastreioRoute
+  '/verificar': typeof VerificarRoute
   '/produto/$productId': typeof ProdutoProductIdRoute
 }
 export interface FileRoutesById {
@@ -69,7 +85,9 @@ export interface FileRoutesById {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
+  '/operacoes': typeof OperacoesRoute
   '/rastreio': typeof RastreioRoute
+  '/verificar': typeof VerificarRoute
   '/produto/$productId': typeof ProdutoProductIdRoute
 }
 export interface FileRouteTypes {
@@ -79,7 +97,9 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
+    | '/operacoes'
     | '/rastreio'
+    | '/verificar'
     | '/produto/$productId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -87,7 +107,9 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
+    | '/operacoes'
     | '/rastreio'
+    | '/verificar'
     | '/produto/$productId'
   id:
     | '__root__'
@@ -95,7 +117,9 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
+    | '/operacoes'
     | '/rastreio'
+    | '/verificar'
     | '/produto/$productId'
   fileRoutesById: FileRoutesById
 }
@@ -104,7 +128,9 @@ export interface RootRouteChildren {
   CatalogoRoute: typeof CatalogoRoute
   CheckoutRoute: typeof CheckoutRoute
   ConfirmacaoRoute: typeof ConfirmacaoRoute
+  OperacoesRoute: typeof OperacoesRoute
   RastreioRoute: typeof RastreioRoute
+  VerificarRoute: typeof VerificarRoute
   ProdutoProductIdRoute: typeof ProdutoProductIdRoute
 }
 
@@ -138,11 +164,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfirmacaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/operacoes': {
+      id: '/operacoes'
+      path: '/operacoes'
+      fullPath: '/operacoes'
+      preLoaderRoute: typeof OperacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rastreio': {
       id: '/rastreio'
       path: '/rastreio'
       fullPath: '/rastreio'
       preLoaderRoute: typeof RastreioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verificar': {
+      id: '/verificar'
+      path: '/verificar'
+      fullPath: '/verificar'
+      preLoaderRoute: typeof VerificarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/produto/$productId': {
@@ -160,7 +200,9 @@ const rootRouteChildren: RootRouteChildren = {
   CatalogoRoute: CatalogoRoute,
   CheckoutRoute: CheckoutRoute,
   ConfirmacaoRoute: ConfirmacaoRoute,
+  OperacoesRoute: OperacoesRoute,
   RastreioRoute: RastreioRoute,
+  VerificarRoute: VerificarRoute,
   ProdutoProductIdRoute: ProdutoProductIdRoute,
 }
 export const routeTree = rootRouteImport

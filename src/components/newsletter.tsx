@@ -67,13 +67,26 @@ export function Newsletter({ compact = false }: { compact?: boolean }) {
       onSubmit={handleSubmit}
     >
       <div>
-        <h2 className={compact ? "font-display text-3xl uppercase" : "font-display text-5xl uppercase md:text-7xl"}>
+        <h2
+          className={
+            compact
+              ? "font-display text-3xl uppercase"
+              : "font-display text-5xl uppercase md:text-7xl"
+          }
+        >
           {t.newsletter}
         </h2>
         <p className="mt-2 text-muted-foreground">{t.newsletterText}</p>
       </div>
       <div className="flex gap-2">
-        <input type="text" name="_honey" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+        <input
+          type="text"
+          name="_honey"
+          tabIndex={-1}
+          autoComplete="off"
+          className="hidden"
+          aria-hidden="true"
+        />
         <Input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -83,7 +96,12 @@ export function Newsletter({ compact = false }: { compact?: boolean }) {
           placeholder={t.email}
           className="h-12 rounded-none border-foreground/30"
         />
-        <Button aria-label={t.subscribe} size="icon" disabled={sending} className="h-12 w-12 shrink-0 rounded-none">
+        <Button
+          aria-label={t.subscribe}
+          size="icon"
+          disabled={sending}
+          className="h-12 w-12 shrink-0 rounded-none"
+        >
           <ArrowRight />
         </Button>
       </div>

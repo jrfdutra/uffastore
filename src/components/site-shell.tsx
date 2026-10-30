@@ -1,13 +1,334 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, Moon, ShoppingBag, Sun, Instagram, MapPin, Minus, Plus, Trash2 } from "lucide-react";
+import {
+  Menu,
+  Moon,
+  PackageSearch,
+  ShoppingBag,
+  Sun,
+  Instagram,
+  MapPin,
+  Minus,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { categoryNames, copy, money, products, type Category, type Language } from "@/lib/shop-data";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  categoryNames,
+  copy,
+  money,
+  products,
+  type Category,
+  type Language,
+} from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
+import { tr } from "@/lib/i18n";
+import { DemoNotice } from "@/components/demo-notice";
 import { useEffect, useState, type ReactNode } from "react";
 
-const cats: Category[] = ["running","casual","streetwear","limited"];
-function CartDrawer() { const s=useShop(), t=copy[s.language]; return <Sheet open={s.cartOpen} onOpenChange={s.setCartOpen}><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label={`${t.cart} (${s.count})`} className="relative"><ShoppingBag/><span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">{s.count}</span></Button></SheetTrigger><SheetContent className="flex w-full flex-col sm:max-w-md"><SheetHeader><SheetTitle className="font-display text-3xl uppercase">{t.cart}</SheetTitle><SheetDescription>{s.count} {t.results}</SheetDescription></SheetHeader><div className="min-h-0 flex-1 space-y-5 overflow-auto py-5">{s.cart.length===0?<div className="grid h-full place-items-center text-center text-muted-foreground"><div><ShoppingBag className="mx-auto mb-3 size-9"/><p>{t.empty}</p></div></div>:s.cart.map((item)=>{const p=products.find((x)=>x.id===item.productId); if(!p)return null; return <div key={`${item.productId}-${item.size}`} className="grid grid-cols-[84px_1fr] gap-3 border-b border-border pb-5"><img src={p.image} alt="" width={1200} height={900} className="aspect-square h-full w-full bg-product object-cover"/><div><div className="flex justify-between gap-2"><div><p className="font-bold">{p.name}</p><p className="text-xs text-muted-foreground">{t.size} {item.size}</p></div><p className="font-bold">{money(p.price*item.quantity)}</p></div><div className="mt-3 flex items-center justify-between"><div className="flex items-center border border-border"><Button variant="ghost" size="icon" className="size-8 rounded-none" onClick={()=>s.updateQuantity(item.productId,item.size,item.quantity-1)} aria-label="-1"><Minus/></Button><span className="w-8 text-center text-sm">{item.quantity}</span><Button variant="ghost" size="icon" className="size-8 rounded-none" onClick={()=>s.updateQuantity(item.productId,item.size,item.quantity+1)} aria-label="+1"><Plus/></Button></div><Button variant="ghost" size="icon" className="size-8" onClick={()=>s.removeFromCart(item.productId,item.size)} aria-label={t.remove}><Trash2/></Button></div></div></div>})}</div>{s.cart.length>0&&<div className="border-t border-border pt-5"><div className="mb-4 flex justify-between text-lg font-bold"><span>{t.subtotal}</span><span>{money(s.subtotal)}</span></div><Button asChild size="lg" className="h-12 w-full rounded-none"><Link to="/checkout" onClick={()=>s.setCartOpen(false)}>{t.checkout}</Link></Button></div>}</SheetContent></Sheet>; }
-function MobileNav(){const {language}=useShop(),t=copy[language];const [open,setOpen]=useState(false);const close=()=>setOpen(false);return <Sheet open={open} onOpenChange={setOpen}><SheetTrigger asChild><Button variant="ghost" size="icon" className="lg:hidden" aria-label={t.menu}><Menu/></Button></SheetTrigger><SheetContent side="left" className="w-full"><SheetHeader><SheetTitle className="font-display text-4xl uppercase">UFFA.</SheetTitle><SheetDescription>Porto sneaker store</SheetDescription></SheetHeader><nav className="mt-10 flex flex-col">{cats.map((c)=><Link key={c} to="/catalogo" search={{category:c}} onClick={close} className="border-b border-border py-4 font-display text-3xl uppercase">{categoryNames[c][language]}</Link>)}<Link to="/rastreio" onClick={close} className="mt-6 font-semibold text-primary">{t.track}</Link></nav></SheetContent></Sheet>}
-export function SiteShell({children}:{children:ReactNode}) { const s=useShop(), t=copy[s.language]; const pathname=useRouterState({select:(state)=>state.location.pathname}); useEffect(()=>s.setCartOpen(false),[pathname]); return <div className="min-h-screen bg-background text-foreground"><div className="bg-foreground px-4 py-2 text-center text-xs font-bold uppercase text-background">{t.pickup}</div><header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur"><div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 md:px-6"><MobileNav/><Link to="/" className="font-display text-3xl uppercase leading-none">UFFA<span className="text-primary">.</span></Link><nav className="ml-8 hidden h-full items-center gap-6 lg:flex">{cats.map((c)=><Link key={c} to="/catalogo" search={{category:c}} className="flex h-full items-center text-xs font-bold uppercase transition hover:text-primary">{categoryNames[c][s.language]}</Link>)}</nav><div className="ml-auto flex items-center gap-1"><Select value={s.language} onValueChange={(v)=>s.setLanguage(v as Language)}><SelectTrigger aria-label="Language" className="h-9 w-[70px] border-0 px-2 font-bold shadow-none"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="pt">PT</SelectItem><SelectItem value="en">EN</SelectItem><SelectItem value="es">ES</SelectItem></SelectContent></Select><Button variant="ghost" size="icon" onClick={s.toggleTheme} aria-label="Theme">{s.theme==="light"?<Moon/>:<Sun/>}</Button><CartDrawer/></div></div></header><main key={pathname}>{children}</main><footer className="border-t border-border bg-footer text-footer-foreground"><div className="mx-auto grid max-w-7xl gap-12 px-4 py-14 md:grid-cols-2 md:px-6 lg:grid-cols-[1.5fr_1fr]"><div><Link to="/" className="font-display text-5xl uppercase">UFFA<span className="text-primary">.</span></Link><p className="mt-4 flex items-center gap-2 text-sm text-footer-muted"><MapPin className="size-4"/>Porto, Portugal</p><a href="https://www.instagram.com/uffastore.legit/" target="_blank" rel="noreferrer" className="mt-3 flex items-center gap-2 text-sm hover:text-primary"><Instagram className="size-4"/>@uffastore.legit</a></div><nav className="flex flex-col items-start gap-3 text-sm"><Link to="/catalogo" search={{}} className="hover:text-primary">{t.shop}</Link><Link to="/rastreio" className="font-bold text-primary">{t.track}</Link><span className="text-footer-muted">{t.noReturns}</span></nav></div><div className="border-t border-footer-border px-4 py-5 text-center text-xs text-footer-muted">© 2026 UFFA STORE · PORTO</div></footer></div>; }
+const cats: Category[] = ["running", "casual", "streetwear", "limited"];
+function CartDrawer() {
+  const s = useShop(),
+    t = copy[s.language];
+  return (
+    <Sheet open={s.cartOpen} onOpenChange={s.setCartOpen}>
+      <SheetTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={`${t.cart} (${s.count})`}
+          className="relative"
+        >
+          <ShoppingBag />
+          <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+            {s.count}
+          </span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent className="flex w-full flex-col sm:max-w-md">
+        <SheetHeader>
+          <SheetTitle className="font-display text-3xl uppercase">{t.cart}</SheetTitle>
+          <SheetDescription>
+            {s.count} {t.results}
+          </SheetDescription>
+        </SheetHeader>
+        <div className="min-h-0 flex-1 space-y-5 overflow-auto py-5">
+          {s.cart.length === 0 ? (
+            <div className="grid h-full place-items-center text-center text-muted-foreground">
+              <div>
+                <ShoppingBag className="mx-auto mb-3 size-9" />
+                <p>{t.empty}</p>
+              </div>
+            </div>
+          ) : (
+            s.cart.map((item) => {
+              const p = products.find((x) => x.id === item.productId);
+              if (!p) return null;
+              return (
+                <div
+                  key={`${item.productId}-${item.size}`}
+                  className="grid grid-cols-[84px_1fr] gap-3 border-b border-border pb-5"
+                >
+                  <img
+                    src={p.image}
+                    alt=""
+                    width={1200}
+                    height={900}
+                    className="aspect-square h-full w-full bg-product object-cover"
+                  />
+                  <div>
+                    <div className="flex justify-between gap-2">
+                      <div>
+                        <p className="font-bold">{p.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {t.size} {item.size}
+                        </p>
+                      </div>
+                      <p className="font-bold">{money(p.price * item.quantity)}</p>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between">
+                      <div className="flex items-center border border-border">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-8 rounded-none"
+                          onClick={() =>
+                            s.updateQuantity(item.productId, item.size, item.quantity - 1)
+                          }
+                          aria-label={tr(
+                            s.language,
+                            "Diminuir quantidade",
+                            "Decrease quantity",
+                            "Disminuir cantidad",
+                          )}
+                        >
+                          <Minus />
+                        </Button>
+                        <span className="w-8 text-center text-sm">{item.quantity}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-8 rounded-none"
+                          onClick={() =>
+                            s.updateQuantity(item.productId, item.size, item.quantity + 1)
+                          }
+                          aria-label={tr(
+                            s.language,
+                            "Aumentar quantidade",
+                            "Increase quantity",
+                            "Aumentar cantidad",
+                          )}
+                        >
+                          <Plus />
+                        </Button>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        onClick={() => s.removeFromCart(item.productId, item.size)}
+                        aria-label={t.remove}
+                      >
+                        <Trash2 />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+        {s.cart.length > 0 && (
+          <div className="border-t border-border pt-5">
+            <div className="mb-4 flex justify-between text-lg font-bold">
+              <span>{t.subtotal}</span>
+              <span>{money(s.subtotal)}</span>
+            </div>
+            <Button asChild size="lg" className="h-12 w-full rounded-none">
+              <Link to="/checkout" onClick={() => s.setCartOpen(false)}>
+                {t.checkout}
+              </Link>
+            </Button>
+          </div>
+        )}
+      </SheetContent>
+    </Sheet>
+  );
+}
+function MobileNav() {
+  const { language } = useShop(),
+    t = copy[language];
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="lg:hidden" aria-label={t.menu}>
+          <Menu />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="w-full">
+        <SheetHeader>
+          <SheetTitle className="font-display text-4xl uppercase">UFFA.</SheetTitle>
+          <SheetDescription>
+            {tr(language, "Sneakers no Porto", "Porto sneaker store", "Sneakers en Oporto")}
+          </SheetDescription>
+        </SheetHeader>
+        <nav className="mt-10 flex flex-col">
+          {cats.map((c) => (
+            <Link
+              key={c}
+              to="/catalogo"
+              search={{ category: c }}
+              onClick={close}
+              className="border-b border-border py-4 font-display text-3xl uppercase"
+            >
+              {categoryNames[c][language]}
+            </Link>
+          ))}
+          <Link to="/rastreio" onClick={close} className="mt-6 font-semibold text-primary">
+            {t.track}
+          </Link>
+          <Link to="/verificar" onClick={close} className="mt-3 font-semibold text-primary">
+            {tr(
+              language,
+              "Verificar autenticidade",
+              "Verify authenticity",
+              "Verificar autenticidad",
+            )}
+          </Link>
+        </nav>
+      </SheetContent>
+    </Sheet>
+  );
+}
+export function SiteShell({ children }: { children: ReactNode }) {
+  const s = useShop(),
+    t = copy[s.language];
+  const { setCartOpen } = s;
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  useEffect(() => setCartOpen(false), [pathname, setCartOpen]);
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <DemoNotice />
+      <div className="bg-foreground px-4 py-2 text-center text-xs font-bold uppercase text-background">
+        {t.pickup}
+      </div>
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 md:px-6">
+          <MobileNav />
+          <Link to="/" className="font-display text-3xl uppercase leading-none">
+            UFFA<span className="text-primary">.</span>
+          </Link>
+          <nav className="ml-8 hidden h-full items-center gap-6 lg:flex">
+            {cats.map((c) => (
+              <Link
+                key={c}
+                to="/catalogo"
+                search={{ category: c }}
+                className="flex h-full items-center text-xs font-bold uppercase transition hover:text-primary"
+              >
+                {categoryNames[c][s.language]}
+              </Link>
+            ))}
+          </nav>
+          <div className="ml-auto flex items-center gap-1">
+            <Select value={s.language} onValueChange={(v) => s.setLanguage(v as Language)}>
+              <SelectTrigger
+                aria-label={tr(s.language, "Idioma", "Language", "Idioma")}
+                className="h-9 w-[70px] border-0 px-2 font-bold shadow-none"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pt">PT</SelectItem>
+                <SelectItem value="en">EN</SelectItem>
+                <SelectItem value="es">ES</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={s.toggleTheme}
+              aria-label={tr(s.language, "Alternar tema", "Toggle theme", "Cambiar tema")}
+            >
+              {s.theme === "light" ? <Moon /> : <Sun />}
+            </Button>
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              className="hidden sm:inline-flex"
+              aria-label={tr(s.language, "A minha encomenda", "My order", "Mi pedido")}
+            >
+              <Link to="/rastreio">
+                <PackageSearch />
+              </Link>
+            </Button>
+            <CartDrawer />
+          </div>
+        </div>
+      </header>
+      <main key={pathname}>{children}</main>
+      <footer className="border-t border-border bg-footer text-footer-foreground">
+        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-14 md:grid-cols-2 md:px-6 lg:grid-cols-[1.5fr_1fr]">
+          <div>
+            <Link to="/" className="font-display text-5xl uppercase">
+              UFFA<span className="text-primary">.</span>
+            </Link>
+            <p className="mt-4 flex items-center gap-2 text-sm text-footer-muted">
+              <MapPin className="size-4" />
+              Porto, Portugal
+            </p>
+            <a
+              href="https://www.instagram.com/uffastore.legit/"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 flex items-center gap-2 text-sm hover:text-primary"
+            >
+              <Instagram className="size-4" />
+              @uffastore.legit
+            </a>
+          </div>
+          <nav className="flex flex-col items-start gap-3 text-sm">
+            <Link to="/catalogo" search={{}} className="hover:text-primary">
+              {t.shop}
+            </Link>
+            <Link to="/rastreio" className="font-bold text-primary">
+              {t.track}
+            </Link>
+            <Link to="/verificar" className="hover:text-primary">
+              {tr(
+                s.language,
+                "Verificar autenticidade",
+                "Verify authenticity",
+                "Verificar autenticidad",
+              )}
+            </Link>
+            <Link to="/operacoes" className="text-footer-muted hover:text-primary">
+              {tr(s.language, "Operações (demo)", "Operations (demo)", "Operaciones (demo)")}
+            </Link>
+            <span className="text-footer-muted">{t.noReturns}</span>
+          </nav>
+        </div>
+        <div className="border-t border-footer-border px-4 py-5 text-center text-xs text-footer-muted">
+          © 2026 UFFA STORE · PORTO
+        </div>
+      </footer>
+    </div>
+  );
+}
