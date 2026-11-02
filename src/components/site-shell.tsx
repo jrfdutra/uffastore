@@ -183,8 +183,9 @@ function MobileNav() {
       </SheetTrigger>
       <SheetContent side="left" className="w-full">
         <SheetHeader>
-          <SheetTitle className="font-display text-4xl uppercase">
-            UFFA STORE<span className="text-primary">.</span>
+          <SheetTitle className="flex flex-col items-start leading-none">
+            <span className="font-display text-4xl uppercase">UFFA</span>
+            <span className="bg-foreground px-1.5 font-display text-sm uppercase text-background">STORE</span>
           </SheetTitle>
           <SheetDescription>
             {tr(language, "Para quem pisa forte no estilo!", "For those who step strong in style!", "¡Para quienes pisan fuerte en el estilo!")}
@@ -227,14 +228,15 @@ export function SiteShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <DemoNotice />
-      <div className="bg-foreground px-4 py-2 text-center text-xs font-bold uppercase text-background">
+      <div className="bg-primary px-4 py-2 text-center text-xs font-bold uppercase text-primary-foreground">
         {t.pickup}
       </div>
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 md:px-6">
           <MobileNav />
-          <Link to="/" className="font-display text-3xl uppercase leading-none">
-            UFFA STORE<span className="text-primary">.</span>
+          <Link to="/" className="flex flex-col items-start leading-none">
+            <span className="font-display text-3xl uppercase">UFFA</span>
+            <span className="bg-foreground px-1 font-display text-sm uppercase text-background">STORE</span>
           </Link>
           <nav className="ml-8 hidden h-full items-center gap-6 lg:flex">
             {cats.map((c) => (
@@ -289,9 +291,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <footer className="border-t border-border bg-footer text-footer-foreground">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-14 md:grid-cols-2 md:px-6 lg:grid-cols-[1.5fr_1fr]">
           <div>
-            <Link to="/" className="font-display text-5xl uppercase">
-              UFFA STORE<span className="text-primary">.</span>
-            </Link>
+          <Link to="/" className="flex flex-col items-start leading-none">
+            <span className="font-display text-5xl uppercase">UFFA</span>
+            <span className="bg-foreground px-1.5 font-display text-lg uppercase text-background">STORE</span>
+          </Link>
             <p className="mt-3 text-sm font-semibold tracking-wide text-foreground/90">
               {tr(s.language, "Para quem pisa forte no estilo! 🎗️", "For those who step strong in style! 🎗️", "¡Para quienes pisan fuerte en el estilo! 🎗️")}
             </p>
