@@ -54,7 +54,7 @@ function CartDrawer() {
           className="relative"
         >
           <ShoppingBag />
-          <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+          <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-brand-foreground text-[10px] font-bold text-brand dark:bg-brand dark:text-brand-strong">
             {s.count}
           </span>
         </Button>
@@ -182,11 +182,14 @@ function MobileNav() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-full">
-        <SheetHeader>
-          <SheetTitle className="flex flex-col items-start leading-none">
-            <span className="font-display text-4xl uppercase tracking-wider text-primary">UFFA</span>
-            <span className="border-b-2 border-foreground pb-0.5 font-display text-xs uppercase tracking-widest text-foreground">
-              STORE
+        <SheetHeader className="items-start text-left">
+          <SheetTitle className="flex items-center gap-2.5 leading-none text-foreground dark:text-brand">
+            <span className="font-display text-4xl uppercase tracking-wide">UFFA</span>
+            <span className="flex flex-col gap-1">
+              <span className="font-display text-xs uppercase leading-none tracking-[0.28em]">
+                STORE
+              </span>
+              <span aria-hidden className="h-[3px] w-full bg-current" />
             </span>
           </SheetTitle>
           <SheetDescription>
@@ -230,16 +233,19 @@ export function SiteShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <DemoNotice />
-      <div className="bg-foreground px-4 py-2 text-center text-xs font-bold uppercase text-background">
+      <div className="bg-foreground px-4 py-2 text-center text-xs font-bold uppercase text-background dark:bg-brand dark:text-brand-foreground">
         {t.pickup}
       </div>
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-brand-strong/20 bg-brand text-brand-foreground dark:border-brand/30 dark:bg-black dark:text-brand">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 md:px-6">
           <MobileNav />
-          <Link to="/" className="flex flex-col items-start leading-none">
-            <span className="font-display text-3xl uppercase tracking-wider text-primary">UFFA</span>
-            <span className="border-b-2 border-foreground pb-0.5 font-display text-[10px] uppercase tracking-widest text-foreground">
-              STORE
+          <Link to="/" className="flex items-center gap-2.5 leading-none">
+            <span className="font-display text-3xl uppercase tracking-wide">UFFA</span>
+            <span className="flex flex-col gap-1">
+              <span className="font-display text-[11px] uppercase leading-none tracking-[0.28em]">
+                STORE
+              </span>
+              <span aria-hidden className="h-[3px] w-full bg-current" />
             </span>
           </Link>
           <nav className="ml-8 hidden h-full items-center gap-6 lg:flex">
@@ -248,7 +254,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 key={c}
                 to="/catalogo"
                 search={{ category: c }}
-                className="flex h-full items-center text-xs font-bold uppercase transition hover:text-primary"
+                className="flex h-full items-center text-xs font-bold uppercase transition hover:opacity-60"
               >
                 {categoryNames[c][s.language]}
               </Link>
@@ -295,13 +301,16 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <footer className="border-t border-border bg-footer text-footer-foreground">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-14 md:grid-cols-2 md:px-6 lg:grid-cols-[1.5fr_1fr]">
           <div>
-          <Link to="/" className="flex flex-col items-start leading-none">
-            <span className="font-display text-5xl uppercase tracking-wider text-primary">UFFA</span>
-            <span className="border-b-2 border-foreground pb-0.5 font-display text-sm uppercase tracking-widest text-foreground">
-              STORE
-            </span>
-          </Link>
-            <p className="mt-3 text-sm font-semibold tracking-wide text-foreground/90">
+            <Link to="/" className="flex items-center gap-3 leading-none">
+              <span className="font-display text-5xl uppercase tracking-wide text-brand">UFFA</span>
+              <span className="flex flex-col gap-1.5">
+                <span className="font-display text-sm uppercase leading-none tracking-[0.28em] text-brand">
+                  STORE
+                </span>
+                <span aria-hidden className="h-[3px] w-full bg-brand" />
+              </span>
+            </Link>
+            <p className="mt-3 text-sm font-semibold tracking-wide text-footer-foreground">
               {tr(s.language, "Para quem pisa forte no estilo! 🎗️", "For those who step strong in style! 🎗️", "¡Para quienes pisan fuerte en el estilo! 🎗️")}
             </p>
             <p className="mt-2 text-xs text-footer-muted">
@@ -315,20 +324,20 @@ export function SiteShell({ children }: { children: ReactNode }) {
               href="https://www.instagram.com/uffastore.legit/"
               target="_blank"
               rel="noreferrer"
-              className="mt-3 flex items-center gap-2 text-sm hover:text-primary"
+              className="mt-3 flex items-center gap-2 text-sm hover:text-brand"
             >
               <Instagram className="size-4" />
               @uffastore.legit
             </a>
           </div>
           <nav className="flex flex-col items-start gap-3 text-sm">
-            <Link to="/catalogo" search={{}} className="hover:text-primary">
+            <Link to="/catalogo" search={{}} className="hover:text-brand">
               {t.shop}
             </Link>
-            <Link to="/rastreio" className="font-bold text-primary">
+            <Link to="/rastreio" className="font-bold text-brand">
               {t.track}
             </Link>
-            <Link to="/verificar" className="hover:text-primary">
+            <Link to="/verificar" className="hover:text-brand">
               {tr(
                 s.language,
                 "Verificar autenticidade",
@@ -336,7 +345,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 "Verificar autenticidad",
               )}
             </Link>
-            <Link to="/operacoes" className="text-footer-muted hover:text-primary">
+            <Link to="/operacoes" className="text-footer-muted hover:text-brand">
               {tr(s.language, "Operações (demo)", "Operations (demo)", "Operaciones (demo)")}
             </Link>
             <span className="text-footer-muted">{t.noReturns}</span>
