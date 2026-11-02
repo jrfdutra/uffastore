@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0E0E0E;
+      font-family: 'Inter', sans-serif;
+      color: #0E0E0E;
+    }
+    .slide {
+      width: 1080px;
+      height: 1350px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 80px;
+      page-break-after: always;
+    }
+    /* Theme variations */
+    .slide.cream {
+      background: #FDF6F3;
+      color: #0E0E0E;
+    }
+    .slide.dark {
+      background: #0E0E0E;
+      color: #FDF6F3;
+    }
+    .slide.accent {
+      background: #C97899;
+      color: #0E0E0E;
+    }
+    
+    .header-tag {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #C97899;
+      margin-bottom: 20px;
+    }
+    .dark .header-tag {
+      color: #F4E2E9;
+    }
+    .accent .header-tag {
+      color: #0E0E0E;
+    }
+
+    .title {
+      font-family: 'Anton', sans-serif;
+      font-size: 82px;
+      line-height: 0.95;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      font-size: 32px;
+      line-height: 1.4;
+      font-weight: 400;
+      color: #4A403E;
+      max-width: 900px;
+    }
+    .dark .subtitle {
+      color: #D6C8C3;
+    }
+    .accent .subtitle {
+      color: #2D1A22;
+      font-weight: 500;
+    }
+
+    .card-box {
+      background: #FFFFFF;
+      border: 3px solid #0E0E0E;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 12px 12px 0px #0E0E0E;
+      margin-top: 40px;
+    }
+    .dark .card-box {
+      background: #1A1A1A;
+      border: 3px solid #FDF6F3;
+      box-shadow: 12px 12px 0px #FDF6F3;
+      color: #FDF6F3;
+    }
+
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 30px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      font-size: 30px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .feature-item span.icon {
+      font-size: 36px;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 2px solid rgba(0,0,0,0.1);
+      padding-top: 30px;
+      font-size: 22px;
+      font-weight: 600;
+      color: #7C6E6A;
+    }
+    .dark .footer {
+      border-top: 2px solid rgba(255,255,255,0.15);
+      color: #A89893;
+    }
+    .accent .footer {
+      border-top: 2px solid rgba(0,0,0,0.2);
+      color: #2D1A22;
+    }
+
+    .swipe-hint {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: #C97899;
+      background: #F4E2E9;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-size: 22px;
+    }
+    .dark .swipe-hint {
+      background: #2D1A22;
+      color: #F4E2E9;
+    }
+
+    .url-badge {
+      font-family: 'Anton', sans-serif;
+      font-size: 40px;
+      letter-spacing: 2px;
+      color: #0E0E0E;
+      background: #FDF6F3;
+      padding: 20px 40px;
+      border: 4px solid #0E0E0E;
+      border-radius: 12px;
+      box-shadow: 8px 8px 0px #0E0E0E;
+      display: inline-block;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .badge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 30px;
+    }
+    .grid-card {
+      background: #F8ECE7;
+      padding: 30px;
+      border-radius: 12px;
+      border: 2px solid #0E0E0E;
+    }
+    .grid-card h3 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0E0E0E;
+    }
+    .grid-card p {
+      font-size: 22px;
+      color: #554A47;
+      line-height: 1.35;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SLIDE 1: CAPA -->
+  <div class="slide dark">
+    <div>
+      <div class="header-tag">⚡ UFFA STORE · NOVIDADE</div>
+      <div class="title" style="font-size: 96px; margin-top: 20px;">A RUA TEM UM NOVO ENDEREÇO.</div>
+      <div class="subtitle" style="margin-top: 20px; font-size: 36px;">A nova loja online oficial da UFFA já está live. O teu streetwear favorito a um clique.</div>
+    </div>
+    
+    <div>
+      <div class="card-box" style="margin-bottom: 40px;">
+        <div style="font-size: 26px; font-weight: 700; margin-bottom: 12px; color: #C97899;">O QUE ENCONTRAS NO SITE:</div>
+        <div style="font-size: 26px; line-height: 1.6; color: #D6C8C3;">
+          ✨ Catálogo completo e exclusivo<br>
+          💳 Checkout rápido com MB WAY<br>
+          📦 Portal de rastreio privado por encomenda<br>
+          🛡️ Verificação de autenticidade por peça
+        </div>
+      </div>
+      
+      <div class="footer">
+        <span>WWW.UFFASTORE.PT</span>
+        <div class="swipe-hint">Arrasta para ver ➔ (1/6)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: PROBLEMA VS SOLUÇÃO -->
+  <div class="slide cream">
+    <div>
+      <div class="header-tag">💡 EXPERIÊNCIA DE COMPRA</div>
+      <div class="title">CHEGA DE "QUANTO CUSTA?" POR DM.</div>
+      <div class="subtitle">Chegou o momento de profissionalizar a experiência e dar total autonomia aos clientes.</div>
+    </div>
+
+    <div class="badge-grid">
+      <div class="grid-card" style="background: #FBE9E7; border-color: #C62828;">
+        <h3 style="color: #C62828;">❌ ANTES (POR DM)</h3>
+        <p>• Preços escondidos ou sob consulta<br>• Dúvidas constantes de tamanhos<br>• Dezenas de mensagens perdidas<br>• Processo manual e lento</p>
+      </div>
+      <div class="grid-card" style="background: #E7F6F0; border-color: #0F9D76;">
+        <h3 style="color: #0F9D76;">✅ AGORA (SITE OFICIAL)</h3>
+        <p>• Catálogo com stock em tempo real<br>• Escolha de tamanho imediata<br>• Compra em 30 segundos 24/7<br>• Confirmação e tracking automáticos</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>UFFA STORE</span>
+      <div class="swipe-hint">Arrasta para ver ➔ (2/6)</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: CATÁLOGO & COMPRA -->
+  <div class="slide cream">
+    <div>
+      <div class="header-tag">🛒 CATÁLOGO & CHECKOUT</div>
+      <div class="title">TUDO À DISTÂNCIA DE UM CLIQUE.</div>
+      <div class="subtitle">Escolhe o teu modelo e tamanho com total transparência de stock.</div>
+    </div>
+
+    <div class="feature-list">
+      <div class="feature-item">
+        <span class="icon">👟</span>
+        <div><strong>Filtros por categoria:</strong> Running, Casual, Streetwear e Edições Limitadas.</div>
+      </div>
+      <div class="feature-item">
+        <span class="icon">⚡</span>
+        <div><strong>Checkout ultra-rápido:</strong> Simulação integrada de MB WAY e Referências MB.</div>
+      </div>
+      <div class="feature-item">
+        <span class="icon">📍</span>
+        <div><strong>Flexibilidade total:</strong> Escolhe entre Envio para casa ou Recolha local no Porto.</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>WWW.UFFASTORE.PT</span>
+      <div class="swipe-hint">Arrasta para ver ➔ (3/6)</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: PORTAL DE RASTREIO -->
+  <div class="slide dark">
+    <div>
+      <div class="header-tag">📦 PORTAL DO CLIENTE</div>
+      <div class="title">ONDE ANDA O MEU PAR?</div>
+      <div class="subtitle">Desenvolvemos um Portal de Encomendas Privado para acompanhar cada entrega sem ansiedade.</div>
+    </div>
+
+    <div class="card-box">
+      <div style="font-size: 32px; font-weight: 800; margin-bottom: 20px; color: #C97899;">COMO FUNCIONA O RASTREIO:</div>
+      <div style="font-size: 26px; line-height: 1.6; color: #E5D6D0;">
+        1️⃣ Recebes um <strong>código exclusivo</strong> ao finalizar a compra.<br>
+        2️⃣ Acedes ao portal e vês o estado em tempo real (Em preparação, Em trânsito, Pronto para recolha).<br>
+        3️⃣ Confirmação de entrega direto no portal com 1 clique.
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>WWW.UFFASTORE.PT</span>
+      <div class="swipe-hint">Arrasta para ver ➔ (4/6)</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: AUTENTICIDADE -->
+  <div class="slide cream">
+    <div>
+      <div class="header-tag">🛡️ SEGURANÇA E CONFIANÇA</div>
+      <div class="title">100% ORIGINAL. ZERO DÚVIDAS.</div>
+      <div class="subtitle">No mercado de sneakers, a autenticidade é sagrada. Criámos um sistema de validação pública.</div>
+    </div>
+
+    <div class="card-box" style="background: #FDF6F3; border-color: #0E0E0E; box-shadow: 10px 10px 0px #0E0E0E;">
+      <div style="font-size: 30px; font-weight: 800; margin-bottom: 15px; color: #0E0E0E;">VERIFICAÇÃO DE AUTENTICIDADE</div>
+      <div style="font-size: 26px; line-height: 1.5; color: #4A403E;">
+        Cada par da UFFA vem acompanhado por um código único de autenticidade. Qualquer pessoa pode aceder a <strong style="color: #0E0E0E;">uffastore.pt/verificar</strong> e validar instantaneamente a originalidade do calçado, garantindo total transparência à comunidade.
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>WWW.UFFASTORE.PT</span>
+      <div class="swipe-hint">Arrasta para ver ➔ (5/6)</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: CTA FINAL -->
+  <div class="slide accent" style="text-align: center; justify-content: center; align-items: center;">
+    <div class="header-tag" style="color: #0E0E0E; letter-spacing: 4px;">⚡ A LOJA JÁ ESTÁ A FUNCIONAR</div>
+    <div class="title" style="font-size: 92px; margin: 30px 0; color: #0E0E0E;">AS PORTAS ESTÃO ABERTAS.</div>
+    <div class="subtitle" style="color: #2D1A22; font-size: 34px; max-width: 900px; margin-bottom: 40px;">
+      Garante já o teu par antes que esgote. Visita a nova loja oficial da UFFA Store!
+    </div>
+
+    <div class="url-badge">
+      WWW.UFFASTORE.PT
+    </div>
+
+    <div style="margin-top: 60px; font-size: 24px; font-weight: 700; color: #2D1A22;">
+      🔗 Clica no link da bio para entrar.
+    </div>
+
+    <div class="footer" style="width: 100%; position: absolute; bottom: 60px; left: 0; padding: 0 80px; border-top: none;">
+      <span>UFFA STORE · PORTO</span>
+      <span>(6/6) FIM</span>
+    </div>
+  </div>
+
+</body>
+</html>

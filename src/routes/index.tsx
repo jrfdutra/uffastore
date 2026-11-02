@@ -17,17 +17,17 @@ import { useShop } from "@/lib/shop-context";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Uffa Store — Sneakers autênticos no Porto" },
+      { title: "Uffa Store — Para quem pisa forte no estilo!" },
       {
         name: "description",
         content:
-          "Sneakers verificados, streetwear e edições limitadas com recolha grátis no Porto.",
+          "Sapatilhas com selo de autenticidade. Entrega em mãos na zona do Porto. Sem trocas nem devoluções.",
       },
-      { property: "og:title", content: "Uffa Store — Sneakers autênticos no Porto" },
+      { property: "og:title", content: "Uffa Store — Para quem pisa forte no estilo!" },
       {
         property: "og:description",
         content:
-          "Sneakers verificados, streetwear e edições limitadas com recolha grátis no Porto.",
+          "Sapatilhas com selo de autenticidade. Entrega em mãos na zona do Porto. Sem trocas nem devoluções.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -38,19 +38,19 @@ export const Route = createFileRoute("/")({
 });
 const hero = {
   pt: {
-    eyebrow: "Sneakers verificados · Porto",
-    title: "SEM DÚVIDAS. SÓ ESTILO.",
-    text: "Pares autênticos, escolhidos um a um. Vê, escolhe e recolhe no Porto — sem ruído.",
+    eyebrow: "Sapatilhas com selo de autenticidade · Porto",
+    title: "PARA QUEM PISA FORTE NO ESTILO.",
+    text: "Sapatilhas com selo de autenticidade. Entrega em mãos na zona do Porto. Sem trocas nem devoluções.",
   },
   en: {
-    eyebrow: "Verified sneakers · Porto",
-    title: "NO DOUBT. JUST STYLE.",
-    text: "Authentic pairs, selected one by one. Browse, choose and collect in Porto — no noise.",
+    eyebrow: "Authentic certified sneakers · Porto",
+    title: "STEP STRONG IN STYLE.",
+    text: "Sneakers with authenticity seal. Hand delivery in the Porto area. No exchanges or returns.",
   },
   es: {
-    eyebrow: "Sneakers verificados · Oporto",
-    title: "SIN DUDAS. SOLO ESTILO.",
-    text: "Pares auténticos, elegidos uno a uno. Mira, elige y recoge en Oporto — sin ruido.",
+    eyebrow: "Zapatillas con sello de autenticidad · Oporto",
+    title: "PARA QUIENES PISAN FUERTE EN EL ESTILO.",
+    text: "Zapatillas con sello de autenticidad. Entrega en mano en la zona de Oporto. Sin cambios ni devoluciones.",
   },
 };
 const catImages = {

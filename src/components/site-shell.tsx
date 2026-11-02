@@ -183,9 +183,12 @@ function MobileNav() {
       </SheetTrigger>
       <SheetContent side="left" className="w-full">
         <SheetHeader>
-          <SheetTitle className="font-display text-4xl uppercase">UFFA.</SheetTitle>
+          <SheetTitle className="flex items-center gap-3 font-display text-4xl uppercase">
+            <img src="/uffastore-logo.jpg" alt="Uffa Store" className="size-10 rounded-full object-cover border border-primary/40" />
+            <span>UFFA.</span>
+          </SheetTitle>
           <SheetDescription>
-            {tr(language, "Sneakers no Porto", "Porto sneaker store", "Sneakers en Oporto")}
+            {tr(language, "Para quem pisa forte no estilo!", "For those who step strong in style!", "¡Para quienes pisan fuerte en el estilo!")}
           </SheetDescription>
         </SheetHeader>
         <nav className="mt-10 flex flex-col">
@@ -231,8 +234,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 md:px-6">
           <MobileNav />
-          <Link to="/" className="font-display text-3xl uppercase leading-none">
-            UFFA<span className="text-primary">.</span>
+          <Link to="/" className="flex items-center gap-2.5 font-display text-3xl uppercase leading-none">
+            <img src="/uffastore-logo.jpg" alt="Uffa Store" className="size-9 rounded-full object-cover border border-primary/40" />
+            <span>UFFA<span className="text-primary">.</span></span>
           </Link>
           <nav className="ml-8 hidden h-full items-center gap-6 lg:flex">
             {cats.map((c) => (
@@ -287,10 +291,17 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <footer className="border-t border-border bg-footer text-footer-foreground">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-14 md:grid-cols-2 md:px-6 lg:grid-cols-[1.5fr_1fr]">
           <div>
-            <Link to="/" className="font-display text-5xl uppercase">
-              UFFA<span className="text-primary">.</span>
+            <Link to="/" className="flex items-center gap-3 font-display text-5xl uppercase">
+              <img src="/uffastore-logo.jpg" alt="Uffa Store" className="size-12 rounded-full object-cover border border-primary/40" />
+              <span>UFFA<span className="text-primary">.</span></span>
             </Link>
-            <p className="mt-4 flex items-center gap-2 text-sm text-footer-muted">
+            <p className="mt-3 text-sm font-semibold tracking-wide text-foreground/90">
+              {tr(s.language, "Para quem pisa forte no estilo! 🎗️", "For those who step strong in style! 🎗️", "¡Para quienes pisan fuerte en el estilo! 🎗️")}
+            </p>
+            <p className="mt-2 text-xs text-footer-muted">
+              {tr(s.language, "Sapatilhas com selo de autenticidade · Entrega em mãos na zona do Porto", "Sneakers with authenticity seal · Hand delivery in Porto area", "Zapatillas con sello de autenticidad · Entrega en mano en la zona de Oporto")}
+            </p>
+            <p className="mt-3 flex items-center gap-2 text-sm text-footer-muted">
               <MapPin className="size-4" />
               Porto, Portugal
             </p>
