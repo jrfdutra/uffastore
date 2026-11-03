@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { tr } from "@/lib/i18n";
 import { formatDate, getOrderByNumber, type Order } from "@/lib/orders";
-import { money, products } from "@/lib/shop-data";
+import { money } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 
 export const Route = createFileRoute("/confirmacao")({
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/confirmacao")({
 });
 
 function Confirmation() {
-  const { language } = useShop();
+  const { language, catalog } = useShop();
   const { order: orderNumber } = Route.useSearch();
   const [order, setOrder] = useState<Order | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -216,7 +216,7 @@ function Confirmation() {
                 </div>
                 <div className="mt-3">
                   {order.items.map((item) => {
-                    const product = products.find((candidate) => candidate.id === item.productId);
+                    const product = catalog.find((candidate) => candidate.id === item.productId);
                     return (
                       <div
                         key={`${item.productId}-${item.size}`}

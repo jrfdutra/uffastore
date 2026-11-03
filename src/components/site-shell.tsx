@@ -31,7 +31,6 @@ import {
   categoryNames,
   copy,
   money,
-  products,
   type Category,
   type Language,
 } from "@/lib/shop-data";
@@ -76,7 +75,7 @@ function CartDrawer() {
             </div>
           ) : (
             s.cart.map((item) => {
-              const p = products.find((x) => x.id === item.productId);
+              const p = s.catalog.find((x) => x.id === item.productId);
               if (!p) return null;
               return (
                 <div

@@ -32,7 +32,7 @@ export const products: Product[] = [
     id: "porto-rose-low",
     name: "Porto Rose Low",
     category: "streetwear",
-    price: 129,
+    price: 0.20,
     image: tan,
     featured: true,
     description: {
@@ -54,7 +54,7 @@ export const products: Product[] = [
     id: "bolhao-runner",
     name: "Bolhão Runner",
     category: "running",
-    price: 145,
+    price: 0.20,
     image: navy,
     featured: true,
     description: {
@@ -76,7 +76,7 @@ export const products: Product[] = [
     id: "cedofeita-court",
     name: "Cedofeita Court",
     category: "casual",
-    price: 115,
+    price: 0.20,
     image: white,
     featured: true,
     description: {
@@ -98,7 +98,7 @@ export const products: Product[] = [
     id: "invicta-01",
     name: "Invicta 01",
     category: "limited",
-    price: 219,
+    price: 0.20,
     image: grey,
     featured: true,
     description: {
@@ -119,7 +119,7 @@ export const products: Product[] = [
     id: "rosa-norte",
     name: "Rosa Norte",
     category: "casual",
-    price: 119,
+    price: 0.20,
     image: green,
     description: {
       pt: "Perfil descontraído com contraste marcante e conforto diário.",
@@ -138,7 +138,7 @@ export const products: Product[] = [
     id: "trindade-flow",
     name: "Trindade Flow",
     category: "running",
-    price: 139,
+    price: 0.20,
     image: greenAlt,
     description: {
       pt: "Volume técnico e apoio macio para um ritmo sempre em movimento.",
@@ -158,7 +158,7 @@ export const products: Product[] = [
     id: "galerias-low",
     name: "Galerias Low",
     category: "streetwear",
-    price: 125,
+    price: 0.20,
     image: navy,
     description: {
       pt: "Linhas retro e construção limpa para combinar sem esforço.",
@@ -178,7 +178,7 @@ export const products: Product[] = [
     id: "afterdark-02",
     name: "Afterdark 02",
     category: "limited",
-    price: 229,
+    price: 0.20,
     image: tan,
     description: {
       pt: "Uma peça numerada para quem não passa despercebido.",

@@ -32,7 +32,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { tr } from "@/lib/i18n";
-import { categoryNames, money, products, type Language } from "@/lib/shop-data";
+import { categoryNames, money, type Language } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import {
   clearOrderSession,
@@ -1035,7 +1035,7 @@ function TimelineCard({ order }: { order: Order }) {
 }
 
 function ItemsCard({ order }: { order: Order }) {
-  const { language } = useShop();
+  const { language, catalog } = useShop();
 
   return (
     <section className="border border-border bg-card p-6 md:p-8">
@@ -1050,7 +1050,7 @@ function ItemsCard({ order }: { order: Order }) {
 
       <div className="mt-4">
         {order.items.map((item) => {
-          const product = products.find((candidate) => candidate.id === item.productId);
+          const product = catalog.find((candidate) => candidate.id === item.productId);
           return (
             <div
               key={`${item.productId}-${item.size}`}

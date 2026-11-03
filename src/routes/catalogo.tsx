@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
-import { categoryNames, copy, products, type Category } from "@/lib/shop-data";
+import { categoryNames, copy, type Category } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 const searchSchema = z.object({
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/catalogo")({
   component: Catalog,
 });
 function Catalog() {
-  const { language } = useShop(),
+  const { language, catalog } = useShop(),
     t = copy[language],
     search = Route.useSearch();
   const [category, setCategory] = useState<Category | "all">(search.category ?? "all");
@@ -41,14 +41,14 @@ function Catalog() {
   const [max, setMax] = useState(250);
   const list = useMemo(
     () =>
-      products.filter(
+      catalog.filter(
         (p) =>
           (category === "all" || p.category === category) &&
           p.name.toLowerCase().includes(query.toLowerCase()) &&
           p.price <= max &&
           (size === "all" || p.sizes.some((s) => s.size === size && s.stock > 0)),
       ),
-    [category, query, size, max],
+    [catalog, category, query, size, max],
   );
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">

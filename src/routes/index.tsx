@@ -9,7 +9,6 @@ import {
   categoryNames,
   copy,
   heroSneaker as heroImage,
-  products,
   type Category,
 } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
@@ -53,14 +52,15 @@ const hero = {
     text: "Zapatillas con sello de autenticidad. Entrega en mano en la zona de Oporto. Sin cambios ni devoluciones.",
   },
 };
-const catImages = {
-  running: products.find((p) => p.category === "running")?.image ?? heroImage,
-  casual: products.find((p) => p.category === "casual")?.image ?? heroImage,
-  streetwear: products.find((p) => p.category === "streetwear")?.image ?? heroImage,
-  limited: products.find((p) => p.category === "limited")?.image ?? heroImage,
-};
+const categoryImages = (catalog: { category: Category; image: string }[]) => ({
+  running: catalog.find((p) => p.category === "running")?.image ?? heroImage,
+  casual: catalog.find((p) => p.category === "casual")?.image ?? heroImage,
+  streetwear: catalog.find((p) => p.category === "streetwear")?.image ?? heroImage,
+  limited: catalog.find((p) => p.category === "limited")?.image ?? heroImage,
+});
 function Home() {
-  const { language } = useShop();
+  const { language, catalog } = useShop();
+  const catImages = categoryImages(catalog);
   const t = copy[language],
     h = hero[language];
   const cats = Object.keys(catImages) as Category[];
@@ -153,7 +153,7 @@ function Home() {
             </Button>
           </div>
           <div className="grid grid-cols-2 gap-x-3 gap-y-10 lg:grid-cols-4">
-            {products
+            {catalog
               .filter((p) => p.featured)
               .map((p) => (
                 <ProductCard key={p.id} product={p} />

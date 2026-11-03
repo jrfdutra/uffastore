@@ -4,7 +4,7 @@ import { Check, MapPin, Package, Smartphone, WalletCards } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { copy, money, products } from "@/lib/shop-data";
+import { copy, money } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { createOrder } from "@/lib/orders";
 import { tr } from "@/lib/i18n";
@@ -203,7 +203,7 @@ function Checkout() {
           </h2>
           <div className="my-5 space-y-4">
             {s.cart.map((x) => {
-              const p = products.find((y) => y.id === x.productId);
+              const p = s.catalog.find((y) => y.id === x.productId);
               return p ? (
                 <div
                   key={`${x.productId}-${x.size}`}

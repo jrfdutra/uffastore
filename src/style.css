@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand: oklch(0.774 0.079 1.9);
+  --brand-foreground: oklch(0.16 0.012 350);
+  --brand-strong: oklch(0.331 0.048 1.6);
+  --brand-soft: oklch(0.94 0.028 2);
+  --background: oklch(0.975 0.008 40);
+  --foreground: oklch(0.16 0.008 350);
+}
+
+.dark {
+  --brand: oklch(0.78 0.079 1.9);
+  --brand-foreground: oklch(0.15 0.012 350);
+  --brand-strong: oklch(0.331 0.048 1.6);
+  --brand-soft: oklch(0.26 0.035 2);
+  --background: oklch(0.14 0.012 352);
+  --foreground: oklch(0.96 0.008 40);
+}

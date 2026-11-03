@@ -3,11 +3,12 @@ import { useRef, useState } from "react";
 import { BadgeCheck, Box, Hand, Rotate3D } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { VerifiedBadge } from "@/components/verified-badge";
-import { categoryNames, copy, money, products } from "@/lib/shop-data";
+import { categoryNames, copy, money } from "@/lib/shop-data";
+import { loadProduct } from "@/lib/catalog";
 import { useShop } from "@/lib/shop-context";
 export const Route = createFileRoute("/produto/$productId")({
-  loader: ({ params }) => {
-    const product = products.find((p) => p.id === params.productId);
+  loader: async ({ params }) => {
+    const product = await loadProduct(params.productId);
     if (!product) throw notFound();
     return product;
   },
@@ -31,9 +32,10 @@ export const Route = createFileRoute("/produto/$productId")({
   component: ProductDetail,
 });
 function ProductDetail() {
-  const p = Route.useLoaderData(),
+  const loaderProduct = Route.useLoaderData(),
     s = useShop(),
     t = copy[s.language];
+  const p = s.catalog.find((item) => item.id === loaderProduct.id) ?? loaderProduct;
   const [selected, setSelected] = useState<number>();
   const [angle, setAngle] = useState(0);
   const [error, setError] = useState(false);

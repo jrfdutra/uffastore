@@ -20,8 +20,28 @@ npx tsc --noEmit
 npm run build
 ```
 
-## Funcionalidades
+## Catálogo via Shopify
 
+O catálogo vem da Storefront API da Shopify (`src/lib/shopify.ts` + `src/lib/catalog.ts`).
+Se as variáveis de ambiente não estiverem definidas, ou a chamada falhar, o site usa
+automaticamente os produtos locais de `src/lib/shop-data.ts`.
+
+```bash
+cp .env.example .env   # preencher com os dados da loja
+```
+
+| Variável | Onde encontrar |
+| --- | --- |
+| `VITE_SHOPIFY_STORE_DOMAIN` | `xxxxx.myshopify.com` |
+| `VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN` | Admin → Headless → Storefront API → token público |
+
+> O `.env` está no `.gitignore`. Em produção (Vercel) as duas variáveis têm de ser
+> configuradas no painel do projeto, senão o site cai no catálogo local.
+
+O ficheiro [`docs/shopify/produtos-uffa.csv`](docs/shopify/produtos-uffa.csv) contém o
+catálogo de demonstração para importar no Shopify (Produtos → Importar).
+
+## Funcionalidades
 - Catálogo, produto, carrinho e checkout com envio ou recolha no Porto.
 - Checkout cria número de encomenda, código exclusivo, rastreio e um código de autenticidade por par.
 - Portal `/rastreio` com acesso por três fatores, dashboard, linha temporal e confirmação de receção/recolha.

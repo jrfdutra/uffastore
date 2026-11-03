@@ -8,12 +8,14 @@ import {
   type ReactNode,
 } from "react";
 import { toast } from "sonner";
-import { copy, products, type Language } from "./shop-data";
+import { copy, products as fallbackProducts, type Language, type Product } from "./shop-data";
+import { loadCatalog } from "./catalog";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 
 export type CartItem = { productId: string; size: number; quantity: number };
 
 type ShopContextValue = {
+  catalog: Product[];
   language: Language;
   setLanguage: (language: Language) => void;
   theme: "light" | "dark";
@@ -74,6 +76,17 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [ready, setReady] = useState(false);
+  const [catalog, setCatalog] = useState<Product[]>(fallbackProducts);
+
+  useEffect(() => {
+    let active = true;
+    loadCatalog().then((loaded) => {
+      if (active && loaded.length) setCatalog(loaded);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     const savedLanguage = readStorage("local", LANGUAGE_KEY);
@@ -148,12 +161,13 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cart.reduce(
     (sum, item) =>
-      sum + (products.find((product) => product.id === item.productId)?.price ?? 0) * item.quantity,
+      sum + (catalog.find((product) => product.id === item.productId)?.price ?? 0) * item.quantity,
     0,
   );
 
   const value = useMemo(
     () => ({
+      catalog,
       language,
       setLanguage,
       theme,
@@ -169,6 +183,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       subtotal,
     }),
     [
+      catalog,
       language,
       setLanguage,
       theme,
