@@ -51,7 +51,7 @@ function Checkout() {
         return { variantId: variant.variantId, quantity: item.quantity };
       });
 
-      const checkout = await createShopifyCheckout(items);
+      const checkout = await createShopifyCheckout(items, delivery);
       // Redireciona para o checkout oficial da Shopify para pagamento seguro
       window.location.href = checkout.webUrl;
     } catch (err: any) {

@@ -102,7 +102,7 @@ const CART_CREATE_MUTATION = `
   }
 `;
 
-export async function createCheckoutUrl(items: { variantId: string; quantity: number }[]) {
+export async function createCheckoutUrl(items: { variantId: string; quantity: number }[], delivery: "pickup" | "shipping" = "pickup") {
   const data = await shopifyFetch<{
     cartCreate: {
       cart: { checkoutUrl: string };
@@ -114,6 +114,13 @@ export async function createCheckoutUrl(items: { variantId: string; quantity: nu
         merchandiseId: item.variantId,
         quantity: item.quantity,
       })),
+      buyerIdentity: {
+        preferences: {
+          delivery: {
+            deliveryMethod: delivery === "pickup" ? "PICK_UP" : "SHIPPING",
+          },
+        },
+      },
     },
   });
 
@@ -124,8 +131,8 @@ export async function createCheckoutUrl(items: { variantId: string; quantity: nu
   return data.cartCreate.cart.checkoutUrl;
 }
 
-export async function createShopifyCheckout(items: { variantId: string; quantity: number }[]) {
-  const url = await createCheckoutUrl(items);
+export async function createShopifyCheckout(items: { variantId: string; quantity: number }[], delivery: "pickup" | "shipping" = "pickup") {
+  const url = await createCheckoutUrl(items, delivery);
   return { webUrl: url };
 }
 
