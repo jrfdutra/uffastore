@@ -133,7 +133,8 @@ export async function createCheckoutUrl(items: { variantId: string; quantity: nu
 
 export async function createShopifyCheckout(items: { variantId: string; quantity: number }[], delivery: "pickup" | "shipping" = "pickup") {
   const url = await createCheckoutUrl(items, delivery);
-  return { webUrl: url };
+  const separator = url.includes("?") ? "&" : "?";
+  return { webUrl: `${url}${separator}skip_shop_pay=true` };
 }
 
 export async function fetchShopifyProducts(first = 50) {
