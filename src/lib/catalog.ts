@@ -42,6 +42,7 @@ function toProduct(node: ShopifyProductNode): Product {
     .map((variant) => ({
       size: Number.parseInt(variant.selectedOptions[0]?.value ?? variant.title, 10),
       stock: variant.quantityAvailable ?? (variant.availableForSale ? 1 : 0),
+      variantId: variant.id,
     }))
     .filter((variant) => Number.isFinite(variant.size))
     .sort((a, b) => a.size - b.size);

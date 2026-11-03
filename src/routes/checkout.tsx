@@ -1,13 +1,12 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Check, MapPin, Package, Smartphone, WalletCards } from "lucide-react";
+import { Check, MapPin, Package, Smartphone, WalletCards, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { copy, money } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
-import { createOrder } from "@/lib/orders";
 import { tr } from "@/lib/i18n";
+import { createShopifyCheckout } from "@/lib/shopify";
+
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
@@ -25,38 +24,47 @@ export const Route = createFileRoute("/checkout")({
   }),
   component: Checkout,
 });
+
 function Checkout() {
   const s = useShop(),
-    t = copy[s.language],
-    navigate = useNavigate();
+    t = copy[s.language];
+  
   const [delivery, setDelivery] = useState<"pickup" | "shipping">("pickup");
-  const [payment, setPayment] = useState<"mbway" | "apple">("mbway");
+  const [payment, setPayment] = useState<"card" | "apple">("card");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const appleWarning =
-    s.language === "pt"
-      ? "Apple Pay estará disponível em breve. Escolhe MB WAY."
-      : s.language === "es"
-        ? "Apple Pay estará disponible pronto. Elige MB WAY."
-        : "Apple Pay is coming soon. Choose MB WAY.";
+
   const shipping = delivery === "shipping" ? 7 : 0;
-  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (payment === "apple") {
-      setError(appleWarning);
-      return;
+    setLoading(true);
+    setError("");
+
+    try {
+      const items = s.cart.map((item) => {
+        const product = s.catalog.find((p) => p.id === item.productId);
+        const variant = product?.sizes.find((sz) => sz.size === item.size);
+        if (!variant?.variantId) {
+          throw new Error(`Variant not found for ${item.productId} size ${item.size}`);
+        }
+        return { variantId: variant.variantId, quantity: item.quantity };
+      });
+
+      const checkout = await createShopifyCheckout(items);
+      // Redireciona para o checkout oficial da Shopify para pagamento seguro
+      window.location.href = checkout.webUrl;
+    } catch (err: any) {
+      console.error(err);
+      setError(
+        s.language === "pt"
+          ? "Erro ao ligar à Shopify. Tenta novamente."
+          : "Error connecting to Shopify. Please try again."
+      );
+      setLoading(false);
     }
-    const data = new FormData(e.currentTarget);
-    const order = createOrder({
-      customerName: String(data.get("name") ?? ""),
-      contact: String(data.get("contact") ?? ""),
-      delivery,
-      address: delivery === "shipping" ? String(data.get("address") ?? "") : "",
-      payment,
-      cart: s.cart,
-    });
-    s.clearCart();
-    navigate({ to: "/confirmacao", search: { order: order.number } });
   };
+
   if (!s.cart.length)
     return (
       <div className="mx-auto grid min-h-[55vh] max-w-xl place-items-center px-4 text-center">
@@ -71,12 +79,14 @@ function Checkout() {
         </div>
       </div>
     );
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
       <p className="text-xs font-bold uppercase text-primary">
         {tr(s.language, "Checkout seguro", "Secure checkout", "Pago seguro")}
       </p>
       <h1 className="font-display text-6xl uppercase md:text-8xl">{t.checkout}</h1>
+      
       <form onSubmit={submit} className="mt-10 grid gap-10 lg:grid-cols-[1fr_380px]">
         <div className="space-y-10">
           <section>
@@ -88,188 +98,106 @@ function Checkout() {
                 active={delivery === "pickup"}
                 onClick={() => setDelivery("pickup")}
                 icon={<MapPin />}
-                title={
-                  s.language === "pt"
-                    ? "Recolher em mãos"
-                    : s.language === "es"
-                      ? "Recoger en mano"
-                      : "Hand pickup"
-                }
+                title={tr(s.language, "Recolher em mãos", "Hand pickup", "Recoger en mano")}
                 detail={t.pickup}
               />
               <Choice
                 active={delivery === "shipping"}
                 onClick={() => setDelivery("shipping")}
                 icon={<Package />}
-                title={
-                  s.language === "pt"
-                    ? "Envio por correio"
-                    : s.language === "es"
-                      ? "Envío por correo"
-                      : "Postal shipping"
-                }
+                title={tr(s.language, "Envio por correio", "Postal shipping", "Envío por correo")}
                 detail="7,00 €"
               />
             </div>
-          </section>
-          <section>
-            <h2 className="mb-4 font-display text-3xl uppercase">
-              2.{" "}
-              {s.language === "pt"
-                ? "Os teus dados"
-                : s.language === "es"
-                  ? "Tus datos"
-                  : "Your details"}
-            </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field
-                label={s.language === "pt" ? "Nome" : s.language === "es" ? "Nombre" : "Name"}
-                name="name"
-                required
-              />
-              <Field
-                label={
-                  s.language === "pt"
-                    ? "Email ou telefone"
-                    : s.language === "es"
-                      ? "Email o teléfono"
-                      : "Email or phone"
-                }
-                name="contact"
-                required
-              />
-              {delivery === "shipping" && (
-                <div className="sm:col-span-2">
-                  <Field
-                    label={
-                      s.language === "pt"
-                        ? "Morada completa"
-                        : s.language === "es"
-                          ? "Dirección completa"
-                          : "Full address"
-                    }
-                    name="address"
-                    required
-                  />
-                </div>
+            <p className="mt-3 text-[11px] text-muted-foreground">
+              {tr(
+                s.language,
+                "* Podes preencher a morada de envio no passo seguinte (Shopify).",
+                "* You can fill the shipping address in the next step (Shopify).",
+                "* Puedes completar la dirección de envío en el siguiente paso (Shopify)."
               )}
-            </div>
+            </p>
           </section>
+
           <section>
             <h2 className="mb-4 font-display text-3xl uppercase">
-              3. {s.language === "pt" ? "Pagamento" : s.language === "es" ? "Pago" : "Payment"}
+              2. {s.language === "pt" ? "Pagamento" : s.language === "es" ? "Pago" : "Payment"}
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
               <Choice
-                active={payment === "mbway"}
-                onClick={() => {
-                  setPayment("mbway");
-                  setError("");
-                }}
+                active={payment === "card"}
+                onClick={() => setPayment("card")}
                 icon={<Smartphone />}
-                title="MB WAY"
-                detail={
-                  s.language === "pt"
-                    ? "Confirmação simulada"
-                    : s.language === "es"
-                      ? "Confirmación simulada"
-                      : "Simulated confirmation"
-                }
-              />
-              <Choice
-                active={payment === "apple"}
-                onClick={() => {
-                  setPayment("apple");
-                  setError(appleWarning);
-                }}
-                icon={<WalletCards />}
-                title="Apple Pay"
-                detail={
-                  s.language === "pt"
-                    ? "Em breve"
-                    : s.language === "es"
-                      ? "Próximamente"
-                      : "Coming soon"
-                }
-                disabled
+                title={tr(s.language, "Cartão / MB WAY / Google Pay", "Card / Apple Pay / Google Pay", "Tarjeta / Google Pay")}
+                detail={tr(s.language, "Pagamento seguro via Shopify", "Secure payment via Shopify", "Pago seguro vía Shopify")}
               />
             </div>
-            {error && <p className="mt-3 text-sm font-semibold text-destructive">{error}</p>}
           </section>
         </div>
+
         <aside className="border border-border p-6 lg:sticky lg:top-28 lg:self-start">
           <h2 className="font-display text-3xl uppercase">
             {s.language === "pt" ? "Resumo" : s.language === "es" ? "Resumen" : "Summary"}
           </h2>
+          
           <div className="my-5 space-y-4">
             {s.cart.map((x) => {
               const p = s.catalog.find((y) => y.id === x.productId);
               return p ? (
-                <div
-                  key={`${x.productId}-${x.size}`}
-                  className="flex justify-between gap-3 text-sm"
-                >
-                  <span>
-                    {x.quantity}× {p.name} · {x.size}
-                  </span>
+                <div key={`${x.productId}-${x.size}`} className="flex justify-between gap-3 text-sm">
+                  <span>{x.quantity}× {p.name} · {x.size}</span>
                   <span className="font-bold">{money(p.price * x.quantity)}</span>
                 </div>
               ) : null;
             })}
           </div>
+
           <div className="space-y-2 border-t border-border pt-4 text-sm">
             <div className="flex justify-between">
               <span>{t.subtotal}</span>
               <span>{money(s.subtotal)}</span>
             </div>
-            <div className="flex justify-between">
-              <span>
-                {s.language === "pt" ? "Portes" : s.language === "es" ? "Envío" : "Shipping"}
-              </span>
-              <span>
-                {shipping
-                  ? money(shipping)
-                  : s.language === "pt"
-                    ? "Grátis"
-                    : s.language === "es"
-                      ? "Gratis"
-                      : "Free"}
-              </span>
-            </div>
+            {delivery === "shipping" && (
+              <div className="flex justify-between">
+                <span>{tr(s.language, "Portes", "Shipping", "Envío")}</span>
+                <span>{money(shipping)}</span>
+              </div>
+            )}
             <div className="flex justify-between pt-3 text-lg font-bold">
               <span>Total</span>
               <span>{money(s.subtotal + shipping)}</span>
             </div>
           </div>
-          <Button type="submit" size="lg" className="mt-6 h-12 w-full rounded-none">
-            {s.language === "pt"
-              ? "Confirmar com MB WAY"
-              : s.language === "es"
-                ? "Confirmar con MB WAY"
-                : "Confirm with MB WAY"}
+
+          <Button 
+            type="submit" 
+            size="lg" 
+            disabled={loading}
+            className="mt-6 h-12 w-full rounded-none font-bold uppercase tracking-wider"
+          >
+            {loading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              tr(s.language, "Pagar agora", "Pay now", "Pagar ahora")
+            )}
           </Button>
-          <p className="mt-3 border-t border-border pt-3 text-center text-[11px] text-muted-foreground">
+
+          {error && <p className="mt-3 text-center text-xs font-bold text-destructive">{error}</p>}
+          
+          <p className="mt-4 text-center text-[10px] leading-relaxed text-muted-foreground">
             {tr(
               s.language,
-              "Após confirmação recebes um código de acesso exclusivo para gerir a encomenda.",
-              "After confirmation you'll receive an exclusive access code to manage your order.",
-              "Tras la confirmación recibirás un código de acceso exclusivo para gestionar tu pedido.",
+              "Serás redirecionado para o checkout oficial da Shopify para concluir o pagamento com total segurança.",
+              "You will be redirected to the official Shopify checkout to complete your payment with total security.",
+              "Serás redirigido al checkout oficial de Shopify para completar tu pago con total seguridad."
             )}
           </p>
-          <p className="mt-2 text-center text-[11px] text-muted-foreground">{t.noReturns}</p>
         </aside>
       </form>
     </div>
   );
 }
-function Field({ label, name, required }: { label: string; name: string; required?: boolean }) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={name}>{label}</Label>
-      <Input id={name} name={name} required={required} className="h-12 rounded-none" />
-    </div>
-  );
-}
+
 function Choice({
   active,
   onClick,
@@ -290,15 +218,17 @@ function Choice({
       type="button"
       variant={active ? "default" : "outline"}
       onClick={onClick}
-      aria-pressed={active}
-      className={`relative h-auto min-h-24 justify-start rounded-none p-4 text-left ${disabled ? "opacity-60" : ""}`}
+      disabled={disabled}
+      className={`relative h-auto min-h-24 justify-start rounded-none p-4 text-left transition-all ${
+        active ? "ring-2 ring-primary ring-offset-2" : "hover:bg-accent"
+      } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
     >
-      <span className="shrink-0">{icon}</span>
+      <span className="shrink-0 mr-3 opacity-80">{icon}</span>
       <span>
         <span className="block font-bold">{title}</span>
         <span className="mt-1 block text-xs opacity-70">{detail}</span>
       </span>
-      {active && <Check className="absolute right-3 top-3" />}
+      {active && <Check className="absolute right-3 top-3 size-4" />}
     </Button>
   );
 }

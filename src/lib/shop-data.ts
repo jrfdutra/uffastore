@@ -9,6 +9,7 @@ export const heroSneaker = grey;
 
 export type Language = "pt" | "en" | "es";
 export type Category = "running" | "casual" | "streetwear" | "limited";
+export type ProductSize = { size: number; stock: number; variantId?: string };
 export type Product = {
   id: string;
   name: string;
@@ -16,7 +17,7 @@ export type Product = {
   price: number;
   image: string;
   description: Record<Language, string>;
-  sizes: { size: number; stock: number }[];
+  sizes: ProductSize[];
   featured?: boolean;
 };
 
