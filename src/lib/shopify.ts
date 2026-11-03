@@ -88,15 +88,13 @@ export type ShopifyProductNode = {
   };
 };
 
-const CHECKOUT_CREATE_MUTATION = `
-  mutation checkoutCreate($input: CheckoutCreateInput!) {
-    checkoutCreate(input: $input) {
-      checkout {
-        id
-        webUrl
+const CART_CREATE_MUTATION = `
+  mutation cartCreate($input: CartInput) {
+    cartCreate(input: $input) {
+      cart {
+        checkoutUrl
       }
-      checkoutUserErrors {
-        code
+      userErrors {
         field
         message
       }
@@ -104,26 +102,31 @@ const CHECKOUT_CREATE_MUTATION = `
   }
 `;
 
-export async function createShopifyCheckout(items: { variantId: string; quantity: number }[]) {
+export async function createCheckoutUrl(items: { variantId: string; quantity: number }[]) {
   const data = await shopifyFetch<{
-    checkoutCreate: {
-      checkout: { id: string; webUrl: string };
-      checkoutUserErrors: { message: string }[];
+    cartCreate: {
+      cart: { checkoutUrl: string };
+      userErrors: { message: string }[];
     };
-  }>(CHECKOUT_CREATE_MUTATION, {
+  }>(CART_CREATE_MUTATION, {
     input: {
-      lineItems: items.map((item) => ({
-        variantId: item.variantId,
+      lines: items.map((item) => ({
+        merchandiseId: item.variantId,
         quantity: item.quantity,
       })),
     },
   });
 
-  if (data.checkoutCreate.checkoutUserErrors.length > 0) {
-    throw new Error(data.checkoutCreate.checkoutUserErrors[0].message);
+  if (data.cartCreate.userErrors && data.cartCreate.userErrors.length > 0) {
+    throw new Error(data.cartCreate.userErrors[0].message);
   }
 
-  return data.checkoutCreate.checkout;
+  return data.cartCreate.cart.checkoutUrl;
+}
+
+export async function createShopifyCheckout(items: { variantId: string; quantity: number }[]) {
+  const url = await createCheckoutUrl(items);
+  return { webUrl: url };
 }
 
 export async function fetchShopifyProducts(first = 50) {
@@ -163,37 +166,4 @@ export async function fetchShopifyProductByHandle(handle: string) {
     handle,
   });
   return data.product;
-}
-
-const CART_CREATE_MUTATION = `
-  mutation cartCreate($input: CartInput) {
-    cartCreate(input: $input) {
-      cart {
-        checkoutUrl
-      }
-      userErrors {
-        field
-        message
-      }
-    }
-  }
-`;
-
-export async function createCheckoutUrl(lines: { variantId: string; quantity: number }[]) {
-  const data = await shopifyFetch<{
-    cartCreate: { cart: { checkoutUrl: string }; userErrors: { message: string }[] };
-  }>(CART_CREATE_MUTATION, {
-    input: {
-      lines: lines.map((line) => ({
-        merchandiseId: line.variantId,
-        quantity: line.quantity,
-      })),
-    },
-  });
-
-  if (data.cartCreate.userErrors?.length) {
-    throw new Error(data.cartCreate.userErrors.map((e) => e.message).join("\n"));
-  }
-
-  return data.cartCreate.cart.checkoutUrl;
 }
