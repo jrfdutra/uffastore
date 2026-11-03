@@ -1,5 +1,5 @@
-const domain = import.meta.env["VITE_SHOPIFY_STORE_DOMAIN"];
-const token = import.meta.env["VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN"];
+const domain = import.meta.env["VITE_SHOPIFY_STORE_DOMAIN"] || (typeof process !== "undefined" ? process.env["VITE_SHOPIFY_STORE_DOMAIN"] : undefined);
+const token = import.meta.env["VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN"] || (typeof process !== "undefined" ? process.env["VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN"] : undefined);
 
 const API_VERSION = "2026-07";
 

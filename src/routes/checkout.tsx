@@ -56,11 +56,11 @@ function Checkout() {
       window.location.href = checkout.webUrl;
     } catch (err: any) {
       console.error(err);
-      setError(
+      setError(err?.message || (
         s.language === "pt"
           ? "Erro ao ligar à Shopify. Tenta novamente."
           : "Error connecting to Shopify. Please try again."
-      );
+      ));
       setLoading(false);
     }
   };
