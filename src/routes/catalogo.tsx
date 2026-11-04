@@ -9,7 +9,7 @@ import { categoryNames, copy, type Category } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 const searchSchema = z.object({
-  category: z.enum(["running", "casual", "streetwear", "limited"]).optional(),
+  category: z.enum(["casual", "streetwear", "limited", "sales"]).optional(),
 });
 const sizeOptions: (number | "all")[] = ["all", 36, 37, 38, 39, 40, 41, 42, 43];
 export const Route = createFileRoute("/catalogo")({
@@ -69,7 +69,7 @@ function Catalog() {
               {tr(language, "Categoria", "Category", "Categoría")}
             </legend>
             <div className="flex flex-wrap gap-2 lg:flex-col">
-              {(["all", "running", "casual", "streetwear", "limited"] as const).map((c) => (
+              {(["all", "casual", "streetwear", "limited", "sales"] as const).map((c) => (
                 <Button
                   key={c}
                   variant={category === c ? "default" : "outline"}

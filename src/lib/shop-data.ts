@@ -8,13 +8,14 @@ import tan from "@/assets/e44536b4-0486-4401-9327-8f300ee11714.jpg";
 export const heroSneaker = grey;
 
 export type Language = "pt" | "en" | "es";
-export type Category = "running" | "casual" | "streetwear" | "limited";
+export type Category = "casual" | "streetwear" | "limited" | "sales";
 export type ProductSize = { size: number; stock: number; variantId?: string };
 export type Product = {
   id: string;
   name: string;
   category: Category;
   price: number;
+  originalPrice?: number;
   image: string;
   description: Record<Language, string>;
   sizes: ProductSize[];
@@ -22,10 +23,10 @@ export type Product = {
 };
 
 export const categoryNames: Record<Category, Record<Language, string>> = {
-  running: { pt: "Running", en: "Running", es: "Running" },
   casual: { pt: "Casual", en: "Casual", es: "Casual" },
   streetwear: { pt: "Streetwear", en: "Streetwear", es: "Streetwear" },
   limited: { pt: "Edições limitadas", en: "Limited editions", es: "Ediciones limitadas" },
+  sales: { pt: "Sales · Promoções", en: "Sales · Special Offers", es: "Sales · Ofertas" },
 };
 
 export const products: Product[] = [
@@ -54,7 +55,7 @@ export const products: Product[] = [
   {
     id: "bolhao-runner",
     name: "Bolhão Runner",
-    category: "running",
+    category: "casual",
     price: 0.20,
     image: navy,
     featured: true,
@@ -76,8 +77,9 @@ export const products: Product[] = [
   {
     id: "cedofeita-court",
     name: "Cedofeita Court",
-    category: "casual",
+    category: "sales",
     price: 0.20,
+    originalPrice: 120.00,
     image: white,
     featured: true,
     description: {
@@ -138,7 +140,7 @@ export const products: Product[] = [
   {
     id: "trindade-flow",
     name: "Trindade Flow",
-    category: "running",
+    category: "streetwear",
     price: 0.20,
     image: greenAlt,
     description: {
@@ -158,8 +160,9 @@ export const products: Product[] = [
   {
     id: "galerias-low",
     name: "Galerias Low",
-    category: "streetwear",
+    category: "sales",
     price: 0.20,
+    originalPrice: 130.00,
     image: navy,
     description: {
       pt: "Linhas retro e construção limpa para combinar sem esforço.",

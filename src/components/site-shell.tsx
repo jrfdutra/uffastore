@@ -10,7 +10,11 @@ import {
   Minus,
   Plus,
   Trash2,
+  MessageSquare,
+  Share2,
+  Copy,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -39,10 +43,34 @@ import { tr } from "@/lib/i18n";
 import { DemoNotice } from "@/components/demo-notice";
 import { useEffect, useState, type ReactNode } from "react";
 
-const cats: Category[] = ["running", "casual", "streetwear", "limited"];
+const cats: Category[] = ["casual", "streetwear", "limited", "sales"];
 function CartDrawer() {
   const s = useShop(),
     t = copy[s.language];
+
+  const handleShareWhatsApp = () => {
+    const itemsText = s.cart.map((item) => {
+      const p = s.catalog.find((c) => c.id === item.productId);
+      return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+    }).join(", ");
+    const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.subtotal)}\nVisita: ${window.location.origin}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  const handleCopyCart = async () => {
+    const itemsText = s.cart.map((item) => {
+      const p = s.catalog.find((c) => c.id === item.productId);
+      return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+    }).join(", ");
+    const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(s.subtotal)}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(tr(s.language, "Carrinho copiado!", "Cart copied!", "¡Carrito copiado!"));
+    } catch {
+      toast.error(tr(s.language, "Erro ao copiar.", "Error copying.", "Error al copiar."));
+    }
+  };
+
   return (
     <Sheet open={s.cartOpen} onOpenChange={s.setCartOpen}>
       <SheetTrigger asChild>
@@ -157,6 +185,30 @@ function CartDrawer() {
               <span>{t.subtotal}</span>
               <span>{money(s.subtotal)}</span>
             </div>
+
+            <div className="mb-4 grid grid-cols-2 gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-none text-xs"
+                onClick={handleShareWhatsApp}
+              >
+                <MessageSquare className="size-3.5 mr-1 text-green-600" />
+                WhatsApp
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-none text-xs"
+                onClick={handleCopyCart}
+              >
+                <Copy className="size-3.5 mr-1" />
+                {tr(s.language, "Copiar", "Copy", "Copiar")}
+              </Button>
+            </div>
+
             <Button asChild size="lg" className="h-12 w-full rounded-none">
               <Link to="/checkout" onClick={() => s.setCartOpen(false)}>
                 {t.checkout}

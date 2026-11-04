@@ -53,10 +53,10 @@ const hero = {
   },
 };
 const categoryImages = (catalog: { category: Category; image: string }[]) => ({
-  running: catalog.find((p) => p.category === "running")?.image ?? heroImage,
   casual: catalog.find((p) => p.category === "casual")?.image ?? heroImage,
   streetwear: catalog.find((p) => p.category === "streetwear")?.image ?? heroImage,
   limited: catalog.find((p) => p.category === "limited")?.image ?? heroImage,
+  sales: catalog.find((p) => p.category === "sales")?.image ?? heroImage,
 });
 function Home() {
   const { language, catalog } = useShop();

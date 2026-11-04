@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Check, MapPin, Package, Smartphone, WalletCards, Loader2 } from "lucide-react";
+import { Check, MapPin, Package, Smartphone, Loader2, Share2, MessageSquare, Copy } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { copy, money } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
@@ -35,6 +36,46 @@ function Checkout() {
   const [error, setError] = useState("");
 
   const shipping = delivery === "shipping" ? 7 : 0;
+
+  const handleShareWhatsApp = () => {
+    const itemsText = s.cart.map((item) => {
+      const p = s.catalog.find((c) => c.id === item.productId);
+      return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+    }).join(", ");
+    const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.subtotal + shipping)}\nVisita: ${window.location.origin}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  const handleCopyCart = async () => {
+    const itemsText = s.cart.map((item) => {
+      const p = s.catalog.find((c) => c.id === item.productId);
+      return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+    }).join(", ");
+    const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(s.subtotal + shipping)}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(tr(s.language, "Carrinho copiado!", "Cart copied!", "¡Carrito copiado!"));
+    } catch {
+      toast.error(tr(s.language, "Erro ao copiar.", "Error copying.", "Error al copiar."));
+    }
+  };
+
+  const handleNativeShare = async () => {
+    const itemsText = s.cart.map((item) => {
+      const p = s.catalog.find((c) => c.id === item.productId);
+      return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+    }).join(", ");
+    const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.subtotal + shipping)}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Carrinho UFFA Store", text, url: window.location.href });
+      } catch {
+        // cancelled
+      }
+    } else {
+      handleCopyCart();
+    }
+  };
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -166,6 +207,48 @@ function Checkout() {
             <div className="flex justify-between pt-3 text-lg font-bold">
               <span>Total</span>
               <span>{money(s.subtotal + shipping)}</span>
+            </div>
+          </div>
+
+          {/* Cart Sharing */}
+          <div className="mt-6 border-t border-border pt-4">
+            <p className="text-xs font-bold uppercase text-muted-foreground mb-2">
+              {tr(s.language, "Partilhar carrinho", "Share cart", "Compartir carrito")}
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-none text-xs"
+                onClick={handleShareWhatsApp}
+                title="WhatsApp"
+              >
+                <MessageSquare className="size-3.5 mr-1 text-green-600" />
+                WhatsApp
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-none text-xs"
+                onClick={handleCopyCart}
+                title="Copiar"
+              >
+                <Copy className="size-3.5 mr-1" />
+                Copiar
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-none text-xs"
+                onClick={handleNativeShare}
+                title="Partilhar"
+              >
+                <Share2 className="size-3.5 mr-1" />
+                Partilhar
+              </Button>
             </div>
           </div>
 
