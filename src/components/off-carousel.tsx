@@ -8,6 +8,12 @@ import useEmblaCarousel from "embla-carousel-react";
 
 export function OffCarousel() {
   const { catalog, language } = useShop();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const saleProducts = catalog.filter((p) => p.category === "sales" || Boolean(p.originalPrice));
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -41,6 +47,29 @@ export function OffCarousel() {
 
   const scrollPrev = () => emblaApi?.scrollPrev();
   const scrollNext = () => emblaApi?.scrollNext();
+
+  if (!mounted) {
+    return (
+      <section className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-24">
+        <div className="mb-8 flex items-end justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-[0.16em]">
+              <Tag className="size-4" />
+              <span>OFF · {tr(language, "Promoções exclusivas", "Exclusive offers", "Ofertas exclusivas")}</span>
+            </div>
+            <h2 className="mt-2 font-display text-5xl uppercase md:text-7xl">
+              {tr(language, "Ofertas Especiais", "Special Offers", "Ofertas Especiales")}
+            </h2>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {saleProducts.slice(0, 4).map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-24">
@@ -84,7 +113,7 @@ export function OffCarousel() {
           {saleProducts.map((product) => (
             <div
               key={product.id}
-              className="min-w-0 shrink-0 grow-0 basis-[85% ] sm:basis-[45%] lg:basis-[28%] pl-4"
+              className="min-w-0 shrink-0 grow-0 basis-[85%] sm:basis-[45%] lg:basis-[28%] pl-4"
             >
               <ProductCard product={product} />
             </div>
