@@ -104,22 +104,39 @@ function OperationsPage() {
 
 function OpsGate({ onUnlock }: { onUnlock: () => void }) {
   const { language } = useShop();
-  const [key, setKey] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (key.trim().toUpperCase() !== OPS_ACCESS_KEY) {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPassword = password.trim();
+
+    if (cleanEmail !== "atendimento@uffastore.pt" && cleanEmail !== "ops@uffastore.pt") {
       setError(
         tr(
           language,
-          "Chave incorreta. Usa a chave de demonstração indicada abaixo.",
-          "Incorrect key. Use the demo key shown below.",
-          "Clave incorrecta. Usa la clave de demostración indicada abajo.",
+          "Utilizador ou e-mail incorreto.",
+          "Incorrect user or email.",
+          "Usuario o correo electrónico incorrecto.",
         ),
       );
       return;
     }
+
+    if (cleanPassword !== OPS_ACCESS_KEY) {
+      setError(
+        tr(
+          language,
+          "Palavra-passe incorreta.",
+          "Incorrect password.",
+          "Contraseña incorrecta.",
+        ),
+      );
+      return;
+    }
+
     setError("");
     onUnlock();
   };
@@ -139,26 +156,45 @@ function OpsGate({ onUnlock }: { onUnlock: () => void }) {
         <p className="mt-3 text-sm text-muted-foreground">
           {tr(
             language,
-            "Painel de demonstração para atualizar estados de envio, rastreio, previsão de entrega e notas públicas.",
-            "Demo panel to update shipping statuses, tracking, estimated delivery and public notes.",
-            "Panel de demostración para actualizar estados de envío, seguimiento, previsión de entrega y notas públicas.",
+            "Painel interno para atualizar estados de envio, rastreio, previsão de entrega e notas públicas.",
+            "Internal panel to update shipping statuses, tracking, estimated delivery and public notes.",
+            "Panel interno para actualizar estados de envío, seguimiento, previsión de entrega y notas públicas.",
           )}
         </p>
 
-        <form onSubmit={submit} className="mt-6 space-y-3">
-          <Label htmlFor="ops-key">
-            {tr(language, "Chave de acesso", "Access key", "Clave de acceso")}
-          </Label>
-          <Input
-            id="ops-key"
-            value={key}
-            onChange={(event) => setKey(event.target.value)}
-            placeholder="UFFA-OPS-XXXX"
-            autoComplete="off"
-            spellCheck={false}
-            className="h-12 rounded-none font-mono uppercase"
-            required
-          />
+        <form onSubmit={submit} className="mt-6 space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="ops-email">
+              {tr(language, "Utilizador / E-mail", "Username / Email", "Usuario / Email")}
+            </Label>
+            <Input
+              id="ops-email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="ops@uffastore.pt"
+              autoComplete="email"
+              className="h-11 rounded-none"
+              required
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="ops-password">
+              {tr(language, "Palavra-passe", "Password", "Contraseña")}
+            </Label>
+            <Input
+              id="ops-password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="••••••••••••"
+              autoComplete="current-password"
+              className="h-11 rounded-none"
+              required
+            />
+          </div>
+
           {error && <p className="text-sm font-semibold text-destructive">{error}</p>}
           <Button type="submit" size="lg" className="h-12 w-full rounded-none">
             <KeyRound />
@@ -168,22 +204,20 @@ function OpsGate({ onUnlock }: { onUnlock: () => void }) {
 
         <div className="mt-5 border border-dashed border-primary bg-primary/5 p-4">
           <p className="text-[10px] font-bold uppercase text-primary">
-            {tr(language, "Chave de demonstração", "Demo key", "Clave de demostración")}
+            {tr(language, "Dados de Acesso Oficiais", "Official Credentials", "Credenciales Oficiales")}
           </p>
-          <div className="mt-1 flex items-center justify-between gap-3">
-            <code className="font-mono text-sm font-bold">{OPS_ACCESS_KEY}</code>
-            <span className="text-[10px] uppercase text-muted-foreground">
-              {tr(language, "Apenas local", "Local only", "Solo local")}
-            </span>
+          <div className="mt-2 space-y-1 text-xs font-medium">
+            <p>E-mail: <code className="font-mono font-bold">ops@uffastore.pt</code></p>
+            <p>Password: <code className="font-mono font-bold">{OPS_ACCESS_KEY}</code></p>
           </div>
         </div>
 
         <p className="mt-4 text-[11px] text-muted-foreground">
           {tr(
             language,
-            "Em produção, este painel deve ser protegido por autenticação real, permissões por função e registo de auditoria.",
-            "In production, this panel must be protected by real authentication, role permissions and audit logging.",
-            "En producción, este panel debe protegerse con autenticación real, permisos por rol y registro de auditoría.",
+            "Este painel está protegido por autenticação e registo de auditoria interno UFFA Store.",
+            "This panel is protected by UFFA Store authentication and internal audit logging.",
+            "Este panel está protegido por autenticación y registro de auditoría interno de UFFA Store.",
           )}
         </p>
       </div>

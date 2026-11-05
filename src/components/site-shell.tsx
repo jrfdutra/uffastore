@@ -42,7 +42,6 @@ import {
 } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
-import { DemoNotice } from "@/components/demo-notice";
 import { useEffect, useState, type ReactNode } from "react";
 
 const cats: Category[] = ["casual", "streetwear", "limited", "sales"];
@@ -337,7 +336,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
   useEffect(() => setCartOpen(false), [pathname, setCartOpen]);
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <DemoNotice />
       <div className="bg-foreground px-4 py-2 text-center text-xs font-bold uppercase text-background dark:bg-brand dark:text-brand-foreground">
         {t.pickup}
       </div>
@@ -458,7 +456,8 @@ export function SiteShell({ children }: { children: ReactNode }) {
             </a>
           </div>
           <nav className="flex flex-col items-start gap-3 text-sm">
-            <Link to="/catalogo" search={{}} className="hover:text-brand">
+            <Link to="/catalogo" search={{}} className="hover:text-brand flex items-center gap-1.5">
+              <ShoppingBag className="size-4" />
               {t.shop}
             </Link>
             <Link to="/favoritos" className="hover:text-brand flex items-center gap-1.5">
@@ -481,7 +480,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               )}
             </Link>
             <Link to="/operacoes" className="text-footer-muted hover:text-brand">
-              {tr(s.language, "Operações (demo)", "Operations (demo)", "Operaciones (demo)")}
+              {tr(s.language, "Operações", "Operations", "Operaciones")}
             </Link>
             <span className="text-footer-muted">{t.noReturns}</span>
           </nav>

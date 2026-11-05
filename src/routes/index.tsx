@@ -5,6 +5,7 @@ import { Newsletter } from "@/components/newsletter";
 import { ProductCard } from "@/components/product-card";
 import { TrustStrip } from "@/components/trust-strip";
 import { OrderPortalPromo } from "@/components/order-portal-promo";
+import { OffCarousel } from "@/components/off-carousel";
 import {
   categoryNames,
   copy,
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/")({
   }),
   component: Home,
 });
+
 const hero = {
   pt: {
     eyebrow: "Sapatilhas com selo de autenticidade · Porto",
@@ -52,21 +54,24 @@ const hero = {
     text: "Zapatillas con sello de autenticidad. Entrega en mano en la zona de Oporto. Sin cambios ni devoluciones.",
   },
 };
+
 const categoryImages = (catalog: { category: Category; image: string }[]) => ({
   casual: catalog.find((p) => p.category === "casual")?.image ?? heroImage,
   streetwear: catalog.find((p) => p.category === "streetwear")?.image ?? heroImage,
   limited: catalog.find((p) => p.category === "limited")?.image ?? heroImage,
-  sales: catalog.find((p) => p.category === "sales")?.image ?? heroImage,
+  promocoes: catalog.find((p) => p.category === "sales" || p.category === "promocoes")?.image ?? heroImage,
 });
+
 function Home() {
   const { language, catalog } = useShop();
   const catImages = categoryImages(catalog);
   const t = copy[language],
     h = hero[language];
   const cats = Object.keys(catImages) as Category[];
+
   return (
     <>
-      <section className="relative min-h-[min(760px,82vh)] overflow-hidden bg-hero text-hero-foreground">
+      <section className="relative min-h-[min(720px,78vh)] overflow-hidden bg-hero text-hero-foreground mt-0">
         <img
           src={heroImage}
           alt="Uffa Store sneakers"
@@ -75,7 +80,7 @@ function Home() {
           className="absolute inset-0 h-full w-full object-cover object-[66%_center] opacity-90"
         />
         <div className="absolute inset-0 bg-hero-overlay" />
-        <div className="relative mx-auto flex min-h-[min(760px,82vh)] max-w-7xl items-end px-4 pb-14 md:px-6 md:pb-20">
+        <div className="relative mx-auto flex min-h-[min(720px,78vh)] max-w-7xl items-end px-4 pb-12 md:px-6 md:pb-16">
           <div className="max-w-3xl animate-reveal">
             <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]">
               <BadgeCheck className="size-4 text-primary" />
@@ -94,8 +99,13 @@ function Home() {
           </div>
         </div>
       </section>
+
       <TrustStrip />
-      <section className="mx-auto max-w-7xl px-4 py-20 md:px-6">
+
+      {/* OFF Carousel positioned strategically right after banner & trust strip */}
+      <OffCarousel />
+
+      <section className="mx-auto max-w-7xl px-4 py-16 md:py-20 md:px-6">
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="text-xs font-bold uppercase text-primary">01 / Categories</p>
@@ -132,8 +142,9 @@ function Home() {
           ))}
         </div>
       </section>
+
       <section className="border-y border-border bg-section">
-        <div className="mx-auto max-w-7xl px-4 py-20 md:px-6">
+        <div className="mx-auto max-w-7xl px-4 py-16 md:py-20 md:px-6">
           <div className="mb-8 flex items-end justify-between">
             <div>
               <p className="text-xs font-bold uppercase text-primary">02 / Uffa picks</p>
@@ -161,10 +172,12 @@ function Home() {
           </div>
         </div>
       </section>
-      <section className="mx-auto max-w-7xl px-4 py-20 md:px-6">
+
+      <section className="mx-auto max-w-7xl px-4 py-16 md:py-20 md:px-6">
         <OrderPortalPromo />
       </section>
-      <section className="mx-auto max-w-7xl px-4 py-20 md:px-6">
+
+      <section className="mx-auto max-w-7xl px-4 py-16 md:py-20 md:px-6">
         <Newsletter />
       </section>
     </>
