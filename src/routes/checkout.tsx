@@ -37,7 +37,7 @@ function Checkout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const shipping = delivery === "shipping" ? 7 : 0;
+  const shipping = delivery === "shipping" ? 5.99 : 0;
   const grandTotal = s.finalTotal + shipping;
 
   const handleShareWhatsApp = () => {
@@ -149,7 +149,7 @@ function Checkout() {
                 onClick={() => setDelivery("shipping")}
                 icon={<Package />}
                 title={tr(s.language, "Envio por correio", "Postal shipping", "Envío por correo")}
-                detail="7,00 €"
+                detail="5,99 €"
               />
             </div>
             <p className="mt-3 text-[11px] text-muted-foreground">

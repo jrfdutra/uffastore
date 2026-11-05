@@ -267,8 +267,8 @@ function seedOrders(): Order[] {
         },
       ],
       subtotal: rose.price + court.price,
-      shipping: 7,
-      total: rose.price + court.price + 7,
+      shipping: 5.99,
+      total: rose.price + court.price + 5.99,
       status: "in_transit",
       trackingCode: "PT-48217-9QX2",
       carrier: DEFAULT_CARRIER,
@@ -386,8 +386,8 @@ function seedOrders(): Order[] {
         },
       ],
       subtotal: afterdark.price,
-      shipping: 7,
-      total: afterdark.price + 7,
+      shipping: 5.99,
+      total: afterdark.price + 5.99,
       status: "delivered",
       trackingCode: "PT-19556-3H8K",
       carrier: DEFAULT_CARRIER,
@@ -500,7 +500,7 @@ export function createOrder(input: {
   if (items.length === 0) throw new Error("O carrinho está vazio.");
 
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  const shipping = input.delivery === "shipping" ? 7 : 0;
+  const shipping = input.delivery === "shipping" ? 5.99 : 0;
   const address = input.address.trim();
 
   const order: Order = {

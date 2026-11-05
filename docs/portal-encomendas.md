@@ -134,7 +134,7 @@ type OrderEvent = {
 
 ### Regras de negócio
 
-- Portes de envio: **7,00 €**. Recolha: **grátis**.
+- Portes de envio: **5,99 €**. Recolha: **grátis**.
 - Previsão inicial: **3 dias** para envio, **1 dia** para recolha.
 - Cada linha do carrinho recebe um código de autenticidade e um número de série próprios.
 - O número da encomenda é gerado com 5 dígitos e verificado contra duplicados.

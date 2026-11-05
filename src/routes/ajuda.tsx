@@ -77,7 +77,7 @@ function HelpPage() {
           </p>
           <ul className="space-y-2 text-xs text-muted-foreground list-disc pl-4">
             <li>Recolha em mãos: Grátis (Porto)</li>
-            <li>Envio expresso CTT: 7,00 €</li>
+            <li>Envio expresso CTT: 5,99 €</li>
             <li>Acompanhamento online via Portal de Encomendas</li>
           </ul>
         </div>
