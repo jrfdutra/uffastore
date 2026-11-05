@@ -110,6 +110,11 @@ function ProductDetail() {
               <p className="text-xs font-bold uppercase text-primary">
                 {categoryNames[p.category][s.language]}
               </p>
+              {(p.category === "sales" || Boolean(p.originalPrice)) && !isSoldOut && (
+                <span className="bg-[#4A2B33] text-[#E1A0B4] border border-[#E1A0B4]/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                  {tr(s.language, "OFERTA", "SALE", "OFERTA")}
+                </span>
+              )}
               {isSoldOut && (
                 <span className="bg-foreground text-background px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
                   {tr(s.language, "ESGOTADO", "SOLD OUT", "AGOTADO")}
@@ -136,7 +141,16 @@ function ProductDetail() {
           <h1 className="mt-4 font-display text-6xl uppercase leading-none md:text-7xl">
             {p.name}
           </h1>
-          <p className="mt-5 text-2xl font-bold">{money(p.price)}</p>
+          <div className="flex items-baseline gap-3 mt-5">
+            <span className="text-3xl font-bold font-display text-primary dark:text-[#E1A0B4]">
+              {money(p.price)}
+            </span>
+            {p.originalPrice && (
+              <span className="text-sm font-semibold text-muted-foreground line-through">
+                {money(p.originalPrice)}
+              </span>
+            )}
+          </div>
           <p className="mt-5 max-w-lg leading-relaxed text-muted-foreground">
             {p.description[s.language]}
           </p>

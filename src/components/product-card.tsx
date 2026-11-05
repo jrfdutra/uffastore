@@ -57,8 +57,8 @@ export function ProductCard({ product }: { product: Product }) {
             <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5 items-start z-10">
               <VerifiedBadge />
               {isSale && !isSoldOut && (
-                <span className="bg-destructive px-2 py-0.5 font-display text-[11px] uppercase tracking-wider text-destructive-foreground">
-                  {tr(language, "SALE", "SALE", "OFERTA")}
+                <span className="bg-[#4A2B33] text-[#E1A0B4] border border-[#E1A0B4]/30 px-2 py-0.5 font-display text-[10px] sm:text-[11px] uppercase tracking-wider font-bold shadow-sm">
+                  {tr(language, "OFERTA", "SALE", "OFERTA")}
                 </span>
               )}
               {isSoldOut && (
@@ -121,10 +121,10 @@ export function ProductCard({ product }: { product: Product }) {
           <div className="text-right">
             {product.originalPrice ? (
               <div className="flex flex-col items-end">
-                <span className="text-xs text-muted-foreground line-through">
+                <span className="text-[11px] text-muted-foreground line-through">
                   {money(product.originalPrice)}
                 </span>
-                <span className="font-display text-base font-bold text-destructive">
+                <span className="font-display text-base font-bold text-primary dark:text-[#E1A0B4]">
                   {money(product.price)}
                 </span>
               </div>
@@ -175,27 +175,32 @@ export function ProductCard({ product }: { product: Product }) {
           size="sm"
           onClick={handleAddToCart}
           disabled={isSoldOut || isComingSoon || availableSizes.length === 0}
-          className={`w-full rounded-none h-11 text-xs font-bold uppercase transition-all duration-200 ${
+          className={`w-full rounded-none h-10 sm:h-11 px-2 text-[11px] sm:text-xs font-bold uppercase transition-all duration-200 active:scale-[0.98] ${
             isSoldOut || isComingSoon
               ? "bg-muted text-muted-foreground cursor-not-allowed hover:bg-muted"
               : added
               ? "bg-green-600 text-white hover:bg-green-700"
-              : "bg-primary text-primary-foreground hover:bg-primary/90"
+              : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
           }`}
         >
           {isSoldOut ? (
-            <span>{tr(language, "Esgotado", "Sold Out", "Agotado")}</span>
+            <span className="truncate">{tr(language, "Esgotado", "Sold Out", "Agotado")}</span>
           ) : isComingSoon ? (
-            <span>{tr(language, "Em breve", "Coming soon", "Próximamente")}</span>
+            <span className="truncate">{tr(language, "Em breve", "Coming soon", "Próximamente")}</span>
           ) : added ? (
-            <span className="flex items-center gap-1.5">
-              <Check className="size-4" />
-              {tr(language, "Adicionado!", "Added!", "¡Añadido!")}
+            <span className="flex items-center justify-center gap-1.5 truncate">
+              <Check className="size-3.5 sm:size-4 shrink-0" />
+              <span>{tr(language, "Adicionado!", "Added!", "¡Añadido!")}</span>
             </span>
           ) : (
-            <span className="flex items-center gap-1.5">
-              <ShoppingBag className="size-3.5" />
-              {tr(language, "Adicionar ao carrinho", "Add to cart", "Añadir al carrito")}
+            <span className="flex items-center justify-center gap-1 sm:gap-1.5 truncate">
+              <ShoppingBag className="size-3.5 shrink-0" />
+              <span className="truncate">
+                {tr(language, "Adicionar", "Add to cart", "Añadir")}
+                <span className="hidden min-[380px]:inline">
+                  {tr(language, " ao carrinho", "", " al carrito")}
+                </span>
+              </span>
             </span>
           )}
         </Button>
