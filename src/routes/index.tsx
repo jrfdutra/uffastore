@@ -59,7 +59,7 @@ const categoryImages = (catalog: { category: Category; image: string }[]) => ({
   casual: catalog.find((p) => p.category === "casual")?.image ?? heroImage,
   streetwear: catalog.find((p) => p.category === "streetwear")?.image ?? heroImage,
   limited: catalog.find((p) => p.category === "limited")?.image ?? heroImage,
-  promocoes: catalog.find((p) => p.category === "sales" || p.category === "promocoes")?.image ?? heroImage,
+  sales: catalog.find((p) => p.category === "sales")?.image ?? heroImage,
 });
 
 function Home() {

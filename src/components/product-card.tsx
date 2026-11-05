@@ -15,7 +15,7 @@ export function ProductCard({ product }: { product: Product }) {
   const isSale = product.category === "sales" || Boolean(product.originalPrice);
   const isWishlisted = wishlist.includes(product.id);
   const availableSizes = product.sizes.filter((s) => s.stock > 0);
-  const defaultSize = availableSizes.length > 0 ? availableSizes[0].size : null;
+  const defaultSize = availableSizes.length > 0 ? availableSizes[0]?.size ?? null : null;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();

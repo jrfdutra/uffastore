@@ -125,7 +125,7 @@ export async function createCheckoutUrl(items: { variantId: string; quantity: nu
   });
 
   if (data.cartCreate.userErrors && data.cartCreate.userErrors.length > 0) {
-    throw new Error(data.cartCreate.userErrors[0].message);
+    throw new Error(data.cartCreate.userErrors[0]?.message ?? "Erro ao criar checkout");
   }
 
   return data.cartCreate.cart.checkoutUrl;

@@ -27,7 +27,7 @@ const imageByHandle: Record<string, string> = {
   "afterdark-02": tan,
 };
 
-const categories: Category[] = ["running", "casual", "streetwear", "limited"];
+const categories: Category[] = ["sales", "casual", "streetwear", "limited"];
 
 function toCategory(value: string): Category {
   const normalized = value.trim().toLowerCase();
