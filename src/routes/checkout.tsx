@@ -95,7 +95,7 @@ function Checkout() {
         return { variantId: variant.variantId, quantity: item.quantity };
       });
 
-      const checkout = await createShopifyCheckout(items, delivery);
+      const checkout = await createShopifyCheckout(items, delivery, s.coupon?.code);
       window.location.href = checkout.webUrl;
     } catch (err: any) {
       console.error(err);
@@ -134,31 +134,38 @@ function Checkout() {
         <div className="space-y-10">
           <section>
             <h2 className="mb-4 font-display text-3xl uppercase">
-              1. {s.language === "pt" ? "Entrega" : s.language === "es" ? "Entrega" : "Delivery"}
+              1. {s.language === "pt" ? "Modalidade de Entrega" : s.language === "es" ? "Modalidad de Entrega" : "Delivery Method"}
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
               <Choice
                 active={delivery === "pickup"}
                 onClick={() => setDelivery("pickup")}
                 icon={<MapPin />}
-                title={tr(s.language, "Recolher em mãos", "Hand pickup", "Recoger en mano")}
-                detail={t.pickup}
+                title={tr(s.language, "Receber em mão", "Hand pickup", "Recibir en mano")}
+                detail={tr(s.language, "Grátis no Porto (0,00 €)", "Free in Porto (0.00 €)", "Gratis en Oporto (0,00 €)")}
               />
               <Choice
                 active={delivery === "shipping"}
                 onClick={() => setDelivery("shipping")}
                 icon={<Package />}
-                title={tr(s.language, "Envio por correio", "Postal shipping", "Envío por correo")}
-                detail="5,99 €"
+                title={tr(s.language, "Entregar", "Deliver to address", "Entregar a domicilio")}
+                detail={tr(s.language, "5,99 € · Envio expresso CTT", "5.99 € · CTT Express shipping", "5,99 € · Envío CTT")}
               />
             </div>
             <p className="mt-3 text-[11px] text-muted-foreground">
-              {tr(
-                s.language,
-                "* Podes preencher a morada de envio no passo seguinte (Shopify).",
-                "* You can fill the shipping address in the next step (Shopify).",
-                "* Puedes completar la dirección de envío en el siguiente paso (Shopify)."
-              )}
+              {delivery === "pickup"
+                ? tr(
+                    s.language,
+                    "* Receber em mão no Porto não tem qualquer custo de envio (0,00 €). A entrega será combinada contigo.",
+                    "* Hand pickup in Porto has no shipping fee (0.00 €). We will coordinate handover with you.",
+                    "* Recibir en mano en Oporto no tiene gastos de envío (0,00 €)."
+                  )
+                : tr(
+                    s.language,
+                    "* Podes preencher a morada de entrega no passo seguinte (Shopify).",
+                    "* You can fill the shipping address in the next step (Shopify).",
+                    "* Puedes completar la dirección de envío en el siguiente paso (Shopify)."
+                  )}
             </p>
           </section>
 
@@ -206,10 +213,15 @@ function Checkout() {
                 <span>-{money(s.discountAmount)}</span>
               </div>
             )}
-            {delivery === "shipping" && (
+            {delivery === "shipping" ? (
               <div className="flex justify-between">
-                <span>{tr(s.language, "Portes", "Shipping", "Envío")}</span>
+                <span>{tr(s.language, "Portes de envio (CTT)", "Shipping (CTT)", "Envío (CTT)")}</span>
                 <span>{money(shipping)}</span>
+              </div>
+            ) : (
+              <div className="flex justify-between">
+                <span>{tr(s.language, "Receber em mão (Porto)", "Hand pickup (Porto)", "Recibir en mano (Oporto)")}</span>
+                <span className="font-semibold text-primary">{tr(s.language, "Grátis (0,00 €)", "Free (0.00 €)", "Gratis (0,00 €)")}</span>
               </div>
             )}
             <div className="flex justify-between pt-3 text-lg font-bold">

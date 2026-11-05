@@ -102,7 +102,40 @@ const CART_CREATE_MUTATION = `
   }
 `;
 
-export async function createCheckoutUrl(items: { variantId: string; quantity: number }[], delivery: "pickup" | "shipping" = "pickup") {
+export async function createCheckoutUrl(
+  items: { variantId: string; quantity: number }[],
+  delivery: "pickup" | "shipping" = "pickup",
+  couponCode?: string,
+) {
+  const isPickup = delivery === "pickup";
+
+  const attributes = [
+    {
+      key: "Modalidade de Entrega",
+      value: isPickup ? "Receber em mão (Porto - Grátis)" : "Entregar (Envio CTT - 5,99 €)",
+    },
+    {
+      key: "Portes de Envio",
+      value: isPickup ? "0,00 € (Grátis)" : "5,99 €",
+    },
+    {
+      key: "Tipo de Envio",
+      value: isPickup ? "PICK_UP" : "SHIPPING",
+    },
+    {
+      key: "Local de Recolha / Entrega",
+      value: isPickup
+        ? "UFFA Store · Porto (Entrega / recolha em mãos combinada no Porto)"
+        : "Envio CTT para a morada indicada pelo cliente",
+    },
+  ];
+
+  const note = isPickup
+    ? "MODALIDADE SELECIONADA: Receber em mão no Porto (0,00 €). Sem custos de envio — entrega em mãos no Porto."
+    : "MODALIDADE SELECIONADA: Entregar (5,99 €). Envio expresso para a morada de entrega.";
+
+  const discountCodes = couponCode ? [couponCode] : [];
+
   const data = await shopifyFetch<{
     cartCreate: {
       cart: { checkoutUrl: string };
@@ -114,10 +147,13 @@ export async function createCheckoutUrl(items: { variantId: string; quantity: nu
         merchandiseId: item.variantId,
         quantity: item.quantity,
       })),
+      attributes,
+      note,
+      discountCodes,
       buyerIdentity: {
         preferences: {
           delivery: {
-            deliveryMethod: delivery === "pickup" ? "PICK_UP" : "SHIPPING",
+            deliveryMethod: [isPickup ? "PICK_UP" : "SHIPPING"],
           },
         },
       },
@@ -131,8 +167,12 @@ export async function createCheckoutUrl(items: { variantId: string; quantity: nu
   return data.cartCreate.cart.checkoutUrl;
 }
 
-export async function createShopifyCheckout(items: { variantId: string; quantity: number }[], delivery: "pickup" | "shipping" = "pickup") {
-  const url = await createCheckoutUrl(items, delivery);
+export async function createShopifyCheckout(
+  items: { variantId: string; quantity: number }[],
+  delivery: "pickup" | "shipping" = "pickup",
+  couponCode?: string,
+) {
+  const url = await createCheckoutUrl(items, delivery, couponCode);
   const separator = url.includes("?") ? "&" : "?";
   return { webUrl: `${url}${separator}skip_shop_pay=true` };
 }
