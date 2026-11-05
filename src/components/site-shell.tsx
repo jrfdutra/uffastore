@@ -340,18 +340,20 @@ export function SiteShell({ children }: { children: ReactNode }) {
         {t.pickup}
       </div>
       <header className="sticky top-0 z-40 border-b border-brand-strong/20 bg-brand text-brand-foreground dark:border-brand/30 dark:bg-black dark:text-brand">
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 md:px-6">
-          <MobileNav />
-          <Link to="/" className="flex items-center gap-2.5 leading-none">
-            <span className="font-display text-3xl uppercase tracking-wide">UFFA</span>
-            <span className="flex flex-col gap-1">
-              <span className="font-display text-[11px] uppercase leading-none tracking-[0.28em]">
-                STORE
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
+          <div className="flex items-center gap-3">
+            <MobileNav />
+            <Link to="/" className="flex items-center gap-2.5 leading-none">
+              <span className="font-display text-3xl uppercase tracking-wide">UFFA</span>
+              <span className="flex flex-col gap-1">
+                <span className="font-display text-[11px] uppercase leading-none tracking-[0.28em]">
+                  STORE
+                </span>
+                <span aria-hidden className="h-[3px] w-full bg-current" />
               </span>
-              <span aria-hidden className="h-[3px] w-full bg-current" />
-            </span>
-          </Link>
-          <nav className="ml-8 hidden h-full items-center gap-6 lg:flex">
+            </Link>
+          </div>
+          <nav className="hidden h-full items-center gap-6 lg:flex">
             {cats.map((c) => (
               <Link
                 key={c}
@@ -369,7 +371,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               {tr(s.language, "Ajuda", "Help", "Ayuda")}
             </Link>
           </nav>
-          <div className="ml-auto flex items-center gap-1">
+          <div className="flex items-center gap-1">
             <Select value={s.language} onValueChange={(v) => s.setLanguage(v as Language)}>
               <SelectTrigger
                 aria-label={tr(s.language, "Idioma", "Language", "Idioma")}

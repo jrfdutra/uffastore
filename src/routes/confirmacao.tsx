@@ -112,7 +112,7 @@ function Confirmation() {
         <div className="mx-auto max-w-6xl px-4 py-10 md:px-6 md:py-14">
           <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
             <div className="space-y-6">
-              <section className="border-2 border-dashed border-primary bg-primary/5 p-6 text-center md:p-8">
+              <section className="border-2 border-dashed border-primary bg-primary/15 p-6 text-center md:p-8">
                 <LockKeyhole className="mx-auto size-7 text-primary" />
                 <p className="mt-3 text-xs font-bold uppercase text-primary">
                   {tr(
@@ -244,7 +244,7 @@ function Confirmation() {
                               {money(item.unitPrice * item.quantity)}
                             </p>
                           </div>
-                          <div className="mt-2 flex flex-wrap items-center gap-2 border border-primary/20 bg-primary/5 px-2 py-1.5">
+                          <div className="mt-2 flex flex-wrap items-center gap-2 border border-primary/20 bg-primary/15 px-2 py-1.5">
                             <ShieldCheck className="size-3.5 text-primary" />
                             <code className="font-mono text-[11px] font-bold">{item.authCode}</code>
                             <Link

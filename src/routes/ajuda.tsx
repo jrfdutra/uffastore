@@ -126,6 +126,15 @@ function HelpPage() {
               <Mail className="size-4 text-primary" />
               atendimento@uffastore.pt
             </p>
+            <a
+              href="https://instagram.com/uffastore.legit"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 font-semibold hover:text-primary transition"
+            >
+              <Instagram className="size-4 text-primary" />
+              @uffastore.legit
+            </a>
             <p className="flex items-center gap-2 text-muted-foreground text-xs">
               <MapPin className="size-4 text-primary" />
               Porto, Portugal
@@ -149,7 +158,7 @@ function HelpPage() {
         </p>
 
         {submitted ? (
-          <div className="mt-8 text-center py-12 border-2 border-dashed border-primary bg-primary/5 p-6">
+          <div className="mt-8 text-center py-12 border-2 border-dashed border-primary bg-primary/15 p-6">
             <CheckCircle2 className="mx-auto size-12 text-primary" />
             <h3 className="mt-3 font-display text-2xl uppercase">
               {tr(language, "Mensagem Enviada!", "Message Sent!", "¡Mensaje Enviado!")}

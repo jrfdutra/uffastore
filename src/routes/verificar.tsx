@@ -210,7 +210,7 @@ function VerificationPage() {
               )}
             </Button>
 
-            <div className="mt-5 border border-dashed border-primary bg-primary/5 p-4">
+            <div className="mt-5 border border-dashed border-primary bg-primary/15 p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-xs font-bold uppercase text-primary">
                   {tr(language, "Código de demonstração", "Demo code", "Código de demostración")}

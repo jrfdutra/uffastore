@@ -36,7 +36,6 @@ import {
   getNextStatus,
   loadOrders,
   orderStatusInfo,
-  resetDemoOrders,
   statusFlow,
   toDateInputValue,
   updateOrder,
@@ -202,7 +201,7 @@ function OpsGate({ onUnlock }: { onUnlock: () => void }) {
           </Button>
         </form>
 
-        <div className="mt-5 border border-dashed border-primary bg-primary/5 p-4">
+        <div className="mt-5 border border-dashed border-primary bg-primary/15 p-4">
           <p className="text-[10px] font-bold uppercase text-primary">
             {tr(language, "Dados de Acesso Oficiais", "Official Credentials", "Credenciales Oficiales")}
           </p>
@@ -283,26 +282,6 @@ function OpsDashboard({ onLock }: { onLock: () => void }) {
     },
   ];
 
-  const handleReset = () => {
-    if (
-      !window.confirm(
-        tr(
-          language,
-          "Repor os dados de demonstração? As alterações locais serão substituídas.",
-          "Reset demo data? Local changes will be replaced.",
-          "¿Restablecer los datos de demostración? Se sustituirán los cambios locales.",
-        ),
-      )
-    ) {
-      return;
-    }
-    setOrders(resetDemoOrders());
-    setSelectedNumber(null);
-    toast.success(
-      tr(language, "Dados demo repostos.", "Demo data reset.", "Datos demo restablecidos."),
-    );
-  };
-
   return (
     <div>
       <section className="border-b border-border bg-foreground text-background">
@@ -326,9 +305,6 @@ function OpsDashboard({ onLock }: { onLock: () => void }) {
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="border border-primary/40 px-3 py-1.5 text-[10px] font-bold uppercase text-primary">
-                {tr(language, "Modo demonstração", "Demo mode", "Modo demostración")}
-              </span>
               <Button
                 asChild
                 variant="outline"
@@ -403,15 +379,6 @@ function OpsDashboard({ onLock }: { onLock: () => void }) {
                 ))}
               </SelectContent>
             </Select>
-            <Button
-              type="button"
-              variant="outline"
-              className="h-11 rounded-none"
-              onClick={handleReset}
-            >
-              <RefreshCw />
-              {tr(language, "Repor demo", "Reset demo", "Restablecer demo")}
-            </Button>
           </div>
         </div>
 
@@ -446,7 +413,7 @@ function OpsDashboard({ onLock }: { onLock: () => void }) {
                       onClick={() => setSelectedNumber(order.number)}
                       className={`w-full border p-4 text-left transition ${
                         isSelected
-                          ? "border-primary bg-primary/5"
+                          ? "border-primary bg-primary/15"
                           : "border-border bg-card hover:border-primary/50"
                       }`}
                     >
@@ -622,7 +589,7 @@ function OrderEditor({ order, onUpdated }: { order: Order; onUpdated: (order: Or
         </div>
       </div>
 
-      <div className="border-b border-border bg-primary/5 p-5">
+      <div className="border-b border-border bg-primary/15 p-5">
         <div className="flex items-center justify-between gap-2">
           <p className="flex items-center gap-2 text-[10px] font-bold uppercase text-primary">
             <KeyRound className="size-3.5" />

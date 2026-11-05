@@ -522,7 +522,7 @@ function AccessLanding({
               </ol>
             </div>
 
-            <div className="border border-dashed border-primary bg-primary/5 p-6">
+            <div className="border border-dashed border-primary bg-primary/15 p-6">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-xs font-bold uppercase text-primary">
                   {tr(
@@ -940,7 +940,7 @@ function CurrentStatusCard({ order }: { order: Order }) {
       )}
 
       {order.notes && (
-        <div className="mt-4 border-l-2 border-primary bg-primary/5 px-4 py-3">
+        <div className="mt-4 border-l-2 border-primary bg-primary/15 px-4 py-3">
           <p className="text-[10px] font-bold uppercase text-primary">
             {tr(language, "Nota da loja", "Store note", "Nota de la tienda")}
           </p>
@@ -1079,7 +1079,7 @@ function ItemsCard({ order }: { order: Order }) {
                   <p className="font-bold">{money(item.unitPrice * item.quantity)}</p>
                 </div>
 
-                <div className="mt-4 flex flex-wrap items-center gap-2 border border-primary/20 bg-primary/5 px-3 py-2">
+                <div className="mt-4 flex flex-wrap items-center gap-2 border border-primary/20 bg-primary/15 px-3 py-2">
                   <ShieldCheck className="size-4 text-primary" />
                   <span className="text-[10px] font-bold uppercase text-primary">
                     {tr(
@@ -1294,7 +1294,7 @@ function ActionCard({ order, onConfirm }: { order: Order; onConfirm: () => void 
 
   if (canConfirm) {
     return (
-      <section className="border border-primary bg-primary/5 p-6">
+      <section className="border border-primary bg-primary/15 p-6">
         <PackageCheck className="size-7 text-primary" />
         <h2 className="mt-3 font-display text-2xl uppercase">
           {order.delivery === "shipping"
