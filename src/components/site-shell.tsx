@@ -11,11 +11,13 @@ import {
   Plus,
   Trash2,
   MessageSquare,
-  Share2,
   Copy,
+  Heart,
+  HelpCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -44,16 +46,18 @@ import { DemoNotice } from "@/components/demo-notice";
 import { useEffect, useState, type ReactNode } from "react";
 
 const cats: Category[] = ["casual", "streetwear", "limited", "sales"];
+
 function CartDrawer() {
   const s = useShop(),
     t = copy[s.language];
+  const [couponCode, setCouponCode] = useState("");
 
   const handleShareWhatsApp = () => {
     const itemsText = s.cart.map((item) => {
       const p = s.catalog.find((c) => c.id === item.productId);
       return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
     }).join(", ");
-    const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.subtotal)}\nVisita: ${window.location.origin}`;
+    const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.finalTotal)}\nVisita: ${window.location.origin}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -62,7 +66,7 @@ function CartDrawer() {
       const p = s.catalog.find((c) => c.id === item.productId);
       return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
     }).join(", ");
-    const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(s.subtotal)}`;
+    const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(s.finalTotal)}`;
     try {
       await navigator.clipboard.writeText(text);
       toast.success(tr(s.language, "Carrinho copiado!", "Cart copied!", "¡Carrito copiado!"));
@@ -180,13 +184,53 @@ function CartDrawer() {
           )}
         </div>
         {s.cart.length > 0 && (
-          <div className="border-t border-border pt-5">
-            <div className="mb-4 flex justify-between text-lg font-bold">
-              <span>{t.subtotal}</span>
-              <span>{money(s.subtotal)}</span>
+          <div className="border-t border-border pt-5 space-y-4">
+            {/* Coupon input */}
+            <div className="flex gap-2">
+              <Input
+                placeholder={tr(s.language, "Código de desconto", "Discount code", "Código de descuento")}
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                className="h-10 rounded-none text-xs"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-10 rounded-none text-xs px-4"
+                onClick={() => {
+                  s.applyCoupon(couponCode);
+                  setCouponCode("");
+                }}
+              >
+                {tr(s.language, "Aplicar", "Apply", "Aplicar")}
+              </Button>
             </div>
 
-            <div className="mb-4 grid grid-cols-2 gap-2">
+            {s.coupon && (
+              <div className="flex items-center justify-between text-xs bg-primary/10 text-primary px-3 py-1.5 font-bold">
+                <span>Cupão: {s.coupon.code} (-{s.coupon.discountPercent}%)</span>
+                <button type="button" onClick={s.removeCoupon} className="underline hover:opacity-80">
+                  {tr(s.language, "Remover", "Remove", "Eliminar")}
+                </button>
+              </div>
+            )}
+
+            <div className="flex justify-between text-lg font-bold">
+              <span>{t.subtotal}</span>
+              <div className="text-right">
+                {s.discountAmount > 0 ? (
+                  <div>
+                    <span className="text-xs text-muted-foreground line-through block">{money(s.subtotal)}</span>
+                    <span className="text-primary">{money(s.finalTotal)}</span>
+                  </div>
+                ) : (
+                  <span>{money(s.subtotal)}</span>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
               <Button
                 type="button"
                 variant="outline"
@@ -220,6 +264,7 @@ function CartDrawer() {
     </Sheet>
   );
 }
+
 function MobileNav() {
   const { language } = useShop(),
     t = copy[language];
@@ -259,7 +304,15 @@ function MobileNav() {
               {categoryNames[c][language]}
             </Link>
           ))}
-          <Link to="/rastreio" onClick={close} className="mt-6 font-semibold text-primary">
+          <Link to="/favoritos" onClick={close} className="mt-6 font-semibold text-primary flex items-center gap-2">
+            <Heart className="size-4" />
+            {tr(language, "Lista de Desejos", "Wishlist", "Lista de Deseos")}
+          </Link>
+          <Link to="/ajuda" onClick={close} className="mt-4 font-semibold text-primary flex items-center gap-2">
+            <HelpCircle className="size-4" />
+            {tr(language, "Ajuda e Contactos", "Help & Contacts", "Ayuda y Contactos")}
+          </Link>
+          <Link to="/rastreio" onClick={close} className="mt-4 font-semibold text-primary">
             {t.track}
           </Link>
           <Link to="/verificar" onClick={close} className="mt-3 font-semibold text-primary">
@@ -275,6 +328,7 @@ function MobileNav() {
     </Sheet>
   );
 }
+
 export function SiteShell({ children }: { children: ReactNode }) {
   const s = useShop(),
     t = copy[s.language];
@@ -310,6 +364,12 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 {categoryNames[c][s.language]}
               </Link>
             ))}
+            <Link
+              to="/ajuda"
+              className="flex h-full items-center text-xs font-bold uppercase transition hover:opacity-60"
+            >
+              {tr(s.language, "Ajuda", "Help", "Ayuda")}
+            </Link>
           </nav>
           <div className="ml-auto flex items-center gap-1">
             <Select value={s.language} onValueChange={(v) => s.setLanguage(v as Language)}>
@@ -332,6 +392,22 @@ export function SiteShell({ children }: { children: ReactNode }) {
               aria-label={tr(s.language, "Alternar tema", "Toggle theme", "Cambiar tema")}
             >
               {s.theme === "light" ? <Moon /> : <Sun />}
+            </Button>
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              aria-label={tr(s.language, "Lista de Desejos", "Wishlist", "Lista de Deseos")}
+              className="relative hidden sm:inline-flex"
+            >
+              <Link to="/favoritos">
+                <Heart className="size-5" />
+                {s.wishlist.length > 0 && (
+                  <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-brand-foreground text-[10px] font-bold text-brand dark:bg-brand dark:text-brand-strong">
+                    {s.wishlist.length}
+                  </span>
+                )}
+              </Link>
             </Button>
             <Button
               asChild
@@ -384,6 +460,14 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <nav className="flex flex-col items-start gap-3 text-sm">
             <Link to="/catalogo" search={{}} className="hover:text-brand">
               {t.shop}
+            </Link>
+            <Link to="/favoritos" className="hover:text-brand flex items-center gap-1.5">
+              <Heart className="size-4" />
+              {tr(s.language, "Lista de Desejos", "Wishlist", "Lista de Deseos")}
+            </Link>
+            <Link to="/ajuda" className="hover:text-brand flex items-center gap-1.5">
+              <HelpCircle className="size-4" />
+              {tr(s.language, "Ajuda e Contactos", "Help & Contacts", "Ayuda y Contactos")}
             </Link>
             <Link to="/rastreio" className="font-bold text-brand">
               {t.track}

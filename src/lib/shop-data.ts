@@ -26,7 +26,7 @@ export const categoryNames: Record<Category, Record<Language, string>> = {
   casual: { pt: "Casual", en: "Casual", es: "Casual" },
   streetwear: { pt: "Streetwear", en: "Streetwear", es: "Streetwear" },
   limited: { pt: "Edições limitadas", en: "Limited editions", es: "Ediciones limitadas" },
-  sales: { pt: "Sales · Promoções", en: "Sales · Special Offers", es: "Sales · Ofertas" },
+  sales: { pt: "Promoções", en: "Sales", es: "Promociones" },
 };
 
 export const products: Product[] = [

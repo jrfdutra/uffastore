@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AjudaRouteImport } from './routes/ajuda'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ConfirmacaoRouteImport } from './routes/confirmacao'
+import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as OperacoesRouteImport } from './routes/operacoes'
 import { Route as RastreioRouteImport } from './routes/rastreio'
 import { Route as VerificarRouteImport } from './routes/verificar'
@@ -21,6 +23,11 @@ import { Route as ProdutoProductIdRouteImport } from './routes/produto.$productI
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AjudaRoute = AjudaRouteImport.update({
+  id: '/ajuda',
+  path: '/ajuda',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogoRoute = CatalogoRouteImport.update({
@@ -36,6 +43,11 @@ const CheckoutRoute = CheckoutRouteImport.update({
 const ConfirmacaoRoute = ConfirmacaoRouteImport.update({
   id: '/confirmacao',
   path: '/confirmacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritosRoute = FavoritosRouteImport.update({
+  id: '/favoritos',
+  path: '/favoritos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OperacoesRoute = OperacoesRouteImport.update({
@@ -61,9 +73,11 @@ const ProdutoProductIdRoute = ProdutoProductIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ajuda': typeof AjudaRoute
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
+  '/favoritos': typeof FavoritosRoute
   '/operacoes': typeof OperacoesRoute
   '/rastreio': typeof RastreioRoute
   '/verificar': typeof VerificarRoute
@@ -71,9 +85,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ajuda': typeof AjudaRoute
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
+  '/favoritos': typeof FavoritosRoute
   '/operacoes': typeof OperacoesRoute
   '/rastreio': typeof RastreioRoute
   '/verificar': typeof VerificarRoute
@@ -82,9 +98,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ajuda': typeof AjudaRoute
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
+  '/favoritos': typeof FavoritosRoute
   '/operacoes': typeof OperacoesRoute
   '/rastreio': typeof RastreioRoute
   '/verificar': typeof VerificarRoute
@@ -94,9 +112,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ajuda'
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
+    | '/favoritos'
     | '/operacoes'
     | '/rastreio'
     | '/verificar'
@@ -104,9 +124,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ajuda'
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
+    | '/favoritos'
     | '/operacoes'
     | '/rastreio'
     | '/verificar'
@@ -114,9 +136,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/ajuda'
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
+    | '/favoritos'
     | '/operacoes'
     | '/rastreio'
     | '/verificar'
@@ -125,9 +149,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AjudaRoute: typeof AjudaRoute
   CatalogoRoute: typeof CatalogoRoute
   CheckoutRoute: typeof CheckoutRoute
   ConfirmacaoRoute: typeof ConfirmacaoRoute
+  FavoritosRoute: typeof FavoritosRoute
   OperacoesRoute: typeof OperacoesRoute
   RastreioRoute: typeof RastreioRoute
   VerificarRoute: typeof VerificarRoute
@@ -141,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ajuda': {
+      id: '/ajuda'
+      path: '/ajuda'
+      fullPath: '/ajuda'
+      preLoaderRoute: typeof AjudaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/catalogo': {
@@ -162,6 +195,13 @@ declare module '@tanstack/react-router' {
       path: '/confirmacao'
       fullPath: '/confirmacao'
       preLoaderRoute: typeof ConfirmacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favoritos': {
+      id: '/favoritos'
+      path: '/favoritos'
+      fullPath: '/favoritos'
+      preLoaderRoute: typeof FavoritosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/operacoes': {
@@ -197,9 +237,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AjudaRoute: AjudaRoute,
   CatalogoRoute: CatalogoRoute,
   CheckoutRoute: CheckoutRoute,
   ConfirmacaoRoute: ConfirmacaoRoute,
+  FavoritosRoute: FavoritosRoute,
   OperacoesRoute: OperacoesRoute,
   RastreioRoute: RastreioRoute,
   VerificarRoute: VerificarRoute,

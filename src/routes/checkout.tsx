@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Check, MapPin, Package, Smartphone, Loader2, Share2, MessageSquare, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { copy, money } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
@@ -32,17 +33,19 @@ function Checkout() {
   
   const [delivery, setDelivery] = useState<"pickup" | "shipping">("pickup");
   const [payment, setPayment] = useState<"card" | "apple">("card");
+  const [couponInput, setCouponInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const shipping = delivery === "shipping" ? 7 : 0;
+  const grandTotal = s.finalTotal + shipping;
 
   const handleShareWhatsApp = () => {
     const itemsText = s.cart.map((item) => {
       const p = s.catalog.find((c) => c.id === item.productId);
       return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
     }).join(", ");
-    const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.subtotal + shipping)}\nVisita: ${window.location.origin}`;
+    const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(grandTotal)}\nVisita: ${window.location.origin}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -51,7 +54,7 @@ function Checkout() {
       const p = s.catalog.find((c) => c.id === item.productId);
       return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
     }).join(", ");
-    const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(s.subtotal + shipping)}`;
+    const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(grandTotal)}`;
     try {
       await navigator.clipboard.writeText(text);
       toast.success(tr(s.language, "Carrinho copiado!", "Cart copied!", "¡Carrito copiado!"));
@@ -65,7 +68,7 @@ function Checkout() {
       const p = s.catalog.find((c) => c.id === item.productId);
       return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
     }).join(", ");
-    const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.subtotal + shipping)}`;
+    const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(grandTotal)}`;
     if (navigator.share) {
       try {
         await navigator.share({ title: "Carrinho UFFA Store", text, url: window.location.href });
@@ -93,7 +96,6 @@ function Checkout() {
       });
 
       const checkout = await createShopifyCheckout(items, delivery);
-      // Redireciona para o checkout oficial da Shopify para pagamento seguro
       window.location.href = checkout.webUrl;
     } catch (err: any) {
       console.error(err);
@@ -198,6 +200,12 @@ function Checkout() {
               <span>{t.subtotal}</span>
               <span>{money(s.subtotal)}</span>
             </div>
+            {s.discountAmount > 0 && (
+              <div className="flex justify-between text-primary font-semibold">
+                <span>Desconto ({s.coupon?.code})</span>
+                <span>-{money(s.discountAmount)}</span>
+              </div>
+            )}
             {delivery === "shipping" && (
               <div className="flex justify-between">
                 <span>{tr(s.language, "Portes", "Shipping", "Envío")}</span>
@@ -206,8 +214,40 @@ function Checkout() {
             )}
             <div className="flex justify-between pt-3 text-lg font-bold">
               <span>Total</span>
-              <span>{money(s.subtotal + shipping)}</span>
+              <span>{money(grandTotal)}</span>
             </div>
+          </div>
+
+          {/* Coupon input */}
+          <div className="mt-4 pt-4 border-t border-border">
+            <div className="flex gap-2">
+              <Input
+                placeholder={tr(s.language, "Código de desconto", "Discount code", "Código de descuento")}
+                value={couponInput}
+                onChange={(e) => setCouponInput(e.target.value)}
+                className="h-9 rounded-none text-xs"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-9 rounded-none text-xs px-3"
+                onClick={() => {
+                  s.applyCoupon(couponInput);
+                  setCouponInput("");
+                }}
+              >
+                {tr(s.language, "Aplicar", "Apply", "Aplicar")}
+              </Button>
+            </div>
+            {s.coupon && (
+              <div className="mt-2 flex items-center justify-between text-[11px] bg-primary/10 text-primary px-2.5 py-1 font-bold">
+                <span>Cupão {s.coupon.code} (-{s.coupon.discountPercent}%)</span>
+                <button type="button" onClick={s.removeCoupon} className="underline">
+                  {tr(s.language, "Remover", "Remove", "Eliminar")}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Cart Sharing */}

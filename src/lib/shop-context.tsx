@@ -13,6 +13,7 @@ import { loadCatalog } from "./catalog";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 
 export type CartItem = { productId: string; size: number; quantity: number };
+export type Coupon = { code: string; discountPercent: number };
 
 type ShopContextValue = {
   catalog: Product[];
@@ -29,12 +30,29 @@ type ShopContextValue = {
   clearCart: () => void;
   count: number;
   subtotal: number;
+  // Wishlist
+  wishlist: string[];
+  toggleWishlist: (productId: string) => void;
+  isInWishlist: (productId: string) => boolean;
+  // Coupon
+  coupon: Coupon | null;
+  applyCoupon: (code: string) => boolean;
+  removeCoupon: () => void;
+  discountAmount: number;
+  finalTotal: number;
 };
 
 const LANGUAGE_KEY = "uffa-language";
 const THEME_KEY = "uffa-theme";
 const CART_KEY = "uffa-cart";
+const WISHLIST_KEY = "uffa-wishlist";
 const LANGUAGES: Language[] = ["pt", "en", "es"];
+
+const VALID_COUPONS: Record<string, number> = {
+  "UFFA10": 10,
+  "PORTO20": 20,
+  "VIP15": 15,
+};
 
 const ShopContext = createContext<ShopContextValue | null>(null);
 
@@ -64,9 +82,22 @@ function readCart(): CartItem[] {
     const parsed: unknown = JSON.parse(raw);
     if (Array.isArray(parsed)) return parsed.filter(isCartItem);
   } catch {
-    // Cart corrompido: limpar e começar vazio.
+    // Cart corrompido
   }
   removeStorage("local", CART_KEY);
+  return [];
+}
+
+function readWishlist(): string[] {
+  const raw = readStorage("local", WISHLIST_KEY);
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed.filter((id): id is string => typeof id === "string");
+  } catch {
+    // Wishlist corrompida
+  }
+  removeStorage("local", WISHLIST_KEY);
   return [];
 }
 
@@ -74,6 +105,8 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>("pt");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [wishlist, setWishlist] = useState<string[]>([]);
+  const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const [catalog, setCatalog] = useState<Product[]>(fallbackProducts);
@@ -94,6 +127,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     if (isLanguage(savedLanguage)) setLanguageState(savedLanguage);
     if (isTheme(savedTheme)) setTheme(savedTheme);
     setCart(readCart());
+    setWishlist(readWishlist());
     setReady(true);
   }, []);
 
@@ -111,6 +145,11 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     if (!ready) return;
     writeStorage("local", CART_KEY, JSON.stringify(cart));
   }, [cart, ready]);
+
+  useEffect(() => {
+    if (!ready) return;
+    writeStorage("local", WISHLIST_KEY, JSON.stringify(wishlist));
+  }, [wishlist, ready]);
 
   const setLanguage = useCallback((nextLanguage: Language) => {
     setLanguageState(nextLanguage);
@@ -153,6 +192,40 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   );
 
   const clearCart = useCallback(() => setCart([]), []);
+
+  const toggleWishlist = useCallback((productId: string) => {
+    setWishlist((current) => {
+      const exists = current.includes(productId);
+      const next = exists ? current.filter((id) => id !== productId) : [...current, productId];
+      if (exists) {
+        toast.info("Removido dos favoritos");
+      } else {
+        toast.success("Adicionado aos favoritos ❤️");
+      }
+      return next;
+    });
+  }, []);
+
+  const isInWishlist = useCallback((productId: string) => wishlist.includes(productId), [wishlist]);
+
+  const applyCoupon = useCallback((code: string) => {
+    const clean = code.trim().toUpperCase();
+    const percent = VALID_COUPONS[clean];
+    if (percent) {
+      setCoupon({ code: clean, discountPercent: percent });
+      toast.success(`Cupão ${clean} aplicado (${percent}% desc.)!`);
+      return true;
+    } else {
+      toast.error("Cupão inválido ou expirado.");
+      return false;
+    }
+  }, []);
+
+  const removeCoupon = useCallback(() => {
+    setCoupon(null);
+    toast.info("Cupão removido.");
+  }, []);
+
   const toggleTheme = useCallback(
     () => setTheme((current) => (current === "light" ? "dark" : "light")),
     [],
@@ -164,6 +237,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       sum + (catalog.find((product) => product.id === item.productId)?.price ?? 0) * item.quantity,
     0,
   );
+
+  const discountAmount = coupon ? (subtotal * coupon.discountPercent) / 100 : 0;
+  const finalTotal = Math.max(0, subtotal - discountAmount);
 
   const value = useMemo(
     () => ({
@@ -181,6 +257,14 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       clearCart,
       count,
       subtotal,
+      wishlist,
+      toggleWishlist,
+      isInWishlist,
+      coupon,
+      applyCoupon,
+      removeCoupon,
+      discountAmount,
+      finalTotal,
     }),
     [
       catalog,
@@ -196,6 +280,14 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       clearCart,
       count,
       subtotal,
+      wishlist,
+      toggleWishlist,
+      isInWishlist,
+      coupon,
+      applyCoupon,
+      removeCoupon,
+      discountAmount,
+      finalTotal,
     ],
   );
 
