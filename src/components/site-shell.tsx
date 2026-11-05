@@ -349,7 +349,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 <span className="font-display text-[11px] uppercase leading-none tracking-[0.28em]">
                   STORE
                 </span>
-                <span aria-hidden className="h-[3px] w-full bg-current" />
+                <span aria-hidden className="h-[5px] w-full bg-current" />
               </span>
             </Link>
           </div>
@@ -359,14 +359,14 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 key={c}
                 to="/catalogo"
                 search={{ category: c }}
-                className="flex h-full items-center text-xs font-bold uppercase transition hover:opacity-60"
+                className="flex h-full items-center text-sm font-bold uppercase transition hover:opacity-60"
               >
                 {categoryNames[c][s.language]}
               </Link>
             ))}
             <Link
               to="/ajuda"
-              className="flex h-full items-center text-xs font-bold uppercase transition hover:opacity-60"
+              className="flex h-full items-center text-sm font-bold uppercase transition hover:opacity-60"
             >
               {tr(s.language, "Ajuda", "Help", "Ayuda")}
             </Link>
