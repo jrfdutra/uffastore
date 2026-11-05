@@ -9,6 +9,36 @@ import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { createShopifyCheckout } from "@/lib/shopify";
 
+export type DeliveryOption = "pickup" | "continental" | "islands" | "eu" | "switzerland";
+
+export const deliveryRates: Record<DeliveryOption, { price: number; title: { pt: string; en: string; es: string }; subtitle: { pt: string; en: string; es: string } }> = {
+  pickup: {
+    price: 0,
+    title: { pt: "Recolha em mão no Porto", en: "Hand pickup in Porto", es: "Recogida en mano en Oporto" },
+    subtitle: { pt: "Grátis (0,00 €)", en: "Free (0.00 €)", es: "Gratis (0,00 €)" },
+  },
+  continental: {
+    price: 8.94,
+    title: { pt: "Portugal Continental", en: "Portugal Mainland", es: "Portugal Continental" },
+    subtitle: { pt: "Envio expresso · 8,94 €", en: "Express shipping · 8.94 €", es: "Envío expreso · 8,94 €" },
+  },
+  islands: {
+    price: 8.94,
+    title: { pt: "Portugal - Ilhas", en: "Portugal Islands", es: "Portugal - Islas" },
+    subtitle: { pt: "Açores e Madeira · 8,94 €", en: "Azores & Madeira · 8.94 €", es: "Azores y Madeira · 8,94 €" },
+  },
+  eu: {
+    price: 24.00,
+    title: { pt: "União Europeia", en: "European Union", es: "Unión Europea" },
+    subtitle: { pt: "Qualquer país da UE · 24,00 €", en: "Any EU country · 24.00 €", es: "Cualquier país de la UE · 24,00 €" },
+  },
+  switzerland: {
+    price: 34.00,
+    title: { pt: "Suíça", en: "Switzerland", es: "Suiza" },
+    subtitle: { pt: "Envio internacional · 34,00 €", en: "International shipping · 34.00 €", es: "Envío internacional · 34,00 €" },
+  },
+};
+
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
@@ -31,13 +61,13 @@ function Checkout() {
   const s = useShop(),
     t = copy[s.language];
   
-  const [delivery, setDelivery] = useState<"pickup" | "shipping">("pickup");
+  const [delivery, setDelivery] = useState<DeliveryOption>("pickup");
   const [payment, setPayment] = useState<"card" | "apple">("card");
   const [couponInput, setCouponInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const shipping = delivery === "shipping" ? 5.99 : 0;
+  const shipping = deliveryRates[delivery].price;
   const grandTotal = s.finalTotal + shipping;
 
   const handleShareWhatsApp = () => {
@@ -156,21 +186,21 @@ function Checkout() {
             <h2 className="mb-4 font-display text-3xl uppercase">
               1. {s.language === "pt" ? "Modalidade de Entrega" : s.language === "es" ? "Modalidad de Entrega" : "Delivery Method"}
             </h2>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Choice
-                active={delivery === "pickup"}
-                onClick={() => setDelivery("pickup")}
-                icon={<MapPin />}
-                title={tr(s.language, "Receber em mão", "Hand pickup", "Recibir en mano")}
-                detail={tr(s.language, "Grátis no Porto (0,00 €)", "Free in Porto (0.00 €)", "Gratis en Oporto (0,00 €)")}
-              />
-              <Choice
-                active={delivery === "shipping"}
-                onClick={() => setDelivery("shipping")}
-                icon={<Package />}
-                title={tr(s.language, "Entregar", "Deliver to address", "Entregar a domicilio")}
-                detail={tr(s.language, "5,99 € · Envio expresso CTT", "5.99 € · CTT Express shipping", "5,99 € · Envío CTT")}
-              />
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {(Object.keys(deliveryRates) as DeliveryOption[]).map((key) => {
+                const opt = deliveryRates[key];
+                const isActive = delivery === key;
+                return (
+                  <Choice
+                    key={key}
+                    active={isActive}
+                    onClick={() => setDelivery(key)}
+                    icon={key === "pickup" ? <MapPin /> : <Package />}
+                    title={opt.title[s.language as keyof typeof opt.title] ?? opt.title.pt}
+                    detail={opt.subtitle[s.language as keyof typeof opt.subtitle] ?? opt.subtitle.pt}
+                  />
+                );
+              })}
             </div>
             <p className="mt-3 text-[11px] text-muted-foreground">
               {delivery === "pickup"
@@ -182,9 +212,9 @@ function Checkout() {
                   )
                 : tr(
                     s.language,
-                    "* Podes preencher a morada de entrega no passo seguinte (Shopify).",
-                    "* You can fill the shipping address in the next step (Shopify).",
-                    "* Puedes completar la dirección de envío en el siguiente paso (Shopify)."
+                    `* Envio selecionado (${money(deliveryRates[delivery].price)}). Podes preencher a morada completa no passo seguinte na Shopify.`,
+                    `* Selected shipping (${money(deliveryRates[delivery].price)}). You can fill your full address in the next step on Shopify.`,
+                    `* Envío seleccionado (${money(deliveryRates[delivery].price)}). Puedes completar tu dirección en el siguiente paso en Shopify.`
                   )}
             </p>
           </section>
@@ -233,9 +263,9 @@ function Checkout() {
                 <span>-{money(s.discountAmount)}</span>
               </div>
             )}
-            {delivery === "shipping" ? (
+            {delivery !== "pickup" ? (
               <div className="flex justify-between">
-                <span>{tr(s.language, "Portes de envio (CTT)", "Shipping (CTT)", "Envío (CTT)")}</span>
+                <span>{tr(s.language, `Portes (${deliveryRates[delivery].title[s.language as keyof typeof deliveryRates[typeof delivery]["title"]] ?? deliveryRates[delivery].title.pt})`, `Shipping (${deliveryRates[delivery].title[s.language as keyof typeof deliveryRates[typeof delivery]["title"]] ?? deliveryRates[delivery].title.pt})`, `Envío (${deliveryRates[delivery].title[s.language as keyof typeof deliveryRates[typeof delivery]["title"]] ?? deliveryRates[delivery].title.pt})`)}</span>
                 <span>{money(shipping)}</span>
               </div>
             ) : (

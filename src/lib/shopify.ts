@@ -104,35 +104,52 @@ const CART_CREATE_MUTATION = `
 
 export async function createCheckoutUrl(
   items: { variantId: string; quantity: number }[],
-  delivery: "pickup" | "shipping" = "pickup",
+  delivery: string = "pickup",
   couponCode?: string,
 ) {
   const isPickup = delivery === "pickup";
+  let deliveryLabel = "Recolha em mão no Porto (0,00 €)";
+  let portesValue = "0,00 €";
+  let costText = "0,00 €";
+
+  if (delivery === "continental") {
+    deliveryLabel = "Portugal Continental (8,94 €)";
+    portesValue = "8,94 €";
+    costText = "8,94 €";
+  } else if (delivery === "islands") {
+    deliveryLabel = "Portugal - Ilhas / Regiões Autónomas (8,94 €)";
+    portesValue = "8,94 €";
+    costText = "8,94 €";
+  } else if (delivery === "eu") {
+    deliveryLabel = "União Europeia (24,00 €)";
+    portesValue = "24,00 €";
+    costText = "24,00 €";
+  } else if (delivery === "switzerland") {
+    deliveryLabel = "Suíça (34,00 €)";
+    portesValue = "34,00 €";
+    costText = "34,00 €";
+  }
 
   const attributes = [
     {
       key: "Modalidade de Entrega",
-      value: isPickup ? "Receber em mão (Porto - Grátis)" : "Entregar (Envio CTT - 5,99 €)",
+      value: deliveryLabel,
     },
     {
       key: "Portes de Envio",
-      value: isPickup ? "0,00 € (Grátis)" : "5,99 €",
+      value: portesValue,
     },
     {
       key: "Tipo de Envio",
       value: isPickup ? "PICK_UP" : "SHIPPING",
     },
     {
-      key: "Local de Recolha / Entrega",
-      value: isPickup
-        ? "UFFA Store · Porto (Entrega / recolha em mãos combinada no Porto)"
-        : "Envio CTT para a morada indicada pelo cliente",
+      key: "Destino / Zona",
+      value: delivery,
     },
   ];
 
-  const note = isPickup
-    ? "MODALIDADE SELECIONADA: Receber em mão no Porto (0,00 €). Sem custos de envio — entrega em mãos no Porto."
-    : "MODALIDADE SELECIONADA: Entregar (5,99 €). Envio expresso para a morada de entrega.";
+  const note = `MODALIDADE DE ENTREGA SELECIONADA: ${deliveryLabel}. Portes: ${costText}.`;
 
   const discountCodes = couponCode ? [couponCode] : [];
 
@@ -169,7 +186,7 @@ export async function createCheckoutUrl(
 
 export async function createShopifyCheckout(
   items: { variantId: string; quantity: number }[],
-  delivery: "pickup" | "shipping" = "pickup",
+  delivery: string = "pickup",
   couponCode?: string,
 ) {
   const url = await createCheckoutUrl(items, delivery, couponCode);
