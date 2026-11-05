@@ -43,10 +43,11 @@ function Catalog() {
     () =>
       catalog.filter(
         (p) =>
+          p.status !== "inactive" &&
           (category === "all" || p.category === category) &&
           p.name.toLowerCase().includes(query.toLowerCase()) &&
           p.price <= max &&
-          (size === "all" || p.sizes.some((s) => s.size === size && s.stock > 0)),
+          (size === "all" || p.sizes.some((s) => s.size === size)),
       ),
     [catalog, category, query, size, max],
   );

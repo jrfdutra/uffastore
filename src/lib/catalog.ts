@@ -4,7 +4,8 @@ import grey from "@/assets/Gemini_Generated_Image_f4688zf4688zf468.jpg";
 import green from "@/assets/Gemini_Generated_Image_wmmzi1wmmzi1wmmz.jpg";
 import greenAlt from "@/assets/b9d62cd4-00e2-45df-95df-701356309f59.jpg";
 import tan from "@/assets/e44536b4-0486-4401-9327-8f300ee11714.jpg";
-import { products as fallbackProducts, type Category, type Product } from "./shop-data";
+import { products as fallbackProducts, type Category, type Product, type ProductStatus } from "./shop-data";
+import { readStorage, removeStorage, writeStorage } from "./storage";
 import {
   fetchShopifyProductByHandle,
   fetchShopifyProducts,
@@ -12,11 +13,13 @@ import {
   type ShopifyProductNode,
 } from "./shopify";
 
+export const CATALOG_STORAGE_KEY = "uffa-custom-catalog-v2";
+
 /**
  * A Shopify não guarda imagens no catálogo de demonstração, por isso usamos
  * a arte local indexada pelo handle do produto.
  */
-const imageByHandle: Record<string, string> = {
+export const imageByHandle: Record<string, string> = {
   "porto-rose-low": tan,
   "bolhao-runner": navy,
   "cedofeita-court": white,
@@ -43,15 +46,18 @@ function toProduct(node: ShopifyProductNode): Product {
       size: Number.parseInt(variant.selectedOptions[0]?.value ?? variant.title, 10),
       stock: variant.quantityAvailable ?? (variant.availableForSale ? 1 : 0),
       variantId: variant.id,
+      sku: `${fallback?.sku ?? `UFFA-${node.handle.toUpperCase()}`}-${variant.selectedOptions[0]?.value ?? variant.title}`,
     }))
     .filter((variant) => Number.isFinite(variant.size))
     .sort((a, b) => a.size - b.size);
 
   return {
     id: node.handle,
+    sku: fallback?.sku ?? `UFFA-${node.handle.toUpperCase()}`,
     name: node.title,
     category: toCategory(node.productType),
     price: Number.parseFloat(node.priceRange.minVariantPrice.amount),
+    status: fallback?.status ?? "active",
     image: node.featuredImage?.url ?? imageByHandle[node.handle] ?? fallback?.image ?? grey,
     description: { pt: description, en: description, es: description },
     sizes: sizes.length ? sizes : (fallback?.sizes ?? []),
@@ -59,13 +65,40 @@ function toProduct(node: ShopifyProductNode): Product {
   };
 }
 
+export function getStoredCatalog(): Product[] | null {
+  const raw = readStorage("local", CATALOG_STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed;
+    }
+  } catch {
+    // corrompido
+  }
+  return null;
+}
+
+export function saveCatalog(items: Product[]): void {
+  writeStorage("local", CATALOG_STORAGE_KEY, JSON.stringify(items));
+}
+
+export function resetCatalogToDefault(): Product[] {
+  removeStorage("local", CATALOG_STORAGE_KEY);
+  return fallbackProducts;
+}
+
 /**
- * Resolve um único produto pelo handle. Tenta a Shopify primeiro e recorre
- * ao catálogo local quando a loja não está configurada ou não conhece o handle.
+ * Resolve um único produto pelo handle.
  */
 export async function loadProduct(handle: string): Promise<Product | undefined> {
-  const local = fallbackProducts.find((item) => item.id === handle);
+  const stored = getStoredCatalog();
+  if (stored) {
+    const match = stored.find((item) => item.id === handle);
+    if (match) return match;
+  }
 
+  const local = fallbackProducts.find((item) => item.id === handle);
   if (!isShopifyConfigured()) return local;
 
   try {
@@ -79,10 +112,18 @@ export async function loadProduct(handle: string): Promise<Product | undefined> 
 }
 
 /**
- * Devolve o catálogo da Shopify. Se a loja não estiver configurada ou a
- * chamada falhar, devolve o catálogo local para o site nunca ficar vazio.
+ * Devolve o catálogo de produtos da loja.
+ * Prioridade:
+ * 1. Alterações personalizadas guardadas no painel de operações (localStorage)
+ * 2. Catálogo sincronizado da Shopify
+ * 3. Catálogo base local (fallback)
  */
 export async function loadCatalog(): Promise<Product[]> {
+  const stored = getStoredCatalog();
+  if (stored && stored.length > 0) {
+    return stored;
+  }
+
   if (!isShopifyConfigured()) return fallbackProducts;
 
   try {
@@ -90,7 +131,6 @@ export async function loadCatalog(): Promise<Product[]> {
     if (!nodes.length) return fallbackProducts;
 
     const mapped = nodes.map(toProduct);
-    // Mantém a ordem editorial do site quando os handles coincidem.
     return mapped.sort((a, b) => {
       const indexA = fallbackProducts.findIndex((item) => item.id === a.id);
       const indexB = fallbackProducts.findIndex((item) => item.id === b.id);

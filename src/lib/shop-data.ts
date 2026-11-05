@@ -9,18 +9,43 @@ export const heroSneaker = grey;
 
 export type Language = "pt" | "en" | "es";
 export type Category = "casual" | "streetwear" | "limited" | "sales";
-export type ProductSize = { size: number; stock: number; variantId?: string };
+export type ProductStatus = "active" | "inactive" | "soldout" | "comingsoon";
+
+export type ProductSize = {
+  size: number;
+  stock: number;
+  color?: string;
+  sku?: string;
+  variantId?: string;
+};
+
 export type Product = {
   id: string;
+  sku?: string;
   name: string;
   category: Category;
   price: number;
   originalPrice?: number;
   image: string;
+  images?: string[];
   description: Record<Language, string>;
   sizes: ProductSize[];
+  status?: ProductStatus;
   featured?: boolean;
 };
+
+export function getProductTotalStock(product: Product): number {
+  return product.sizes.reduce((sum, s) => sum + (s.stock > 0 ? s.stock : 0), 0);
+}
+
+export function getProductEffectiveStatus(product: Product): ProductStatus {
+  if (product.status === "inactive") return "inactive";
+  if (product.status === "comingsoon") return "comingsoon";
+  if (product.status === "soldout") return "soldout";
+  const stock = getProductTotalStock(product);
+  if (stock <= 0) return "soldout";
+  return "active";
+}
 
 export const categoryNames: Record<Category, Record<Language, string>> = {
   casual: { pt: "Casual", en: "Casual", es: "Casual" },
@@ -32,9 +57,11 @@ export const categoryNames: Record<Category, Record<Language, string>> = {
 export const products: Product[] = [
   {
     id: "porto-rose-low",
+    sku: "UFFA-PRL-01",
     name: "Porto Rose Low",
     category: "streetwear",
     price: 0.20,
+    status: "active",
     image: tan,
     featured: true,
     description: {
@@ -43,20 +70,22 @@ export const products: Product[] = [
       es: "Ante rosa envejecido y piel negra en una silueta baja hecha para la calle.",
     },
     sizes: [
-      { size: 36, stock: 1, variantId: "gid://shopify/ProductVariant/59744414138716" },
-      { size: 37, stock: 2, variantId: "gid://shopify/ProductVariant/59744414171484" },
-      { size: 38, stock: 0, variantId: "gid://shopify/ProductVariant/59744414204252" },
-      { size: 39, stock: 3, variantId: "gid://shopify/ProductVariant/59744414237020" },
-      { size: 40, stock: 2, variantId: "gid://shopify/ProductVariant/59744414269788" },
-      { size: 41, stock: 0, variantId: "gid://shopify/ProductVariant/59744414302556" },
-      { size: 42, stock: 1, variantId: "gid://shopify/ProductVariant/59744414335324" },
+      { size: 36, stock: 1, sku: "UFFA-PRL-01-36", variantId: "gid://shopify/ProductVariant/59744414138716" },
+      { size: 37, stock: 2, sku: "UFFA-PRL-01-37", variantId: "gid://shopify/ProductVariant/59744414171484" },
+      { size: 38, stock: 0, sku: "UFFA-PRL-01-38", variantId: "gid://shopify/ProductVariant/59744414204252" },
+      { size: 39, stock: 3, sku: "UFFA-PRL-01-39", variantId: "gid://shopify/ProductVariant/59744414237020" },
+      { size: 40, stock: 2, sku: "UFFA-PRL-01-40", variantId: "gid://shopify/ProductVariant/59744414269788" },
+      { size: 41, stock: 0, sku: "UFFA-PRL-01-41", variantId: "gid://shopify/ProductVariant/59744414302556" },
+      { size: 42, stock: 1, sku: "UFFA-PRL-01-42", variantId: "gid://shopify/ProductVariant/59744414335324" },
     ],
   },
   {
     id: "bolhao-runner",
+    sku: "UFFA-BLR-02",
     name: "Bolhão Runner",
     category: "casual",
     price: 0.20,
+    status: "active",
     image: navy,
     featured: true,
     description: {
@@ -65,21 +94,23 @@ export const products: Product[] = [
       es: "Malla transpirable, amortiguación generosa y actitud urbana para días largos.",
     },
     sizes: [
-      { size: 37, stock: 2, variantId: "gid://shopify/ProductVariant/59744414400860" },
-      { size: 38, stock: 3, variantId: "gid://shopify/ProductVariant/59744414433628" },
-      { size: 39, stock: 1, variantId: "gid://shopify/ProductVariant/59744414466396" },
-      { size: 40, stock: 0, variantId: "gid://shopify/ProductVariant/59744414499164" },
-      { size: 41, stock: 2, variantId: "gid://shopify/ProductVariant/59744414531932" },
-      { size: 42, stock: 4, variantId: "gid://shopify/ProductVariant/59744414564700" },
-      { size: 43, stock: 1, variantId: "gid://shopify/ProductVariant/59744414597468" },
+      { size: 37, stock: 2, sku: "UFFA-BLR-02-37", variantId: "gid://shopify/ProductVariant/59744414400860" },
+      { size: 38, stock: 3, sku: "UFFA-BLR-02-38", variantId: "gid://shopify/ProductVariant/59744414433628" },
+      { size: 39, stock: 1, sku: "UFFA-BLR-02-39", variantId: "gid://shopify/ProductVariant/59744414466396" },
+      { size: 40, stock: 0, sku: "UFFA-BLR-02-40", variantId: "gid://shopify/ProductVariant/59744414499164" },
+      { size: 41, stock: 2, sku: "UFFA-BLR-02-41", variantId: "gid://shopify/ProductVariant/59744414531932" },
+      { size: 42, stock: 4, sku: "UFFA-BLR-02-42", variantId: "gid://shopify/ProductVariant/59744414564700" },
+      { size: 43, stock: 1, sku: "UFFA-BLR-02-43", variantId: "gid://shopify/ProductVariant/59744414597468" },
     ],
   },
   {
     id: "cedofeita-court",
+    sku: "UFFA-CDC-03",
     name: "Cedofeita Court",
     category: "sales",
     price: 0.20,
     originalPrice: 120.00,
+    status: "active",
     image: white,
     featured: true,
     description: {
@@ -88,20 +119,22 @@ export const products: Product[] = [
       es: "Un clásico court en crema, negro y rosa para todos los días.",
     },
     sizes: [
-      { size: 36, stock: 3, variantId: "gid://shopify/ProductVariant/59744414630236" },
-      { size: 37, stock: 0, variantId: "gid://shopify/ProductVariant/59744414663004" },
-      { size: 38, stock: 2, variantId: "gid://shopify/ProductVariant/59744414695772" },
-      { size: 39, stock: 4, variantId: "gid://shopify/ProductVariant/59744414728540" },
-      { size: 40, stock: 2, variantId: "gid://shopify/ProductVariant/59744414761308" },
-      { size: 41, stock: 1, variantId: "gid://shopify/ProductVariant/59744414794076" },
-      { size: 42, stock: 0, variantId: "gid://shopify/ProductVariant/59744414826844" },
+      { size: 36, stock: 3, sku: "UFFA-CDC-03-36", variantId: "gid://shopify/ProductVariant/59744414630236" },
+      { size: 37, stock: 0, sku: "UFFA-CDC-03-37", variantId: "gid://shopify/ProductVariant/59744414663004" },
+      { size: 38, stock: 2, sku: "UFFA-CDC-03-38", variantId: "gid://shopify/ProductVariant/59744414695772" },
+      { size: 39, stock: 4, sku: "UFFA-CDC-03-39", variantId: "gid://shopify/ProductVariant/59744414728540" },
+      { size: 40, stock: 2, sku: "UFFA-CDC-03-40", variantId: "gid://shopify/ProductVariant/59744414761308" },
+      { size: 41, stock: 1, sku: "UFFA-CDC-03-41", variantId: "gid://shopify/ProductVariant/59744414794076" },
+      { size: 42, stock: 0, sku: "UFFA-CDC-03-42", variantId: "gid://shopify/ProductVariant/59744414826844" },
     ],
   },
   {
     id: "invicta-01",
+    sku: "UFFA-INV-04",
     name: "Invicta 01",
     category: "limited",
     price: 0.20,
+    status: "active",
     image: grey,
     featured: true,
     description: {
@@ -110,19 +143,21 @@ export const products: Product[] = [
       es: "High-top de edición corta con estructura escultural y acabado mate.",
     },
     sizes: [
-      { size: 38, stock: 0, variantId: "gid://shopify/ProductVariant/59744414859612" },
-      { size: 39, stock: 1, variantId: "gid://shopify/ProductVariant/59744414892380" },
-      { size: 40, stock: 1, variantId: "gid://shopify/ProductVariant/59744414925148" },
-      { size: 41, stock: 0, variantId: "gid://shopify/ProductVariant/59744414957916" },
-      { size: 42, stock: 2, variantId: "gid://shopify/ProductVariant/59744414990684" },
-      { size: 43, stock: 0, variantId: "gid://shopify/ProductVariant/59744415023452" },
+      { size: 38, stock: 0, sku: "UFFA-INV-04-38", variantId: "gid://shopify/ProductVariant/59744414859612" },
+      { size: 39, stock: 1, sku: "UFFA-INV-04-39", variantId: "gid://shopify/ProductVariant/59744414892380" },
+      { size: 40, stock: 1, sku: "UFFA-INV-04-40", variantId: "gid://shopify/ProductVariant/59744414925148" },
+      { size: 41, stock: 0, sku: "UFFA-INV-04-41", variantId: "gid://shopify/ProductVariant/59744414957916" },
+      { size: 42, stock: 2, sku: "UFFA-INV-04-42", variantId: "gid://shopify/ProductVariant/59744414990684" },
+      { size: 43, stock: 0, sku: "UFFA-INV-04-43", variantId: "gid://shopify/ProductVariant/59744415023452" },
     ],
   },
   {
     id: "rosa-norte",
+    sku: "UFFA-RSN-05",
     name: "Rosa Norte",
     category: "casual",
     price: 0.20,
+    status: "active",
     image: green,
     description: {
       pt: "Perfil descontraído com contraste marcante e conforto diário.",
@@ -130,18 +165,20 @@ export const products: Product[] = [
       es: "Perfil relajado con contraste marcado y comodidad diaria.",
     },
     sizes: [
-      { size: 36, stock: 1, variantId: "gid://shopify/ProductVariant/59744415056220" },
-      { size: 37, stock: 2, variantId: "gid://shopify/ProductVariant/59744415088988" },
-      { size: 38, stock: 2, variantId: "gid://shopify/ProductVariant/59744415121756" },
-      { size: 39, stock: 0, variantId: "gid://shopify/ProductVariant/59744415154524" },
-      { size: 40, stock: 2, variantId: "gid://shopify/ProductVariant/59744415187292" },
+      { size: 36, stock: 1, sku: "UFFA-RSN-05-36", variantId: "gid://shopify/ProductVariant/59744415056220" },
+      { size: 37, stock: 2, sku: "UFFA-RSN-05-37", variantId: "gid://shopify/ProductVariant/59744415088988" },
+      { size: 38, stock: 2, sku: "UFFA-RSN-05-38", variantId: "gid://shopify/ProductVariant/59744415121756" },
+      { size: 39, stock: 0, sku: "UFFA-RSN-05-39", variantId: "gid://shopify/ProductVariant/59744415154524" },
+      { size: 40, stock: 2, sku: "UFFA-RSN-05-40", variantId: "gid://shopify/ProductVariant/59744415187292" },
     ],
   },
   {
     id: "trindade-flow",
+    sku: "UFFA-TRF-06",
     name: "Trindade Flow",
     category: "streetwear",
     price: 0.20,
+    status: "active",
     image: greenAlt,
     description: {
       pt: "Volume técnico e apoio macio para um ritmo sempre em movimento.",
@@ -149,20 +186,22 @@ export const products: Product[] = [
       es: "Volumen técnico y apoyo suave para un ritmo siempre en movimiento.",
     },
     sizes: [
-      { size: 38, stock: 2, variantId: "gid://shopify/ProductVariant/59744415220060" },
-      { size: 39, stock: 1, variantId: "gid://shopify/ProductVariant/59744415252828" },
-      { size: 40, stock: 2, variantId: "gid://shopify/ProductVariant/59744415285596" },
-      { size: 41, stock: 3, variantId: "gid://shopify/ProductVariant/59744415318364" },
-      { size: 42, stock: 0, variantId: "gid://shopify/ProductVariant/59744415351132" },
-      { size: 43, stock: 1, variantId: "gid://shopify/ProductVariant/59744415383900" },
+      { size: 38, stock: 2, sku: "UFFA-TRF-06-38", variantId: "gid://shopify/ProductVariant/59744415220060" },
+      { size: 39, stock: 1, sku: "UFFA-TRF-06-39", variantId: "gid://shopify/ProductVariant/59744415252828" },
+      { size: 40, stock: 2, sku: "UFFA-TRF-06-40", variantId: "gid://shopify/ProductVariant/59744415285596" },
+      { size: 41, stock: 3, sku: "UFFA-TRF-06-41", variantId: "gid://shopify/ProductVariant/59744415318364" },
+      { size: 42, stock: 0, sku: "UFFA-TRF-06-42", variantId: "gid://shopify/ProductVariant/59744415351132" },
+      { size: 43, stock: 1, sku: "UFFA-TRF-06-43", variantId: "gid://shopify/ProductVariant/59744415383900" },
     ],
   },
   {
     id: "galerias-low",
+    sku: "UFFA-GAL-07",
     name: "Galerias Low",
     category: "sales",
     price: 0.20,
     originalPrice: 130.00,
+    status: "active",
     image: navy,
     description: {
       pt: "Linhas retro e construção limpa para combinar sem esforço.",
@@ -170,19 +209,21 @@ export const products: Product[] = [
       es: "Líneas retro y construcción limpia para combinar sin esfuerzo.",
     },
     sizes: [
-      { size: 36, stock: 2, variantId: "gid://shopify/ProductVariant/59744415482204" },
-      { size: 37, stock: 3, variantId: "gid://shopify/ProductVariant/59744415514972" },
-      { size: 38, stock: 1, variantId: "gid://shopify/ProductVariant/59744415547740" },
-      { size: 39, stock: 1, variantId: "gid://shopify/ProductVariant/59744415580508" },
-      { size: 40, stock: 0, variantId: "gid://shopify/ProductVariant/59744415613276" },
-      { size: 41, stock: 2, variantId: "gid://shopify/ProductVariant/59744415646044" },
+      { size: 36, stock: 2, sku: "UFFA-GAL-07-36", variantId: "gid://shopify/ProductVariant/59744415482204" },
+      { size: 37, stock: 3, sku: "UFFA-GAL-07-37", variantId: "gid://shopify/ProductVariant/59744415514972" },
+      { size: 38, stock: 1, sku: "UFFA-GAL-07-38", variantId: "gid://shopify/ProductVariant/59744415547740" },
+      { size: 39, stock: 1, sku: "UFFA-GAL-07-39", variantId: "gid://shopify/ProductVariant/59744415580508" },
+      { size: 40, stock: 0, sku: "UFFA-GAL-07-40", variantId: "gid://shopify/ProductVariant/59744415613276" },
+      { size: 41, stock: 2, sku: "UFFA-GAL-07-41", variantId: "gid://shopify/ProductVariant/59744415646044" },
     ],
   },
   {
     id: "afterdark-02",
+    sku: "UFFA-AFT-08",
     name: "Afterdark 02",
     category: "limited",
     price: 0.20,
+    status: "active",
     image: tan,
     description: {
       pt: "Uma peça numerada para quem não passa despercebido.",
@@ -190,11 +231,11 @@ export const products: Product[] = [
       es: "Una pieza numerada para quien nunca pasa desapercibido.",
     },
     sizes: [
-      { size: 39, stock: 1, variantId: "gid://shopify/ProductVariant/59744415678812" },
-      { size: 40, stock: 0, variantId: "gid://shopify/ProductVariant/59744415711580" },
-      { size: 41, stock: 1, variantId: "gid://shopify/ProductVariant/59744415744348" },
-      { size: 42, stock: 0, variantId: "gid://shopify/ProductVariant/59744415777116" },
-      { size: 43, stock: 1, variantId: "gid://shopify/ProductVariant/59744415809884" },
+      { size: 39, stock: 1, sku: "UFFA-AFT-08-39", variantId: "gid://shopify/ProductVariant/59744415678812" },
+      { size: 40, stock: 0, sku: "UFFA-AFT-08-40", variantId: "gid://shopify/ProductVariant/59744415711580" },
+      { size: 41, stock: 1, sku: "UFFA-AFT-08-41", variantId: "gid://shopify/ProductVariant/59744415744348" },
+      { size: 42, stock: 0, sku: "UFFA-AFT-08-42", variantId: "gid://shopify/ProductVariant/59744415777116" },
+      { size: 43, stock: 1, sku: "UFFA-AFT-08-43", variantId: "gid://shopify/ProductVariant/59744415809884" },
     ],
   },
 ];

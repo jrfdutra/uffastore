@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, ShoppingBag, Check, Heart } from "lucide-react";
-import { categoryNames, money, type Product } from "@/lib/shop-data";
+import { categoryNames, getProductEffectiveStatus, money, type Product } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { VerifiedBadge } from "./verified-badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,9 @@ export function ProductCard({ product }: { product: Product }) {
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [added, setAdded] = useState(false);
 
+  const effectiveStatus = getProductEffectiveStatus(product);
+  const isSoldOut = effectiveStatus === "soldout";
+  const isComingSoon = effectiveStatus === "comingsoon";
   const isSale = product.category === "sales" || Boolean(product.originalPrice);
   const isWishlisted = wishlist.includes(product.id);
   const availableSizes = product.sizes.filter((s) => s.stock > 0);
@@ -20,6 +23,8 @@ export function ProductCard({ product }: { product: Product }) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (isSoldOut || isComingSoon) return;
 
     const sizeToAdd = selectedSize ?? defaultSize;
     if (!sizeToAdd) return;
@@ -44,17 +49,37 @@ export function ProductCard({ product }: { product: Product }) {
               width={1200}
               height={900}
               loading="lazy"
-              className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
+              className={`h-full w-full object-cover transition duration-500 group-hover:scale-[1.035] ${
+                isSoldOut ? "grayscale-[0.25] opacity-90" : ""
+              }`}
             />
 
             <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5 items-start z-10">
               <VerifiedBadge />
-              {isSale && (
+              {isSale && !isSoldOut && (
                 <span className="bg-destructive px-2 py-0.5 font-display text-[11px] uppercase tracking-wider text-destructive-foreground">
                   {tr(language, "SALE", "SALE", "OFERTA")}
                 </span>
               )}
+              {isSoldOut && (
+                <span className="bg-foreground/90 backdrop-blur-sm px-2 py-0.5 font-display text-[10px] uppercase tracking-wider text-background font-bold border border-background/20">
+                  {tr(language, "ESGOTADO", "SOLD OUT", "AGOTADO")}
+                </span>
+              )}
+              {isComingSoon && (
+                <span className="bg-primary px-2 py-0.5 font-display text-[10px] uppercase tracking-wider text-primary-foreground font-bold">
+                  {tr(language, "EM BREVE", "COMING SOON", "PRÓXIMAMENTE")}
+                </span>
+              )}
             </div>
+
+            {isSoldOut && (
+              <div className="absolute inset-0 bg-background/20 backdrop-blur-[1px] flex items-center justify-center pointer-events-none z-10">
+                <span className="bg-background/95 text-foreground border border-border px-3.5 py-1.5 font-display text-xs uppercase tracking-[0.2em] font-bold shadow-lg">
+                  {tr(language, "ESGOTADO", "SOLD OUT", "AGOTADO")}
+                </span>
+              </div>
+            )}
 
             <button
               type="button"
@@ -149,14 +174,20 @@ export function ProductCard({ product }: { product: Product }) {
           type="button"
           size="sm"
           onClick={handleAddToCart}
-          disabled={availableSizes.length === 0}
+          disabled={isSoldOut || isComingSoon || availableSizes.length === 0}
           className={`w-full rounded-none h-11 text-xs font-bold uppercase transition-all duration-200 ${
-            added
+            isSoldOut || isComingSoon
+              ? "bg-muted text-muted-foreground cursor-not-allowed hover:bg-muted"
+              : added
               ? "bg-green-600 text-white hover:bg-green-700"
               : "bg-primary text-primary-foreground hover:bg-primary/90"
           }`}
         >
-          {added ? (
+          {isSoldOut ? (
+            <span>{tr(language, "Esgotado", "Sold Out", "Agotado")}</span>
+          ) : isComingSoon ? (
+            <span>{tr(language, "Em breve", "Coming soon", "Próximamente")}</span>
+          ) : added ? (
             <span className="flex items-center gap-1.5">
               <Check className="size-4" />
               {tr(language, "Adicionado!", "Added!", "¡Añadido!")}

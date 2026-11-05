@@ -3,9 +3,10 @@ import { useRef, useState } from "react";
 import { BadgeCheck, Box, Hand, Rotate3D } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { VerifiedBadge } from "@/components/verified-badge";
-import { categoryNames, copy, money } from "@/lib/shop-data";
+import { categoryNames, copy, getProductEffectiveStatus, money } from "@/lib/shop-data";
 import { loadProduct } from "@/lib/catalog";
 import { useShop } from "@/lib/shop-context";
+import { tr } from "@/lib/i18n";
 export const Route = createFileRoute("/produto/$productId")({
   loader: async ({ params }) => {
     const product = await loadProduct(params.productId);
@@ -39,6 +40,10 @@ function ProductDetail() {
   const [selected, setSelected] = useState<number>();
   const [angle, setAngle] = useState(0);
   const [error, setError] = useState(false);
+  const effectiveStatus = getProductEffectiveStatus(p);
+  const isSoldOut = effectiveStatus === "soldout";
+  const isComingSoon = effectiveStatus === "comingsoon";
+  const isInactive = p.status === "inactive";
   const drag = useRef<number | null>(null);
   const transform = `perspective(1000px) rotateY(${angle}deg)`;
   return (
@@ -101,11 +106,33 @@ function ProductDetail() {
         </div>
         <div className="lg:sticky lg:top-28 lg:self-start">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold uppercase text-primary">
-              {categoryNames[p.category][s.language]}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-xs font-bold uppercase text-primary">
+                {categoryNames[p.category][s.language]}
+              </p>
+              {isSoldOut && (
+                <span className="bg-foreground text-background px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                  {tr(s.language, "ESGOTADO", "SOLD OUT", "AGOTADO")}
+                </span>
+              )}
+              {isComingSoon && (
+                <span className="bg-primary text-primary-foreground px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                  {tr(s.language, "EM BREVE", "COMING SOON", "PRÓXIMAMENTE")}
+                </span>
+              )}
+            </div>
             <VerifiedBadge />
           </div>
+          {isInactive && (
+            <div className="mt-4 border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive font-semibold">
+              {tr(
+                s.language,
+                "Aviso: Este produto está marcado como inativo no painel de administração e não se encontra visível na loja pública.",
+                "Notice: This product is marked as inactive in administration and is not publicly visible.",
+                "Aviso: Este producto está marcado como inactivo en administración."
+              )}
+            </div>
+          )}
           <h1 className="mt-4 font-display text-6xl uppercase leading-none md:text-7xl">
             {p.name}
           </h1>
@@ -124,7 +151,7 @@ function ProductDetail() {
                   key={x.size}
                   variant={selected === x.size ? "default" : "outline"}
                   className="relative h-12 rounded-none"
-                  disabled={!x.stock}
+                  disabled={!x.stock || isSoldOut || isComingSoon}
                   onClick={() => {
                     setSelected(x.size);
                     setError(false);
@@ -143,8 +170,14 @@ function ProductDetail() {
           </div>
           <Button
             size="lg"
-            className="h-14 w-full rounded-none text-base uppercase"
+            disabled={isSoldOut || isComingSoon || isInactive}
+            className={`h-14 w-full rounded-none text-base uppercase font-bold ${
+              isSoldOut || isComingSoon || isInactive
+                ? "bg-muted text-muted-foreground cursor-not-allowed hover:bg-muted"
+                : ""
+            }`}
             onClick={() => {
+              if (isSoldOut || isComingSoon || isInactive) return;
               if (!selected) {
                 setError(true);
                 return;
@@ -152,7 +185,11 @@ function ProductDetail() {
               s.addToCart(p.id, selected);
             }}
           >
-            {t.add}
+            {isSoldOut
+              ? tr(s.language, "Esgotado", "Sold out", "Agotado")
+              : isComingSoon
+              ? tr(s.language, "Em breve", "Coming soon", "Próximamente")
+              : t.add}
           </Button>
           <div className="mt-7 grid grid-cols-2 gap-3 text-xs">
             <div className="flex gap-3 border border-border p-4">

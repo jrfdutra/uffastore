@@ -9,7 +9,7 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { copy, products as fallbackProducts, type Language, type Product } from "./shop-data";
-import { loadCatalog } from "./catalog";
+import { loadCatalog, saveCatalog, resetCatalogToDefault } from "./catalog";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 
 export type CartItem = { productId: string; size: number; quantity: number };
@@ -40,6 +40,11 @@ type ShopContextValue = {
   removeCoupon: () => void;
   discountAmount: number;
   finalTotal: number;
+  // Catalog / Model Management
+  saveProduct: (product: Product) => void;
+  deleteProduct: (productId: string) => void;
+  updateStock: (productId: string, size: number, newStock: number) => void;
+  resetCatalog: () => void;
 };
 
 const LANGUAGE_KEY = "uffa-language";
@@ -158,6 +163,40 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
   const addToCart = useCallback(
     (productId: string, size: number) => {
+      const product = catalog.find((p) => p.id === productId);
+      if (!product) return;
+
+      if (product.status === "inactive" || product.status === "comingsoon") {
+        toast.error(
+          language === "pt"
+            ? "Este modelo não está disponível para encomenda."
+            : "This model is not available for order."
+        );
+        return;
+      }
+
+      const variant = product.sizes.find((s) => s.size === size);
+      if (!variant || variant.stock <= 0) {
+        toast.error(
+          language === "pt"
+            ? `O tamanho ${size} deste modelo está esgotado.`
+            : `Size ${size} of this model is sold out.`
+        );
+        return;
+      }
+
+      const existingItem = cart.find((item) => item.productId === productId && item.size === size);
+      const currentQty = existingItem?.quantity ?? 0;
+
+      if (currentQty + 1 > variant.stock) {
+        toast.error(
+          language === "pt"
+            ? `Apenas existem ${variant.stock} unidades disponíveis no tamanho ${size}.`
+            : `Only ${variant.stock} units available in size ${size}.`
+        );
+        return;
+      }
+
       setCart((items) => {
         const hit = items.find((item) => item.productId === productId && item.size === size);
         return hit
@@ -167,7 +206,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       setCartOpen(true);
       toast.success(copy[language].add);
     },
-    [language],
+    [catalog, cart, language],
   );
 
   const removeFromCart = useCallback((productId: string, size: number) => {
@@ -182,16 +221,92 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         removeFromCart(productId, size);
         return;
       }
+
+      const product = catalog.find((p) => p.id === productId);
+      const variant = product?.sizes.find((s) => s.size === size);
+      let targetQty = quantity;
+
+      if (variant && quantity > variant.stock) {
+        toast.error(
+          language === "pt"
+            ? `Stock máximo atingido (${variant.stock} unidades disponíveis).`
+            : `Maximum stock reached (${variant.stock} units available).`
+        );
+        targetQty = variant.stock;
+      }
+
       setCart((items) =>
         items.map((item) =>
-          item.productId === productId && item.size === size ? { ...item, quantity } : item,
+          item.productId === productId && item.size === size ? { ...item, quantity: targetQty } : item,
         ),
       );
     },
-    [removeFromCart],
+    [catalog, language, removeFromCart],
   );
 
   const clearCart = useCallback(() => setCart([]), []);
+
+  const saveProduct = useCallback(
+    (product: Product) => {
+      setCatalog((prev) => {
+        const index = prev.findIndex((p) => p.id === product.id);
+        let next: Product[];
+        if (index >= 0) {
+          next = [...prev];
+          next[index] = product;
+        } else {
+          next = [product, ...prev];
+        }
+        saveCatalog(next);
+        return next;
+      });
+      toast.success(
+        language === "pt"
+          ? `Modelo "${product.name}" guardado com sucesso.`
+          : `Model "${product.name}" saved successfully.`
+      );
+    },
+    [language],
+  );
+
+  const deleteProduct = useCallback(
+    (productId: string) => {
+      setCatalog((prev) => {
+        const next = prev.filter((p) => p.id !== productId);
+        saveCatalog(next);
+        return next;
+      });
+      toast.success(
+        language === "pt" ? "Modelo removido do catálogo." : "Model removed from catalog."
+      );
+    },
+    [language],
+  );
+
+  const updateStock = useCallback(
+    (productId: string, size: number, newStock: number) => {
+      setCatalog((prev) => {
+        const next = prev.map((p) => {
+          if (p.id !== productId) return p;
+          return {
+            ...p,
+            sizes: p.sizes.map((s) => (s.size === size ? { ...s, stock: Math.max(0, newStock) } : s)),
+          };
+        });
+        saveCatalog(next);
+        return next;
+      });
+    },
+    [],
+  );
+
+  const resetCatalog = useCallback(() => {
+    const defaults = resetCatalogToDefault();
+    setCatalog(defaults);
+    toast.success(
+      language === "pt" ? "Catálogo reposto para os valores originais." : "Catalog reset to defaults."
+    );
+  }, [language]);
 
   const toggleWishlist = useCallback((productId: string) => {
     setWishlist((current) => {
@@ -265,6 +380,10 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       removeCoupon,
       discountAmount,
       finalTotal,
+      saveProduct,
+      deleteProduct,
+      updateStock,
+      resetCatalog,
     }),
     [
       catalog,
@@ -288,6 +407,10 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       removeCoupon,
       discountAmount,
       finalTotal,
+      saveProduct,
+      deleteProduct,
+      updateStock,
+      resetCatalog,
     ],
   );
 

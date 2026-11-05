@@ -8,10 +8,20 @@ import {
   KeyRound,
   LogOut,
   PackageCheck,
+  Plus,
   RefreshCw,
   Search,
+  SlidersHorizontal,
   Store,
+  Tag,
+  Trash2,
   Truck,
+  Upload,
+  CheckCircle2,
+  AlertCircle,
+  EyeOff,
+  Clock,
+  Edit,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -24,9 +34,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { tr } from "@/lib/i18n";
-import { money } from "@/lib/shop-data";
+import {
+  categoryNames,
+  getProductEffectiveStatus,
+  getProductTotalStock,
+  money,
+  type Category,
+  type Product,
+  type ProductSize,
+  type ProductStatus,
+} from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { readStorage, removeStorage, writeStorage } from "@/lib/storage";
 import {
@@ -226,6 +253,7 @@ function OpsGate({ onUnlock }: { onUnlock: () => void }) {
 
 function OpsDashboard({ onLock }: { onLock: () => void }) {
   const { language } = useShop();
+  const [activeTab, setActiveTab] = useState<"orders" | "models">("models");
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedNumber, setSelectedNumber] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -293,15 +321,24 @@ function OpsDashboard({ onLock }: { onLock: () => void }) {
                 UFFA Ops · {tr(language, "Painel interno", "Internal panel", "Panel interno")}
               </p>
               <h1 className="mt-10 font-display text-5xl uppercase leading-[.9] md:text-6xl">
-                {tr(language, "Gestão de encomendas", "Order management", "Gestión de pedidos")}
+                {activeTab === "models"
+                  ? tr(language, "Gestão de Modelos", "Model Management", "Gestión de Modelos")
+                  : tr(language, "Gestão de encomendas", "Order management", "Gestión de pedidos")}
               </h1>
               <p className="mt-2 max-w-2xl text-sm text-background/60">
-                {tr(
-                  language,
-                  "Atualiza o estado de envio ou recolha, o rastreio e a previsão. Cada alteração fica registada no histórico do cliente.",
-                  "Update shipping or pickup status, tracking and estimates. Every change is recorded in the customer timeline.",
-                  "Actualiza el estado de envío o recogida, el seguimiento y la previsión. Cada cambio queda registrado en el historial del cliente.",
-                )}
+                {activeTab === "models"
+                  ? tr(
+                      language,
+                      "Controla modelos, stock por variante, preços e publicação em tempo real na loja.",
+                      "Control product models, variant stock, pricing and live store publication.",
+                      "Controla modelos, stock por variante, precios y publicación en la tienda.",
+                    )
+                  : tr(
+                      language,
+                      "Atualiza o estado de envio ou recolha, o rastreio e a previsão. Cada alteração fica registada no histórico do cliente.",
+                      "Update shipping or pickup status, tracking and estimates. Every change is recorded in the customer timeline.",
+                      "Actualiza el estado de envío o recogida, el seguimiento y la previsión. Cada cambio queda registrado en el historial del cliente.",
+                    )}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -327,10 +364,38 @@ function OpsDashboard({ onLock }: { onLock: () => void }) {
               </Button>
             </div>
           </div>
+
+          <div className="mt-8 flex gap-2 border-b border-background/20 pb-px">
+            <button
+              type="button"
+              onClick={() => setActiveTab("models")}
+              className={`border-b-2 px-4 py-2 text-sm font-bold uppercase transition ${
+                activeTab === "models"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-background/60 hover:text-background"
+              }`}
+            >
+              {tr(language, "Gestão de Modelos", "Model Management", "Gestión de Modelos")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("orders")}
+              className={`border-b-2 px-4 py-2 text-sm font-bold uppercase transition ${
+                activeTab === "orders"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-background/60 hover:text-background"
+              }`}
+            >
+              {tr(language, "Encomendas", "Orders", "Pedidos")}
+            </button>
+          </div>
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-10">
+      {activeTab === "models" ? (
+        <ModelsManagementView />
+      ) : (
+        <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-10">
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {stats.map((stat) => (
             <div key={stat.label} className="border border-border bg-card p-4">
@@ -480,6 +545,7 @@ function OpsDashboard({ onLock }: { onLock: () => void }) {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
@@ -747,5 +813,585 @@ function OrderEditor({ order, onUpdated }: { order: Order; onUpdated: (order: Or
         </ol>
       </div>
     </section>
+  );
+}
+
+function ModelsManagementView() {
+  const { catalog, language, saveProduct, deleteProduct, updateStock, resetCatalog } = useShop();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const filteredModels = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    return catalog.filter((product) => {
+      const matchesSearch =
+        !q ||
+        product.name.toLowerCase().includes(q) ||
+        (product.sku && product.sku.toLowerCase().includes(q)) ||
+        product.id.toLowerCase().includes(q);
+
+      const matchesCategory =
+        categoryFilter === "all" || product.category === categoryFilter;
+
+      const effective = getProductEffectiveStatus(product);
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "active" && effective === "active") ||
+        (statusFilter === "inactive" && product.status === "inactive") ||
+        (statusFilter === "soldout" && effective === "soldout") ||
+        (statusFilter === "comingsoon" && effective === "comingsoon");
+
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+  }, [catalog, searchQuery, categoryFilter, statusFilter]);
+
+  const handleOpenNew = () => {
+    const newModel: Product = {
+      id: `uffa-model-${Date.now().toString(36)}`,
+      sku: `UFFA-${Math.floor(100 + Math.random() * 900)}`,
+      name: "",
+      category: "casual",
+      price: 0.2,
+      status: "active",
+      image: "",
+      description: {
+        pt: "",
+        en: "",
+        es: "",
+      },
+      sizes: [
+        { size: 36, stock: 1 },
+        { size: 37, stock: 1 },
+        { size: 38, stock: 2 },
+        { size: 39, stock: 2 },
+        { size: 40, stock: 2 },
+        { size: 41, stock: 1 },
+        { size: 42, stock: 1 },
+      ],
+    };
+    setEditingProduct(newModel);
+    setIsDialogOpen(true);
+  };
+
+  const handleEdit = (p: Product) => {
+    setEditingProduct(JSON.parse(JSON.stringify(p)));
+    setIsDialogOpen(true);
+  };
+
+  const handleToggleActive = (p: Product) => {
+    const nextStatus: ProductStatus = p.status === "inactive" ? "active" : "inactive";
+    saveProduct({
+      ...p,
+      status: nextStatus,
+    });
+  };
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-10">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="font-display text-3xl uppercase tracking-wide">
+            {tr(language, "Catálogo de Modelos", "Model Catalog", "Catálogo de Modelos")}
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            {filteredModels.length}{" "}
+            {tr(language, "modelos apresentados", "models shown", "modelos mostrados")} ·{" "}
+            {catalog.length} {tr(language, "no total", "total", "en total")}
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={resetCatalog}
+            className="rounded-none text-xs"
+          >
+            <RefreshCw className="size-3.5" />
+            {tr(language, "Repor Originais", "Reset to Defaults", "Restablecer Originales")}
+          </Button>
+          <Button
+            size="sm"
+            onClick={handleOpenNew}
+            className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-bold uppercase"
+          >
+            <Plus className="size-4" />
+            {tr(language, "Adicionar Modelo", "Add Model", "Añadir Modelo")}
+          </Button>
+        </div>
+      </div>
+
+      <div className="mt-6 flex flex-col gap-3 border border-border bg-section p-4 md:flex-row md:items-center">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={tr(
+              language,
+              "Pesquisar por modelo, nome ou SKU...",
+              "Search by model, name or SKU...",
+              "Buscar por modelo, nombre o SKU...",
+            )}
+            className="h-11 rounded-none bg-background pl-9"
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="h-11 w-44 rounded-none bg-background">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">
+                {tr(language, "Todas as Categorias", "All Categories", "Todas las Categorías")}
+              </SelectItem>
+              <SelectItem value="casual">Casual</SelectItem>
+              <SelectItem value="streetwear">Streetwear</SelectItem>
+              <SelectItem value="limited">Limited</SelectItem>
+              <SelectItem value="sales">Promoções</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="h-11 w-44 rounded-none bg-background">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">
+                {tr(language, "Todos os Estados", "All Statuses", "Todos los Estados")}
+              </SelectItem>
+              <SelectItem value="active">
+                {tr(language, "Ativo", "Active", "Activo")}
+              </SelectItem>
+              <SelectItem value="soldout">
+                {tr(language, "Esgotado", "Sold Out", "Agotado")}
+              </SelectItem>
+              <SelectItem value="comingsoon">
+                {tr(language, "Em breve", "Coming Soon", "Próximamente")}
+              </SelectItem>
+              <SelectItem value="inactive">
+                {tr(language, "Inativo (Oculto)", "Inactive (Hidden)", "Inactivo (Oculto)")}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="mt-6 grid gap-4">
+        {filteredModels.map((p) => {
+          const totalStock = getProductTotalStock(p);
+          const effectiveStatus = getProductEffectiveStatus(p);
+
+          return (
+            <div
+              key={p.id}
+              className={`border p-4 transition-all ${
+                p.status === "inactive"
+                  ? "border-dashed border-border/80 bg-muted/30 opacity-75"
+                  : "border-border bg-card"
+              }`}
+            >
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="relative size-16 shrink-0 overflow-hidden border border-border bg-muted">
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      className="h-full w-full object-cover"
+                    />
+                    {effectiveStatus === "soldout" && (
+                      <span className="absolute inset-0 bg-background/60 flex items-center justify-center font-display text-[8px] font-bold uppercase tracking-wider text-foreground">
+                        ESGOTADO
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-xs font-bold text-muted-foreground">
+                        {p.sku || p.id}
+                      </span>
+                      <span className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 text-[10px] font-bold uppercase">
+                        {p.category}
+                      </span>
+                      {p.originalPrice && (
+                        <span className="bg-destructive/10 text-destructive border border-destructive/20 px-2 py-0.5 text-[10px] font-bold uppercase">
+                          PROMO
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-display text-xl uppercase tracking-wide text-foreground">
+                      {p.name}
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      {money(p.price)}
+                      {p.originalPrice ? (
+                        <span className="ml-1.5 line-through">{money(p.originalPrice)}</span>
+                      ) : null}{" "}
+                      · {totalStock} {tr(language, "unidades em stock", "units in stock", "unidades en stock")}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-1.5 mr-2">
+                    {p.status === "inactive" ? (
+                      <span className="inline-flex items-center gap-1 border border-muted-foreground/30 bg-muted px-2 py-1 text-[11px] font-bold uppercase text-muted-foreground">
+                        <EyeOff className="size-3" />
+                        {tr(language, "Inativo (Oculto)", "Inactive", "Inactivo")}
+                      </span>
+                    ) : effectiveStatus === "comingsoon" ? (
+                      <span className="inline-flex items-center gap-1 border border-primary/30 bg-primary/10 px-2 py-1 text-[11px] font-bold uppercase text-primary">
+                        <Clock className="size-3" />
+                        {tr(language, "Em breve", "Coming Soon", "Próximamente")}
+                      </span>
+                    ) : effectiveStatus === "soldout" ? (
+                      <span className="inline-flex items-center gap-1 border border-foreground/30 bg-foreground/10 px-2 py-1 text-[11px] font-bold uppercase text-foreground">
+                        <AlertCircle className="size-3" />
+                        {tr(language, "Esgotado", "Sold Out", "Agotado")}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 border border-green-600/30 bg-green-500/10 px-2 py-1 text-[11px] font-bold uppercase text-green-600 dark:text-green-400">
+                        <CheckCircle2 className="size-3" />
+                        {tr(language, "Ativo", "Active", "Activo")}
+                      </span>
+                    )}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleToggleActive(p)}
+                    className="rounded-none text-xs"
+                  >
+                    {p.status === "inactive"
+                      ? tr(language, "Publicar", "Publish", "Publicar")
+                      : tr(language, "Ocultar", "Hide", "Ocultar")}
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEdit(p)}
+                    className="rounded-none text-xs"
+                  >
+                    <Edit className="size-3.5" />
+                    {tr(language, "Editar", "Edit", "Editar")}
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      if (
+                        confirm(
+                          language === "pt"
+                            ? `Desejas realmente remover o modelo "${p.name}"?`
+                            : `Are you sure you want to delete model "${p.name}"?`
+                        )
+                      ) {
+                        deleteProduct(p.id);
+                      }
+                    }}
+                    className="rounded-none text-xs text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Tabela de variantes e stock rápido */}
+              <div className="mt-4 border-t border-border pt-3">
+                <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2">
+                  {tr(language, "Stock por Tamanho (Ajuste Rápido)", "Stock by Size (Quick Adjust)", "Stock por Talla (Ajuste Rápido)")}:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {p.sizes.map((sz) => (
+                    <div
+                      key={sz.size}
+                      className={`flex items-center border px-2 py-1 text-xs ${
+                        sz.stock <= 0
+                          ? "border-destructive/30 bg-destructive/5 text-destructive"
+                          : "border-border bg-background"
+                      }`}
+                    >
+                      <span className="font-bold mr-2">T.{sz.size}:</span>
+                      <input
+                        type="number"
+                        min="0"
+                        value={sz.stock}
+                        onChange={(e) => {
+                          const val = Number.parseInt(e.target.value, 10);
+                          updateStock(p.id, sz.size, Number.isFinite(val) ? val : 0);
+                        }}
+                        className="w-12 bg-transparent text-center font-mono font-bold focus:outline-none"
+                      />
+                      <span className="text-[10px] text-muted-foreground ml-1">un.</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {editingProduct && (
+        <ProductEditorDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          product={editingProduct}
+          onSave={(saved) => {
+            saveProduct(saved);
+            setIsDialogOpen(false);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function ProductEditorDialog({
+  isOpen,
+  onClose,
+  product,
+  onSave,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  product: Product;
+  onSave: (p: Product) => void;
+}) {
+  const { language } = useShop();
+  const [formData, setFormData] = useState<Product>({ ...product });
+
+  const handleSizeStockChange = (size: number, stock: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      sizes: prev.sizes.map((s) => (s.size === size ? { ...s, stock: Math.max(0, stock) } : s)),
+    }));
+  };
+
+  const handleAddSize = () => {
+    const existingSizes = formData.sizes.map((s) => s.size);
+    const nextSize = Math.max(...existingSizes, 35) + 1;
+    setFormData((prev) => ({
+      ...prev,
+      sizes: [...prev.sizes, { size: nextSize, stock: 1 }].sort((a, b) => a.size - b.size),
+    }));
+  };
+
+  const handleRemoveSize = (size: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      sizes: prev.sizes.filter((s) => s.size !== size),
+    }));
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-none border-2 border-foreground bg-background p-6">
+        <DialogHeader>
+          <DialogTitle className="font-display text-3xl uppercase">
+            {formData.id.startsWith("uffa-model-")
+              ? tr(language, "Novo Modelo", "New Model", "Nuevo Modelo")
+              : tr(language, "Editar Modelo", "Edit Model", "Editar Modelo")}
+          </DialogTitle>
+          <DialogDescription>
+            {tr(
+              language,
+              "Configura os dados base, imagem, categorias e variantes de stock.",
+              "Configure base details, image, categories and variant inventory.",
+              "Configura datos base, imagen, categorías y variantes de stock.",
+            )}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="mt-4 space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <Label className="text-xs font-bold uppercase">{tr(language, "Nome do Modelo", "Model Name", "Nombre")}</Label>
+              <Input
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="Ex.: Porto Rose Low"
+                className="mt-1 rounded-none"
+              />
+            </div>
+            <div>
+              <Label className="text-xs font-bold uppercase">SKU / Referência</Label>
+              <Input
+                value={formData.sku ?? ""}
+                onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                placeholder="Ex.: UFFA-PRL-01"
+                className="mt-1 rounded-none font-mono"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <Label className="text-xs font-bold uppercase">{tr(language, "Categoria", "Category", "Categoría")}</Label>
+              <Select
+                value={formData.category}
+                onValueChange={(val) => setFormData({ ...formData, category: val as Category })}
+              >
+                <SelectTrigger className="mt-1 rounded-none">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="casual">Casual</SelectItem>
+                  <SelectItem value="streetwear">Streetwear</SelectItem>
+                  <SelectItem value="limited">Limited</SelectItem>
+                  <SelectItem value="sales">Promoções</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label className="text-xs font-bold uppercase">{tr(language, "Preço (€)", "Price (€)", "Precio (€)")}</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={formData.price}
+                onChange={(e) => setFormData({ ...formData, price: Number.parseFloat(e.target.value) || 0 })}
+                className="mt-1 rounded-none"
+              />
+            </div>
+
+            <div>
+              <Label className="text-xs font-bold uppercase">{tr(language, "Preço Original (€)", "Original Price (€)", "Precio Original (€)")}</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={formData.originalPrice ?? ""}
+                onChange={(e) => {
+                  const val = e.target.value ? Number.parseFloat(e.target.value) : undefined;
+                  setFormData((prev) => {
+                    const next = { ...prev };
+                    if (val !== undefined && !Number.isNaN(val)) {
+                      next.originalPrice = val;
+                    } else {
+                      delete next.originalPrice;
+                    }
+                    return next;
+                  });
+                }}
+                placeholder="Opcional (promoção)"
+                className="mt-1 rounded-none"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <Label className="text-xs font-bold uppercase">{tr(language, "Estado de Publicação", "Publication Status", "Estado")}</Label>
+              <Select
+                value={formData.status ?? "active"}
+                onValueChange={(val) => setFormData({ ...formData, status: val as ProductStatus })}
+              >
+                <SelectTrigger className="mt-1 rounded-none">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">{tr(language, "Ativo (Visível se houver stock)", "Active", "Activo")}</SelectItem>
+                  <SelectItem value="inactive">{tr(language, "Inativo (Oculto da loja)", "Inactive (Hidden)", "Inactivo (Oculto)")}</SelectItem>
+                  <SelectItem value="soldout">{tr(language, "Esgotado (Forçar selo ESGOTADO)", "Sold Out", "Agotado")}</SelectItem>
+                  <SelectItem value="comingsoon">{tr(language, "Em breve (Selo EM BREVE)", "Coming Soon", "Próximamente")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label className="text-xs font-bold uppercase">{tr(language, "URL da Imagem Principal", "Image URL", "URL de Imagen")}</Label>
+              <Input
+                value={formData.image}
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                placeholder="https://... ou caminho local"
+                className="mt-1 rounded-none text-xs"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-xs font-bold uppercase">{tr(language, "Descrição", "Description", "Descripción")}</Label>
+            <Textarea
+              value={formData.description.pt}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  description: {
+                    pt: e.target.value,
+                    en: e.target.value,
+                    es: e.target.value,
+                  },
+                })
+              }
+              rows={3}
+              placeholder="Descrição do produto, materiais e acabamentos..."
+              className="mt-1 rounded-none"
+            />
+          </div>
+
+          <div className="border-t border-border pt-4">
+            <div className="flex items-center justify-between mb-2">
+              <Label className="text-xs font-bold uppercase">{tr(language, "Variantes e Stock por Tamanho", "Variants and Stock", "Variantes y Stock")}</Label>
+              <Button type="button" size="sm" variant="outline" onClick={handleAddSize} className="rounded-none text-xs">
+                <Plus className="size-3 mr-1" />
+                {tr(language, "Novo Tamanho", "Add Size", "Nueva Talla")}
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {formData.sizes.map((s) => (
+                <div key={s.size} className="flex items-center justify-between border border-border bg-card p-2 text-xs">
+                  <div>
+                    <span className="font-bold">EU {s.size}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="number"
+                      min="0"
+                      value={s.stock}
+                      onChange={(e) => handleSizeStockChange(s.size, Number.parseInt(e.target.value, 10) || 0)}
+                      className="w-12 border border-border bg-background p-1 text-center font-bold"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSize(s.size)}
+                      className="text-muted-foreground hover:text-destructive p-1"
+                    >
+                      <Trash2 className="size-3" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <DialogFooter className="mt-6 border-t border-border pt-4 flex gap-2">
+          <Button variant="outline" onClick={onClose} className="rounded-none">
+            {tr(language, "Cancelar", "Cancel", "Cancelar")}
+          </Button>
+          <Button
+            onClick={() => {
+              if (!formData.name.trim()) {
+                toast.error(language === "pt" ? "O nome é obrigatório." : "Name is required.");
+                return;
+              }
+              onSave(formData);
+            }}
+            className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            {tr(language, "Guardar Modelo", "Save Model", "Guardar Modelo")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

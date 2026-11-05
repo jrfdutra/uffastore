@@ -12,6 +12,7 @@ import type { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { ShopProvider } from "@/lib/shop-context";
 import { SiteShell } from "@/components/site-shell";
+import { DemoNotice } from "@/components/demo-notice";
 
 import appCss from "../styles.css?url";
 
@@ -124,6 +125,7 @@ function RootComponent() {
         <SiteShell>
           <Outlet />
         </SiteShell>
+        <DemoNotice />
         <Toaster position="top-center" />
       </ShopProvider>
     </QueryClientProvider>

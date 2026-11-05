@@ -86,6 +86,26 @@ function Checkout() {
     setError("");
 
     try {
+      // Revalidação de stock antes de submeter
+      for (const item of s.cart) {
+        const product = s.catalog.find((p) => p.id === item.productId);
+        if (!product || product.status === "inactive" || product.status === "comingsoon") {
+          throw new Error(
+            s.language === "pt"
+              ? `O modelo ${product?.name ?? item.productId} já não se encontra disponível.`
+              : `The model ${product?.name ?? item.productId} is no longer available.`
+          );
+        }
+        const variant = product.sizes.find((sz) => sz.size === item.size);
+        if (!variant || variant.stock < item.quantity) {
+          throw new Error(
+            s.language === "pt"
+              ? `Stock insuficiente para ${product.name} (Tamanho ${item.size}). Disponível: ${variant?.stock ?? 0}.`
+              : `Insufficient stock for ${product.name} (Size ${item.size}). Available: ${variant?.stock ?? 0}.`
+          );
+        }
+      }
+
       const items = s.cart.map((item) => {
         const product = s.catalog.find((p) => p.id === item.productId);
         const variant = product?.sizes.find((sz) => sz.size === item.size);

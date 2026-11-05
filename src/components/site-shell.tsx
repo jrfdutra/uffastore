@@ -292,17 +292,28 @@ function MobileNav() {
           </SheetDescription>
         </SheetHeader>
         <nav className="mt-10 flex flex-col">
-          {cats.map((c) => (
-            <Link
-              key={c}
-              to="/catalogo"
-              search={{ category: c }}
-              onClick={close}
-              className="border-b border-border py-4 font-display text-3xl uppercase"
-            >
-              {categoryNames[c][language]}
-            </Link>
-          ))}
+          {cats.map((c) => {
+            const location = useRouterState({ select: (state) => state.location });
+            const isMobActive =
+              location.pathname === "/catalogo" &&
+              (location.search as { category?: string })?.category === c;
+            return (
+              <Link
+                key={c}
+                to="/catalogo"
+                search={{ category: c }}
+                onClick={close}
+                className={`border-b border-border py-4 font-display text-3xl uppercase flex items-center justify-between ${
+                  isMobActive ? "text-primary font-black" : "text-foreground"
+                }`}
+              >
+                <span>{categoryNames[c][language]}</span>
+                {isMobActive && (
+                  <span className="size-2 rounded-full bg-primary" aria-hidden="true" />
+                )}
+              </Link>
+            );
+          })}
           <Link to="/favoritos" onClick={close} className="mt-6 font-semibold text-primary flex items-center gap-2">
             <Heart className="size-4" />
             {tr(language, "Lista de Desejos", "Wishlist", "Lista de Deseos")}
@@ -332,7 +343,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
   const s = useShop(),
     t = copy[s.language];
   const { setCartOpen } = s;
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const location = useRouterState({ select: (state) => state.location });
+  const pathname = location.pathname;
+  const currentCategory = (location.search as { category?: string })?.category;
+
   useEffect(() => setCartOpen(false), [pathname, setCartOpen]);
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -353,22 +367,51 @@ export function SiteShell({ children }: { children: ReactNode }) {
               </span>
             </Link>
           </div>
-          <nav className="hidden h-full items-center gap-6 lg:flex">
-            {cats.map((c) => (
-              <Link
-                key={c}
-                to="/catalogo"
-                search={{ category: c }}
-                className="flex h-full items-center text-sm font-bold uppercase transition hover:opacity-60"
-              >
-                {categoryNames[c][s.language]}
-              </Link>
-            ))}
+          <nav className="hidden h-full items-center gap-7 lg:flex">
+            {cats.map((c) => {
+              const isActive = pathname === "/catalogo" && currentCategory === c;
+              return (
+                <Link
+                  key={c}
+                  to="/catalogo"
+                  search={{ category: c }}
+                  className={`group relative flex h-full items-center text-sm font-bold uppercase transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                    isActive ? "text-brand-foreground dark:text-brand" : "text-brand-foreground/85 hover:text-brand-foreground dark:text-brand/85 dark:hover:text-brand"
+                  }`}
+                >
+                  <span className="relative py-1">
+                    {categoryNames[c][s.language]}
+                    <span
+                      aria-hidden="true"
+                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] bg-[#E1A0B4] transition-all duration-300 ease-out ${
+                        isActive
+                          ? "w-full opacity-100 shadow-[0_0_8px_rgba(225,160,180,0.8)]"
+                          : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
+                      }`}
+                    />
+                  </span>
+                </Link>
+              );
+            })}
             <Link
               to="/ajuda"
-              className="flex h-full items-center text-sm font-bold uppercase transition hover:opacity-60"
+              className={`group relative flex h-full items-center text-sm font-bold uppercase transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                pathname === "/ajuda"
+                  ? "text-brand-foreground dark:text-brand"
+                  : "text-brand-foreground/85 hover:text-brand-foreground dark:text-brand/85 dark:hover:text-brand"
+              }`}
             >
-              {tr(s.language, "Ajuda", "Help", "Ayuda")}
+              <span className="relative py-1">
+                {tr(s.language, "Ajuda", "Help", "Ayuda")}
+                <span
+                  aria-hidden="true"
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] bg-[#E1A0B4] transition-all duration-300 ease-out ${
+                    pathname === "/ajuda"
+                      ? "w-full opacity-100 shadow-[0_0_8px_rgba(225,160,180,0.8)]"
+                      : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
+                  }`}
+                />
+              </span>
             </Link>
           </nav>
           <div className="flex items-center gap-1">
