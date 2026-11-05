@@ -111,7 +111,7 @@ function ProductDetail() {
                 {categoryNames[p.category][s.language]}
               </p>
               {(p.category === "sales" || Boolean(p.originalPrice)) && !isSoldOut && (
-                <span className="bg-promo text-promo-foreground border-2 border-promo rounded-[3px] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                <span className="bg-promo text-promo-foreground border-2 border-promo rounded-[4px] px-3.5 py-1 text-xs font-black uppercase tracking-widest shadow-md">
                   {tr(s.language, "PROMO", "PROMO", "PROMO")}
                 </span>
               )}
@@ -142,7 +142,7 @@ function ProductDetail() {
             {p.name}
           </h1>
           <div className="flex items-baseline gap-3 mt-5">
-            <span className="text-3xl font-bold font-display text-primary dark:text-[#E1A0B4] underline decoration-[#4A2B33] dark:decoration-[#E1A0B4] underline-offset-4">
+            <span className={`font-bold font-display text-foreground ${Boolean(p.originalPrice) || p.category === "sales" ? "text-4xl md:text-5xl" : "text-3xl"}`}>
               {money(p.price)}
             </span>
             {p.originalPrice && (

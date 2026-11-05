@@ -185,3 +185,10 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+.price-outline {
+  -webkit-text-stroke: 0.6px rgba(74, 43, 51, 0.5);
+}
+.dark .price-outline {
+  -webkit-text-stroke: 0.6px rgba(225, 160, 180, 0.5);
+}

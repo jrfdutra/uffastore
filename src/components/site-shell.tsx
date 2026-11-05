@@ -221,10 +221,10 @@ function CartDrawer() {
                 {s.discountAmount > 0 ? (
                   <div>
                     <span className="text-xs text-muted-foreground line-through block">{money(s.subtotal)}</span>
-                    <span className="text-primary underline decoration-[#4A2B33] dark:decoration-[#E1A0B4] underline-offset-2">{money(s.finalTotal)}</span>
+                    <span className="text-primary price-outline">{money(s.finalTotal)}</span>
                   </div>
                 ) : (
-                  <span className="underline decoration-[#4A2B33] dark:decoration-[#E1A0B4] underline-offset-2">{money(s.subtotal)}</span>
+                  <span className="price-outline">{money(s.subtotal)}</span>
                 )}
               </div>
             </div>
