@@ -57,8 +57,8 @@ export function ProductCard({ product }: { product: Product }) {
             <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5 items-start z-10">
               <VerifiedBadge />
               {isSale && !isSoldOut && (
-                <span className="bg-red-600 text-white border border-red-500/50 px-2 py-0.5 font-display text-[10px] sm:text-[11px] uppercase tracking-wider font-bold shadow-md">
-                  {tr(language, "OFF", "OFF", "OFF")}
+                <span className="bg-promo text-promo-foreground border border-promo/40 rounded-[3px] px-2.5 py-0.5 font-display text-[10px] sm:text-[11px] uppercase tracking-wider font-semibold shadow-xs">
+                  {tr(language, "PROMO", "PROMO", "PROMO")}
                 </span>
               )}
               {isSoldOut && (

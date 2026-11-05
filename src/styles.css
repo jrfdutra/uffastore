@@ -41,6 +41,8 @@
   --color-footer-foreground: var(--footer-foreground);
   --color-footer-muted: var(--footer-muted);
   --color-footer-border: var(--footer-border);
+  --color-promo: var(--promo);
+  --color-promo-foreground: var(--promo-foreground);
 }
 
 :root {
@@ -50,6 +52,8 @@
   --brand-foreground: oklch(0.16 0.012 350);
   --brand-strong: oklch(0.331 0.048 1.6);
   --brand-soft: oklch(0.94 0.028 2);
+  --promo: oklch(0.42 0.15 18);
+  --promo-foreground: oklch(0.98 0 0);
   --background: oklch(0.975 0.008 40);
   --foreground: oklch(0.16 0.008 350);
   --card: oklch(1 0 0);
@@ -90,6 +94,8 @@
   --brand-foreground: oklch(0.15 0.012 350);
   --brand-strong: oklch(0.331 0.048 1.6);
   --brand-soft: oklch(0.26 0.035 2);
+  --promo: oklch(0.52 0.16 18);
+  --promo-foreground: oklch(0.98 0 0);
   --background: oklch(0.14 0.012 352);
   --foreground: oklch(0.96 0.008 40);
   --card: oklch(0.18 0.014 352);

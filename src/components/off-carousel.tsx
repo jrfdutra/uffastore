@@ -55,7 +55,7 @@ export function OffCarousel() {
           <div>
             <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-[0.16em]">
               <Tag className="size-4" />
-              <span>OFF · {tr(language, "Promoções exclusivas", "Exclusive offers", "Ofertas exclusivas")}</span>
+              <span>PROMO · {tr(language, "Promoções exclusivas", "Exclusive offers", "Ofertas exclusivas")}</span>
             </div>
             <h2 className="mt-2 font-display text-5xl uppercase md:text-7xl">
               {tr(language, "Ofertas Especiais", "Special Offers", "Ofertas Especiales")}
@@ -77,7 +77,7 @@ export function OffCarousel() {
         <div>
           <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-[0.16em]">
             <Tag className="size-4" />
-            <span>OFF · {tr(language, "Promoções exclusivas", "Exclusive offers", "Ofertas exclusivas")}</span>
+            <span>PROMO · {tr(language, "Promoções exclusivas", "Exclusive offers", "Ofertas exclusivas")}</span>
           </div>
           <h2 className="mt-2 font-display text-5xl uppercase md:text-7xl">
             {tr(language, "Ofertas Especiais", "Special Offers", "Ofertas Especiales")}
