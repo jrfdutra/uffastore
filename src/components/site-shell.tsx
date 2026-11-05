@@ -367,7 +367,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               </span>
             </Link>
           </div>
-          <nav className="hidden h-full items-center gap-7 lg:flex">
+          <nav className="hidden h-full items-center gap-8 lg:flex">
             {cats.map((c) => {
               const isActive = pathname === "/catalogo" && currentCategory === c;
               return (
@@ -375,7 +375,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                   key={c}
                   to="/catalogo"
                   search={{ category: c }}
-                  className={`group relative flex h-full items-center text-sm font-bold uppercase transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                  className={`group relative flex h-full items-center text-base font-extrabold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                     isActive ? "text-brand-foreground dark:text-brand" : "text-brand-foreground/85 hover:text-brand-foreground dark:text-brand/85 dark:hover:text-brand"
                   }`}
                 >
@@ -383,9 +383,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
                     {categoryNames[c][s.language]}
                     <span
                       aria-hidden="true"
-                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] bg-[#E1A0B4] transition-all duration-300 ease-out ${
+                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[3.5px] bg-[#E1A0B4] transition-all duration-300 ease-out ${
                         isActive
-                          ? "w-full opacity-100 shadow-[0_0_8px_rgba(225,160,180,0.8)]"
+                          ? "w-full opacity-100 shadow-[0_0_12px_rgba(225,160,180,0.95)]"
                           : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
                       }`}
                     />
@@ -395,7 +395,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             })}
             <Link
               to="/ajuda"
-              className={`group relative flex h-full items-center text-sm font-bold uppercase transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+              className={`group relative flex h-full items-center text-base font-extrabold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                 pathname === "/ajuda"
                   ? "text-brand-foreground dark:text-brand"
                   : "text-brand-foreground/85 hover:text-brand-foreground dark:text-brand/85 dark:hover:text-brand"
@@ -405,9 +405,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 {tr(s.language, "Ajuda", "Help", "Ayuda")}
                 <span
                   aria-hidden="true"
-                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] bg-[#E1A0B4] transition-all duration-300 ease-out ${
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[3.5px] bg-[#E1A0B4] transition-all duration-300 ease-out ${
                     pathname === "/ajuda"
-                      ? "w-full opacity-100 shadow-[0_0_8px_rgba(225,160,180,0.8)]"
+                      ? "w-full opacity-100 shadow-[0_0_12px_rgba(225,160,180,0.95)]"
                       : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
                   }`}
                 />
