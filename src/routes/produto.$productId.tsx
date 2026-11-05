@@ -142,7 +142,7 @@ function ProductDetail() {
             {p.name}
           </h1>
           <div className="flex items-baseline gap-3 mt-5">
-            <span className="text-3xl font-bold font-display text-primary dark:text-[#E1A0B4]">
+            <span className="text-3xl font-bold font-display text-primary dark:text-[#E1A0B4] underline decoration-[#4A2B33] dark:decoration-[#E1A0B4] underline-offset-4">
               {money(p.price)}
             </span>
             {p.originalPrice && (
