@@ -57,7 +57,7 @@ export function ProductCard({ product }: { product: Product }) {
             <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5 items-start z-10">
               <VerifiedBadge />
               {isSale && !isSoldOut && (
-                <span className="bg-promo text-promo-foreground border border-promo/60 rounded-[3px] px-2.5 py-0.5 font-display text-[10px] sm:text-[11px] uppercase tracking-wider font-bold shadow-md">
+                <span className="bg-promo text-promo-foreground border-2 border-promo rounded-[3px] px-2.5 py-0.5 font-display text-[10px] sm:text-[11px] uppercase tracking-wider font-bold">
                   {tr(language, "PROMO", "PROMO", "PROMO")}
                 </span>
               )}
@@ -124,12 +124,12 @@ export function ProductCard({ product }: { product: Product }) {
                 <span className="text-[11px] text-muted-foreground line-through">
                   {money(product.originalPrice)}
                 </span>
-                <span className="font-display text-base font-bold text-primary dark:text-[#E1A0B4] drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
+                <span className="font-display text-base font-bold text-primary dark:text-[#E1A0B4]">
                   {money(product.price)}
                 </span>
               </div>
             ) : (
-              <span className="font-bold text-foreground drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)]">{money(product.price)}</span>
+              <span className="font-bold text-foreground">{money(product.price)}</span>
             )}
           </div>
         </div>

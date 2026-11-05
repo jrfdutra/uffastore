@@ -383,9 +383,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
                     {categoryNames[c][s.language]}
                     <span
                       aria-hidden="true"
-                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[3.5px] bg-[#E1A0B4] transition-all duration-300 ease-out ${
+                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[3.5px] bg-[#4A2B33] dark:bg-[#E1A0B4] transition-all duration-300 ease-out ${
                         isActive
-                          ? "w-full opacity-100 shadow-[0_0_12px_rgba(225,160,180,0.95)]"
+                          ? "w-full opacity-100"
                           : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
                       }`}
                     />
@@ -405,9 +405,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 {tr(s.language, "Ajuda", "Help", "Ayuda")}
                 <span
                   aria-hidden="true"
-                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[3.5px] bg-[#E1A0B4] transition-all duration-300 ease-out ${
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[3.5px] bg-[#4A2B33] dark:bg-[#E1A0B4] transition-all duration-300 ease-out ${
                     pathname === "/ajuda"
-                      ? "w-full opacity-100 shadow-[0_0_12px_rgba(225,160,180,0.95)]"
+                      ? "w-full opacity-100"
                       : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
                   }`}
                 />
