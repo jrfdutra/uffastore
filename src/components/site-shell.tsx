@@ -354,20 +354,20 @@ export function SiteShell({ children }: { children: ReactNode }) {
         {t.pickup}
       </div>
       <header className="sticky top-0 z-40 border-b border-brand-strong/20 bg-brand text-brand-foreground dark:border-brand/30 dark:bg-black dark:text-brand">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
+        <div className="mx-auto flex h-20 md:h-24 max-w-7xl items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-3">
             <MobileNav />
             <Link to="/" className="flex items-center gap-2.5 leading-none">
-              <span className="font-display text-3xl uppercase tracking-wide">UFFA</span>
+              <span className="font-display text-4xl md:text-5xl uppercase tracking-wide">UFFA</span>
               <span className="flex flex-col gap-1">
-                <span className="font-display text-[11px] uppercase leading-none tracking-[0.28em]">
+                <span className="font-display text-xs md:text-sm uppercase leading-none tracking-[0.28em]">
                   STORE
                 </span>
-                <span aria-hidden className="h-[5px] w-full bg-current" />
+                <span aria-hidden className="h-[6px] w-full bg-current" />
               </span>
             </Link>
           </div>
-          <nav className="hidden h-full items-center gap-8 lg:flex">
+          <nav className="hidden h-full items-center gap-10 lg:flex">
             {cats.map((c) => {
               const isActive = pathname === "/catalogo" && currentCategory === c;
               return (
@@ -375,7 +375,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                   key={c}
                   to="/catalogo"
                   search={{ category: c }}
-                  className={`group relative flex h-full items-center text-base font-extrabold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                  className={`group relative flex h-full items-center text-lg md:text-xl font-extrabold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                     isActive ? "text-brand-foreground dark:text-brand" : "text-brand-foreground/85 hover:text-brand-foreground dark:text-brand/85 dark:hover:text-brand"
                   }`}
                 >
@@ -383,7 +383,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                     {categoryNames[c][s.language]}
                     <span
                       aria-hidden="true"
-                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[3.5px] bg-[#4A2B33] dark:bg-[#E1A0B4] transition-all duration-300 ease-out ${
+                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[4px] bg-[#4A2B33] dark:bg-[#E1A0B4] transition-all duration-300 ease-out ${
                         isActive
                           ? "w-full opacity-100"
                           : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
@@ -395,7 +395,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             })}
             <Link
               to="/ajuda"
-              className={`group relative flex h-full items-center text-base font-extrabold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+              className={`group relative flex h-full items-center text-lg md:text-xl font-extrabold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                 pathname === "/ajuda"
                   ? "text-brand-foreground dark:text-brand"
                   : "text-brand-foreground/85 hover:text-brand-foreground dark:text-brand/85 dark:hover:text-brand"
@@ -405,7 +405,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 {tr(s.language, "Ajuda", "Help", "Ayuda")}
                 <span
                   aria-hidden="true"
-                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[3.5px] bg-[#4A2B33] dark:bg-[#E1A0B4] transition-all duration-300 ease-out ${
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[4px] bg-[#4A2B33] dark:bg-[#E1A0B4] transition-all duration-300 ease-out ${
                     pathname === "/ajuda"
                       ? "w-full opacity-100"
                       : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
