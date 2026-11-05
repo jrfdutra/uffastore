@@ -33,6 +33,18 @@ export type OrderEvent = {
   location: string | null;
 };
 
+export type EmailNotification = {
+  id: string;
+  at: string;
+  status: OrderStatus;
+  recipient: string;
+  sender: string;
+  subject: string;
+  body: string;
+  success: boolean;
+  error?: string;
+};
+
 export type Order = {
   id: string;
   number: string;
@@ -55,6 +67,7 @@ export type Order = {
   pickupLocation: string | null;
   notes: string | null;
   events: OrderEvent[];
+  notifications: EmailNotification[];
   isDemo: boolean;
 };
 
@@ -155,6 +168,8 @@ export const orderStatusInfo: Record<OrderStatus, StatusInfo> = {
 
 export const PICKUP_LOCATION = "UFFA Store · Rua de Santa Catarina 112, 4000-447 Porto";
 export const DEFAULT_CARRIER = "CTT Expresso";
+export const OFFICIAL_SENDER = "atendimento@uffastore.pt";
+export const OFFICIAL_SENDER_NAME = "UFFA | Atendimento";
 
 export const demoAccess = {
   orderNumber: "UFFA-48217",
@@ -228,13 +243,59 @@ function inDays(days: number) {
   return new Date(Date.now() + days * DAY).toISOString();
 }
 
+function sendEmailNotification(order: Order, status: OrderStatus): EmailNotification {
+  const statusLabel = orderStatusInfo[status].label.pt;
+  const statusDesc = orderStatusInfo[status].description.pt;
+  const subject = `A tua encomenda UFFA ${order.number} tem novidades!`;
+  const body = `Olá, ${order.customerName || "Cliente"}! 💗\n\nTemos novidades sobre a tua encomenda!\n\nA tua encomenda #${order.number} foi atualizada e encontra-se agora no seguinte estado:\n\n[${statusLabel}] - ${statusDesc}\n\nContinuamos a acompanhar tudo para que recebas as tuas peças UFFA com toda a tranquilidade.\n\nObrigada por escolheres a UFFA. É um prazer fazer parte do teu estilo!\n\nCom carinho,\nEquipa UFFA\natendimento@uffastore.pt`;
+
+  return {
+    id: makeId(),
+    at: new Date().toISOString(),
+    status,
+    recipient: order.contact,
+    sender: OFFICIAL_SENDER,
+    subject,
+    body,
+    success: true,
+  };
+}
+
+export function resendEmailNotification(orderNumber: string, notificationId: string): Order | null {
+  const orders = loadOrders();
+  const index = orders.findIndex((o) => o.number === normalizeOrderNumber(orderNumber));
+  const current = orders[index];
+  if (!current) return null;
+
+  const target = current.notifications?.find((n) => n.id === notificationId);
+  if (!target) return null;
+
+  const newNotification: EmailNotification = {
+    ...target,
+    id: makeId(),
+    at: new Date().toISOString(),
+    success: true,
+  };
+
+  const updated: Order = {
+    ...current,
+    notifications: [newNotification, ...(current.notifications || [])],
+    updatedAt: new Date().toISOString(),
+  };
+
+  const next = orders.slice();
+  next[index] = updated;
+  saveOrders(next);
+  return updated;
+}
+
 function seedOrders(): Order[] {
   const rose = productById("porto-rose-low");
   const court = productById("cedofeita-court");
   const invicta = productById("invicta-01");
   const afterdark = productById("afterdark-02");
 
-  return [
+  const orders: Order[] = [
     {
       id: "demo-order-in-transit",
       number: demoAccess.orderNumber,
@@ -276,35 +337,12 @@ function seedOrders(): Order[] {
       pickupLocation: null,
       notes: "A encomenda segue para distribuição no Porto. Entrega prevista até às 18h.",
       events: [
-        {
-          id: "demo-event-1",
-          status: "confirmed",
-          at: at(5, 10, 12),
-          message: null,
-          location: "UFFA Store · Porto",
-        },
-        {
-          id: "demo-event-2",
-          status: "preparing",
-          at: at(4, 15, 40),
-          message: null,
-          location: "UFFA Store · Porto",
-        },
-        {
-          id: "demo-event-3",
-          status: "shipped",
-          at: at(2, 9, 25),
-          message: null,
-          location: "CTT Expresso · Porto",
-        },
-        {
-          id: "demo-event-4",
-          status: "in_transit",
-          at: at(1, 18, 10),
-          message: null,
-          location: "Centro de distribuição · Lisboa",
-        },
+        { id: "e1", status: "confirmed", at: at(5, 10, 12), message: null, location: "UFFA Store · Porto" },
+        { id: "e2", status: "preparing", at: at(4, 15, 40), message: null, location: "UFFA Store · Porto" },
+        { id: "e3", status: "shipped", at: at(2, 9, 25), message: null, location: "CTT Expresso · Porto" },
+        { id: "e4", status: "in_transit", at: at(1, 18, 10), message: null, location: "Centro de distribuição · Lisboa" },
       ],
+      notifications: [],
       isDemo: true,
     },
     {
@@ -339,101 +377,19 @@ function seedOrders(): Order[] {
       pickupLocation: PICKUP_LOCATION,
       notes: "O teu par está reservado na loja. Traz o número da encomenda e o código exclusivo.",
       events: [
-        {
-          id: "demo-event-5",
-          status: "confirmed",
-          at: at(2, 9, 30),
-          message: null,
-          location: "UFFA Store · Porto",
-        },
-        {
-          id: "demo-event-6",
-          status: "preparing",
-          at: at(1, 11, 0),
-          message: null,
-          location: "UFFA Store · Porto",
-        },
-        {
-          id: "demo-event-7",
-          status: "ready_pickup",
-          at: hoursAgo(5),
-          message: null,
-          location: PICKUP_LOCATION,
-        },
+        { id: "e5", status: "confirmed", at: at(2, 9, 30), message: null, location: "UFFA Store · Porto" },
+        { id: "e6", status: "preparing", at: at(1, 11, 0), message: null, location: "UFFA Store · Porto" },
+        { id: "e7", status: "ready_pickup", at: hoursAgo(5), message: null, location: PICKUP_LOCATION },
       ],
-      isDemo: true,
-    },
-    {
-      id: "demo-order-delivered",
-      number: "UFFA-19556",
-      accessCode: "UFFA-6D1F-3H8K",
-      contact: "ana@uffa.pt",
-      customerName: "Ana Costa",
-      createdAt: at(12, 11, 0),
-      updatedAt: at(7, 14, 30),
-      delivery: "shipping",
-      address: "Rua do Almada 45, 4050-031 Porto",
-      payment: "mbway",
-      items: [
-        {
-          productId: afterdark.id,
-          name: afterdark.name,
-          size: 41,
-          quantity: 1,
-          unitPrice: afterdark.price,
-          authCode: "UFFA-AUTH-1Z6Y-5A3E",
-          serial: "UFFA-2026-103904",
-        },
-      ],
-      subtotal: afterdark.price,
-      shipping: 5.99,
-      total: afterdark.price + 5.99,
-      status: "delivered",
-      trackingCode: "PT-19556-3H8K",
-      carrier: DEFAULT_CARRIER,
-      estimatedDelivery: at(8, 18, 0),
-      pickupLocation: null,
-      notes: null,
-      events: [
-        {
-          id: "demo-event-8",
-          status: "confirmed",
-          at: at(12, 11, 0),
-          message: null,
-          location: "UFFA Store · Porto",
-        },
-        {
-          id: "demo-event-9",
-          status: "preparing",
-          at: at(11, 16, 20),
-          message: null,
-          location: "UFFA Store · Porto",
-        },
-        {
-          id: "demo-event-10",
-          status: "shipped",
-          at: at(10, 10, 5),
-          message: null,
-          location: "CTT Expresso · Porto",
-        },
-        {
-          id: "demo-event-11",
-          status: "in_transit",
-          at: at(9, 8, 45),
-          message: null,
-          location: "Centro de distribuição · Porto",
-        },
-        {
-          id: "demo-event-12",
-          status: "delivered",
-          at: at(7, 14, 30),
-          message: null,
-          location: "Destino · Porto",
-        },
-      ],
+      notifications: [],
       isDemo: true,
     },
   ];
+
+  return orders.map((o) => ({
+    ...o,
+    notifications: [sendEmailNotification(o, o.status)],
+  }));
 }
 
 export function loadOrders(): Order[] {
@@ -533,8 +489,12 @@ export function createOrder(input: {
         location: "UFFA Store · Porto",
       },
     ],
+    notifications: [],
     isDemo: false,
   };
+
+  const initialNotification = sendEmailNotification(order, "confirmed");
+  order.notifications = [initialNotification];
 
   saveOrders([order, ...existing]);
   return order;
@@ -552,12 +512,14 @@ export function updateOrder(
 
   const nowIso = new Date().toISOString();
   const statusChanged = patch.status !== undefined && patch.status !== current.status;
+  const newStatus = patch.status ?? current.status;
+
   const events: OrderEvent[] = statusChanged
     ? [
         ...current.events,
         {
           id: makeId(),
-          status: patch.status ?? current.status,
+          status: newStatus,
           at: nowIso,
           message: event?.message ?? null,
           location: event?.location ?? null,
@@ -565,9 +527,14 @@ export function updateOrder(
       ]
     : current.events;
 
+  const notification = statusChanged ? sendEmailNotification(current, newStatus) : null;
+  const notifications = notification
+    ? [notification, ...(current.notifications || [])]
+    : current.notifications || [];
+
   const updated: Order = {
     ...current,
-    status: patch.status ?? current.status,
+    status: newStatus,
     trackingCode: patch.trackingCode !== undefined ? patch.trackingCode : current.trackingCode,
     carrier: patch.carrier !== undefined ? patch.carrier : current.carrier,
     estimatedDelivery:
@@ -576,6 +543,7 @@ export function updateOrder(
     pickupLocation:
       patch.pickupLocation !== undefined ? patch.pickupLocation : current.pickupLocation,
     events,
+    notifications,
     updatedAt: nowIso,
   };
 
@@ -795,12 +763,14 @@ export function fromDateInputValue(value: string) {
 }
 
 function generateOrderNumber(existing: Order[]) {
-  for (let attempt = 0; attempt < 50; attempt += 1) {
-    const digits = String(Math.floor(10000 + Math.random() * 90000));
-    const candidate = `UFFA-${digits}`;
-    if (!existing.some((order) => order.number === candidate)) return candidate;
+  for (let i = 0; i < 50; i++) {
+    const num = Math.floor(10000 + Math.random() * 90000);
+    const formatted = `UFFA-${num}`;
+    if (!existing.some((o) => o.number === formatted)) {
+      return formatted;
+    }
   }
-  return `UFFA-${String(Date.now()).slice(-5)}`;
+  return `UFFA-${Date.now().toString().slice(-5)}`;
 }
 
 function generateAccessCode() {
@@ -811,10 +781,11 @@ function generateAuthCode() {
   return `UFFA-AUTH-${randomToken(4)}-${randomToken(4)}`;
 }
 
-function generateSerial() {
-  return `UFFA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+function generateTrackingCode(number: string) {
+  const clean = number.replace("UFFA-", "");
+  return `PT-${clean}-${randomToken(4)}`;
 }
 
-function generateTrackingCode(number: string) {
-  return `PT-${number.replace("UFFA-", "")}-${randomToken(4)}`;
+function generateSerial() {
+  return `UFFA-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 }
