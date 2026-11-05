@@ -111,8 +111,8 @@ function ProductDetail() {
                 {categoryNames[p.category][s.language]}
               </p>
               {(p.category === "sales" || Boolean(p.originalPrice)) && !isSoldOut && (
-                <span className="bg-[#4A2B33] text-[#E1A0B4] border border-[#E1A0B4]/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-                  {tr(s.language, "OFERTA", "SALE", "OFERTA")}
+                <span className="bg-red-600 text-white border border-red-500/50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                  {tr(s.language, "OFF", "OFF", "OFF")}
                 </span>
               )}
               {isSoldOut && (
