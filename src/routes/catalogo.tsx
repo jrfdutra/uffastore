@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { z } from "zod";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
@@ -34,8 +34,15 @@ export const Route = createFileRoute("/catalogo")({
 function Catalog() {
   const { language, catalog } = useShop(),
     t = copy[language],
+    navigate = Route.useNavigate(),
     search = Route.useSearch();
-  const [category, setCategory] = useState<Category | "all">(search.category ?? "all");
+  const category: Category | "all" = search.category ?? "all";
+  const setCategory = (c: Category | "all") => {
+    navigate({
+      search: (old) => ({ ...old, category: c === "all" ? undefined : c }),
+      replace: true,
+    });
+  };
   const [query, setQuery] = useState("");
   const [size, setSize] = useState<number | "all">("all");
   const [max, setMax] = useState(250);
