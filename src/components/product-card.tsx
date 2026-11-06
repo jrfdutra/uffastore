@@ -124,12 +124,12 @@ export function ProductCard({ product }: { product: Product }) {
                 <span className="text-[11px] text-muted-foreground line-through">
                   {money(product.originalPrice)}
                 </span>
-                <span className="text-lg font-normal text-foreground">
+                <span className="text-lg font-bold text-foreground">
                   {money(product.price)}
                 </span>
               </div>
             ) : isSale ? (
-              <span className="text-lg font-normal text-foreground">{money(product.price)}</span>
+              <span className="text-lg font-bold text-foreground">{money(product.price)}</span>
             ) : (
               <span className="font-bold text-foreground">{money(product.price)}</span>
             )}
