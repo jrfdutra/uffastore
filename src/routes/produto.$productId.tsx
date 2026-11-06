@@ -142,7 +142,7 @@ function ProductDetail() {
             {p.name}
           </h1>
           <div className="flex items-baseline gap-3 mt-5">
-            <span className={`font-bold font-display text-foreground ${Boolean(p.originalPrice) || p.category === "sales" ? "text-4xl md:text-5xl" : "text-3xl"}`}>
+            <span className={`font-display text-foreground ${Boolean(p.originalPrice) || p.category === "sales" ? "text-4xl md:text-5xl font-normal" : "text-3xl font-bold"}`}>
               {money(p.price)}
             </span>
             {p.originalPrice && (
