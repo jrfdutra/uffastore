@@ -328,8 +328,8 @@ function seedOrders(): Order[] {
         },
       ],
       subtotal: rose.price + court.price,
-      shipping: 5.99,
-      total: rose.price + court.price + 5.99,
+      shipping: 8.94,
+      total: rose.price + court.price + 8.94,
       status: "in_transit",
       trackingCode: "PT-48217-9QX2",
       carrier: DEFAULT_CARRIER,
@@ -456,7 +456,7 @@ export function createOrder(input: {
   if (items.length === 0) throw new Error("O carrinho está vazio.");
 
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  const shipping = input.delivery === "shipping" ? 5.99 : 0;
+  const shipping = input.delivery === "shipping" ? 8.94 : 0;
   const address = input.address.trim();
 
   const order: Order = {

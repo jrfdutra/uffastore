@@ -76,9 +76,10 @@ function HelpPage() {
             )}
           </p>
           <ul className="space-y-2 text-xs text-muted-foreground list-disc pl-4">
-            <li>Recolha em mãos: Grátis (Porto)</li>
-            <li>Envio expresso CTT: 5,99 €</li>
-            <li>Acompanhamento online via Portal de Encomendas</li>
+            <li>{tr(language, "Recolha em mãos: Grátis (Porto)", "Hand pickup: Free (Porto)", "Recogida en mano: Gratis (Oporto)")}</li>
+            <li>{tr(language, "Portugal Continental e Ilhas: 8,94 €", "Portugal Mainland & Islands: €8.94", "Portugal Continental e Islas: 8,94 €")}</li>
+            <li>{tr(language, "União Europeia: 24,00 € · Suíça: 34,00 €", "European Union: €24.00 · Switzerland: €34.00", "Unión Europea: 24,00 € · Suiza: 34,00 €")}</li>
+            <li>{tr(language, "Acompanhamento online via Portal de Encomendas", "Online tracking via Order Portal", "Seguimiento online vía Portal de Pedidos")}</li>
           </ul>
         </div>
 

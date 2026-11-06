@@ -2,7 +2,7 @@
 
 Loja online de sneakers (Porto) — React + TanStack Start + Tailwind, com deploy na Vercel.
 
-Inclui uma área de cliente para acompanhar encomendas de envio ou recolha, validar a autenticidade de cada par e um painel interno de demonstração para gestão de estados.
+Inclui uma área de cliente para acompanhar encomendas de envio ou recolha, validar a autenticidade de cada par e um painel interno de demonstração para gestão de estados. O manual funcional completo está em [`docs/manual-site.md`](docs/manual-site.md).
 
 ## Desenvolvimento
 
@@ -43,7 +43,11 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 
 ## Funcionalidades
 - Catálogo, produto, carrinho e checkout com envio ou recolha no Porto.
-- Checkout cria número de encomenda, código exclusivo, rastreio e um código de autenticidade por par.
+- Categorias do cabeçalho sincronizadas com o filtro do catálogo, inclusive quando o cliente já está em `/catalogo`.
+- Stock de demonstração com **5 pares por tamanho** em todos os produtos.
+- Preços de oferta com o mesmo peso tipográfico do preço normal e um nível de tamanho acima; placas **PROMO** com contorno nítido em claro e escuro.
+- Checkout redireciona para a Shopify para dados e pagamento; a demo local inclui encomendas de exemplo com código exclusivo, rastreio e autenticidade.
+- Portes: recolha grátis no Porto, **8,94 €** em Portugal Continental e Ilhas, **24,00 €** na União Europeia e **34,00 €** na Suíça.
 - Portal `/rastreio` com acesso por três fatores, dashboard, linha temporal e confirmação de receção/recolha.
 - Verificação pública de autenticidade em `/verificar`, sem expor dados do comprador.
 - Painel `/operacoes` para atualizar estado, previsão, rastreio, transportador e nota pública.
@@ -55,13 +59,15 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 | Rota                            | Descrição                                           |
 | ------------------------------- | --------------------------------------------------- |
 | `/`                             | Home com bloco promocional do portal.               |
-| `/catalogo`                     | Catálogo com filtros.                               |
+| `/catalogo`                     | Catálogo com filtros e categorias sincronizadas.    |
 | `/produto/:id`                  | Detalhe do produto.                                 |
-| `/checkout`                     | Checkout e criação da encomenda.                    |
-| `/confirmacao?order=UFFA-XXXXX` | Confirmação com código exclusivo e próximos passos. |
+| `/checkout`                     | Checkout, entrega e pagamento no checkout Shopify.  |
+| `/confirmacao?order=UFFA-XXXXX` | Confirmação demo com código exclusivo e próximos passos. |
 | `/rastreio`                     | Portal do cliente.                                  |
 | `/verificar`                    | Verificação de autenticidade.                       |
 | `/operacoes`                    | Painel interno de demonstração.                     |
+| `/favoritos`                    | Lista de desejos persistente.                       |
+| `/ajuda`                        | Perguntas frequentes, contactos e formulário de apoio. |
 
 ## Dados de demonstração
 
@@ -69,16 +75,16 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 | ------------ | -------------- | ---------------- | ------------------- |
 | `UFFA-48217` | `demo@uffa.pt` | `UFFA-7K3M-9QX2` | Em trânsito         |
 | `UFFA-73104` | `demo@uffa.pt` | `UFFA-2P8N-5RV6` | Pronta para recolha |
-| `UFFA-19556` | `ana@uffa.pt`  | `UFFA-6D1F-3H8K` | Entregue            |
 
 Códigos de autenticidade:
 
 - `UFFA-AUTH-4K7P-2M9Q` — Porto Rose Low, 39
 - `UFFA-AUTH-8R3T-6N1W` — Cedofeita Court, 40
 - `UFFA-AUTH-9C2L-7B4X` — Invicta 01, 42
-- `UFFA-AUTH-1Z6Y-5A3E` — Afterdark 02, 41
 
 Painel de operações: chave `UFFA-OPS-2026`.
+
+O checkout usa a Shopify para dados e pagamento. As encomendas demo acima são as que alimentam a confirmação, o portal e o painel no browser; encomendas concluídas na Shopify não são sincronizadas automaticamente para este armazenamento local.
 
 O aviso de versão demo fecha uma vez por sessão e guarda a dispensa em `sessionStorage` com a chave `uffa-demo-notice-v1`.
 
@@ -86,6 +92,7 @@ O aviso de versão demo fecha uma vez por sessão e guarda a dispensa em `sessio
 
 ## Documentação
 
+- [`docs/manual-site.md`](docs/manual-site.md) — manual funcional completo: rotas, ecrãs, checkout, portal, autenticidade, operações, stock, temas e resolução de problemas.
 - [`docs/portal-encomendas.md`](docs/portal-encomendas.md) — arquitetura, modelo de dados, fluxos, segurança e testes.
 - [`docs/guia-apresentacao.md`](docs/guia-apresentacao.md) — guião slide a slide da apresentação do portal.
 - [`docs/guia-apresentacao-site.md`](docs/guia-apresentacao-site.md) — guião slide a slide da apresentação do site.
@@ -106,6 +113,7 @@ O aviso de versão demo fecha uma vez por sessão e guarda a dispensa em `sessio
 - `scripts/capture-screenshots.mjs` — captura automatizada das imagens da documentação
 - `scripts/build-apresentacao.mjs` — geração da apresentação do portal com `pptxgenjs`
 - `scripts/build-apresentacao-site.mjs` — geração da apresentação do site com `pptxgenjs`
+- `docs/manual-site.md` — manual funcional completo do site
 
 ## Apresentações
 

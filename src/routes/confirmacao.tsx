@@ -71,9 +71,9 @@ function Confirmation() {
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
             {tr(
               language,
-              "Pagamento MB WAY simulado com sucesso. Guarda o código de exclusividade para gerir a encomenda.",
-              "MB WAY payment simulated successfully. Keep the exclusive code to manage your order.",
-              "Pago MB WAY simulado con éxito. Guarda el código de exclusividad para gestionar el pedido.",
+              "Pagamento concluído com sucesso. Guarda o código de exclusividade para gerir a encomenda.",
+              "Payment completed successfully. Keep the exclusive code to manage your order.",
+              "Pago completado con éxito. Guarda el código de exclusividad para gestionar el pedido.",
             )}
           </p>
         </div>

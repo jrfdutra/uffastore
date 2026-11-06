@@ -325,7 +325,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     w: 4.2,
     h: 5.6,
   });
-  pill(slide, "PORTO ROSE LOW  ·  129 €", 9.1, 6.25, 2.4, 0.32, C.white, C.ink);
+  pill(slide, "PORTO ROSE LOW  ·  0,20 €", 9.1, 6.25, 2.4, 0.32, C.white, C.ink);
   slide.addNotes(
     "Abertura. Apresentar o portal como extensão da experiência de compra, não como uma página de tracking genérica. Referir que o foco é o cliente que já comprou e a equipa que acompanha a encomenda.",
   );
@@ -474,7 +474,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 /* ------------------------------------------------------------------ */
 {
   const slide = pptx.addSlide();
-  addHeader(slide, "03 / JORNADA", "O código nasce no checkout.", 4);
+  addHeader(slide, "03 / JORNADA", "O código nasce com a encomenda.", 4);
 
   const steps = [
     ["1", "Compra", "Envio para casa ou recolha gratuita no Porto."],
@@ -515,7 +515,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     color: C.muted,
   });
   slide.addNotes(
-    "Percorrer a jornada: compra, geração de códigos, confirmação, acesso e acompanhamento. Destacar que o código exclusivo é gerado no checkout e que a confirmação explica exatamente o que guardar.",
+    "Percorrer a jornada: compra, geração de códigos, confirmação, acesso e acompanhamento. Na demonstração, a encomenda gera o código exclusivo e a confirmação explica exatamente o que guardar. Numa encomenda Shopify, a referência e a confirmação vêm da Shopify.",
   );
 }
 

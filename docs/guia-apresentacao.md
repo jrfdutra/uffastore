@@ -77,9 +77,9 @@ Três ideias a repetir:
 
 ---
 
-### Slide 4 — Jornada: do checkout à confirmação
+### Slide 4 — Jornada: da compra à confirmação
 
-**Título:** O código nasce no checkout.  
+**Título:** O código nasce com a encomenda.
 **Passos:**
 
 1. Compra e escolha de envio ou recolha.
@@ -92,7 +92,7 @@ Três ideias a repetir:
 
 **Notas do orador:**
 
-> “No checkout criamos a encomenda e, no mesmo momento, geramos o número, o código exclusivo, um código de autenticidade por par e o rastreio inicial. A página de confirmação explica ao cliente o que guardar e o que fazer a seguir. Não há criação de conta: o código exclusivo é a chave.”
+> “Na demonstração, a encomenda gera o número, o código exclusivo, um código de autenticidade por par e o rastreio inicial. A página de confirmação explica ao cliente o que guardar e o que fazer a seguir. Não há criação de conta: o código exclusivo é a chave. Numa encomenda Shopify, a referência e a confirmação vêm da Shopify.”
 
 **Transição:** “Esse código é o centro do modelo de acesso.”
 
@@ -191,7 +191,7 @@ Três ideias a repetir:
 **Título:** A prova de autenticidade.  
 **Pontos:**
 
-- Código gerado no checkout, único por linha.
+- Código gerado com a encomenda, único por linha.
 - Formato `UFFA-AUTH-XXXX-XXXX`.
 - Verificação pública em `/verificar`.
 - Resultado mostra produto, tamanho, série, edição e data.

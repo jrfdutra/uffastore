@@ -22,6 +22,18 @@ Três ideias a repetir:
 2. **Porto** — recolha gratuita em mãos; a loja física faz parte da experiência digital.
 3. **Continuidade** — portal, autenticidade e operação no mesmo sistema, sem emails soltos.
 
+## 2.1 Identidade visual e navegação
+
+Pontos a demonstrar em qualquer ecrã:
+
+- **Cabeçalho fixo** com logótipo proporcional, altura `h-20 md:h-24` e menu em `text-xs md:text-sm` com `gap-6`.
+- **Categorias sincronizadas** — clicar em Casual, Streetwear, Edições Limitadas ou Promoções abre `/catalogo` já filtrado. Se o cliente já estiver no catálogo, o filtro muda no momento, sem recarregar.
+- **Sublinhado animado** no item ativo e em `hover`: ameixa no modo claro (`#4A2B33`) e rosa UFFA no modo escuro (`#E1A0B4`).
+- **Preços** — o preço normal e o preço de oferta usam `font-bold text-foreground`; o preço de oferta fica um nível de tamanho acima.
+- **Placas PROMO** — cor burgundy (`--promo`), `border-2 border-promo`, preenchimento e tracking generosos, sem sombras.
+- **Stock** — 5 pares por tamanho em todos os produtos; tamanhos esgotados aparecem desativados.
+- **Temas** — claro e escuro em todas as páginas, com preferência guardada em `localStorage`.
+
 ## 3. Percurso de demonstração
 
 | Rota                      | O que mostrar                                                    |
@@ -29,7 +41,7 @@ Três ideias a repetir:
 | `/`                       | Hero, categorias, mais procurados, bloco do portal e newsletter. |
 | `/catalogo`               | Filtros por linha, tamanho e preço; pesquisa instantânea.        |
 | `/produto/porto-rose-low` | Galeria 360°, tamanhos com stock e garantias.                    |
-| `/checkout`               | Recolha grátis ou envio por 7 €, dados e MB WAY simulado.        |
+| `/checkout`               | Recolha grátis ou envio: 8,94 € PT Continental/Ilhas, 24 € UE, 34 € Suíça; dados e pagamento no checkout Shopify. |
 | `/confirmacao`            | Número, código exclusivo, rastreio e códigos de autenticidade.   |
 | `/rastreio`               | Acesso por três fatores, estado, timeline e confirmação.         |
 | `/verificar`              | Certificado válido e exemplo de código inválido.                 |
@@ -49,7 +61,6 @@ Códigos de autenticidade:
 - `UFFA-AUTH-4K7P-2M9Q` — Porto Rose Low, 39
 - `UFFA-AUTH-8R3T-6N1W` — Cedofeita Court, 40
 - `UFFA-AUTH-9C2L-7B4X` — Invicta 01, 42
-- `UFFA-AUTH-1Z6Y-5A3E` — Afterdark 02, 41
 
 ## 4. Guião slide a slide
 
@@ -99,7 +110,7 @@ Códigos de autenticidade:
 
 **Notas do orador:**
 
-> “O catálogo permite filtrar por linha, tamanho e preço máximo, pesquisar sem recarregar a página e comparar cartões com preço, categoria e selo de verificação. No mobile, os filtros empilham e continuam utilizáveis.”
+> “O catálogo permite filtrar por linha, tamanho e preço máximo, pesquisar sem recarregar a página e comparar cartões com preço, categoria e selo de verificação. As categorias do cabeçalho abrem o catálogo já filtrado e sincronizam com o URL (`?category=sales`), mesmo quando o cliente já está na página. No mobile, os filtros empilham e continuam utilizáveis.”
 
 **Transição:** “Escolhido o par, a decisão acontece no produto.”
 
@@ -112,7 +123,7 @@ Códigos de autenticidade:
 
 **Notas do orador:**
 
-> “A página de produto responde às dúvidas todas antes do carrinho: galeria com rotação 360°, stock por tamanho, descrição, preço, autenticidade, recolha gratuita e política de trocas. O cliente não precisa de abrir menus para decidir.”
+> “A página de produto responde às dúvidas todas antes do carrinho: galeria com rotação 360°, stock por tamanho, descrição, preço, autenticidade, recolha gratuita e política de trocas. O stock está a 5 pares por tamanho, os tamanhos esgotados ficam desativados e o preço de oferta mantém o peso do preço normal, um nível acima. O cliente não precisa de abrir menus para decidir.”
 
 **Transição:** “Com a decisão tomada, falta o último empurrão.”
 
@@ -138,7 +149,7 @@ Códigos de autenticidade:
 
 **Notas do orador:**
 
-> “Entrega — recolha grátis no Porto ou envio por sete euros. Dados — nome e email ou telefone, sem criar conta. Pagamento — MB WAY simulado, com Apple Pay marcado como em breve. O fluxo é curto e a confirmação gera logo os códigos.”
+> “Entrega — recolha grátis no Porto ou envio por 8,94 € em Portugal Continental e Ilhas, 24 € na União Europeia e 34 € na Suíça. Dados e pagamento — o cliente é redirecionado para o checkout oficial da Shopify, onde completa nome, contacto, morada e escolhe cartão, MB WAY ou Google Pay. Não é criada conta UFFA. O fluxo é curto; na demonstração, a confirmação local mostra os códigos de exemplo.”
 
 **Transição:** “A confirmação é o início do pós-compra.”
 
@@ -151,7 +162,7 @@ Códigos de autenticidade:
 
 **Notas do orador:**
 
-> “O cliente leva o número da encomenda, o código exclusivo para o portal, o rastreio e um código de autenticidade por par. Não há conta: o código é a chave. É por isso que insistimos em guardá-lo.”
+> “Na confirmação de demonstração, o cliente leva o número da encomenda, o código exclusivo para o portal, o rastreio e um código de autenticidade por par. Não há conta: o código é a chave. É por isso que insistimos em guardá-lo. Numa encomenda Shopify, a confirmação equivalente é enviada pela própria Shopify.”
 
 **Transição:** “Com o código, o par não desaparece.”
 
@@ -244,7 +255,7 @@ Códigos de autenticidade:
 
 **É preciso criar conta?** Não. O acesso ao portal usa número, contacto e código exclusivo.
 
-**Os pagamentos são reais?** Na demo, o MB WAY é simulado. Em produção, passa a haver integração real.
+**Os pagamentos são reais?** O checkout é redirecionado para a Shopify. Os métodos disponíveis (cartão, MB WAY, Google Pay) dependem da configuração da loja; para demonstração, usar o ambiente de testes da Shopify.
 
 **Os dados persistem?** Na demo, ficam no browser (`localStorage`/`sessionStorage`). Em produção, passam para backend com autenticação e auditoria.
 

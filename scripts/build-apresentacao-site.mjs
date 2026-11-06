@@ -336,7 +336,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     h: 6.36,
     sizing: { type: "cover", w: 4.71, h: 6.36 },
   });
-  pill(slide, "PORTO ROSE LOW  ·  129 €", 8.55, 6.2, 3.55, 0.34, C.white, C.ink);
+  pill(slide, "PORTO ROSE LOW  ·  0,20 €", 8.55, 6.2, 3.55, 0.34, C.white, C.ink);
 
   slide.addNotes(
     "Abertura. Este documento apresenta o site UFFA Store como experiência completa: marca, descoberta, compra, pós-compra e operação. A apresentação anterior aprofundou o portal; esta mostra o percurso inteiro.",
@@ -441,13 +441,14 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     [
       "Linha, tamanho e preço máximo no mesmo painel.",
       "Pesquisa instantânea por nome, sem recarregar a página.",
-      "Cartões com preço, categoria e selo de verificação.",
+      "Categorias do menu abrem já filtradas e sincronizadas com o URL.",
+      "Cartões com preço, categoria, selo de verificação e placa PROMO.",
       "No mobile, os filtros empilham e continuam ao alcance.",
     ],
     5.45,
     2.3,
     7.0,
-    { gap: 0.78, fontSize: 11 },
+    { gap: 0.68, fontSize: 10.5 },
   );
 
   card(slide, 5.45, 5.45, 6.95, 1.15, C.ink, C.ink);
@@ -462,7 +463,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
   });
 
   slide.addNotes(
-    "Mostrar o catálogo: filtros por linha, tamanho e preço, pesquisa e cartões com informação essencial. Destacar que o selo VERIFICADO aparece antes de abrir o produto e que o layout mobile mantém os filtros utilizáveis.",
+    "Mostrar o catálogo: filtros por linha, tamanho e preço, pesquisa e cartões com informação essencial. Clicar numa categoria do cabeçalho e mostrar que o catálogo abre já filtrado, mesmo estando na página. Destacar o selo VERIFICADO, a placa PROMO e o layout mobile com filtros utilizáveis.",
   );
 }
 
@@ -483,14 +484,15 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     slide,
     [
       "Galeria com rotação 360° e várias perspetivas.",
-      "Tamanhos com stock em tempo real.",
-      "Preço, descrição e selo de autenticidade.",
-      "Recolha grátis no Porto e sem trocas nem devoluções.",
+      "Tamanhos com stock — 5 pares por tamanho.",
+      "Preço normal ou de oferta, com placa PROMO.",
+      "Descrição, autenticidade e política de trocas.",
+      "Recolha grátis no Porto.",
     ],
     6.95,
     2.3,
     5.5,
-    { gap: 0.82, fontSize: 11 },
+    { gap: 0.62, fontSize: 10.5 },
   );
 
   card(slide, 6.95, 5.55, 5.45, 1.05, C.primarySoft, C.primarySoft);
@@ -505,7 +507,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
   });
 
   slide.addNotes(
-    "Entrar no produto: galeria, rotação 360°, seleção de tamanho com stock, descrição, preço e garantias. O objetivo é responder às dúvidas todas antes do carrinho. A recolha gratuita e a política de trocas são visíveis sem abrir menus.",
+    "Entrar no produto: galeria, rotação 360°, seleção de tamanho com stock de 5 pares, descrição, preço e garantias. O preço de oferta mantém o peso do preço normal e ganha um nível de tamanho; a placa PROMO tem contorno nítido. O objetivo é responder às dúvidas todas antes do carrinho. A recolha gratuita e a política de trocas são visíveis sem abrir menus.",
   );
 }
 
@@ -555,9 +557,9 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
   imageFrame(slide, img("05-checkout.png"), 0.7, 1.65, 6.1, 4.93);
 
   const steps = [
-    ["1", "Entrega", "Recolha grátis no Porto ou envio por 7 €."],
-    ["2", "Dados", "Nome e email/telefone. Sem criar conta."],
-    ["3", "Pagamento", "MB WAY simulado. Apple Pay marcado como em breve."],
+    ["1", "Entrega", "Recolha grátis. Envio 8,94 € PT · 24 € UE · 34 € CH."],
+    ["2", "Dados", "Nome, contacto e morada no checkout oficial da Shopify."],
+    ["3", "Pagamento", "Cartão, MB WAY ou Google Pay via Shopify."],
   ];
   steps.forEach(([number, title, description], index) => {
     stepRow(slide, number, title, description, 7.15, 1.8 + index * 1.18, 5.3, {
@@ -577,7 +579,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
   });
 
   slide.addNotes(
-    "Mostrar o checkout em três blocos: entrega, dados e pagamento. Recolha gratuita ou envio por sete euros. Não há criação de conta. O pagamento é simulado na demo, mas o fluxo e a confirmação são reais.",
+    "Mostrar o checkout em três blocos: entrega, dados e pagamento. Recolha gratuita no Porto; envio por 8,94 € em Portugal Continental e Ilhas, 24 € na União Europeia e 34 € na Suíça. O cliente é redirecionado para o checkout oficial da Shopify para completar os dados e o pagamento; não há criação de conta. Na demonstração, a confirmação local mostra os códigos de exemplo.",
   );
 }
 

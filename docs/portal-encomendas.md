@@ -30,8 +30,8 @@ A home, o header, o menu mobile e o footer têm ligações para `/rastreio`, `/v
 
 ## 3. Jornada do cliente
 
-1. **Compra** — o cliente escolhe envio ou recolha no checkout e confirma o pagamento MB WAY simulado.
-2. **Confirmação** — recebe o número da encomenda, o código exclusivo e, no envio, o código de rastreio.
+1. **Compra** — o cliente escolhe envio ou recolha no checkout e conclui os dados e o pagamento no checkout oficial da Shopify.
+2. **Confirmação** — a Shopify envia a confirmação por email. Na demonstração, a página `/confirmacao` mostra as encomendas de exemplo guardadas localmente, com número, código exclusivo e, no envio, o código de rastreio.
 3. **Acesso** — entra em `/rastreio` com três dados: número da encomenda, contacto usado na compra e código exclusivo.
 4. **Acompanhamento** — vê o estado atual, a linha temporal, os detalhes de entrega ou recolha, os itens e o resumo.
 5. **Conclusão** — confirma a receção (envio) ou a recolha (loja). O estado passa a `Entregue` ou `Recolhida`.
@@ -53,7 +53,7 @@ Regras implementadas em `src/lib/orders.ts`:
 - Bloqueio de **60 segundos** após a quinta falha.
 - Sessão de **30 minutos** em `sessionStorage`.
 - O botão **Terminar sessão** limpa a sessão imediatamente.
-- O código exclusivo é gerado no checkout com o formato `UFFA-XXXX-XXXX`.
+- Nas encomendas demo, o código exclusivo é gerado localmente com o formato `UFFA-XXXX-XXXX`.
 - Os códigos usam um alfabeto sem caracteres ambíguos (`I`, `O`, `0`, `1`).
 - A verificação de autenticidade não revela nome, contacto ou morada do comprador.
 
@@ -134,7 +134,7 @@ type OrderEvent = {
 
 ### Regras de negócio
 
-- Portes de envio: **5,99 €**. Recolha: **grátis**.
+- Portes de envio: **8,94 €** em Portugal Continental e Ilhas, **24,00 €** na União Europeia e **34,00 €** na Suíça. Recolha em mãos no Porto: **grátis**.
 - Previsão inicial: **3 dias** para envio, **1 dia** para recolha.
 - Cada linha do carrinho recebe um código de autenticidade e um número de série próprios.
 - O número da encomenda é gerado com 5 dígitos e verificado contra duplicados.
@@ -152,17 +152,16 @@ type OrderEvent = {
 | `uffa-cart`              | `localStorage`   | Carrinho (já existente na loja).               |
 | `uffa-theme`             | `localStorage`   | Tema claro/escuro (já existente na loja).      |
 
-Na primeira visita, `loadOrders()` cria três encomendas de demonstração. O botão **Repor demo** em `/operacoes` volta a criar esses dados.
+Na primeira visita, `loadOrders()` cria duas encomendas de demonstração. O botão **Repor demo** em `/operacoes` volta a criar esses dados.
 
 ## 8. Dados de demonstração
 
 ### Encomendas
 
-| Encomenda    | Contacto       | Código exclusivo | Estado              | Entrega                  |
-| ------------ | -------------- | ---------------- | ------------------- | ------------------------ |
-| `UFFA-48217` | `demo@uffa.pt` | `UFFA-7K3M-9QX2` | Em trânsito         | Envio, 2 pares, 251,00 € |
-| `UFFA-73104` | `demo@uffa.pt` | `UFFA-2P8N-5RV6` | Pronta para recolha | Recolha, 1 par, 219,00 € |
-| `UFFA-19556` | `ana@uffa.pt`  | `UFFA-6D1F-3H8K` | Entregue            | Envio, 1 par, 236,00 €   |
+| Encomenda    | Contacto       | Código exclusivo | Estado              | Entrega            |
+| ------------ | -------------- | ---------------- | ------------------- | ------------------ |
+| `UFFA-48217` | `demo@uffa.pt` | `UFFA-7K3M-9QX2` | Em trânsito         | Envio, 2 pares     |
+| `UFFA-73104` | `demo@uffa.pt` | `UFFA-2P8N-5RV6` | Pronta para recolha | Recolha, 1 par     |
 
 ### Códigos de autenticidade
 
@@ -171,9 +170,10 @@ Na primeira visita, `loadOrders()` cria três encomendas de demonstração. O bo
 | `UFFA-AUTH-4K7P-2M9Q` | Porto Rose Low  | 39      |
 | `UFFA-AUTH-8R3T-6N1W` | Cedofeita Court | 40      |
 | `UFFA-AUTH-9C2L-7B4X` | Invicta 01      | 42      |
-| `UFFA-AUTH-1Z6Y-5A3E` | Afterdark 02    | 41      |
 
 ### Painel de operações
+
+> **Âmbito da demo:** a confirmação, o portal e o painel de operações leem as encomendas guardadas em `uffa-orders-v1`. Encomendas concluídas na Shopify não são sincronizadas automaticamente para este armazenamento local.
 
 - Chave demo: `UFFA-OPS-2026`
 - A chave é validada no browser. Em produção, tem de ser substituída por autenticação real com perfis e permissões.
