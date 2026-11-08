@@ -20,14 +20,11 @@ export const CATALOG_STORAGE_KEY = "uffa-custom-catalog-v2";
  * a arte local indexada pelo handle do produto.
  */
 export const imageByHandle: Record<string, string> = {
-  "porto-rose-low": tan,
-  "bolhao-runner": navy,
-  "cedofeita-court": white,
-  "invicta-01": grey,
-  "rosa-norte": green,
-  "trindade-flow": greenAlt,
-  "galerias-low": navy,
-  "afterdark-02": tan,
+  "air-force-1-07-white": white,
+  "air-force-1-07-black": navy,
+  "dunk-low-panda": green,
+  "dunk-low-grey-fog": greenAlt,
+  "dunk-low-photon-dust": tan,
 };
 
 const categories: Category[] = ["sales", "casual", "streetwear", "limited"];
@@ -55,7 +52,9 @@ function toProduct(node: ShopifyProductNode): Product {
     id: node.handle,
     sku: fallback?.sku ?? `UFFA-${node.handle.toUpperCase()}`,
     name: node.title,
-    category: toCategory(node.productType),
+    // O catálogo local é a referência da taxonomia do site; a Shopify só
+    // define a categoria de produtos que ainda não existam localmente.
+    category: fallback?.category ?? toCategory(node.productType),
     price: Number.parseFloat(node.priceRange.minVariantPrice.amount),
     status: fallback?.status ?? "active",
     image: node.featuredImage?.url ?? imageByHandle[node.handle] ?? fallback?.image ?? grey,
