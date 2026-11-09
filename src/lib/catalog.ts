@@ -22,9 +22,9 @@ export const CATALOG_STORAGE_KEY = "uffa-custom-catalog-v2";
 export const imageByHandle: Record<string, string> = {
   "air-force-1-07-white": white,
   "air-force-1-07-black": navy,
-  "dunk-low-panda": green,
-  "dunk-low-grey-fog": greenAlt,
-  "dunk-low-photon-dust": tan,
+  "nike-dunk-low-panda": green,
+  "nike-dunk-low-grey-fog": greenAlt,
+  "nike-dunk-low-photon-dust": tan,
 };
 
 const categories: Category[] = ["sales", "casual", "streetwear", "limited"];
