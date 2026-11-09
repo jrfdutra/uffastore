@@ -51,6 +51,7 @@ const PRODUCTS_QUERY = `
         productType
         tags
         featuredImage { url altText }
+        images(first: 10) { nodes { url altText } }
         priceRange { minVariantPrice { amount currencyCode } }
         variants(first: 50) {
           nodes {
@@ -75,6 +76,7 @@ export type ShopifyProductNode = {
   productType: string;
   tags: string[];
   featuredImage: { url: string; altText: string | null } | null;
+  images: { nodes: { url: string; altText: string | null }[] };
   priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
   variants: {
     nodes: {
@@ -211,6 +213,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
       productType
       tags
       featuredImage { url altText }
+      images(first: 10) { nodes { url altText } }
       priceRange { minVariantPrice { amount currencyCode } }
       variants(first: 100) {
         nodes {

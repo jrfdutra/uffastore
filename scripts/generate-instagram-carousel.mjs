@@ -7,7 +7,7 @@ const CHROME =
   process.env.CHROME_PATH ?? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const OUT = resolve("docs/assets/instagram");
 const PORT = 9335;
-const HTML_PATH = resolve("scripts/instagram-carousel.html");
+const HTML_PATH = resolve("scripts/instagram-agency-carousel.html");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

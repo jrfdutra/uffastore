@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0E0E0E;
+      font-family: 'Inter', sans-serif;
+      color: #0E0E0E;
+    }
+    .slide {
+      width: 1080px;
+      height: 1350px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 100px 90px;
+      page-break-after: always;
+    }
+    
+    /* Cores e Temas */
+    .slide.cream {
+      background: #FDF6F3;
+      color: #0E0E0E;
+    }
+    .slide.dark {
+      background: #0E0E0E;
+      color: #FDF6F3;
+    }
+    .slide.accent {
+      background: #C97899;
+      color: #FDF6F3;
+    }
+
+    /* Elementos textuais comuns */
+    .header-tag {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #C97899;
+    }
+    .slide.dark .header-tag {
+      color: #E1A0B4;
+    }
+    .slide.accent .header-tag {
+      color: #0E0E0E;
+    }
+
+    h1 {
+      font-family: 'Anton', sans-serif;
+      font-size: 78px;
+      line-height: 1.05;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 40px;
+    }
+    .slide.accent h1 {
+      font-size: 90px;
+    }
+
+    h2 {
+      font-family: 'Anton', sans-serif;
+      font-size: 64px;
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 30px;
+    }
+
+    p.description {
+      font-size: 32px;
+      line-height: 1.45;
+      color: #554A47;
+      margin-top: 24px;
+      font-weight: 500;
+    }
+    .slide.dark p.description {
+      color: #D6C8C3;
+    }
+    .slide.accent p.description {
+      color: #0E0E0E;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 2px solid rgba(0,0,0,0.1);
+      padding-top: 40px;
+      margin-top: auto;
+      font-weight: 700;
+      font-size: 22px;
+      color: #7C6E6A;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .slide.dark .footer {
+      border-top-color: rgba(255,255,255,0.15);
+      color: #A89893;
+    }
+    .slide.accent .footer {
+      border-top-color: rgba(0,0,0,0.15);
+      color: #0E0E0E;
+    }
+
+    /* Mockups */
+    .mockup-container {
+      width: 100%;
+      height: 620px;
+      position: relative;
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .browser-frame {
+      width: 100%;
+      height: 100%;
+      background: #FFFFFF;
+      border: 4px solid #0E0E0E;
+      border-radius: 16px;
+      box-shadow: 16px 16px 0px #0E0E0E;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .slide.dark .browser-frame {
+      border-color: #FFFFFF;
+      box-shadow: 16px 16px 0px #C97899;
+    }
+    .browser-bar {
+      height: 48px;
+      background: #F5EAE6;
+      border-bottom: 4px solid #0E0E0E;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 10px;
+    }
+    .slide.dark .browser-bar {
+      border-bottom-color: #FFFFFF;
+    }
+    .browser-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #0E0E0E;
+    }
+    .slide.dark .browser-dot {
+      background: #0E0E0E;
+    }
+    .browser-content {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      background: #FDF6F3;
+    }
+    .browser-content img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Dual Mockup: Desktop + Mobile overlapping */
+    .dual-mockup {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .dual-desktop {
+      width: 80%;
+      height: 85%;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .dual-mobile {
+      width: 280px;
+      height: 490px;
+      position: absolute;
+      right: -10px;
+      bottom: -10px;
+      background: #0E0E0E;
+      border: 6px solid #0E0E0E;
+      border-radius: 40px;
+      box-shadow: 15px 15px 35px rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+    .dual-mobile img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Grids e Listas */
+    .features-list {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      margin-top: 50px;
+    }
+    .feature-row {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      font-size: 32px;
+      font-weight: 600;
+    }
+    .feature-icon {
+      width: 70px;
+      height: 70px;
+      background: #F4E2E9;
+      color: #C97899;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 800;
+      border: 3px solid #0E0E0E;
+    }
+
+    .segments-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 50px;
+    }
+    .segment-card {
+      background: #FFFFFF;
+      border: 4px solid #0E0E0E;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 10px 10px 0px #0E0E0E;
+    }
+    .segment-card h3 {
+      font-family: 'Anton', sans-serif;
+      font-size: 36px;
+      text-transform: uppercase;
+      color: #C97899;
+      margin-bottom: 12px;
+    }
+    .segment-card p {
+      font-size: 24px;
+      line-height: 1.4;
+      color: #554A47;
+      font-weight: 500;
+    }
+
+    /* CTA Card */
+    .cta-badge {
+      font-family: 'Anton', sans-serif;
+      font-size: 44px;
+      letter-spacing: 2px;
+      color: #0E0E0E;
+      background: #FDF6F3;
+      padding: 30px 50px;
+      border: 5px solid #0E0E0E;
+      border-radius: 16px;
+      box-shadow: 12px 12px 0px #0E0E0E;
+      display: inline-block;
+      text-align: center;
+      margin: 40px auto 0;
+      text-transform: uppercase;
+    }
+
+    .problem-box {
+      border: 4px solid #C62828;
+      background: #FDF2F2;
+      border-radius: 16px;
+      padding: 40px;
+      margin-top: 40px;
+      box-shadow: 10px 10px 0px #C62828;
+    }
+    .problem-box h3 {
+      font-family: 'Anton', sans-serif;
+      font-size: 36px;
+      color: #C62828;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+    }
+    .problem-box p {
+      font-size: 26px;
+      line-height: 1.4;
+      color: #2D1D1D;
+      font-weight: 500;
+    }
+
+    .solutions-visual {
+      display: flex;
+      gap: 30px;
+      margin-top: 50px;
+    }
+    .solution-col {
+      flex: 1;
+      background: #FDF6F3;
+      border: 3px solid #0E0E0E;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 8px 8px 0px #0E0E0E;
+    }
+    .solution-col h4 {
+      font-family: 'Anton', sans-serif;
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #C97899;
+    }
+    .solution-col p {
+      font-size: 22px;
+      line-height: 1.45;
+      color: #554A47;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- SLIDE 1: CAPA / IMPACTO -->
+  <div class="slide dark" id="slide-1">
+    <div class="header-tag">CASO DE ESTUDO · UFFA STORE</div>
+    <h1>A TUA MARCA MERECE MAIS DO QUE UMA PÁGINA NAS REDES SOCIAIS.</h1>
+    <p class="description">Transforma o teu negócio numa loja online profissional com uma experiência premium.</p>
+    <div class="mockup-container">
+      <div class="dual-mockup">
+        <div class="dual-desktop">
+          <div class="browser-frame">
+            <div class="browser-bar">
+              <div class="browser-dot"></div>
+              <div class="browser-dot"></div>
+              <div class="browser-dot"></div>
+            </div>
+            <div class="browser-content">
+              <img src="../docs/assets/screenshots/01-home.png" alt="UFFA Home">
+            </div>
+          </div>
+        </div>
+        <div class="dual-mobile">
+          <img src="../docs/assets/screenshots/19-home-mobile.png" alt="UFFA Mobile">
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Agência de E-commerce</span>
+      <span>01 / 08</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: O PROBLEMA -->
+  <div class="slide cream" id="slide-2">
+    <div class="header-tag">O DESAFIO DIGITAL</div>
+    <h2>Quantas vendas estás a perder por ainda não teres loja online?</h2>
+    <p class="description">Os teus clientes querem encontrar os teus produtos, saber os preços e comprar de forma simples, rápida e segura.</p>
+    <div class="problem-box">
+      <h3>Vendas por Mensagem Privada (DM)</h3>
+      <p>É manual, lento e pouco profissional. Os clientes cansam-se de esperar e abandonam a compra. Vende em piloto automático 24/7 com uma loja própria.</p>
+    </div>
+    <div class="footer">
+      <span>E-commerce Solutions</span>
+      <span>02 / 08</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: A SOLUÇÃO -->
+  <div class="slide cream" id="slide-3">
+    <div class="header-tag">A SOLUÇÃO</div>
+    <h2>A TUA PRÓPRIA LOJA. A TUA PRÓPRIA MARCA.</h2>
+    <p class="description">Criamos lojas online personalizadas, pensadas para apresentar os teus produtos com elegância e profissionalismo.</p>
+    <div class="solutions-visual">
+      <div class="solution-col">
+        <h4>Identidade</h4>
+        <p>Um design exclusivo que transmite o valor real dos teus produtos.</p>
+      </div>
+      <div class="solution-col">
+        <h4>Autonomia</h4>
+        <p>Gestão de stock, preços e encomendas de forma centralizada.</p>
+      </div>
+      <div class="solution-col">
+        <h4>Confiança</h4>
+        <p>Métodos de pagamento seguros para que comprem sem receio.</p>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Performance & Design</span>
+      <span>03 / 08</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: PROJETO REAL: UFFA -->
+  <div class="slide cream" id="slide-4">
+    <div class="header-tag">PROJETO REAL · UFFA STORE</div>
+    <h2>Do conceito à experiência digital de elite.</h2>
+    <p class="description">A UFFA Store é o exemplo perfeito de como uma marca ganha presença própria, com um catálogo intuitivo, categorias e fluxo de checkout fluido.</p>
+    <div class="mockup-container">
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+        </div>
+        <div class="browser-content">
+          <img src="../docs/assets/screenshots/03-catalogo.png" alt="UFFA Catálogo">
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Caso Real · uffastore.pt</span>
+      <span>04 / 08</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: O QUE PODEMOS CRIAR -->
+  <div class="slide dark" id="slide-5">
+    <div class="header-tag">O QUE DESENVOLVEMOS</div>
+    <h2>Tudo o que o teu negócio precisa para faturar online.</h2>
+    <p class="description">Montamos o teu e-commerce do zero com tudo integrado e pronto para vender.</p>
+    <div class="features-list">
+      <div class="feature-row">
+        <div class="feature-icon">✨</div>
+        <span>Design Premium & Responsivo</span>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">📦</div>
+        <span>Catálogo, Categorias e Filtros Inteligentes</span>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">🛒</div>
+        <span>Carrinho Persistente e Checkout Fluido</span>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">💳</div>
+        <span>Pagamentos Integrados (MB WAY, Cartão, etc.)</span>
+      </div>
+    </div>
+    <div class="footer">
+      <span>E-commerce Integrado</span>
+      <span>05 / 08</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: MOBILE-FIRST -->
+  <div class="slide cream" id="slide-6">
+    <div class="header-tag">MOBILE-FIRST EXPERIENCE</div>
+    <h2>A tua loja online, sempre no bolso do teu cliente.</h2>
+    <p class="description">Mais de 80% das compras online são feitas no smartphone. Garantimos uma experiência mobile ultra-rápida, simples e sem atrito.</p>
+    <div class="mockup-container">
+      <div class="dual-mockup" style="display:flex; justify-content:space-around; gap:30px; align-items:center; margin-top:20px;">
+        <div class="mobile-frame" style="width:280px; height:500px; border:4px solid #0E0E0E; border-radius:30px; overflow:hidden; box-shadow:8px 8px 0px #0E0E0E;">
+          <img src="../docs/assets/screenshots/19-home-mobile.png" style="width:100%; height:auto;" alt="Mobile Home">
+        </div>
+        <div class="mobile-frame" style="width:280px; height:500px; border:4px solid #0E0E0E; border-radius:30px; overflow:hidden; box-shadow:8px 8px 0px #0E0E0E;">
+          <img src="../docs/assets/screenshots/20-catalogo-mobile.png" style="width:100%; height:auto;" alt="Mobile Catálogo">
+        </div>
+        <div class="mobile-frame" style="width:280px; height:500px; border:4px solid #0E0E0E; border-radius:30px; overflow:hidden; box-shadow:8px 8px 0px #0E0E0E;">
+          <img src="../docs/assets/screenshots/21-produto-mobile.png" style="width:100%; height:auto;" alt="Mobile Produto">
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Design Responsivo</span>
+      <span>06 / 08</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: PARA QUEM É -->
+  <div class="slide cream" id="slide-7">
+    <div class="header-tag">MARCAS DE FUTURO</div>
+    <h2>O próximo passo do teu negócio começa aqui.</h2>
+    <p class="description">Desenvolvemos soluções para marcas ambiciosas em diversos setores do comércio.</p>
+    <div class="segments-grid">
+      <div class="segment-card">
+        <h3>Moda & Acessórios</h3>
+        <p>Monta o teu lookbook online e mostra os detalhes das tuas peças.</p>
+      </div>
+      <div class="segment-card">
+        <h3>Marcas Locais</h3>
+        <p>Amplia as tuas vendas além da tua cidade e chega a todo o país.</p>
+      </div>
+      <div class="segment-card">
+        <h3>Gastronomia</h3>
+        <p>Recebe pedidos de takeaway de forma automática e organizada.</p>
+      </div>
+      <div class="segment-card">
+        <h3>Artesanato</h3>
+        <p>Valoriza o trabalho manual com uma montra digital que brilha.</p>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Diversidade de Setores</span>
+      <span>07 / 08</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: CHAMADA PARA AÇÃO -->
+  <div class="slide accent" id="slide-8">
+    <div class="header-tag">COMEÇA HOJE</div>
+    <h1>ESTÁ NA HORA DE COLOCAR O TEU NEGÓCIO ONLINE.</h1>
+    <p class="description">Não deixes para amanhã a expansão que a tua marca pode ter hoje. Fale connosco e tire a tua ideia do papel.</p>
+    <div style="text-align: center; width: 100%;">
+      <div class="cta-badge">QUERO CRIAR A MINHA LOJA</div>
+    </div>
+    <div class="footer">
+      <span>Envia Mensagem Privada</span>
+      <span>08 / 08</span>
+    </div>
+  </div>
+
+</body>
+</html>

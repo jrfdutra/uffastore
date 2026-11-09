@@ -13,7 +13,7 @@ export type OrderStatus =
   | "cancelled";
 
 export type DeliveryMethod = "pickup" | "shipping";
-export type PaymentMethod = "mbway" | "apple";
+export type PaymentMethod = "mbway" | "apple" | "card" | "paypal" | "google";
 
 export type OrderItem = {
   productId: string;

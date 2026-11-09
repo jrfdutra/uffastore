@@ -1,9 +1,4 @@
-import navy from "@/assets/78e737e0-4cab-4dee-b928-4e7e4d451907.jpg";
-import white from "@/assets/7c2838ae-c293-4a40-946c-1a482d19369c.jpg";
 import grey from "@/assets/Gemini_Generated_Image_f4688zf4688zf468.jpg";
-import green from "@/assets/Gemini_Generated_Image_wmmzi1wmmzi1wmmz.jpg";
-import greenAlt from "@/assets/b9d62cd4-00e2-45df-95df-701356309f59.jpg";
-import tan from "@/assets/e44536b4-0486-4401-9327-8f300ee11714.jpg";
 import { products as fallbackProducts, type Category, type Product, type ProductStatus } from "./shop-data";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 import {
@@ -16,16 +11,41 @@ import {
 export const CATALOG_STORAGE_KEY = "uffa-custom-catalog-v2";
 
 /**
- * A Shopify não guarda imagens no catálogo de demonstração, por isso usamos
- * a arte local indexada pelo handle do produto.
+ * Imagens locais usadas como fallback quando a Shopify ainda não tem media.
+ * Neste momento todos os modelos partilham a mesma galeria (3 fotografias do
+ * Nike Air Force 1 '07 White com bordado floral laranja/amarelo).
  */
-export const imageByHandle: Record<string, string> = {
-  "air-force-1-07-white": white,
-  "air-force-1-07-black": navy,
-  "nike-dunk-low-panda": green,
-  "nike-dunk-low-grey-fog": greenAlt,
-  "nike-dunk-low-photon-dust": tan,
+export const productImagesByHandle: Record<string, string[]> = {
+  "air-force-1-07-white": [
+    "/images/nike-af1-floral-01.jpg",
+    "/images/nike-af1-floral-02.jpg",
+    "/images/nike-af1-floral-03.jpg",
+  ],
+  "air-force-1-07-black": [
+    "/images/nike-af1-floral-01.jpg",
+    "/images/nike-af1-floral-02.jpg",
+    "/images/nike-af1-floral-03.jpg",
+  ],
+  "nike-dunk-low-panda": [
+    "/images/nike-af1-floral-01.jpg",
+    "/images/nike-af1-floral-02.jpg",
+    "/images/nike-af1-floral-03.jpg",
+  ],
+  "nike-dunk-low-grey-fog": [
+    "/images/nike-af1-floral-01.jpg",
+    "/images/nike-af1-floral-02.jpg",
+    "/images/nike-af1-floral-03.jpg",
+  ],
+  "nike-dunk-low-photon-dust": [
+    "/images/nike-af1-floral-01.jpg",
+    "/images/nike-af1-floral-02.jpg",
+    "/images/nike-af1-floral-03.jpg",
+  ],
 };
+
+export const imageByHandle: Record<string, string> = Object.fromEntries(
+  Object.entries(productImagesByHandle).map(([handle, images]) => [handle, images[0] ?? ""]),
+);
 
 const categories: Category[] = ["sales", "casual", "streetwear", "limited"];
 

@@ -62,7 +62,7 @@ function Checkout() {
     t = copy[s.language];
   
   const [delivery, setDelivery] = useState<DeliveryOption>("pickup");
-  const [payment, setPayment] = useState<"card" | "apple">("card");
+  const [payment, setPayment] = useState<"card" | "mbway" | "paypal" | "apple">("card");
   const [couponInput, setCouponInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -223,15 +223,44 @@ function Checkout() {
             <h2 className="mb-4 font-display text-3xl uppercase">
               2. {s.language === "pt" ? "Pagamento" : s.language === "es" ? "Pago" : "Payment"}
             </h2>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <Choice
                 active={payment === "card"}
                 onClick={() => setPayment("card")}
                 icon={<Smartphone />}
-                title={tr(s.language, "Cartão / MB WAY / Google Pay", "Card / Apple Pay / Google Pay", "Tarjeta / Google Pay")}
-                detail={tr(s.language, "Pagamento seguro via Shopify", "Secure payment via Shopify", "Pago seguro vía Shopify")}
+                title={tr(s.language, "Cartão de Crédito / Débito", "Credit / Debit Card", "Tarjeta de Crédito / Débito")}
+                detail={tr(s.language, "Visa, Mastercard, Maestro via Shopify", "Visa, Mastercard, Maestro via Shopify", "Visa, Mastercard, Maestro vía Shopify")}
+              />
+              <Choice
+                active={payment === "mbway"}
+                onClick={() => setPayment("mbway")}
+                icon={<Smartphone className="text-primary" />}
+                title={tr(s.language, "MB WAY", "MB WAY", "MB WAY")}
+                detail={tr(s.language, "Pagamento instantâneo por telemóvel", "Instant phone payment", "Pago instantáneo por móvil")}
+              />
+              <Choice
+                active={payment === "apple"}
+                onClick={() => setPayment("apple")}
+                icon={<Smartphone className="text-slate-900 dark:text-white" />}
+                title={tr(s.language, "Apple Pay / Google Pay", "Apple Pay / Google Pay", "Apple Pay / Google Pay")}
+                detail={tr(s.language, "Pagamento rápido de 1 clique", "1-click fast checkout", "Pago rápido en 1 clic")}
+              />
+              <Choice
+                active={payment === "paypal"}
+                onClick={() => setPayment("paypal")}
+                icon={<Smartphone className="text-blue-600" />}
+                title={tr(s.language, "PayPal", "PayPal", "PayPal")}
+                detail={tr(s.language, "Conta PayPal ou Cartão", "PayPal account or Card", "Cuenta PayPal o Tarjeta")}
               />
             </div>
+            <p className="mt-3 text-[11px] text-muted-foreground">
+              {tr(
+                s.language,
+                "* Todos os pagamentos são processados com encriptação de nível bancário e SSL no checkout seguro da Shopify.",
+                "* All payments are processed with bank-level encryption and SSL on Shopify's secure checkout.",
+                "* Todos los pagos se procesan con cifrado de nivel bancario y SSL en el checkout seguro de Shopify."
+              )}
+            </p>
           </section>
         </div>
 

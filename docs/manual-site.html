@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UFFA Store — Manual do Site</title>
+<meta name="description" content="Manual funcional e operacional do site UFFA Store: catálogo, checkout, portal de encomendas, autenticidade e operações.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0e0e0e;
+    --cream: #fdf6f3;
+    --white: #ffffff;
+    --primary: #c97899;
+    --primary-soft: #f4e2e9;
+    --primary-dark: #9e4e6a;
+    --muted: #7c6e6a;
+    --line: #e5d6d0;
+    --section: #f7efeb;
+    --green: #0f9d76;
+    --red: #c62828;
+    --display: Impact, Anton, "Arial Black", sans-serif;
+    --body: "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--section);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--primary-dark); text-decoration-color: var(--primary); text-underline-offset: 3px; }
+  a:hover { color: var(--ink); }
+
+  /* ---------- Capa ---------- */
+  .cover {
+    position: relative;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 420px;
+    gap: 56px;
+    align-items: center;
+    padding: 64px clamp(28px, 5vw, 72px);
+    background: var(--ink);
+    color: var(--white);
+    overflow: hidden;
+  }
+  .cover::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 14px;
+    background: var(--primary);
+  }
+  .cover__text { position: relative; z-index: 1; max-width: 640px; }
+  .eyebrow {
+    margin: 0 0 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+  .cover h1 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(64px, 8vw, 108px);
+    line-height: 0.88;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+  .cover h1 span { display: block; }
+  .cover h1 .pink { color: var(--primary); }
+  .cover__sub {
+    margin: 22px 0 0;
+    font-size: clamp(20px, 2.4vw, 30px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .cover__tagline {
+    margin: 14px 0 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--primary-soft);
+    max-width: 34ch;
+  }
+  .cover__desc {
+    margin: 12px 0 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #d9cbc6;
+    max-width: 52ch;
+  }
+  .cover__rule { display: block; width: 78px; height: 5px; margin: 26px 0 22px; background: var(--primary); }
+  .cover__meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 26px;
+    margin: 0;
+  }
+  .cover__meta div { border-top: 1px solid #332b29; padding-top: 8px; }
+  .cover__meta dt {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #9a8c87;
+  }
+  .cover__meta dd { margin: 2px 0 0; font-size: 12.5px; color: #f0e5e1; }
+  .cover__foot {
+    margin: 30px 0 0;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: #8d7f7a;
+  }
+  .cover__media {
+    position: relative;
+    align-self: stretch;
+    max-height: 78vh;
+    border: 6px solid var(--primary);
+    background: var(--primary);
+  }
+  .cover__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover__pill {
+    position: absolute;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: var(--white);
+    color: var(--ink);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 8px 16px;
+    border-radius: 999px;
+  }
+
+  /* ---------- Estrutura ---------- */
+  .shell {
+    display: grid;
+    grid-template-columns: 272px minmax(0, 1fr);
+    align-items: start;
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 34px 26px 30px;
+  }
+  .sidebar__mark {
+    font-family: var(--display);
+    font-size: 26px;
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .sidebar__mark span { color: var(--primary); }
+  .sidebar__sub {
+    margin: 8px 0 22px;
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #9a8c87;
+  }
+  .sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+  .sidebar nav a {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    padding: 6px 8px;
+    color: #d9cbc6;
+    text-decoration: none;
+    font-size: 12.5px;
+    border-left: 2px solid transparent;
+  }
+  .sidebar nav a b {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    color: var(--primary);
+    min-width: 20px;
+  }
+  .sidebar nav a:hover { background: #1c1817; color: var(--white); border-left-color: var(--primary); }
+  .sidebar__print {
+    margin-top: 24px;
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--primary);
+    color: var(--ink);
+    border: 0;
+    font-family: var(--body);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .sidebar__print:hover { background: var(--primary-soft); }
+
+  main { padding: 0 clamp(22px, 4vw, 56px) 80px; min-width: 0; }
+
+  .chapter {
+    max-width: 860px;
+    padding: 64px 0 0;
+    scroll-margin-top: 20px;
+  }
+  .chapter + .chapter { border-top: 1px solid var(--line); margin-top: 64px; }
+
+  .chapter-head { margin-bottom: 26px; }
+  .chapter-head h2 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(34px, 4.2vw, 52px);
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+  .rule { display: block; width: 46px; height: 4px; margin-top: 14px; background: var(--primary); }
+
+  .chapter-claim {
+    margin: 0 0 22px;
+    font-size: clamp(19px, 2.2vw, 25px);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--primary-dark);
+    letter-spacing: -0.01em;
+    max-width: 40ch;
+  }
+
+  h3 {
+    margin: 38px 0 10px;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  h3::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 10px;
+    background: var(--primary);
+    vertical-align: 2px;
+  }
+
+  p { margin: 0 0 14px; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+
+  ul, ol { margin: 0 0 18px; padding-left: 0; list-style: none; }
+  ul li, ol li { position: relative; padding-left: 24px; margin-bottom: 8px; }
+  ul li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 10px;
+    width: 7px;
+    height: 7px;
+    background: var(--primary);
+  }
+  ol { counter-reset: step; }
+  ol li { counter-increment: step; }
+  ol li::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--primary-dark);
+  }
+
+  code {
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 0.86em;
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .code {
+    margin: 0 0 20px;
+    padding: 18px 20px;
+    background: var(--ink);
+    color: #f0e5e1;
+    border-left: 4px solid var(--primary);
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.7;
+  }
+  .code code { background: none; color: inherit; padding: 0; white-space: pre; font-size: inherit; }
+
+  .table-wrap { margin: 0 0 22px; overflow-x: auto; border: 1px solid var(--line); background: var(--white); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    background: var(--section);
+    text-align: left;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--primary-dark);
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--primary);
+    white-space: nowrap;
+  }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:nth-child(even) { background: #fdfaf8; }
+
+  figure { margin: 22px 0 26px; }
+  figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 820px;
+    object-fit: cover;
+    object-position: top center;
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 6px;
+  }
+  figure.figure--phone img {
+    width: auto;
+    max-width: 300px;
+    max-height: none;
+    object-fit: contain;
+    margin: 0 auto;
+  }
+  figcaption {
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: var(--muted);
+    letter-spacing: 0.01em;
+  }
+  .figure-link {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--primary-dark);
+    text-decoration: none;
+    border-bottom: 1px solid var(--primary);
+  }
+
+  .callout {
+    position: relative;
+    margin: 24px 0;
+    padding: 16px 20px 16px 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--primary);
+  }
+  .callout__label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--primary-dark);
+  }
+  .callout p { margin: 0; font-size: 13.5px; }
+  .callout--dica { border-left-color: var(--green); }
+  .callout--dica .callout__label { color: var(--green); }
+  .callout--atencao { border-left-color: var(--red); }
+  .callout--atencao .callout__label { color: var(--red); }
+  .callout--check {
+    background: var(--ink);
+    border-color: var(--ink);
+    border-left-color: var(--primary);
+    color: var(--cream);
+  }
+  .callout--check .callout__label { color: var(--primary); }
+  .callout--check p { color: #e8dcd7; }
+
+  .intro-note {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 20px;
+    margin: 0 0 34px;
+    padding: 18px 22px;
+    background: var(--primary-soft);
+    border-left: 4px solid var(--primary);
+  }
+  .intro-note span {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--primary-dark);
+    padding-top: 3px;
+  }
+  .intro-note p { margin: 0; font-size: 13.5px; }
+
+  .chapter-foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 52px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  .chapter--front .chapter-head h2 { font-size: clamp(30px, 3.4vw, 42px); }
+
+  @media (max-width: 980px) {
+    .cover { grid-template-columns: 1fr; min-height: auto; padding: 52px 26px; gap: 32px; }
+    .cover__media { max-height: 380px; order: -1; }
+    .shell { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; }
+    .sidebar nav { flex-direction: row; flex-wrap: wrap; }
+    .sidebar nav a { border-left: 0; border-bottom: 2px solid transparent; }
+    .sidebar nav a:hover { border-left: 0; border-bottom-color: var(--primary); }
+    .sidebar__print { width: auto; }
+    main { padding: 0 22px 60px; }
+    .chapter { padding-top: 46px; }
+    .chapter + .chapter { margin-top: 46px; }
+    .intro-note { grid-template-columns: 1fr; gap: 6px; }
+    figure img { max-height: none; }
+  }
+
+  @media print {
+    @page { size: A4; margin: 16mm 14mm; }
+    body { background: var(--white); font-size: 10.5pt; }
+    .sidebar { display: none; }
+    .shell { display: block; max-width: none; }
+    main { padding: 0; }
+    .cover {
+      min-height: 0;
+      height: 100vh;
+      page-break-after: always;
+      grid-template-columns: 1fr 300px;
+      gap: 30px;
+      padding: 24mm 16mm;
+    }
+    .cover h1 { font-size: 76pt; }
+    .cover__meta { grid-template-columns: 1fr 1fr; }
+    .chapter { max-width: none; padding-top: 0; margin: 0; border: 0; page-break-before: always; }
+    .chapter-head h2 { font-size: 30pt; }
+    .chapter-claim { font-size: 15pt; }
+    h3 { font-size: 12pt; }
+    .table-wrap, figure, .callout { page-break-inside: avoid; }
+    figure img { max-height: 170mm; object-fit: contain; }
+    figure.figure--phone img { max-width: 66mm; }
+    .callout--check { background: var(--white); color: var(--ink); border: 1px solid var(--line); border-left: 4px solid var(--primary); }
+    .callout--check p { color: var(--ink); }
+    a { color: var(--ink); text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="cover" id="topo">
+  <div class="cover__text">
+    <p class="eyebrow">UFFA Store · Porto · Sneakers verificados</p>
+    <h1><span>UFFA</span><span class="pink">STORE.</span></h1>
+    <p class="cover__sub">Manual do Site</p>
+    <p class="cover__tagline">Da descoberta à autenticidade — tudo o que o site faz, ecrã a ecrã.</p>
+    <p class="cover__desc">Manual funcional e operacional da loja online UFFA Store. Segue a mesma estrutura, identidade e numeração da apresentação <strong>apresentacao-site-uffa.pptx</strong>: doze capítulos e quatro anexos.</p>
+    <span class="cover__rule"></span>
+    <dl class="cover__meta"><div><dt>Versão</dt><dd>2.0 · novembro de 2026</dd></div><div><dt>Âmbito</dt><dd>Site público, checkout, portal de encomendas, verificação de autenticidade e painel de operações</dd></div><div><dt>Produção</dt><dd><code>https://uffastore.pt</code></dd></div><div><dt>Desenvolvimento</dt><dd><code>http://localhost:8080</code></dd></div><div><dt>Idiomas</dt><dd>Português, Inglês e Espanhol</dd></div><div><dt>Temas</dt><dd>Claro e escuro</dd></div><div><dt>Stack</dt><dd>React 19 · TanStack Start · Tailwind CSS · Shopify Storefront API</dd></div><div><dt>Documento irmão</dt><dd><code>docs/apresentacao-site-uffa.pptx</code> (14 slides)</dd></div></dl>
+    <p class="cover__foot">Documentação e demonstração · 2026 · versão 2.0</p>
+  </div>
+  <div class="cover__media">
+    <img src="assets/manual/cover.jpg" alt="Porto Rose Low">
+    <span class="cover__pill">PORTO ROSE LOW · 0,20 €</span>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar__mark">UFFA <span>Store.</span></div>
+    <p class="sidebar__sub">Manual do Site · v2.0</p>
+    <nav><a href="#indice"><b>·</b><span>Índice</span></a><a href="#cap-01"><b>01</b><span>Posicionamento</span></a><a href="#cap-02"><b>02</b><span>Home</span></a><a href="#cap-03"><b>03</b><span>Catálogo</span></a><a href="#cap-04"><b>04</b><span>Produto</span></a><a href="#cap-05"><b>05</b><span>Carrinho</span></a><a href="#cap-06"><b>06</b><span>Checkout</span></a><a href="#cap-07"><b>07</b><span>Confirmação</span></a><a href="#cap-08"><b>08</b><span>Portal</span></a><a href="#cap-09"><b>09</b><span>Autenticidade</span></a><a href="#cap-10"><b>10</b><span>Operações</span></a><a href="#cap-11"><b>11</b><span>Mobile</span></a><a href="#cap-12"><b>12</b><span>Tecnologia</span></a><a href="#ap-a"><b>A</b><span>Dados de demonstração</span></a><a href="#ap-b"><b>B</b><span>Resolução de problemas</span></a><a href="#ap-c"><b>C</b><span>Comandos, build e deploy</span></a><a href="#ap-d"><b>D</b><span>Mapa de ficheiros e glossário</span></a></nav>
+    <button class="sidebar__print" onclick="window.print()">Imprimir / PDF</button>
+  </aside>
+  <main>
+    <aside class="intro-note"><span>Como usar este manual</span><p>Cada capítulo abre com o número e o título que aparecem no PowerPoint. As figuras usam capturas reais do site. Os blocos <strong>Nota</strong>, <strong>Dica</strong>, <strong>Demo</strong> e <strong>Atenção</strong> marcam contexto técnico, boas práticas, dados de demonstração e riscos. No fim de cada capítulo há uma <strong>checklist de demonstração</strong> para ensaiar a apresentação.</p></aside>
+    <section class="chapter chapter--front" id="indice"><header class="chapter-head"><p class="eyebrow">ÍNDICE</p><h2>Índice</h2><span class="rule"></span></header><div class="table-wrap"><table><thead><tr><th>#</th><th>Capítulo</th><th>O que cobre</th></tr></thead><tbody><tr><td><a href="#cap-01">01</a></td><td>Posicionamento</td><td>Promessa da marca, jornada, públicos e mapa de rotas</td></tr><tr><td><a href="#cap-02">02</a></td><td>Home</td><td>Cabeçalho, hero, confiança, categorias, destaques, portal e newsletter</td></tr><tr><td><a href="#cap-03">03</a></td><td>Catálogo</td><td>Filtros, URL, cartões, preços, PROMO e stock</td></tr><tr><td><a href="#cap-04">04</a></td><td>Produto</td><td>Galeria, tamanhos, preço, garantias e relacionados</td></tr><tr><td><a href="#cap-05">05</a></td><td>Carrinho</td><td>Camada lateral, quantidades, cupões, partilha e persistência</td></tr><tr><td><a href="#cap-06">06</a></td><td>Checkout</td><td>Portes, pagamento, redirecionamento Shopify e erros</td></tr><tr><td><a href="#cap-07">07</a></td><td>Confirmação</td><td>Número, código exclusivo, rastreio e autenticidade</td></tr><tr><td><a href="#cap-08">08</a></td><td>Portal</td><td>Acesso por três fatores, dashboard, estados e confirmação</td></tr><tr><td><a href="#cap-09">09</a></td><td>Autenticidade</td><td>Verificação pública, resultado válido, inválido e privacidade</td></tr><tr><td><a href="#cap-10">10</a></td><td>Operações</td><td>Chave, indicadores, fila, editor, avanço e reposição</td></tr><tr><td><a href="#cap-11">11</a></td><td>Mobile</td><td>Breakpoints, menu, grelhas, toque e desempenho</td></tr><tr><td><a href="#cap-12">12</a></td><td>Tecnologia</td><td>Stack, ficheiros, variáveis, build, deploy e segurança</td></tr><tr><td><a href="#ap-a">A</a></td><td>Anexo A</td><td>Dados de demonstração</td></tr><tr><td><a href="#ap-b">B</a></td><td>Anexo B</td><td>Resolução de problemas</td></tr><tr><td><a href="#ap-c">C</a></td><td>Anexo C</td><td>Comandos, build e deploy</td></tr><tr><td><a href="#ap-d">D</a></td><td>Anexo D</td><td>Mapa de ficheiros e glossário</td></tr></tbody></table></div><p class="chapter-claim">Índice detalhado</p><div class="table-wrap"><table><thead><tr><th>Secção</th><th>Título</th></tr></thead><tbody><tr><td><a href="#cap-01-1">1.1</a></td><td>A promessa</td></tr><tr><td><a href="#cap-01-2">1.2</a></td><td>A jornada</td></tr><tr><td><a href="#cap-01-3">1.3</a></td><td>Públicos</td></tr><tr><td><a href="#cap-01-4">1.4</a></td><td>Mapa de rotas</td></tr><tr><td><a href="#cap-02-1">2.1</a></td><td>Cabeçalho e navegação</td></tr><tr><td><a href="#cap-02-2">2.2</a></td><td>Hero e faixa de confiança</td></tr><tr><td><a href="#cap-02-3">2.3</a></td><td>Categorias e destaques</td></tr><tr><td><a href="#cap-02-4">2.4</a></td><td>Bloco do portal e newsletter</td></tr><tr><td><a href="#cap-02-5">2.5</a></td><td>Temas e idiomas</td></tr><tr><td><a href="#cap-03-1">3.1</a></td><td>Filtros e pesquisa</td></tr><tr><td><a href="#cap-03-2">3.2</a></td><td>Sincronização com o cabeçalho</td></tr><tr><td><a href="#cap-03-3">3.3</a></td><td>Cartões de produto</td></tr><tr><td><a href="#cap-03-4">3.4</a></td><td>Preços e PROMO</td></tr><tr><td><a href="#cap-03-5">3.5</a></td><td>Stock e estados</td></tr><tr><td><a href="#cap-04-1">4.1</a></td><td>Galeria e informação</td></tr><tr><td><a href="#cap-04-2">4.2</a></td><td>Tamanhos e stock</td></tr><tr><td><a href="#cap-04-3">4.3</a></td><td>Garantias e relacionados</td></tr><tr><td><a href="#cap-05-1">5.1</a></td><td>Artigos e quantidades</td></tr><tr><td><a href="#cap-05-2">5.2</a></td><td>Cupões</td></tr><tr><td><a href="#cap-05-3">5.3</a></td><td>Partilha e persistência</td></tr><tr><td><a href="#cap-06-1">6.1</a></td><td>Entrega e portes</td></tr><tr><td><a href="#cap-06-2">6.2</a></td><td>Pagamento e Shopify</td></tr><tr><td><a href="#cap-06-3">6.3</a></td><td>Cupões e erros</td></tr><tr><td><a href="#cap-07-1">7.1</a></td><td>O que o cliente recebe</td></tr><tr><td><a href="#cap-07-2">7.2</a></td><td>Âmbito da demonstração</td></tr><tr><td><a href="#cap-08-1">8.1</a></td><td>Acesso por três fatores</td></tr><tr><td><a href="#cap-08-2">8.2</a></td><td>Dashboard do cliente</td></tr><tr><td><a href="#cap-08-3">8.3</a></td><td>Fluxos de estado</td></tr><tr><td><a href="#cap-09-1">9.1</a></td><td>Como verificar</td></tr><tr><td><a href="#cap-09-2">9.2</a></td><td>Resultado válido</td></tr><tr><td><a href="#cap-09-3">9.3</a></td><td>Resultado inválido e privacidade</td></tr><tr><td><a href="#cap-10-1">10.1</a></td><td>Entrada e indicadores</td></tr><tr><td><a href="#cap-10-2">10.2</a></td><td>Fila e pesquisa</td></tr><tr><td><a href="#cap-10-3">10.3</a></td><td>Editor e avanço de estado</td></tr><tr><td><a href="#cap-10-4">10.4</a></td><td>Credenciais, histórico e reposição</td></tr><tr><td><a href="#cap-11-1">11.1</a></td><td>Breakpoints e menu</td></tr><tr><td><a href="#cap-11-2">11.2</a></td><td>Ecrãs pequenos</td></tr><tr><td><a href="#cap-12-1">12.1</a></td><td>Stack e ficheiros</td></tr><tr><td><a href="#cap-12-2">12.2</a></td><td>Variáveis de ambiente</td></tr><tr><td><a href="#cap-12-3">12.3</a></td><td>Build, deploy e segurança</td></tr></tbody></table></div><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>01 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-01"><header class="chapter-head"><p class="eyebrow">01 / POSICIONAMENTO</p><h2>POSICIONAMENTO</h2><span class="rule"></span></header><p class="chapter-claim">Uma loja, não um catálogo.</p><p>O site existe para responder a três perguntas antes que o cliente as faça: <em>é original? serve-me? e depois da compra?</em> Cada ecrã responde a uma delas.</p><h3>1.1 A promessa</h3><ul><li><strong>Descoberta rápida</strong> — catálogo filtrável, stock visível e preço sem ambiguidade.</li><li><strong>Compra curta</strong> — carrinho lateral, checkout em três decisões e pagamento no ambiente seguro da Shopify.</li><li><strong>Pós-compra verificável</strong> — portal privado por encomenda e código de autenticidade por par.</li></ul><aside class="callout callout--nota"><span class="callout__label">Nota</span><p>O site não é um folheto. É a operação da marca: catálogo, encomenda, acompanhamento e prova de autenticidade no mesmo domínio.</p></aside><h3>1.2 A jornada</h3><pre class="code" data-lang="text"><code>Home → Catálogo → Produto → Carrinho → Checkout → Confirmação
+                                                ↓
+                              Portal de rastreio → Autenticidade
+                                                ↓
+                                        Painel de operações</code></pre><div class="table-wrap"><table><thead><tr><th>Momento</th><th>Pergunta do cliente</th><th>Resposta do site</th></tr></thead><tbody><tr><td>Descoberta</td><td>“O que têm?”</td><td>Home, categorias e catálogo filtrável</td></tr><tr><td>Decisão</td><td>“Serve-me? É original?”</td><td>Página de produto, stock por tamanho, selo Verificado</td></tr><tr><td>Compra</td><td>“Como pago?”</td><td>Checkout com entrega e pagamento Shopify</td></tr><tr><td>Pós-compra</td><td>“Onde está o meu par?”</td><td>Portal com estado, timeline e confirmação</td></tr><tr><td>Confiança</td><td>“É mesmo UFFA?”</td><td>Verificação pública <code>UFFA-AUTH</code></td></tr></tbody></table></div><h3>1.3 Públicos</h3><div class="table-wrap"><table><thead><tr><th>Público</th><th>O que precisa</th><th>Onde encontra</th></tr></thead><tbody><tr><td>Cliente final</td><td>Escolher, comprar e acompanhar</td><td>Site público, checkout, portal</td></tr><tr><td>Equipa de operações</td><td>Atualizar estados e comunicar</td><td><code>/operacoes</code></td></tr><tr><td>Marketing</td><td>Mostrar produto, preço e prova</td><td>Home, catálogo, autenticidade</td></tr><tr><td>Parceiros</td><td>Perceber o modelo</td><td>Apresentação e este manual</td></tr></tbody></table></div><h3>1.4 Mapa de rotas</h3><div class="table-wrap"><table><thead><tr><th>Área</th><th>Rota</th><th>Acesso</th></tr></thead><tbody><tr><td>Home</td><td><code>/</code></td><td>Público</td></tr><tr><td>Catálogo</td><td><code>/catalogo</code></td><td>Público</td></tr><tr><td>Produto</td><td><code>/produto/:id</code></td><td>Público</td></tr><tr><td>Carrinho</td><td>camada lateral</td><td>Público</td></tr><tr><td>Checkout</td><td><code>/checkout</code></td><td>Público</td></tr><tr><td>Confirmação</td><td><code>/confirmacao?order=UFFA-XXXXX</code></td><td>Cliente</td></tr><tr><td>Portal de rastreio</td><td><code>/rastreio</code></td><td>Cliente com três fatores</td></tr><tr><td>Verificação</td><td><code>/verificar</code></td><td>Público</td></tr><tr><td>Operações</td><td><code>/operacoes</code></td><td>Equipa com chave</td></tr><tr><td>Favoritos</td><td><code>/favoritos</code></td><td>Público</td></tr><tr><td>Ajuda</td><td><code>/ajuda</code></td><td>Público</td></tr></tbody></table></div><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Abrir a home, mostrar o menu, entrar no catálogo e terminar no bloco do portal. Trinta segundos para provar que a jornada é contínua.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>02 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-02"><header class="chapter-head"><p class="eyebrow">02 / HOME</p><h2>HOME</h2><span class="rule"></span></header><p class="chapter-claim">A marca em primeiro.</p><p>A home não mostra tudo. Mostra o próximo passo: promessa, confiança, categorias, produtos e acompanhamento.</p><figure class="figure--screen"><img src="assets/screenshots/crops/home-hero.png" alt="Figura 2.1 — Hero da home: promessa da marca e chamada para o catálogo" loading="lazy"><figcaption>Figura 2.1 — Hero da home: promessa da marca e chamada para o catálogo <a class="figure-link" href="assets/screenshots/crops/home-hero.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>2.1 Cabeçalho e navegação</h3><p>O cabeçalho é fixo (<code>sticky</code>) e acompanha todas as páginas.</p><ul><li><strong>Altura</strong> — <code>h-20 md:h-24</code>, com logótipo proporcional.</li><li><strong>Menu</strong> — Casual, Streetwear, Edições Limitadas, Promoções e Ajuda, em <code>text-xs md:text-sm</code> com <code>gap-6</code>.</li><li><strong>Sublinhado animado</strong> — no item ativo e em <code>hover</code>: ameixa <code>#4A2B33</code> no tema claro e rosa UFFA <code>#E1A0B4</code> no escuro.</li><li><strong>Categorias sincronizadas</strong> — o clique abre <code>/catalogo</code> já filtrado; se o cliente já estiver no catálogo, o filtro muda de imediato.</li><li><strong>Ações</strong> — idioma PT/EN/ES, tema claro/escuro, favoritos com contador, rastreio e carrinho.</li></ul><p>Abaixo de <code>lg</code>, o menu passa para um painel lateral com logótipo, assinatura, as quatro categorias e atalhos para favoritos, ajuda, rastreio e verificação. Fecha ao escolher uma opção.</p><h3>2.2 Hero e faixa de confiança</h3><ol><li><strong>Hero</strong> — imagem de destaque, promessa e botão para o catálogo.</li><li><strong>Faixa de confiança</strong> — autenticidade, recolha no Porto e envio.</li><li><strong>Barra de anúncio</strong> — “Recolha em mãos grátis no Porto”, no topo de todas as páginas.</li></ol><figure class="figure--screen"><img src="assets/screenshots/crops/home-categorias.png" alt="Figura 2.2 — Categorias da home: quatro portas de entrada para o catálogo" loading="lazy"><figcaption>Figura 2.2 — Categorias da home: quatro portas de entrada para o catálogo <a class="figure-link" href="assets/screenshots/crops/home-categorias.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>2.3 Categorias e destaques</h3><ul><li><strong>Categorias</strong> — Casual, Streetwear, Edições Limitadas e Promoções. Cada cartão abre o catálogo com o filtro certo.</li><li><strong>Mais procurados</strong> — produtos em destaque com preço, tamanhos, selo Verificado, placa PROMO e botão de compra.</li><li><strong>Estado vazio</strong> — se não houver destaques, a secção desaparece sem deixar espaço morto.</li></ul><h3>2.4 Bloco do portal e newsletter</h3><ul><li><strong>Bloco do portal</strong> — convite para acompanhar a encomenda em <code>/rastreio</code>, com argumento de privacidade.</li><li><strong>Newsletter</strong> — formulário de email no fim da home; a subscrição é enviada para <code>atendimento@uffastore.pt</code> com confirmação visual.</li></ul><figure class="figure--screen"><img src="assets/screenshots/crops/home-promo.png" alt="Figura 2.3 — Bloco promocional do portal de encomendas na home" loading="lazy"><figcaption>Figura 2.3 — Bloco promocional do portal de encomendas na home <a class="figure-link" href="assets/screenshots/crops/home-promo.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>2.5 Temas e idiomas</h3><ul><li>Tema guardado em <code>localStorage</code> (<code>uffa-theme</code>).</li><li>Idioma guardado no contexto da loja e mantido durante a sessão.</li><li>Todos os textos de interface passam por <code>tr(language, pt, en, es)</code>.</li><li>O modo escuro aplica-se a todo o site, incluindo checkout, portal e operações.</li></ul><aside class="callout callout--dica"><span class="callout__label">Dica</span><p>Demonstrar o tema escuro no catálogo: é onde o contraste do preço e da placa PROMO se nota mais.</p></aside><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Hero → faixa de confiança → categorias → destaque → bloco do portal. Alternar tema e idioma a meio.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>03 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-03"><header class="chapter-head"><p class="eyebrow">03 / CATÁLOGO</p><h2>CATÁLOGO</h2><span class="rule"></span></header><p class="chapter-claim">Encontrar o par certo.</p><p>Catálogo com filtros combináveis, pesquisa instantânea e cartões que respondem antes do clique.</p><figure class="figure--screen"><img src="assets/screenshots/03-catalogo.png" alt="Figura 3.1 — Catálogo em desktop: filtros à esquerda e grelha de produtos" loading="lazy"><figcaption>Figura 3.1 — Catálogo em desktop: filtros à esquerda e grelha de produtos <a class="figure-link" href="assets/screenshots/03-catalogo.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>3.1 Filtros e pesquisa</h3><div class="table-wrap"><table><thead><tr><th>Filtro</th><th>Comportamento</th></tr></thead><tbody><tr><td>Categoria</td><td>Todas, Casual, Streetwear, Edições Limitadas e Promoções</td></tr><tr><td>Tamanho</td><td>36 a 43, ou todos</td></tr><tr><td>Preço máximo</td><td>Controlo deslizante sobre o preço atual</td></tr><tr><td>Pesquisa</td><td>Filtra por nome em tempo real, sem recarregar</td></tr></tbody></table></div><ul><li>Os filtros combinam entre si e o resultado atualiza no momento.</li><li>O botão de limpar devolve o catálogo completo.</li><li>O estado vazio explica o que fazer e sugere remover filtros.</li></ul><h3>3.2 Sincronização com o cabeçalho</h3><p>O filtro de categoria vive no URL (<code>/catalogo?category=sales</code>), o que permite:</p><ul><li>partilhar um catálogo já filtrado;</li><li>voltar atrás no browser e recuperar o filtro;</li><li>clicar numa categoria do cabeçalho <strong>mesmo estando no catálogo</strong> e ver a grelha mudar sem recarregar.</li></ul><p>Categorias suportadas: <code>casual</code>, <code>streetwear</code>, <code>limited</code>, <code>sales</code>.</p><aside class="callout callout--nota"><span class="callout__label">Nota</span><p>A categoria é derivada de <code>search.category</code> com fallback para <code>all</code>; a navegação usa <code>navigate({ search })</code>, pelo que o URL e o ecrã nunca divergem.</p></aside><h3>3.3 Cartões de produto</h3><p>Cada cartão mostra:</p><ul><li>imagem do par;</li><li>selo <strong>Verificado</strong>;</li><li>placa <strong>PROMO</strong> quando aplicável;</li><li>nome e categoria;</li><li>preço normal ou de oferta;</li><li>tamanhos disponíveis;</li><li>botão <strong>Adicionar ao carrinho</strong>;</li><li>coração de favoritos.</li></ul><p>Produtos sem stock aparecem como <strong>ESGOTADO</strong>, com o botão desativado.</p><h3>3.4 Preços e PROMO</h3><ul><li>Preço normal e preço de oferta usam <code>font-bold text-foreground</code>.</li><li>O preço de oferta fica <strong>um nível de tamanho acima</strong> do preço normal.</li><li>O preço original aparece riscado, sem sombras.</li><li>A placa <strong>PROMO</strong> usa a cor burgundy <code>--promo</code>, <code>border-2 border-promo</code>, preenchimento e tracking generosos, com contorno nítido em claro e escuro.</li></ul><aside class="callout callout--dica"><span class="callout__label">Dica</span><p>Ao apresentar, comparar um cartão em promoção com um cartão a preço normal: a diferença é de hierarquia, não de peso tipográfico.</p></aside><h3>3.5 Stock e estados</h3><ul><li><strong>5 pares por tamanho</strong> em todos os produtos do catálogo local.</li><li>Tamanhos esgotados aparecem desativados na página de produto.</li><li>Estado calculado automaticamente: sem stock em todos os tamanhos → <strong>ESGOTADO</strong>; caso contrário → <strong>ATIVO</strong>.</li></ul><figure class="figure--phone"><img src="assets/screenshots/20-catalogo-mobile.png" alt="Figura 3.2 — Catálogo em mobile: filtros empilhados e cartões a largura total" loading="lazy"><figcaption>Figura 3.2 — Catálogo em mobile: filtros empilhados e cartões a largura total</figcaption></figure><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Filtrar por Promoções no cabeçalho, mudar para Streetwear sem sair da página, pesquisar um nome e limpar tudo.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>04 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-04"><header class="chapter-head"><p class="eyebrow">04 / PRODUTO</p><h2>PRODUTO</h2><span class="rule"></span></header><p class="chapter-claim">A decisão acontece aqui.</p><p>A página de produto responde às dúvidas todas antes do carrinho.</p><figure class="figure--screen"><img src="assets/screenshots/04-produto.png" alt="Figura 4.1 — Página de produto: galeria, preço, tamanhos e garantias" loading="lazy"><figcaption>Figura 4.1 — Página de produto: galeria, preço, tamanhos e garantias <a class="figure-link" href="assets/screenshots/04-produto.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>4.1 Galeria e informação</h3><ul><li><strong>Galeria</strong> — imagem principal, miniaturas e rotação 360°.</li><li><strong>Categoria e selo</strong> — PROMO, ESGOTADO ou EM BREVE.</li><li><strong>Nome e descrição</strong> — traduzidos em PT/EN/ES.</li><li><strong>Preço</strong> — normal ou de oferta, com o original riscado.</li><li><strong>Quantidade</strong> — ajuste antes de adicionar.</li><li><strong>Adicionar ao carrinho</strong> — valida o tamanho escolhido.</li><li><strong>Favoritos</strong> — guarda o par na lista de desejos.</li></ul><h3>4.2 Tamanhos e stock</h3><ul><li>Só os tamanhos com stock ficam selecionáveis.</li><li>Cada tamanho tem SKU e variante Shopify associados.</li><li>O stock local está a <strong>5 pares por tamanho</strong>.</li><li>Ao esgotar, o tamanho passa a desativado e o produto muda de estado quando todos acabam.</li></ul><h3>4.3 Garantias e relacionados</h3><ul><li><strong>Autenticidade</strong> — cada par tem código <code>UFFA-AUTH</code>.</li><li><strong>Recolha grátis no Porto</strong> — visível sem abrir menus.</li><li><strong>Política de trocas</strong> — resumida junto ao preço.</li><li><strong>Relacionados</strong> — sugestões da mesma categoria, com o mesmo cartão do catálogo.</li></ul><aside class="callout callout--nota"><span class="callout__label">Nota</span><p>O stock mostrado na demo é local (<code>src/lib/shop-data.ts</code>). Com a Storefront API configurada, o catálogo e a disponibilidade passam a vir da Shopify, com fallback automático para os dados locais.</p></aside><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Escolher tamanho, mostrar um tamanho esgotado, adicionar ao carrinho e abrir os relacionados.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>05 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-05"><header class="chapter-head"><p class="eyebrow">05 / CARRINHO</p><h2>CARRINHO</h2><span class="rule"></span></header><p class="chapter-claim">O último empurrão.</p><p>O carrinho é uma camada lateral: o cliente não perde o contexto da loja.</p><figure class="figure--screen"><img src="assets/screenshots/22-cart-drawer.png" alt="Figura 5.1 — Carrinho lateral com artigos, quantidades, cupão e total" loading="lazy"><figcaption>Figura 5.1 — Carrinho lateral com artigos, quantidades, cupão e total <a class="figure-link" href="assets/screenshots/22-cart-drawer.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>5.1 Artigos e quantidades</h3><ul><li>Lista com imagem, nome, tamanho, quantidade e preço.</li><li>Alteração de quantidade com <code>+</code> / <code>-</code>.</li><li>Remoção individual.</li><li>Subtotal, desconto e total sempre visíveis.</li><li><strong>Finalizar encomenda</strong> leva ao checkout.</li></ul><h3>5.2 Cupões</h3><div class="table-wrap"><table><thead><tr><th>Código</th><th>Desconto</th></tr></thead><tbody><tr><td><code>UFFA10</code></td><td>10%</td></tr><tr><td><code>PORTO20</code></td><td>20%</td></tr><tr><td><code>VIP15</code></td><td>15%</td></tr></tbody></table></div><p>O código é validado localmente, sem distinção de maiúsculas, e aplicado ao subtotal. Um código inválido devolve mensagem clara e não altera o total.</p><h3>5.3 Partilha e persistência</h3><ul><li><strong>Partilhar no WhatsApp</strong> — gera mensagem com o resumo do carrinho.</li><li><strong>Copiar carrinho</strong> — copia o resumo para a área de transferência.</li><li>O carrinho persiste em <code>localStorage</code> (<code>uffa-cart</code>) e sobrevive a recargas.</li></ul><aside class="callout callout--dica"><span class="callout__label">Dica</span><p>Aplicar <code>PORTO20</code> durante a demo: o desconto aparece no resumo e segue para a Shopify como <code>discountCodes</code>.</p></aside><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Adicionar dois pares, mudar quantidades, aplicar cupão, copiar resumo e avançar para o checkout.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>06 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-06"><header class="chapter-head"><p class="eyebrow">06 / CHECKOUT</p><h2>CHECKOUT</h2><span class="rule"></span></header><p class="chapter-claim">Três decisões. Zero fricção.</p><p>Entrega, pagamento e confirmação — sem criação de conta.</p><figure class="figure--screen"><img src="assets/screenshots/05-checkout.png" alt="Figura 6.1 — Checkout: modalidade de entrega, pagamento e resumo" loading="lazy"><figcaption>Figura 6.1 — Checkout: modalidade de entrega, pagamento e resumo <a class="figure-link" href="assets/screenshots/05-checkout.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>6.1 Entrega e portes</h3><div class="table-wrap"><table><thead><tr><th>Opção</th><th>Preço</th><th>Nota</th></tr></thead><tbody><tr><td>Recolha em mão no Porto</td><td><strong>0,00 €</strong></td><td>Entrega combinada com a equipa</td></tr><tr><td>Portugal Continental</td><td><strong>8,94 €</strong></td><td>Envio expresso</td></tr><tr><td>Portugal — Ilhas</td><td><strong>8,94 €</strong></td><td>Açores e Madeira</td></tr><tr><td>União Europeia</td><td><strong>24,00 €</strong></td><td>Qualquer país da UE</td></tr><tr><td>Suíça</td><td><strong>34,00 €</strong></td><td>Envio internacional</td></tr></tbody></table></div><p>O resumo atualiza o total assim que a modalidade muda.</p><h3>6.2 Pagamento e Shopify</h3><ul><li>O checkout local apresenta <strong>Cartão / MB WAY / Google Pay</strong> como método seguro via Shopify.</li><li>Ao clicar em <strong>Pagar agora</strong>, o cliente é redirecionado para o checkout oficial da Shopify.</li><li>Aí completa nome, email, telefone e morada, e escolhe o método disponível na loja.</li><li>Não é criada conta UFFA.</li></ul><p>A integração cria um checkout com:</p><ul><li>variantes e quantidades;</li><li>modalidade de entrega e respetivo custo, via atributos <code>Modalidade de Entrega</code>, <code>Portes de Envio</code>, <code>Tipo de Envio</code> e <code>Destino / Zona</code>;</li><li>código de desconto, quando aplicável;</li><li>idioma do cliente.</li></ul><h3>6.3 Cupões e erros</h3><ul><li>O desconto é aplicado ao subtotal e passado como <code>discountCodes</code>.</li><li>Sem variáveis Shopify válidas, o catálogo local continua a funcionar, mas o checkout não conclui — mostrar a mensagem de erro e validar o <code>.env</code>.</li></ul><aside class="callout callout--atencao"><span class="callout__label">Atenção</span><p>O checkout é o único ponto que sai do domínio. Ensaie a demo com a loja Shopify em ambiente de testes para não gerar encomendas reais.</p></aside><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Comparar recolha e envio, mostrar o total a mudar, explicar o salto para a Shopify e voltar atrás.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>07 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-07"><header class="chapter-head"><p class="eyebrow">07 / CONFIRMAÇÃO</p><h2>CONFIRMAÇÃO</h2><span class="rule"></span></header><p class="chapter-claim">O pós-compra começa aqui.</p><p>A confirmação explica o que guardar e o que fazer a seguir.</p><figure class="figure--screen"><img src="assets/screenshots/06-confirmacao.png" alt="Figura 7.1 — Confirmação com número, código exclusivo e próximos passos" loading="lazy"><figcaption>Figura 7.1 — Confirmação com número, código exclusivo e próximos passos <a class="figure-link" href="assets/screenshots/06-confirmacao.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>7.1 O que o cliente recebe</h3><ul><li><strong>Número da encomenda</strong> — <code>UFFA-XXXXX</code>.</li><li><strong>Código exclusivo</strong> — <code>UFFA-XXXX-XXXX</code>, a chave do portal.</li><li><strong>Código de rastreio</strong> — nas encomendas com envio.</li><li><strong>Código de autenticidade por par</strong> — <code>UFFA-AUTH-XXXX-XXXX</code>.</li><li><strong>Resumo</strong> — artigos, entrega, subtotal, portes e total.</li><li><strong>Próximos passos</strong> — guardar o código e acompanhar em <code>/rastreio</code>.</li></ul><figure class="figure--screen"><img src="assets/screenshots/crops/confirmacao-codigo-final.png" alt="Figura 7.2 — Detalhe do cartão de código exclusivo e botão de cópia" loading="lazy"><figcaption>Figura 7.2 — Detalhe do cartão de código exclusivo e botão de cópia <a class="figure-link" href="assets/screenshots/crops/confirmacao-codigo-final.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>7.2 Âmbito da demonstração</h3><ul><li>A página lê as encomendas guardadas no browser (<code>uffa-orders-v1</code>).</li><li>Nas encomendas concluídas na Shopify, a confirmação e o acompanhamento são enviados pela própria Shopify por email.</li><li>A confirmação local só encontra uma encomenda se ela existir nesse armazenamento.</li></ul><aside class="callout callout--nota"><span class="callout__label">Nota</span><p>Este é o ponto onde a demo e a produção mais divergem. Diga-o em voz alta: evita expectativas erradas sobre sincronização automática.</p></aside><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Abrir <code>/confirmacao?order=UFFA-48217</code>, copiar o código e entrar no portal com ele.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>08 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-08"><header class="chapter-head"><p class="eyebrow">08 / PORTAL</p><h2>PORTAL</h2><span class="rule"></span></header><p class="chapter-claim">O par não desaparece.</p><p>O cliente passa a ter um espaço privado para acompanhar envio ou recolha e confirmar a entrega.</p><figure class="figure--screen"><img src="assets/screenshots/07-rastreio-acesso.png" alt="Figura 8.1 — Acesso ao portal por número, contacto e código exclusivo" loading="lazy"><figcaption>Figura 8.1 — Acesso ao portal por número, contacto e código exclusivo <a class="figure-link" href="assets/screenshots/07-rastreio-acesso.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>8.1 Acesso por três fatores</h3><div class="table-wrap"><table><thead><tr><th>Fator</th><th>Exemplo</th></tr></thead><tbody><tr><td>Número da encomenda</td><td><code>UFFA-48217</code> ou apenas <code>48217</code></td></tr><tr><td>Contacto</td><td><code>demo@uffa.pt</code></td></tr><tr><td>Código exclusivo</td><td><code>UFFA-7K3M-9QX2</code></td></tr></tbody></table></div><p>Regras de proteção:</p><ul><li><strong>5 tentativas</strong> falhadas por encomenda;</li><li><strong>bloqueio de 60 segundos</strong> ao atingir o limite;</li><li><strong>sessão de 30 minutos</strong>;</li><li>botão <strong>Terminar sessão</strong> sempre visível.</li></ul><h3>8.2 Dashboard do cliente</h3><figure class="figure--screen"><img src="assets/screenshots/08-rastreio-dashboard.png" alt="Figura 8.2 — Dashboard: estado, previsão, transportador e resumo" loading="lazy"><figcaption>Figura 8.2 — Dashboard: estado, previsão, transportador e resumo <a class="figure-link" href="assets/screenshots/08-rastreio-dashboard.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><ul><li>Estado atual e linha temporal.</li><li>Previsão de entrega ou data limite de recolha.</li><li>Transportador e código de rastreio, no envio.</li><li>Morada da loja e nota pública, na recolha.</li><li>Resumo de valores.</li><li>Itens com código de autenticidade.</li><li>Botão <strong>Confirmar receção</strong> ou <strong>Confirmar recolha</strong>.</li></ul><figure class="figure--screen"><img src="assets/screenshots/crops/rastreio-itens.png" alt="Figura 8.3 — Itens da encomenda com código de autenticidade por par" loading="lazy"><figcaption>Figura 8.3 — Itens da encomenda com código de autenticidade por par <a class="figure-link" href="assets/screenshots/crops/rastreio-itens.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>8.3 Fluxos de estado</h3><p><strong>Envio</strong></p><pre class="code" data-lang="text"><code>Confirmada → Em preparação → Enviada → Em trânsito → Entregue</code></pre><p><strong>Recolha</strong></p><pre class="code" data-lang="text"><code>Confirmada → Em preparação → Pronta para recolha → Recolhida</code></pre><p><strong>Independente:</strong> <code>Cancelada</code></p><p>Cada mudança cria um evento com data e hora no histórico visível ao cliente.</p><aside class="callout callout--dica"><span class="callout__label">Dica</span><p>A nota pública é o único campo escrito à mão que o cliente vê. Use-a para dar contexto (“O teu par está reservado ao balcão”), não para dados internos.</p></aside><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Entrar com as credenciais demo, mostrar a timeline, confirmar a receção e terminar sessão.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>09 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-09"><header class="chapter-head"><p class="eyebrow">09 / AUTENTICIDADE</p><h2>AUTENTICIDADE</h2><span class="rule"></span></header><p class="chapter-claim">A prova de autenticidade.</p><p>Cada par tem um código único. Qualquer pessoa pode validá-lo, sem ver dados do comprador.</p><figure class="figure--screen"><img src="assets/screenshots/10-verificar.png" alt="Figura 9.1 — Página de verificação de autenticidade" loading="lazy"><figcaption>Figura 9.1 — Página de verificação de autenticidade <a class="figure-link" href="assets/screenshots/10-verificar.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>9.1 Como verificar</h3><ol><li>Abrir <code>/verificar</code>.</li><li>Introduzir o código <code>UFFA-AUTH-XXXX-XXXX</code>.</li><li>Confirmar o resultado.</li></ol><p>Também aceita link direto: <code>/verificar?codigo=UFFA-AUTH-XXXX-XXXX</code>. O código não distingue maiúsculas de minúsculas.</p><h3>9.2 Resultado válido</h3><figure class="figure--screen"><img src="assets/screenshots/crops/verificar-resultado-v2.png" alt="Figura 9.2 — Resultado válido: selo UFFA Verified, produto, tamanho e série" loading="lazy"><figcaption>Figura 9.2 — Resultado válido: selo UFFA Verified, produto, tamanho e série <a class="figure-link" href="assets/screenshots/crops/verificar-resultado-v2.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><p>O certificado mostra:</p><ul><li>selo <strong>UFFA Verified</strong>;</li><li>produto e tamanho;</li><li>edição e número de série;</li><li>data de emissão;</li><li>loja emissora.</li></ul><h3>9.3 Resultado inválido e privacidade</h3><ul><li>Código inexistente devolve mensagem clara e contacto da equipa.</li><li>O resultado <strong>nunca</strong> mostra nome, email, telefone ou morada do comprador.</li><li>O código é a única chave: quem o tiver consegue validar, mas não acede à encomenda.</li></ul><aside class="callout callout--nota"><span class="callout__label">Nota</span><p>Autenticidade e portal são sistemas separados de propósito. Validar um par não dá acesso a dados pessoais.</p></aside><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Validar <code>UFFA-AUTH-4K7P-2M9Q</code>, mostrar o certificado e depois um código inválido.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>10 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-10"><header class="chapter-head"><p class="eyebrow">10 / OPERAÇÕES</p><h2>OPERAÇÕES</h2><span class="rule"></span></header><p class="chapter-claim">Gerir sem folhas de cálculo.</p><p>Painel interno de demonstração para atualizar estado, previsão, rastreio, transportador e nota pública.</p><figure class="figure--screen"><img src="assets/screenshots/13-operacoes-painel.png" alt="Figura 10.1 — Painel de operações: indicadores, fila e detalhe" loading="lazy"><figcaption>Figura 10.1 — Painel de operações: indicadores, fila e detalhe <a class="figure-link" href="assets/screenshots/13-operacoes-painel.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><h3>10.1 Entrada e indicadores</h3><ul><li><strong>Chave demo:</strong> <code>UFFA-OPS-2026</code>.</li><li>Indicadores: total, em trânsito, prontas para recolha e concluídas.</li><li>Sessão terminada pelo botão <strong>Sair</strong>.</li></ul><h3>10.2 Fila e pesquisa</h3><ul><li>Pesquisa por número, nome ou contacto.</li><li>Filtro por estado.</li><li>Fila ordenada pela última atualização.</li><li>Cada linha mostra número, cliente, estado e entrega.</li></ul><h3>10.3 Editor e avanço de estado</h3><figure class="figure--screen"><img src="assets/screenshots/crops/operacoes-editor-limpo-v2.png" alt="Figura 10.2 — Editor de encomenda com estado, previsão, rastreio e nota pública" loading="lazy"><figcaption>Figura 10.2 — Editor de encomenda com estado, previsão, rastreio e nota pública <a class="figure-link" href="assets/screenshots/crops/operacoes-editor-limpo-v2.png" target="_blank" rel="noopener">Ver captura completa ↗</a></figcaption></figure><ul><li>Estado, previsão, rastreio, transportador e nota pública.</li><li><strong>Avançar para…</strong> move para o estado seguinte permitido.</li><li>O editor adapta-se ao tipo de entrega: rastreio e transportador só aparecem em envios.</li><li>Cada gravação cria um evento no histórico.</li></ul><h3>10.4 Credenciais, histórico e reposição</h3><ul><li><strong>Copiar</strong> gera credenciais e link do portal para enviar ao cliente.</li><li><strong>Histórico</strong> lista os últimos movimentos.</li><li><strong>Repor demo</strong> restaura as encomendas de exemplo.</li><li>As alterações refletem-se de imediato no portal do cliente.</li></ul><aside class="callout callout--atencao"><span class="callout__label">Atenção</span><p>O painel é uma demonstração local. Em produção exige autenticação real, registo de auditoria e persistência no servidor.</p></aside><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Entrar, filtrar “Em trânsito”, avançar <code>UFFA-48217</code>, copiar credenciais e mostrar o portal atualizado.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>11 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-11"><header class="chapter-head"><p class="eyebrow">11 / MOBILE</p><h2>MOBILE</h2><span class="rule"></span></header><p class="chapter-claim">A mesma experiência, no bolso.</p><p>Layout mobile-first, validado a 390 px, sem funcionalidades escondidas.</p><figure class="figure--phone"><img src="assets/screenshots/19-home-mobile.png" alt="Figura 11.1 — Home em mobile" loading="lazy"><figcaption>Figura 11.1 — Home em mobile</figcaption></figure><h3>11.1 Breakpoints e menu</h3><ul><li>Abaixo de <code>lg</code>, o menu passa para painel lateral com categorias e atalhos.</li><li>O cabeçalho reduz para <code>h-20</code>, mantendo o logótipo proporcional.</li><li>A barra de anúncio continua visível.</li></ul><h3>11.2 Ecrãs pequenos</h3><figure class="figure--phone"><img src="assets/screenshots/20-catalogo-mobile.png" alt="Figura 11.2 — Catálogo em mobile com filtros empilhados" loading="lazy"><figcaption>Figura 11.2 — Catálogo em mobile com filtros empilhados</figcaption></figure><figure class="figure--phone"><img src="assets/screenshots/21-produto-mobile.png" alt="Figura 11.3 — Produto em mobile com galeria e seleção de tamanho" loading="lazy"><figcaption>Figura 11.3 — Produto em mobile com galeria e seleção de tamanho</figcaption></figure><ul><li>Grelha do catálogo empilhada; filtros utilizáveis.</li><li>Produto com galeria, tamanhos e CTA ao alcance do polegar.</li><li>Carrinho e checkout a largura total.</li><li>Portal e operações com cartões empilhados.</li><li>Alvos de toque com pelo menos 44 px.</li><li>Imagens com <code>alt</code> e carregamento diferido.</li></ul><aside class="callout callout--dica"><span class="callout__label">Dica</span><p>Demonstrar sempre o mesmo fluxo em mobile e desktop: a narrativa mantém-se, o layout adapta-se.</p></aside><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Abrir o menu lateral, filtrar o catálogo, escolher tamanho e chegar ao checkout.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>12 / 17</span></footer></section><section class="chapter chapter--chapter" id="cap-12"><header class="chapter-head"><p class="eyebrow">12 / TECNOLOGIA</p><h2>TECNOLOGIA</h2><span class="rule"></span></header><p class="chapter-claim">Simples na demo, pronto para produção.</p><p>Stack moderna, dados isolados por camada e fallback automático.</p><h3>12.1 Stack e ficheiros</h3><div class="table-wrap"><table><thead><tr><th>Camada</th><th>Tecnologia</th></tr></thead><tbody><tr><td>Interface</td><td>React 19 + TanStack Start</td></tr><tr><td>Estilo</td><td>Tailwind CSS + tokens de tema</td></tr><tr><td>Dados</td><td><code>src/lib/shop-data.ts</code> (local) e Storefront API</td></tr><tr><td>Encomendas</td><td><code>src/lib/orders.ts</code> + <code>localStorage</code></td></tr><tr><td>Build</td><td>Vite + Nitro (preset Cloudflare)</td></tr><tr><td>Deploy</td><td>Vercel, automático em <code>main</code></td></tr></tbody></table></div><div class="table-wrap"><table><thead><tr><th>Ficheiro</th><th>Responsabilidade</th></tr></thead><tbody><tr><td><code>src/lib/shop-data.ts</code></td><td>Produtos, preços, tamanhos, stock e textos</td></tr><tr><td><code>src/lib/shopify.ts</code></td><td>Catálogo e checkout Shopify</td></tr><tr><td><code>src/lib/orders.ts</code></td><td>Encomendas, códigos, estados e sessões</td></tr><tr><td><code>src/lib/shop-context.tsx</code></td><td>Carrinho, favoritos, cupões, tema e idioma</td></tr><tr><td><code>src/components/site-shell.tsx</code></td><td>Cabeçalho, navegação, carrinho e footer</td></tr><tr><td><code>src/routes/*</code></td><td>Uma rota por ecrã</td></tr><tr><td><code>docs/shopify/produtos-uffa.csv</code></td><td>Catálogo de importação com 5 unidades por variante</td></tr></tbody></table></div><h3>12.2 Variáveis de ambiente</h3><div class="table-wrap"><table><thead><tr><th>Variável</th><th>Onde encontrar</th></tr></thead><tbody><tr><td><code>VITE_SHOPIFY_STORE_DOMAIN</code></td><td><code>xxxxx.myshopify.com</code></td></tr><tr><td><code>VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN</code></td><td>Admin → Headless → Storefront API → token público</td></tr></tbody></table></div><p>Sem estas variáveis, o site usa o catálogo local e o checkout Shopify não conclui.</p><h3>12.3 Build, deploy e segurança</h3><pre class="code" data-lang="bash"><code>npm install
+npm run dev        # http://localhost:8080
+npx tsc --noEmit
+npm run build</code></pre><ul><li>O deploy de produção é automático na Vercel a cada push para <code>main</code>.</li><li>A demonstração guarda encomendas, tentativas e sessões no browser.</li><li>Em produção, validação e persistência têm de passar para um backend com autenticação, base de dados e auditoria.</li></ul><aside class="callout callout--atencao"><span class="callout__label">Atenção</span><p>Nunca colocar o token de admin da Shopify no cliente. A Storefront API usa apenas o token público.</p></aside><aside class="callout callout--check"><span class="callout__label">Checklist de demonstração</span><p>Mostrar o <code>.env.example</code>, explicar o fallback e terminar no build a passar.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>13 / 17</span></footer></section><section class="chapter chapter--annex" id="ap-a"><header class="chapter-head"><p class="eyebrow">ANEXO A · DADOS DE DEMONSTRAÇÃO</p><h2>DADOS DE DEMONSTRAÇÃO</h2><span class="rule"></span></header><p class="chapter-claim">Encomendas</p><div class="table-wrap"><table><thead><tr><th>Encomenda</th><th>Contacto</th><th>Código exclusivo</th><th>Estado</th></tr></thead><tbody><tr><td><code>UFFA-48217</code></td><td><code>demo@uffa.pt</code></td><td><code>UFFA-7K3M-9QX2</code></td><td>Em trânsito</td></tr><tr><td><code>UFFA-73104</code></td><td><code>demo@uffa.pt</code></td><td><code>UFFA-2P8N-5RV6</code></td><td>Pronta para recolha</td></tr></tbody></table></div><h3>Códigos de autenticidade</h3><div class="table-wrap"><table><thead><tr><th>Código</th><th>Produto</th><th>Tamanho</th></tr></thead><tbody><tr><td><code>UFFA-AUTH-4K7P-2M9Q</code></td><td>Porto Rose Low</td><td>39</td></tr><tr><td><code>UFFA-AUTH-8R3T-6N1W</code></td><td>Cedofeita Court</td><td>40</td></tr><tr><td><code>UFFA-AUTH-9C2L-7B4X</code></td><td>Invicta 01</td><td>42</td></tr></tbody></table></div><h3>Cupões</h3><div class="table-wrap"><table><thead><tr><th>Código</th><th>Desconto</th></tr></thead><tbody><tr><td><code>UFFA10</code></td><td>10%</td></tr><tr><td><code>PORTO20</code></td><td>20%</td></tr><tr><td><code>VIP15</code></td><td>15%</td></tr></tbody></table></div><h3>Acessos</h3><div class="table-wrap"><table><thead><tr><th>Sistema</th><th>Credencial</th></tr></thead><tbody><tr><td>Painel de operações</td><td><code>UFFA-OPS-2026</code></td></tr><tr><td>Portal do cliente</td><td>Número + contacto + código exclusivo</td></tr><tr><td>Verificação</td><td>Código <code>UFFA-AUTH-XXXX-XXXX</code></td></tr></tbody></table></div><aside class="callout callout--nota"><span class="callout__label">Nota</span><p><code>Repor demo</code> em <code>/operacoes</code> recria as encomendas de exemplo e apaga alterações locais.</p></aside><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>14 / 17</span></footer></section><section class="chapter chapter--annex" id="ap-b"><header class="chapter-head"><p class="eyebrow">ANEXO B · RESOLUÇÃO DE PROBLEMAS</p><h2>RESOLUÇÃO DE PROBLEMAS</h2><span class="rule"></span></header><div class="table-wrap"><table><thead><tr><th>Sintoma</th><th>Causa provável</th><th>Solução</th></tr></thead><tbody><tr><td>O site mostra o catálogo local</td><td>Variáveis Shopify em falta</td><td>Preencher <code>.env</code> e reiniciar o servidor</td></tr><tr><td>Produto não aparece</td><td>Estado <code>inactive</code> ou sem stock</td><td>Verificar <code>status</code> e <code>stock</code> em <code>shop-data.ts</code></td></tr><tr><td>Categoria não filtra</td><td>URL sem <code>?category=</code></td><td>Clicar na categoria do menu ou abrir <code>/catalogo?category=casual</code></td></tr><tr><td>Filtro não muda no catálogo</td><td>Estado antigo em cache</td><td>Recarregar; confirmar <code>search.category</code> no URL</td></tr><tr><td>Checkout não abre na Shopify</td><td>Domínio ou token inválidos</td><td>Validar variáveis e a consola do browser</td></tr><tr><td>Portal recusa acesso</td><td>Dados ou código incorretos</td><td>Usar as credenciais do Anexo A ou repor demo</td></tr><tr><td>Portal bloqueado</td><td>5 tentativas falhadas</td><td>Aguardar 60 segundos</td></tr><tr><td>Sessão expirou</td><td>Passaram 30 minutos</td><td>Voltar a entrar</td></tr><tr><td>Tema não guarda</td><td><code>localStorage</code> bloqueado</td><td>Permitir armazenamento no browser</td></tr><tr><td>Confirmação vazia</td><td>Encomenda não existe localmente</td><td>Usar uma encomenda demo do Anexo A</td></tr><tr><td>Preço de oferta sem destaque</td><td>Falta de <code>originalPrice</code></td><td>Confirmar o campo no produto</td></tr><tr><td>Imagem não carrega</td><td>Caminho ou asset em falta</td><td>Validar <code>src/assets</code> e o <code>alt</code></td></tr></tbody></table></div><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>15 / 17</span></footer></section><section class="chapter chapter--annex" id="ap-c"><header class="chapter-head"><p class="eyebrow">ANEXO C · COMANDOS, BUILD E DEPLOY</p><h2>COMANDOS, BUILD E DEPLOY</h2><span class="rule"></span></header><pre class="code" data-lang="bash"><code># instalar
+npm install
+
+# desenvolvimento
+npm run dev            # http://localhost:8080
+
+# validação
+npx tsc --noEmit
+npm run build
+npm run lint
+
+# apresentações
+npm install --no-save --package-lock=false pptxgenjs
+node scripts/build-apresentacao-site.mjs
+node scripts/build-apresentacao.mjs
+
+# manual em HTML
+node scripts/build-manual.mjs
+
+# publicar
+git add .
+git commit -m &quot;docs: atualizar manual e materiais&quot;
+git push origin main</code></pre><div class="table-wrap"><table><thead><tr><th>Comando</th><th>Efeito</th></tr></thead><tbody><tr><td><code>npm run dev</code></td><td>Servidor local com hot reload</td></tr><tr><td><code>npx tsc --noEmit</code></td><td>Verificação de tipos</td></tr><tr><td><code>npm run build</code></td><td>Build de produção</td></tr><tr><td><code>node scripts/build-manual.mjs</code></td><td>Gera <code>docs/manual-site.html</code></td></tr><tr><td><code>node scripts/build-apresentacao-site.mjs</code></td><td>Gera o deck do site</td></tr></tbody></table></div><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>16 / 17</span></footer></section><section class="chapter chapter--annex" id="ap-d"><header class="chapter-head"><p class="eyebrow">ANEXO D · MAPA DE FICHEIROS E GLOSSÁRIO</p><h2>MAPA DE FICHEIROS E GLOSSÁRIO</h2><span class="rule"></span></header><p class="chapter-claim">Documentação</p><div class="table-wrap"><table><thead><tr><th>Ficheiro</th><th>Conteúdo</th></tr></thead><tbody><tr><td><code>docs/manual-site.md</code></td><td>Este manual (fonte)</td></tr><tr><td><code>docs/manual-site.html</code></td><td>Manual paginado no estilo da apresentação</td></tr><tr><td><code>docs/guia-apresentacao-site.md</code></td><td>Guião slide a slide do site</td></tr><tr><td><code>docs/guia-apresentacao.md</code></td><td>Guião slide a slide do portal</td></tr><tr><td><code>docs/portal-encomendas.md</code></td><td>Arquitetura e segurança do portal</td></tr><tr><td><code>docs/apresentacao-site-uffa.pptx</code></td><td>Apresentação do site</td></tr><tr><td><code>docs/apresentacao-uffa.pptx</code></td><td>Apresentação do portal</td></tr><tr><td><code>docs/assets/screenshots/</code></td><td>Capturas completas e recortes</td></tr></tbody></table></div><h3>Glossário</h3><div class="table-wrap"><table><thead><tr><th>Termo</th><th>Significado</th></tr></thead><tbody><tr><td><strong>Código exclusivo</strong></td><td>Chave <code>UFFA-XXXX-XXXX</code> que dá acesso ao portal</td></tr><tr><td><strong>Código de autenticidade</strong></td><td><code>UFFA-AUTH-XXXX-XXXX</code>, prova pública por par</td></tr><tr><td><strong>PROMO</strong></td><td>Placa burgundy que marca preço de oferta</td></tr><tr><td><strong>Verificado</strong></td><td>Selo de autenticidade no cartão e no produto</td></tr><tr><td><strong>Storefront API</strong></td><td>API pública da Shopify usada pelo catálogo</td></tr><tr><td><strong>Fallback local</strong></td><td>Catálogo de <code>shop-data.ts</code> usado se a API falhar</td></tr><tr><td><strong>Repor demo</strong></td><td>Restaura as encomendas de exemplo</td></tr><tr><td><strong>Sessão protegida</strong></td><td>Acesso ao portal válido por 30 minutos</td></tr></tbody></table></div><p><strong>UFFA Store</strong> · Porto · <code>atendimento@uffastore.pt</code> · <a href="https://www.instagram.com/uffastore.legit/">@uffastore.legit</a></p><p><a href="#indice">Voltar ao índice</a></p><footer class="chapter-foot"><span>UFFA Store · Manual do Site · v2.0</span><span>17 / 17</span></footer></section>
+  </main>
+</div>
+
+</body>
+</html>
