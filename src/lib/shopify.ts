@@ -168,7 +168,7 @@ export async function createCheckoutUrl(
       buyerIdentity: {
         preferences: {
           delivery: {
-            deliveryMethod: [isPickup ? "PICK_UP" : "SHIPPING"],
+            deliveryMethod: isPickup ? "PICK_UP" : "SHIPPING",
           },
         },
       },
