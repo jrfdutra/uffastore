@@ -1,5 +1,5 @@
-const domain = import.meta.env["VITE_SHOPIFY_STORE_DOMAIN"] || (typeof process !== "undefined" ? process.env["VITE_SHOPIFY_STORE_DOMAIN"] : undefined);
-const token = import.meta.env["VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN"] || (typeof process !== "undefined" ? process.env["VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN"] : undefined);
+const domain = import.meta.env["VITE_SHOPIFY_STORE_DOMAIN"] || "uffastore.myshopify.com";
+const token = import.meta.env["VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN"] || "cabe7b9d813cad638ad8a2812fc84f20";
 
 const API_VERSION = "2026-07";
 
@@ -10,10 +10,6 @@ export function isShopifyConfigured() {
 type ShopifyResponse<T> = { data?: T; errors?: { message: string }[] };
 
 export async function shopifyFetch<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
-  if (!isShopifyConfigured()) {
-    throw new Error("Shopify não configurado: falta o domain ou o token no .env");
-  }
-
   const response = await fetch(`https://${domain}/api/${API_VERSION}/graphql.json`, {
     method: "POST",
     headers: {
@@ -23,14 +19,11 @@ export async function shopifyFetch<T>(query: string, variables: Record<string, u
     body: JSON.stringify({ query, variables }),
   });
 
-  if (!response.ok) {
-    throw new Error(`Shopify respondeu ${response.status}`);
-  }
-
   const json = (await response.json()) as ShopifyResponse<T>;
 
-  if (json.errors?.length) {
-    throw new Error(json.errors.map((error) => error.message).join("\n"));
+  if (!response.ok || json.errors?.length) {
+    console.error("Shopify error:", response.status, json.errors?.map(e => e.message).join(", "));
+    throw new Error(`Shopify API error: ${json.errors?.map((e) => e.message).join(", ") || response.statusText}`);
   }
 
   if (!json.data) {
@@ -154,6 +147,9 @@ export async function createCheckoutUrl(
   const note = `MODALIDADE DE ENTREGA SELECIONADA: ${deliveryLabel}. Portes: ${costText}.`;
 
   const discountCodes = couponCode ? [couponCode] : [];
+
+  console.log("DEBUG: domain being used:", domain);
+  console.log("DEBUG: token being used:", token ? "YES" : "NO");
 
   const data = await shopifyFetch<{
     cartCreate: {
