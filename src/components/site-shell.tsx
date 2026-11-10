@@ -83,7 +83,7 @@ function CartDrawer() {
           aria-label={`${t.cart} (${s.count})`}
           className="relative"
         >
-          <ShoppingBag />
+          <ShoppingBag className="size-6" />
           <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-brand-foreground text-[10px] font-bold text-brand dark:bg-brand dark:text-brand-strong">
             {s.count}
           </span>
@@ -375,7 +375,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                   key={c}
                   to="/catalogo"
                   search={{ category: c }}
-                  className={`group relative flex h-full items-center text-xs md:text-sm font-bold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                  className={`group relative flex h-full items-center text-xs font-bold uppercase tracking-wider transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                     isActive ? "text-brand-foreground dark:text-brand" : "text-brand-foreground/85 hover:text-brand-foreground dark:text-brand/85 dark:hover:text-brand"
                   }`}
                 >
@@ -395,7 +395,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             })}
             <Link
               to="/ajuda"
-              className={`group relative flex h-full items-center text-xs md:text-sm font-bold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+              className={`group relative flex h-full items-center text-xs font-bold uppercase tracking-wider transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                 pathname === "/ajuda"
                   ? "text-brand-foreground dark:text-brand"
                   : "text-brand-foreground/85 hover:text-brand-foreground dark:text-brand/85 dark:hover:text-brand"
@@ -418,7 +418,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <Select value={s.language} onValueChange={(v) => s.setLanguage(v as Language)}>
               <SelectTrigger
                 aria-label={tr(s.language, "Idioma", "Language", "Idioma")}
-                className="h-9 w-[70px] border-0 px-2 font-bold shadow-none"
+                className="h-10 w-[74px] border-0 px-2 font-bold shadow-none text-base"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -431,20 +431,21 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <Button
               variant="ghost"
               size="icon"
+              className="size-11"
               onClick={s.toggleTheme}
               aria-label={tr(s.language, "Alternar tema", "Toggle theme", "Cambiar tema")}
             >
-              {s.theme === "light" ? <Moon /> : <Sun />}
+              {s.theme === "light" ? <Moon className="size-6" /> : <Sun className="size-6" />}
             </Button>
             <Button
               asChild
               variant="ghost"
               size="icon"
               aria-label={tr(s.language, "Lista de Desejos", "Wishlist", "Lista de Deseos")}
-              className="relative hidden sm:inline-flex"
+              className="relative hidden sm:inline-flex size-11"
             >
               <Link to="/favoritos">
-                <Heart className="size-5" />
+                <Heart className="size-6" />
                 {s.wishlist.length > 0 && (
                   <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-brand-foreground text-[10px] font-bold text-brand dark:bg-brand dark:text-brand-strong">
                     {s.wishlist.length}
@@ -456,11 +457,11 @@ export function SiteShell({ children }: { children: ReactNode }) {
               asChild
               variant="ghost"
               size="icon"
-              className="hidden sm:inline-flex"
+              className="hidden sm:inline-flex size-11"
               aria-label={tr(s.language, "A minha encomenda", "My order", "Mi pedido")}
             >
               <Link to="/rastreio">
-                <PackageSearch />
+                <PackageSearch className="size-6" />
               </Link>
             </Button>
             <CartDrawer />
@@ -517,12 +518,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               {t.track}
             </Link>
             <Link to="/verificar" className="hover:text-brand">
-              {tr(
-                s.language,
-                "Verificar autenticidade",
-                "Verify authenticity",
-                "Verificar autenticidad",
-              )}
+              {tr(s.language, "Verificar autenticidade", "Verify authenticity", "Verificar autenticidad")}
             </Link>
           </nav>
         </div>
