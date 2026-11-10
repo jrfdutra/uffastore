@@ -186,7 +186,7 @@ function Checkout() {
             <h2 className="mb-4 font-display text-3xl uppercase">
               1. {s.language === "pt" ? "Modalidade de Entrega" : s.language === "es" ? "Modalidad de Entrega" : "Delivery Method"}
             </h2>
-            <div className="grid gap-3 justify-items-center sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
               {(Object.keys(deliveryRates) as DeliveryOption[]).map((key) => {
                 const opt = deliveryRates[key];
                 const isActive = delivery === key;
@@ -223,7 +223,7 @@ function Checkout() {
             <h2 className="mb-4 font-display text-3xl uppercase">
               2. {s.language === "pt" ? "Pagamento" : s.language === "es" ? "Pago" : "Payment"}
             </h2>
-            <div className="grid gap-3 justify-items-center sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
               <Choice
                 active={payment === "card"}
                 onClick={() => setPayment("card")}
@@ -441,7 +441,7 @@ function Choice({
       variant={active ? "default" : "outline"}
       onClick={onClick}
       disabled={disabled}
-      className={`relative h-auto min-h-24 flex-col items-center justify-center whitespace-normal rounded-none p-4 text-center transition-all ${
+      className={`relative w-full h-auto min-h-24 flex-col items-center justify-center whitespace-normal rounded-none p-4 text-center transition-all ${
         active ? "ring-2 ring-primary ring-offset-2" : "hover:bg-accent"
       } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
     >
