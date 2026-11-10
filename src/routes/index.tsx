@@ -6,6 +6,7 @@ import { ProductCard } from "@/components/product-card";
 import { TrustStrip } from "@/components/trust-strip";
 import { OrderPortalPromo } from "@/components/order-portal-promo";
 import { OffCarousel } from "@/components/off-carousel";
+import { HeroCarousel } from "@/components/hero-carousel";
 import {
   categoryNames,
   copy,
@@ -71,34 +72,24 @@ function Home() {
 
   return (
     <>
-      <section className="relative min-h-[min(720px,78vh)] overflow-hidden bg-hero text-hero-foreground mt-0">
-        <img
-          src={heroImage}
-          alt="Uffa Store sneakers"
-          width={1200}
-          height={900}
-          className="absolute inset-0 h-full w-full object-cover object-[66%_center] opacity-90"
-        />
-        <div className="absolute inset-0 bg-hero-overlay" />
-        <div className="relative mx-auto flex min-h-[min(720px,78vh)] max-w-7xl items-end px-4 pb-12 md:px-6 md:pb-16">
-          <div className="max-w-3xl animate-reveal">
-            <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]">
-              <BadgeCheck className="size-4 text-primary" />
-              {h.eyebrow}
-            </p>
-            <h1 className="font-display text-6xl uppercase leading-[.9] sm:text-7xl md:text-9xl">
-              {h.title}
-            </h1>
-            <p className="mt-5 max-w-xl text-base md:text-lg">{h.text}</p>
-            <Button asChild size="lg" className="mt-7 h-12 rounded-none px-7">
-              <Link to="/catalogo" search={{}}>
-                {t.shop}
-                <ArrowRight />
-              </Link>
-            </Button>
-          </div>
+      <HeroCarousel products={catalog}>
+        <div className="max-w-3xl animate-reveal">
+          <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]">
+            <BadgeCheck className="size-4 text-primary" />
+            {h.eyebrow}
+          </p>
+          <h1 className="font-display text-6xl uppercase leading-[.9] sm:text-7xl md:text-9xl">
+            {h.title}
+          </h1>
+          <p className="mt-5 max-w-xl text-base md:text-lg">{h.text}</p>
+          <Button asChild size="lg" className="mt-7 h-12 rounded-none px-7">
+            <Link to="/catalogo" search={{}}>
+              {t.shop}
+              <ArrowRight />
+            </Link>
+          </Button>
         </div>
-      </section>
+      </HeroCarousel>
 
       <TrustStrip />
 
@@ -166,6 +157,7 @@ function Home() {
           <div className="grid grid-cols-2 gap-x-3 gap-y-10 lg:grid-cols-4">
             {catalog
               .filter((p) => p.featured)
+              .slice(0, 4)
               .map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
