@@ -369,9 +369,10 @@ O carrinho é uma camada lateral: o cliente não perde o contexto da loja.
 
 <a id="cap-05-1"></a>
 
-### 5.1 Artigos e quantidades
+### 5.1 Artigos, quantidades e confirmação
 
 - Lista com imagem, nome, tamanho, quantidade e preço.
+- **Confirmação via toast** ao adicionar itens, com ação não intrusiva "Ver carrinho" — sem redirecionamentos automáticos.
 - Alteração de quantidade com `+` / `-`.
 - Remoção individual.
 - Subtotal, desconto e total sempre visíveis.

@@ -43,14 +43,16 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 
 ## Funcionalidades
 - Catálogo, produto, carrinho e checkout com envio ou recolha no Porto.
+- Carrinho com confirmação via toast e ação não intrusiva "Ver carrinho", sem redirecionamentos automáticos.
 - Categorias do cabeçalho sincronizadas com o filtro do catálogo, inclusive quando o cliente já está em `/catalogo`.
 - Stock de demonstração com **5 pares por tamanho** em todos os produtos.
 - Preços de oferta com o mesmo peso tipográfico do preço normal e um nível de tamanho acima; placas **PROMO** com contorno nítido em claro e escuro.
-- Checkout redireciona para a Shopify para dados e pagamento; a demo local inclui encomendas de exemplo com código exclusivo, rastreio e autenticidade.
+- Layout de checkout simplificado com opção de pagamento unificada e ícone de cartão de crédito destacado.
+- Integração segura com a Shopify Storefront API para catálogo e checkout.
 - Portes: recolha grátis no Porto, **8,94 €** em Portugal Continental e Ilhas, **24,00 €** na União Europeia e **34,00 €** na Suíça.
 - Portal `/rastreio` com acesso por três fatores, dashboard, linha temporal e confirmação de receção/recolha.
 - Verificação pública de autenticidade em `/verificar`, sem expor dados do comprador.
-- Painel `/operacoes` para atualizar estado, previsão, rastreio, transportador e nota pública.
+- Painel `/operacoes` para atualizar estado, previsão, rastreio, transportador e nota pública (gestão de estados demo).
 - Aviso de versão demo no primeiro acesso de cada sessão, em PT/EN/ES.
 - Textos em PT/EN/ES, tema claro/escuro e layout mobile-first.
 
