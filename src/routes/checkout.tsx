@@ -223,34 +223,13 @@ function Checkout() {
             <h2 className="mb-4 font-display text-3xl uppercase">
               2. {s.language === "pt" ? "Pagamento" : s.language === "es" ? "Pago" : "Payment"}
             </h2>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3">
               <Choice
-                active={payment === "card"}
-                onClick={() => setPayment("card")}
-                icon={<Smartphone />}
-                title={tr(s.language, "Cartão de Crédito / Débito", "Credit / Debit Card", "Tarjeta de Crédito / Débito")}
-                detail={tr(s.language, "Visa, Mastercard, Maestro via Shopify", "Visa, Mastercard, Maestro via Shopify", "Visa, Mastercard, Maestro vía Shopify")}
-              />
-              <Choice
-                active={payment === "mbway"}
-                onClick={() => setPayment("mbway")}
+                active={true}
+                onClick={() => {}}
                 icon={<Smartphone className="text-primary" />}
-                title={tr(s.language, "MB WAY", "MB WAY", "MB WAY")}
-                detail={tr(s.language, "Pagamento instantâneo por telemóvel", "Instant phone payment", "Pago instantáneo por móvil")}
-              />
-              <Choice
-                active={payment === "apple"}
-                onClick={() => setPayment("apple")}
-                icon={<Smartphone className="text-slate-900 dark:text-white" />}
-                title={tr(s.language, "Apple Pay / Google Pay", "Apple Pay / Google Pay", "Apple Pay / Google Pay")}
-                detail={tr(s.language, "Pagamento rápido de 1 clique via Shopify", "Fast 1-click checkout via Shopify", "Pago rápido en 1 clic vía Shopify")}
-              />
-              <Choice
-                active={payment === "paypal"}
-                onClick={() => setPayment("paypal")}
-                icon={<Smartphone className="text-blue-600" />}
-                title={tr(s.language, "PayPal", "PayPal", "PayPal")}
-                detail={tr(s.language, "Conta PayPal ou Cartão", "PayPal account or Card", "Cuenta PayPal o Tarjeta")}
+                title={tr(s.language, "Pagamento Seguro via Shopify", "Secure Payment via Shopify", "Pago Seguro vía Shopify")}
+                detail={tr(s.language, "Aceita MB WAY, Cartão de Crédito/Débito (Visa, Mastercard), PayPal, Apple Pay, Google Pay", "Accepts MB WAY, Credit/Debit Card, PayPal, Apple Pay, Google Pay", "Acepta MB WAY, Tarjeta de Crédito/Débito, PayPal, Apple Pay, Google Pay")}
               />
             </div>
             <p className="mt-3 text-[11px] text-muted-foreground">
