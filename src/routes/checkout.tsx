@@ -441,14 +441,14 @@ function Choice({
       variant={active ? "default" : "outline"}
       onClick={onClick}
       disabled={disabled}
-      className={`relative h-auto min-h-24 items-start justify-start whitespace-normal rounded-none p-4 text-left transition-all ${
+      className={`relative h-auto min-h-24 flex-col items-center justify-center whitespace-normal rounded-none p-4 text-center transition-all ${
         active ? "ring-2 ring-primary ring-offset-2" : "hover:bg-accent"
       } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
     >
-      <span className="mr-3 mt-0.5 shrink-0 opacity-80">{icon}</span>
-      <span className="min-w-0 flex-1 pr-4">
-        <span className="block break-all font-bold leading-snug">{title}</span>
-        <span className="mt-1 block break-all text-xs leading-snug opacity-70">{detail}</span>
+      <span className="mb-2 shrink-0 opacity-80">{icon}</span>
+      <span className="min-w-0">
+        <span className="block font-bold leading-snug">{title}</span>
+        <span className="mt-1 block text-xs leading-snug opacity-70">{detail}</span>
       </span>
       {active && <Check className="absolute right-3 top-3 size-4" />}
     </Button>
