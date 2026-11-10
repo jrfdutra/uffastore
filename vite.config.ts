@@ -10,6 +10,6 @@ export default defineConfig({
     },
   },
   nitro: {
-    preset: "static", // Forces SSG
+    preset: "vercel",
   },
 });
