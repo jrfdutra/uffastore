@@ -186,7 +186,7 @@ function Checkout() {
             <h2 className="mb-4 font-display text-3xl uppercase">
               1. {s.language === "pt" ? "Modalidade de Entrega" : s.language === "es" ? "Modalidad de Entrega" : "Delivery Method"}
             </h2>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               {(Object.keys(deliveryRates) as DeliveryOption[]).map((key) => {
                 const opt = deliveryRates[key];
                 const isActive = delivery === key;
@@ -223,7 +223,7 @@ function Checkout() {
             <h2 className="mb-4 font-display text-3xl uppercase">
               2. {s.language === "pt" ? "Pagamento" : s.language === "es" ? "Pago" : "Payment"}
             </h2>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <Choice
                 active={payment === "card"}
                 onClick={() => setPayment("card")}
@@ -447,8 +447,8 @@ function Choice({
     >
       <span className="mr-3 mt-0.5 shrink-0 opacity-80">{icon}</span>
       <span className="min-w-0 flex-1 pr-4">
-        <span className="block break-words font-bold leading-snug">{title}</span>
-        <span className="mt-1 block break-words text-xs leading-snug opacity-70">{detail}</span>
+        <span className="block break-all font-bold leading-snug">{title}</span>
+        <span className="mt-1 block break-all text-xs leading-snug opacity-70">{detail}</span>
       </span>
       {active && <Check className="absolute right-3 top-3 size-4" />}
     </Button>
