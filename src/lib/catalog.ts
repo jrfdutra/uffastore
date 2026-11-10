@@ -72,9 +72,8 @@ function toProduct(node: ShopifyProductNode): Product {
     id: node.handle,
     sku: fallback?.sku ?? `UFFA-${node.handle.toUpperCase()}`,
     name: node.title,
-    // O catálogo local é a referência da taxonomia do site; a Shopify só
-    // define a categoria de produtos que ainda não existam localmente.
-    category: fallback?.category ?? toCategory(node.productType),
+    // A Shopify tem prioridade se o productType estiver definido, caso contrário usa o fallback local.
+    category: node.productType ? toCategory(node.productType) : (fallback?.category ?? "casual"),
     price: Number.parseFloat(node.priceRange.minVariantPrice.amount),
     status: fallback?.status ?? "active",
     image: node.featuredImage?.url ?? imageByHandle[node.handle] ?? fallback?.image ?? grey,
