@@ -223,9 +223,13 @@ function makeId() {
   return `${Date.now()}-${randomToken(10)}`;
 }
 
-function productById(id: string) {
-  const product = products.find((candidate) => candidate.id === id);
-  if (!product) throw new Error(`Produto desconhecido: ${id}`);
+// As encomendas de demonstração devem usar sempre o catálogo atual.
+// Escolhe por índice para nunca referenciar produtos que já não existem.
+function productAt(index: number): Product {
+  const product = products[index] ?? products[0];
+  if (!product) {
+    throw new Error("Catálogo vazio: não é possível gerar encomendas de demonstração.");
+  }
   return product;
 }
 
@@ -290,10 +294,9 @@ export function resendEmailNotification(orderNumber: string, notificationId: str
 }
 
 function seedOrders(): Order[] {
-  const rose = productById("porto-rose-low");
-  const court = productById("cedofeita-court");
-  const invicta = productById("invicta-01");
-  const afterdark = productById("afterdark-02");
+  const rose = productAt(0);
+  const court = productAt(1);
+  const invicta = productAt(2);
 
   const orders: Order[] = [
     {
@@ -403,9 +406,15 @@ export function loadOrders(): Order[] {
   } catch {
     removeStorage("local", ORDERS_KEY);
   }
-  const seeded = seedOrders();
-  saveOrders(seeded);
-  return seeded;
+  try {
+    const seeded = seedOrders();
+    saveOrders(seeded);
+    return seeded;
+  } catch (error) {
+    // Nunca deixar o painel rebentar por causa das encomendas de demonstração.
+    console.error("Não foi possível gerar encomendas de demonstração:", error);
+    return [];
+  }
 }
 
 export function saveOrders(orders: Order[]) {
