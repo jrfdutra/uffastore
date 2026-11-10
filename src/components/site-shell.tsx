@@ -524,10 +524,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 "Verificar autenticidad",
               )}
             </Link>
-            <Link to="/operacoes" className="text-footer-muted hover:text-brand">
-              {tr(s.language, "Operações", "Operations", "Operaciones")}
-            </Link>
-            <span className="text-footer-muted">{t.noReturns}</span>
           </nav>
         </div>
         <div className="border-t border-footer-border px-4 py-5 text-center text-xs text-footer-muted">
