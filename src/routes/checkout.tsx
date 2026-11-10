@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Check, MapPin, Package, Smartphone, Loader2, Share2, MessageSquare, Copy } from "lucide-react";
+import { Check, MapPin, Package, Smartphone, Loader2, Share2, MessageSquare, Copy, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -227,7 +227,7 @@ function Checkout() {
               <Choice
                 active={true}
                 onClick={() => {}}
-                icon={<Smartphone className="text-primary" />}
+                icon={<CreditCard className="text-primary" />}
                 title={tr(s.language, "Pagamento Seguro via Shopify", "Secure Payment via Shopify", "Pago Seguro vía Shopify")}
                 detail={tr(s.language, "Aceita MB WAY, Cartão de Crédito/Débito (Visa, Mastercard), PayPal, Apple Pay, Google Pay", "Accepts MB WAY, Credit/Debit Card, PayPal, Apple Pay, Google Pay", "Acepta MB WAY, Tarjeta de Crédito/Débito, PayPal, Apple Pay, Google Pay")}
               />
