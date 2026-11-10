@@ -500,7 +500,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               @uffastore.legit
             </a>
           </div>
-          <nav className="flex flex-col items-start gap-3 text-sm">
+          <nav className="flex flex-col items-start gap-3 text-sm mt-3">
             <Link to="/catalogo" search={{}} className="hover:text-brand flex items-center gap-1.5">
               <ShoppingBag className="size-4" />
               {t.shop}
