@@ -64,11 +64,9 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 | `/catalogo`                     | Catálogo com filtros e categorias sincronizadas.    |
 | `/produto/:id`                  | Detalhe do produto.                                 |
 | `/checkout`                     | Checkout, entrega e pagamento no checkout Shopify.  |
-| `/manual`                       | Manual funcional e operacional do site integrado.   |
 | `/confirmacao?order=UFFA-XXXXX` | Confirmação demo com código exclusivo e próximos passos. |
 | `/rastreio`                     | Portal do cliente.                                  |
 | `/verificar`                    | Verificação de autenticidade.                       |
-| `/operacoes`                    | Painel interno de demonstração.                     |
 | `/favoritos`                    | Lista de desejos persistente.                       |
 | `/ajuda`                        | Perguntas frequentes, contactos e formulário de apoio. |
 
@@ -96,7 +94,6 @@ O aviso de versão demo fecha uma vez por sessão e guarda a dispensa em `sessio
 ## Documentação
 
 - [`docs/manual-site.md`](docs/manual-site.md) — manual funcional completo: rotas, ecrãs, checkout, portal, autenticidade, operações, stock, temas e resolução de problemas.
-- **Manual Interativo no Site**: [`/manual`](https://www.uffastore.pt/manual) — toda a documentação renderizada diretamente na aplicação com navegação e suporte a múltiplos idiomas.
 - [`docs/portal-encomendas.md`](docs/portal-encomendas.md) — arquitetura, modelo de dados, fluxos, segurança e testes.
 - [`docs/guia-apresentacao.md`](docs/guia-apresentacao.md) — guião slide a slide da apresentação do portal.
 - [`docs/guia-apresentacao-site.md`](docs/guia-apresentacao-site.md) — guião slide a slide da apresentação do site.
