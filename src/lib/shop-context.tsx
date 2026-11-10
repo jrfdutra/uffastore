@@ -203,8 +203,12 @@ export function ShopProvider({ children }: { children: ReactNode }) {
           ? items.map((item) => (item === hit ? { ...item, quantity: item.quantity + 1 } : item))
           : [...items, { productId, size, quantity: 1 }];
       });
-      setCartOpen(true);
-      toast.success(copy[language].add);
+      toast.success(tr(language, "Adicionado ao carrinho", "Added to cart", "Añadido al carrito"), {
+        action: {
+          label: tr(language, "Ver carrinho", "View cart", "Ver carrito"),
+          onClick: () => setCartOpen(true),
+        },
+      });
     },
     [catalog, cart, language],
   );

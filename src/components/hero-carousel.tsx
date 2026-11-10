@@ -101,10 +101,10 @@ export function HeroCarousel({ products, children }: { products: Product[]; chil
         />
       )}
 
-      <div className="pointer-events-none absolute inset-0 bg-hero-overlay" />
+      <div className="pointer-events-none absolute inset-0 bg-hero/60 sm:bg-hero-overlay" />
 
       {/* O conteúdo do hero não bloqueia o clique na foto; apenas os elementos interativos o fazem. */}
-      <div className="pointer-events-none relative mx-auto flex min-h-[min(720px,78vh)] max-w-7xl items-end px-4 pb-12 md:px-6 md:pb-16">
+      <div className="pointer-events-none relative mx-auto flex min-h-[min(720px,78vh)] max-w-7xl items-end px-4 pb-12 md:px-6 md:pb-16 [text-shadow:_0_2px_10px_rgb(0_0_0_/_40%)] sm:[text-shadow:none]">
         {children}
       </div>
 

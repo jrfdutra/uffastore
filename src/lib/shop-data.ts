@@ -5,7 +5,7 @@ import green from "@/assets/Gemini_Generated_Image_wmmzi1wmmzi1wmmz.jpg";
 import greenAlt from "@/assets/b9d62cd4-00e2-45df-95df-701356309f59.jpg";
 import tan from "@/assets/e44536b4-0486-4401-9327-8f300ee11714.jpg";
 
-export const heroSneaker = grey;
+export const heroSneaker = white;
 
 export type Language = "pt" | "en" | "es";
 export type Category = "casual" | "streetwear" | "limited" | "sales";
