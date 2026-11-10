@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, CheckCircle2, Shield, Package, ShoppingBag, Terminal, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
-import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/manual")({
   head: () => ({
