@@ -97,6 +97,38 @@ const CART_CREATE_MUTATION = `
   }
 `;
 
+const PICKUP_LOCATIONS_QUERY = `
+  query PickupLocations {
+    locations(first: 10) {
+      nodes {
+        id
+        name
+        address {
+          countryCode
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Devolve os identificadores das localizações com recolha em loja ativa.
+ * A Storefront API usa o ID numérico da localização como pickupHandle.
+ */
+async function fetchPickupHandles(): Promise<string[]> {
+  try {
+    const data = await shopifyFetch<{ locations: { nodes: { id: string }[] } }>(
+      PICKUP_LOCATIONS_QUERY,
+    );
+    return data.locations.nodes
+      .map((location) => location.id.split("/").pop())
+      .filter((handle): handle is string => Boolean(handle));
+  } catch (error) {
+    console.error("Não foi possível obter as localizações de recolha:", error);
+    return [];
+  }
+}
+
 export async function createCheckoutUrl(
   items: { variantId: string; quantity: number }[],
   delivery: string = "pickup",
@@ -147,6 +179,7 @@ export async function createCheckoutUrl(
   const note = `MODALIDADE DE ENTREGA SELECIONADA: ${deliveryLabel}. Portes: ${costText}.`;
 
   const discountCodes = couponCode ? [couponCode] : [];
+  const pickupHandles = isPickup ? await fetchPickupHandles() : [];
 
   console.log("DEBUG: domain being used:", domain);
   console.log("DEBUG: token being used:", token ? "YES" : "NO");
@@ -166,9 +199,13 @@ export async function createCheckoutUrl(
       note,
       discountCodes,
       buyerIdentity: {
+        // A recolha é sempre em Portugal; o envio não força o país para permitir
+        // que o cliente escolha o destino no checkout (UE, Suíça, etc.).
+        ...(isPickup ? { countryCode: "PT" } : {}),
         preferences: {
           delivery: {
-            deliveryMethod: isPickup ? "PICK_UP" : "SHIPPING",
+            deliveryMethod: [isPickup ? "PICK_UP" : "SHIPPING"],
+            ...(isPickup && pickupHandles.length > 0 ? { pickupHandle: pickupHandles } : {}),
           },
         },
       },

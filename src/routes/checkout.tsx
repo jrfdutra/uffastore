@@ -243,7 +243,7 @@ function Checkout() {
                 onClick={() => setPayment("apple")}
                 icon={<Smartphone className="text-slate-900 dark:text-white" />}
                 title={tr(s.language, "Apple Pay / Google Pay", "Apple Pay / Google Pay", "Apple Pay / Google Pay")}
-                detail={tr(s.language, "Pagamento rápido de 1 clique", "1-click fast checkout", "Pago rápido en 1 clic")}
+                detail={tr(s.language, "Pagamento rápido de 1 clique via Shopify", "Fast 1-click checkout via Shopify", "Pago rápido en 1 clic vía Shopify")}
               />
               <Choice
                 active={payment === "paypal"}
@@ -273,39 +273,39 @@ function Checkout() {
             {s.cart.map((x) => {
               const p = s.catalog.find((y) => y.id === x.productId);
               return p ? (
-                <div key={`${x.productId}-${x.size}`} className="flex justify-between gap-3 text-sm">
-                  <span>{x.quantity}× {p.name} · {x.size}</span>
-                  <span className="font-bold">{money(p.price * x.quantity)}</span>
+                <div key={`${x.productId}-${x.size}`} className="flex min-w-0 justify-between gap-3 text-sm">
+                  <span className="min-w-0 break-words">{x.quantity}× {p.name} · {x.size}</span>
+                  <span className="shrink-0 whitespace-nowrap font-bold">{money(p.price * x.quantity)}</span>
                 </div>
               ) : null;
             })}
           </div>
 
           <div className="space-y-2 border-t border-border pt-4 text-sm">
-            <div className="flex justify-between">
-              <span>{t.subtotal}</span>
-              <span>{money(s.subtotal)}</span>
+            <div className="flex min-w-0 justify-between gap-3">
+              <span className="min-w-0">{t.subtotal}</span>
+              <span className="shrink-0 whitespace-nowrap">{money(s.subtotal)}</span>
             </div>
             {s.discountAmount > 0 && (
-              <div className="flex justify-between text-primary font-semibold">
-                <span>Desconto ({s.coupon?.code})</span>
-                <span>-{money(s.discountAmount)}</span>
+              <div className="flex min-w-0 justify-between gap-3 text-primary font-semibold">
+                <span className="min-w-0 break-words">Desconto ({s.coupon?.code})</span>
+                <span className="shrink-0 whitespace-nowrap">-{money(s.discountAmount)}</span>
               </div>
             )}
             {delivery !== "pickup" ? (
-              <div className="flex justify-between">
-                <span>{tr(s.language, `Portes (${deliveryRates[delivery].title[s.language as keyof typeof deliveryRates[typeof delivery]["title"]] ?? deliveryRates[delivery].title.pt})`, `Shipping (${deliveryRates[delivery].title[s.language as keyof typeof deliveryRates[typeof delivery]["title"]] ?? deliveryRates[delivery].title.pt})`, `Envío (${deliveryRates[delivery].title[s.language as keyof typeof deliveryRates[typeof delivery]["title"]] ?? deliveryRates[delivery].title.pt})`)}</span>
-                <span>{money(shipping)}</span>
+              <div className="flex min-w-0 justify-between gap-3">
+                <span className="min-w-0 break-words">{tr(s.language, `Portes (${deliveryRates[delivery].title[s.language as keyof typeof deliveryRates[typeof delivery]["title"]] ?? deliveryRates[delivery].title.pt})`, `Shipping (${deliveryRates[delivery].title[s.language as keyof typeof deliveryRates[typeof delivery]["title"]] ?? deliveryRates[delivery].title.pt})`, `Envío (${deliveryRates[delivery].title[s.language as keyof typeof deliveryRates[typeof delivery]["title"]] ?? deliveryRates[delivery].title.pt})`)}</span>
+                <span className="shrink-0 whitespace-nowrap">{money(shipping)}</span>
               </div>
             ) : (
-              <div className="flex justify-between">
-                <span>{tr(s.language, "Receber em mão (Porto)", "Hand pickup (Porto)", "Recibir en mano (Oporto)")}</span>
-                <span className="font-semibold text-primary">{tr(s.language, "Grátis (0,00 €)", "Free (0.00 €)", "Gratis (0,00 €)")}</span>
+              <div className="flex min-w-0 justify-between gap-3">
+                <span className="min-w-0 break-words">{tr(s.language, "Receber em mão (Porto)", "Hand pickup (Porto)", "Recibir en mano (Oporto)")}</span>
+                <span className="shrink-0 whitespace-nowrap font-semibold text-primary">{tr(s.language, "Grátis (0,00 €)", "Free (0.00 €)", "Gratis (0,00 €)")}</span>
               </div>
             )}
-            <div className="flex justify-between pt-3 text-lg font-bold">
-              <span>Total</span>
-              <span>{money(grandTotal)}</span>
+            <div className="flex min-w-0 justify-between gap-3 pt-3 text-lg font-bold">
+              <span className="min-w-0">Total</span>
+              <span className="shrink-0 whitespace-nowrap">{money(grandTotal)}</span>
             </div>
           </div>
 
@@ -396,6 +396,14 @@ function Checkout() {
             )}
           </Button>
 
+          <div className="mt-4 flex flex-wrap justify-center gap-3 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay" className="h-5" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo_%282020%29.svg" alt="Google Pay" className="h-5" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-3 mt-1" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-5" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-5" />
+          </div>
+
           {error && <p className="mt-3 text-center text-xs font-bold text-destructive">{error}</p>}
           
           <p className="mt-4 text-center text-[10px] leading-relaxed text-muted-foreground">
@@ -433,14 +441,14 @@ function Choice({
       variant={active ? "default" : "outline"}
       onClick={onClick}
       disabled={disabled}
-      className={`relative h-auto min-h-24 justify-start rounded-none p-4 text-left transition-all ${
+      className={`relative h-auto min-h-24 items-start justify-start whitespace-normal rounded-none p-4 text-left transition-all ${
         active ? "ring-2 ring-primary ring-offset-2" : "hover:bg-accent"
       } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
     >
-      <span className="shrink-0 mr-3 opacity-80">{icon}</span>
-      <span>
-        <span className="block font-bold">{title}</span>
-        <span className="mt-1 block text-xs opacity-70">{detail}</span>
+      <span className="mr-3 mt-0.5 shrink-0 opacity-80">{icon}</span>
+      <span className="min-w-0 flex-1 pr-4">
+        <span className="block break-words font-bold leading-snug">{title}</span>
+        <span className="mt-1 block break-words text-xs leading-snug opacity-70">{detail}</span>
       </span>
       {active && <Check className="absolute right-3 top-3 size-4" />}
     </Button>

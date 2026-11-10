@@ -73,7 +73,7 @@ function Home() {
   return (
     <>
       <HeroCarousel products={catalog}>
-        <div className="max-w-3xl animate-reveal">
+        <div className="pointer-events-none max-w-3xl animate-reveal">
           <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]">
             <BadgeCheck className="size-4 text-primary" />
             {h.eyebrow}
@@ -82,7 +82,7 @@ function Home() {
             {h.title}
           </h1>
           <p className="mt-5 max-w-xl text-base md:text-lg">{h.text}</p>
-          <Button asChild size="lg" className="mt-7 h-12 rounded-none px-7">
+          <Button asChild size="lg" className="pointer-events-auto mt-7 h-12 rounded-none px-7">
             <Link to="/catalogo" search={{}}>
               {t.shop}
               <ArrowRight />
