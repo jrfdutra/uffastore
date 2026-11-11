@@ -10,6 +10,7 @@ import {
 import { toast } from "sonner";
 import { copy, products as fallbackProducts, type Language, type Product } from "./shop-data";
 import { loadCatalog, saveCatalog, resetCatalogToDefault } from "./catalog";
+import { tr } from "./i18n";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 
 export type CartItem = { productId: string; size: number; quantity: number };
