@@ -80,7 +80,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Uffa Store" },
+      { property: "og:locale", content: "pt_PT" },
+      {
+        property: "og:image",
+        content: "https://www.uffastore.pt/images/nike-af1-floral-01.jpg",
+      },
+      { property: "og:image:alt", content: "Uffa Store — sapatilhas autenticadas no Porto" },
+      { property: "og:image:width", content: "1920" },
+      { property: "og:image:height", content: "2560" },
       { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:image",
+        content: "https://www.uffastore.pt/images/nike-af1-floral-01.jpg",
+      },
     ],
     links: [
       {
@@ -104,7 +116,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt">
       <head>
         <HeadContent />
       </head>

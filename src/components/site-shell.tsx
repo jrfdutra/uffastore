@@ -373,6 +373,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
   const currentCategory = (location.search as { category?: string })?.category;
 
   useEffect(() => setCartOpen(false), [pathname, setCartOpen]);
+  useEffect(() => {
+    document.documentElement.lang = s.language;
+  }, [s.language]);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="bg-foreground px-4 py-2 text-center text-xs font-bold uppercase text-background dark:bg-brand dark:text-brand-foreground">
