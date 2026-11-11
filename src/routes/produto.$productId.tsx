@@ -39,6 +39,7 @@ function ProductDetail() {
   const p = s.catalog.find((item) => item.id === loaderProduct.id) ?? loaderProduct;
   const [selected, setSelected] = useState<number>();
   const [angle, setAngle] = useState(0);
+  const [activeImage, setActiveImage] = useState(0);
   const [error, setError] = useState(false);
   const effectiveStatus = getProductEffectiveStatus(p);
   const isSoldOut = effectiveStatus === "soldout";
@@ -46,6 +47,8 @@ function ProductDetail() {
   const isInactive = p.status === "inactive";
   const drag = useRef<number | null>(null);
   const transform = `perspective(1000px) rotateY(${angle}deg)`;
+  const gallery = p.images?.length ? p.images : [p.image];
+  const currentImage = gallery[activeImage] ?? p.image;
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-16">
       <div className="grid gap-10 lg:grid-cols-[1.15fr_.85fr]">
@@ -66,7 +69,7 @@ function ProductDetail() {
             onPointerCancel={() => (drag.current = null)}
           >
             <img
-              src={p.image}
+              src={currentImage}
               alt={p.name}
               width={1200}
               height={900}
@@ -83,22 +86,25 @@ function ProductDetail() {
             </div>
           </div>
           <div className="mt-3 grid grid-cols-3 gap-3">
-            {[0, -10, 10].map((v, i) => (
+            {gallery.map((image, i) => (
               <Button
-                key={v}
+                key={`${image}-${i}`}
                 variant="ghost"
-                className="h-auto rounded-none bg-product p-0"
-                onClick={() => setAngle(v * 2)}
-                aria-label={`View ${i + 1}`}
+                className={`h-auto rounded-none bg-product p-0 ${i === activeImage ? "ring-2 ring-primary" : ""}`}
+                onClick={() => {
+                  setActiveImage(i);
+                  setAngle(0);
+                }}
+                aria-label={`${p.name} — ${i + 1}`}
+                aria-pressed={i === activeImage}
               >
                 <img
-                  src={p.image}
+                  src={image}
                   alt=""
                   width={1200}
                   height={900}
                   loading="lazy"
                   className="aspect-[4/3] w-full object-cover"
-                  style={{ transform: `rotate(${v}deg)` }}
                 />
               </Button>
             ))}

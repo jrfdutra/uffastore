@@ -57,6 +57,12 @@ function toCategory(value: string): Category {
 function toProduct(node: ShopifyProductNode): Product {
   const fallback = fallbackProducts.find((item) => item.id === node.handle);
   const description = node.description.replace(/<[^>]*>/g, "").trim();
+  const shopifyImages = (node.images?.nodes ?? [])
+    .map((image) => image.url)
+    .filter((url): url is string => Boolean(url));
+  const images = shopifyImages.length
+    ? shopifyImages
+    : (productImagesByHandle[node.handle] ?? (fallback?.image ? [fallback.image] : []));
 
   const sizes = node.variants.nodes
     .map((variant) => ({
@@ -76,7 +82,8 @@ function toProduct(node: ShopifyProductNode): Product {
     category: node.productType ? toCategory(node.productType) : (fallback?.category ?? "casual"),
     price: Number.parseFloat(node.priceRange.minVariantPrice.amount),
     status: fallback?.status ?? "active",
-    image: node.featuredImage?.url ?? imageByHandle[node.handle] ?? fallback?.image ?? grey,
+    image: images[0] ?? grey,
+    ...(images.length ? { images } : {}),
     description: { pt: description, en: description, es: description },
     sizes: sizes.length ? sizes : (fallback?.sizes ?? []),
     ...(fallback?.featured ? { featured: true } : {}),
