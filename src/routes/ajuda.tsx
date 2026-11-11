@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   HelpCircle,
@@ -154,15 +154,46 @@ function HelpPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             {tr(
               language,
-              "A UFFA Store pratica uma política rigorosa de autenticidade. Salvo defeito de fabrico comprovado, não efetuamos trocas nem devoluções por escolha de tamanho ou arrependimento. Verifica sempre o guia de tamanhos antes de comprar.",
-              "UFFA Store maintains a strict authenticity policy. Unless verified manufacturing defect, we do not offer exchanges or returns for size choice or change of mind.",
-              "UFFA Store mantiene una política estricta de autenticidad. Salvo defecto de fabricación comprobado, no realizamos cambios ni devoluciones.",
+              "Tens 14 dias, a contar da receção, para devolver a tua encomenda sem necessidade de justificação. Os artigos devem estar sem uso e na embalagem original. Produtos com defeito são recolhidos e substituídos ou reembolsados por nossa conta.",
+              "You have 14 days from delivery to return your order without justification. Items must be unused and in their original packaging. Defective products are collected and replaced or refunded at our expense.",
+              "Tienes 14 días desde la recepción para devolver tu pedido sin necesidad de justificación. Los artículos deben estar sin uso y en su embalaje original. Los productos defectuosos se recogen y sustituyen o reembolsan por nuestra cuenta.",
             )}
           </p>
           <ul className="space-y-2 text-xs text-muted-foreground list-disc pl-4">
-            <li>Sem trocas nem devoluções por tamanho</li>
-            <li>Artigos com defeito: contacto em 48h</li>
-            <li>Reembolsos processados via Shopify Payments</li>
+            <li>
+              {tr(
+                language,
+                "14 dias de livre resolução",
+                "14-day right of withdrawal",
+                "14 días de libre resolución",
+              )}
+            </li>
+            <li>
+              {tr(
+                language,
+                "Artigos com defeito: contacto em 48h",
+                "Defective items: contact within 48h",
+                "Artículos defectuosos: contacto en 48h",
+              )}
+            </li>
+            <li>
+              {tr(
+                language,
+                "Reembolsos processados via Shopify Payments",
+                "Refunds processed via Shopify Payments",
+                "Reembolsos procesados vía Shopify Payments",
+              )}
+            </li>
+            <li>
+              <Link to="/devolucoes" className="text-primary underline">
+                {tr(
+                  language,
+                  "Ver política de devoluções",
+                  "See returns policy",
+                  "Ver política de devoluciones",
+                )}
+              </Link>
+            </li>
           </ul>
         </div>
 

@@ -14,10 +14,13 @@ import { Route as AjudaRouteImport } from './routes/ajuda'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ConfirmacaoRouteImport } from './routes/confirmacao'
+import { Route as DevolucoesRouteImport } from './routes/devolucoes'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as ManualRouteImport } from './routes/manual'
 import { Route as OperacoesRouteImport } from './routes/operacoes'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as RastreioRouteImport } from './routes/rastreio'
+import { Route as TermosRouteImport } from './routes/termos'
 import { Route as VerificarRouteImport } from './routes/verificar'
 import { Route as ProdutoProductIdRouteImport } from './routes/produto.$productId'
 
@@ -46,6 +49,11 @@ const ConfirmacaoRoute = ConfirmacaoRouteImport.update({
   path: '/confirmacao',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevolucoesRoute = DevolucoesRouteImport.update({
+  id: '/devolucoes',
+  path: '/devolucoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FavoritosRoute = FavoritosRouteImport.update({
   id: '/favoritos',
   path: '/favoritos',
@@ -61,9 +69,19 @@ const OperacoesRoute = OperacoesRouteImport.update({
   path: '/operacoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RastreioRoute = RastreioRouteImport.update({
   id: '/rastreio',
   path: '/rastreio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VerificarRoute = VerificarRouteImport.update({
@@ -83,10 +101,13 @@ export interface FileRoutesByFullPath {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
+  '/devolucoes': typeof DevolucoesRoute
   '/favoritos': typeof FavoritosRoute
   '/manual': typeof ManualRoute
   '/operacoes': typeof OperacoesRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
+  '/termos': typeof TermosRoute
   '/verificar': typeof VerificarRoute
   '/produto/$productId': typeof ProdutoProductIdRoute
 }
@@ -96,10 +117,13 @@ export interface FileRoutesByTo {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
+  '/devolucoes': typeof DevolucoesRoute
   '/favoritos': typeof FavoritosRoute
   '/manual': typeof ManualRoute
   '/operacoes': typeof OperacoesRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
+  '/termos': typeof TermosRoute
   '/verificar': typeof VerificarRoute
   '/produto/$productId': typeof ProdutoProductIdRoute
 }
@@ -110,10 +134,13 @@ export interface FileRoutesById {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
+  '/devolucoes': typeof DevolucoesRoute
   '/favoritos': typeof FavoritosRoute
   '/manual': typeof ManualRoute
   '/operacoes': typeof OperacoesRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
+  '/termos': typeof TermosRoute
   '/verificar': typeof VerificarRoute
   '/produto/$productId': typeof ProdutoProductIdRoute
 }
@@ -125,10 +152,13 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
+    | '/devolucoes'
     | '/favoritos'
     | '/manual'
     | '/operacoes'
+    | '/privacidade'
     | '/rastreio'
+    | '/termos'
     | '/verificar'
     | '/produto/$productId'
   fileRoutesByTo: FileRoutesByTo
@@ -138,10 +168,13 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
+    | '/devolucoes'
     | '/favoritos'
     | '/manual'
     | '/operacoes'
+    | '/privacidade'
     | '/rastreio'
+    | '/termos'
     | '/verificar'
     | '/produto/$productId'
   id:
@@ -151,10 +184,13 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
+    | '/devolucoes'
     | '/favoritos'
     | '/manual'
     | '/operacoes'
+    | '/privacidade'
     | '/rastreio'
+    | '/termos'
     | '/verificar'
     | '/produto/$productId'
   fileRoutesById: FileRoutesById
@@ -165,10 +201,13 @@ export interface RootRouteChildren {
   CatalogoRoute: typeof CatalogoRoute
   CheckoutRoute: typeof CheckoutRoute
   ConfirmacaoRoute: typeof ConfirmacaoRoute
+  DevolucoesRoute: typeof DevolucoesRoute
   FavoritosRoute: typeof FavoritosRoute
   ManualRoute: typeof ManualRoute
   OperacoesRoute: typeof OperacoesRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
   RastreioRoute: typeof RastreioRoute
+  TermosRoute: typeof TermosRoute
   VerificarRoute: typeof VerificarRoute
   ProdutoProductIdRoute: typeof ProdutoProductIdRoute
 }
@@ -210,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfirmacaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/devolucoes': {
+      id: '/devolucoes'
+      path: '/devolucoes'
+      fullPath: '/devolucoes'
+      preLoaderRoute: typeof DevolucoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/favoritos': {
       id: '/favoritos'
       path: '/favoritos'
@@ -231,11 +277,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OperacoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rastreio': {
       id: '/rastreio'
       path: '/rastreio'
       fullPath: '/rastreio'
       preLoaderRoute: typeof RastreioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/verificar': {
@@ -261,10 +321,13 @@ const rootRouteChildren: RootRouteChildren = {
   CatalogoRoute: CatalogoRoute,
   CheckoutRoute: CheckoutRoute,
   ConfirmacaoRoute: ConfirmacaoRoute,
+  DevolucoesRoute: DevolucoesRoute,
   FavoritosRoute: FavoritosRoute,
   ManualRoute: ManualRoute,
   OperacoesRoute: OperacoesRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
   RastreioRoute: RastreioRoute,
+  TermosRoute: TermosRoute,
   VerificarRoute: VerificarRoute,
   ProdutoProductIdRoute: ProdutoProductIdRoute,
 }

@@ -36,6 +36,7 @@ import {
 import { categoryNames, copy, money, type Category, type Language } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
+import { company } from "@/lib/legal";
 import { useEffect, useState, type ReactNode } from "react";
 
 const cats: Category[] = ["casual", "streetwear", "limited", "sales"];
@@ -563,10 +564,43 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 "Verificar autenticidad",
               )}
             </Link>
+            <span aria-hidden className="my-2 h-px w-12 bg-footer-border" />
+            <Link to="/privacidade" className="hover:text-brand">
+              {tr(
+                s.language,
+                "Política de Privacidade",
+                "Privacy Policy",
+                "Política de Privacidad",
+              )}
+            </Link>
+            <Link to="/termos" className="hover:text-brand">
+              {tr(s.language, "Termos e Condições", "Terms & Conditions", "Términos y Condiciones")}
+            </Link>
+            <Link to="/devolucoes" className="hover:text-brand">
+              {tr(s.language, "Devoluções e Reembolsos", "Returns & Refunds", "Devoluciones")}
+            </Link>
+            <a
+              href={company.complaintsBook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-brand"
+            >
+              {tr(s.language, "Livro de Reclamações", "Complaints Book", "Libro de Reclamaciones")}
+            </a>
           </nav>
         </div>
         <div className="border-t border-footer-border px-4 py-5 text-center text-xs text-footer-muted">
-          © 2026 UFFA STORE · PORTO
+          <p>
+            © 2026 {company.legalName} · {company.nif} · {company.address}
+          </p>
+          <p className="mt-1">
+            {tr(
+              s.language,
+              "Todos os direitos reservados.",
+              "All rights reserved.",
+              "Todos los derechos reservados.",
+            )}
+          </p>
         </div>
       </footer>
     </div>
