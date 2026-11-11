@@ -1,10 +1,10 @@
-import grey from "@/assets/Gemini_Generated_Image_f4688zf4688zf468.jpg";
 import {
   products as fallbackProducts,
   type Category,
   type Product,
   type ProductStatus,
 } from "./shop-data";
+import { getConsolidatedAsProducts } from "./catalog-adapter";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 import {
   fetchShopifyProductByHandle,
@@ -13,45 +13,9 @@ import {
   type ShopifyProductNode,
 } from "./shopify";
 
-export const CATALOG_STORAGE_KEY = "uffa-custom-catalog-v2";
-
-/**
- * Imagens locais usadas como fallback quando a Shopify ainda não tem media.
- * Neste momento todos os modelos partilham a mesma galeria (3 fotografias do
- * Nike Air Force 1 '07 White com bordado floral laranja/amarelo).
- */
-export const productImagesByHandle: Record<string, string[]> = {
-  "air-force-1-07-white": [
-    "/images/nike-af1-floral-01.jpg",
-    "/images/nike-af1-floral-02.jpg",
-    "/images/nike-af1-floral-03.jpg",
-  ],
-  "air-force-1-07-black": [
-    "/images/nike-af1-floral-01.jpg",
-    "/images/nike-af1-floral-02.jpg",
-    "/images/nike-af1-floral-03.jpg",
-  ],
-  "nike-dunk-low-panda": [
-    "/images/nike-af1-floral-01.jpg",
-    "/images/nike-af1-floral-02.jpg",
-    "/images/nike-af1-floral-03.jpg",
-  ],
-  "nike-dunk-low-grey-fog": [
-    "/images/nike-af1-floral-01.jpg",
-    "/images/nike-af1-floral-02.jpg",
-    "/images/nike-af1-floral-03.jpg",
-  ],
-  "nike-dunk-low-photon-dust": [
-    "/images/nike-af1-floral-01.jpg",
-    "/images/nike-af1-floral-02.jpg",
-    "/images/nike-af1-floral-03.jpg",
-  ],
-};
-
-export const imageByHandle: Record<string, string> = Object.fromEntries(
-  Object.entries(productImagesByHandle).map(([handle, images]) => [handle, images[0] ?? ""]),
-);
-
+export const CATALOG_STORAGE_KEY = "uffa-custom-catalog-v3";
+export const productImagesByHandle: Record<string, string[]> = {};
+export const imageByHandle: Record<string, string> = {};
 const categories: Category[] = ["sales", "casual", "streetwear", "limited"];
 
 function toCategory(value: string): Category {
@@ -60,37 +24,29 @@ function toCategory(value: string): Category {
 }
 
 function toProduct(node: ShopifyProductNode): Product {
-  const fallback = fallbackProducts.find((item) => item.id === node.handle);
+  const fallback =
+    getConsolidatedAsProducts().find((item) => item.id === node.handle) ?? fallbackProducts[0];
   const description = node.description.replace(/<[^>]*>/g, "").trim();
   const shopifyImages = (node.images?.nodes ?? [])
     .map((image) => image.url)
     .filter((url): url is string => Boolean(url));
   const images = shopifyImages.length
     ? shopifyImages
-    : (productImagesByHandle[node.handle] ?? (fallback?.image ? [fallback.image] : []));
-
-  const sizes = node.variants.nodes
-    .map((variant) => ({
-      size: Number.parseInt(variant.selectedOptions[0]?.value ?? variant.title, 10),
-      stock: variant.quantityAvailable ?? (variant.availableForSale ? 1 : 0),
-      variantId: variant.id,
-      sku: `${fallback?.sku ?? `UFFA-${node.handle.toUpperCase()}`}-${variant.selectedOptions[0]?.value ?? variant.title}`,
-    }))
-    .filter((variant) => Number.isFinite(variant.size))
-    .sort((a, b) => a.size - b.size);
+    : (fallback?.images ?? [fallback?.image ?? "/produtos/material-01.webp"]);
 
   return {
     id: node.handle,
     sku: fallback?.sku ?? `UFFA-${node.handle.toUpperCase()}`,
     name: node.title,
-    // A Shopify tem prioridade se o productType estiver definido, caso contrário usa o fallback local.
-    category: node.productType ? toCategory(node.productType) : (fallback?.category ?? "casual"),
+    category: node.productType
+      ? toCategory(node.productType)
+      : (fallback?.category ?? "streetwear"),
     price: Number.parseFloat(node.priceRange.minVariantPrice.amount),
     status: fallback?.status ?? "active",
-    image: images[0] ?? grey,
+    image: images[0] ?? "/produtos/material-01.webp",
     ...(images.length ? { images } : {}),
     description: { pt: description, en: description, es: description },
-    sizes: sizes.length ? sizes : (fallback?.sizes ?? []),
+    sizes: fallback?.sizes ?? [],
     ...(fallback?.featured ? { featured: true } : {}),
   };
 }
@@ -115,12 +71,9 @@ export function saveCatalog(items: Product[]): void {
 
 export function resetCatalogToDefault(): Product[] {
   removeStorage("local", CATALOG_STORAGE_KEY);
-  return fallbackProducts;
+  return getConsolidatedAsProducts();
 }
 
-/**
- * Resolve um único produto pelo handle.
- */
 export async function loadProduct(handle: string): Promise<Product | undefined> {
   const stored = getStoredCatalog();
   if (stored) {
@@ -128,7 +81,8 @@ export async function loadProduct(handle: string): Promise<Product | undefined> 
     if (match) return match;
   }
 
-  const local = fallbackProducts.find((item) => item.id === handle);
+  const consolidatedList = getConsolidatedAsProducts();
+  const local = consolidatedList.find((item) => item.id === handle);
   if (!isShopifyConfigured()) return local;
 
   try {
@@ -141,29 +95,23 @@ export async function loadProduct(handle: string): Promise<Product | undefined> 
   }
 }
 
-/**
- * Devolve o catálogo de produtos da loja.
- * Prioridade:
- * 1. Alterações personalizadas guardadas no painel de operações (localStorage)
- * 2. Catálogo sincronizado da Shopify
- * 3. Catálogo base local (fallback)
- */
 export async function loadCatalog(): Promise<Product[]> {
   const stored = getStoredCatalog();
   if (stored && stored.length > 0) {
     return stored;
   }
 
-  if (!isShopifyConfigured()) return fallbackProducts;
+  const consolidatedList = getConsolidatedAsProducts();
+  if (!isShopifyConfigured()) return consolidatedList;
 
   try {
     const nodes = await fetchShopifyProducts(50);
-    if (!nodes.length) return fallbackProducts;
+    if (!nodes.length) return consolidatedList;
 
     const mapped = nodes.map(toProduct);
     return mapped.sort((a, b) => {
-      const indexA = fallbackProducts.findIndex((item) => item.id === a.id);
-      const indexB = fallbackProducts.findIndex((item) => item.id === b.id);
+      const indexA = consolidatedList.findIndex((item) => item.id === a.id);
+      const indexB = consolidatedList.findIndex((item) => item.id === b.id);
       if (indexA === -1 && indexB === -1) return 0;
       if (indexA === -1) return 1;
       if (indexB === -1) return -1;
@@ -171,6 +119,6 @@ export async function loadCatalog(): Promise<Product[]> {
     });
   } catch (error) {
     console.warn("[shopify] catálogo indisponível, a usar dados locais:", error);
-    return fallbackProducts;
+    return consolidatedList;
   }
 }

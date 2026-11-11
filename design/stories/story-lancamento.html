@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<title>UFFA · Story Lançamento do Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#080506}
+  #story{
+    position:relative;width:1080px;height:1920px;overflow:hidden;
+    background:
+      radial-gradient(1200px 760px at 50% 34%, #2a161c 0%, #170d11 46%, #0b0608 100%);
+    font-family:"Inter",system-ui,sans-serif;
+    color:#F7F1EC;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Parede ---------- */
+  .wall{position:absolute;inset:0 0 800px 0;pointer-events:none}
+  .wall::before{content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(760px 460px at 18% 24%, rgba(225,160,180,.055), transparent 70%),
+      radial-gradient(680px 420px at 82% 30%, rgba(255,190,150,.045), transparent 70%),
+      radial-gradient(900px 520px at 50% 86%, rgba(74,43,52,.55), transparent 78%);
+  }
+  .wall-seam{position:absolute;left:0;right:0;top:330px;height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.075) 12%, rgba(255,255,255,.10) 50%, rgba(255,255,255,.075) 88%, transparent);
+    box-shadow:0 10px 26px rgba(0,0,0,.55)}
+  .wall-seam::after{content:"";position:absolute;left:0;right:0;top:1px;height:26px;
+    background:linear-gradient(to bottom, rgba(0,0,0,.45), transparent)}
+  .wall-vseam{position:absolute;top:0;bottom:0;right:186px;width:1px;
+    background:linear-gradient(to bottom, rgba(255,255,255,.035), rgba(255,255,255,.012) 60%, transparent);}
+  .backlight{position:absolute;left:50%;top:1080px;transform:translate(-50%,-50%);
+    width:1080px;height:480px;border-radius:50%;
+    background:radial-gradient(closest-side, rgba(225,160,180,.28), rgba(225,160,180,.08) 60%, transparent 85%);
+    filter:blur(22px);pointer-events:none}
+  .led{position:absolute;top:1180px;height:3px;border-radius:2px;
+    background:rgba(255,210,225,.85);
+    box-shadow:0 0 18px 4px rgba(225,160,180,.65), 0 0 50px 15px rgba(225,160,180,.25)}
+  .led.l{left:0;width:150px}
+  .led.r{right:0;width:170px}
+
+  /* ---------- Secretária ---------- */
+  .desk{position:absolute;left:0;right:0;top:1118px;height:344px;
+    background:
+      linear-gradient(180deg, #241519 0%, #1a0f13 34%, #120a0d 72%, #0c0709 100%);
+  }
+  .desk::before{content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(620px 200px at 50% 22%, rgba(225,160,180,.12), transparent 72%),
+      radial-gradient(680px 120px at 50% 68%, rgba(225,160,180,.10), transparent 76%),
+      radial-gradient(300px 120px at 12% 30%, rgba(255,180,130,.05), transparent 70%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.012) 0 1px, transparent 1px 7px);
+    }
+  .desk::after{content:"";position:absolute;left:0;right:0;top:0;height:2px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.10) 20%, rgba(255,255,255,.16) 50%, rgba(255,255,255,.10) 80%, transparent)}
+  .desk-edge{position:absolute;left:0;right:0;top:1458px;height:54px;
+    background:linear-gradient(180deg,#0d0709 0%, #060304 60%, #030202 100%);
+    box-shadow:0 -8px 24px rgba(0,0,0,.55)}
+  .desk-edge::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.10) 30%, rgba(255,255,255,.16) 50%, rgba(255,255,255,.10) 70%, transparent)}
+
+  /* ---------- Tapete ---------- */
+  .rug{position:absolute;left:0;right:0;top:1512px;bottom:0;
+    background:
+      radial-gradient(900px 420px at 50% 10%, rgba(225,160,180,.06), transparent 70%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.045) 0 2px, rgba(0,0,0,.34) 2px 5px),
+      repeating-linear-gradient(0deg, rgba(0,0,0,.46) 0 3px, rgba(255,255,255,.028) 3px 6px),
+      linear-gradient(180deg,#0f0a0d,#080506);
+  }
+  .rug::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(760px 300px at 50% 0%, rgba(0,0,0,.55), transparent 75%)}
+
+  /* ---------- Objetos ---------- */
+  .plant{position:absolute;left:-46px;top:690px;width:284px;height:466px;z-index:3;
+    filter:blur(2px) drop-shadow(0 24px 26px rgba(0,0,0,.55));opacity:.95}
+  .speaker{position:absolute;right:-12px;top:1016px;width:150px;height:220px;z-index:3;
+    border-radius:26px 26px 18px 18px;
+    background:
+      linear-gradient(90deg, #050304 0%, #1b1316 18%, #241a1e 46%, #171013 78%, #050304 100%);
+    box-shadow:0 26px 34px rgba(0,0,0,.60), inset 0 1px 0 rgba(255,255,255,.10)}
+  .speaker::before{content:"";position:absolute;left:12px;right:12px;top:8px;height:26px;border-radius:50%;
+    background:linear-gradient(180deg,#2a2024,#0a0708);box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+  .speaker::after{content:"";position:absolute;left:0;top:14px;bottom:14px;width:2px;border-radius:2px;
+    background:rgba(255,205,215,.55);box-shadow:0 0 16px 4px rgba(225,160,180,.28)}
+  .slab{position:absolute;right:-30px;top:1370px;width:300px;height:52px;z-index:2;
+    transform:rotate(-7deg);border-radius:10px;
+    background:linear-gradient(180deg,#1a1215,#0a0608);
+    box-shadow:0 22px 30px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08)}
+
+  /* ---------- Portátil ---------- */
+  .laptop{position:absolute;left:50%;top:610px;transform:translateX(-50%);width:980px;z-index:5}
+  .lid{position:relative;width:848px;height:547px;margin:0 auto;
+    border-radius:24px 24px 12px 12px;
+    padding:14px 14px 20px;
+    background:linear-gradient(180deg,#332a2e 0%, #201a1d 8%, #141013 62%, #0d0a0c 100%);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.09),
+      0 34px 60px rgba(0,0,0,.62),
+      0 8px 18px rgba(0,0,0,.55),
+      inset 0 1px 0 rgba(255,255,255,.14);
+  }
+  .display{position:relative;width:820px;height:512px;border-radius:12px;overflow:hidden;
+    background:#000;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
+  .display img{width:100%;height:100%;object-fit:cover;object-position:50% 0%;display:block;
+    filter:brightness(.94) saturate(.97) contrast(1.02)}
+  .display::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      linear-gradient(112deg, rgba(255,255,255,.11) 0%, rgba(255,255,255,.03) 26%, transparent 44%, transparent 68%, rgba(255,255,255,.045) 88%),
+      radial-gradient(120% 90% at 50% 50%, transparent 62%, rgba(0,0,0,.28) 100%);
+    mix-blend-mode:screen}
+  .display::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    box-shadow:inset 0 0 40px rgba(0,0,0,.45);border-radius:12px}
+  .cam{position:absolute;left:50%;top:5px;transform:translateX(-50%);width:9px;height:9px;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%, #2c3a44, #07090b 70%);box-shadow:0 0 0 1px rgba(255,255,255,.06)}
+  .chin{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);
+    font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(247,241,236,.30)}
+
+  .deck{position:relative;width:930px;height:108px;margin:-6px auto 0;
+    border-radius:6px 6px 26px 26px;
+    background:
+      linear-gradient(180deg,#2b2326 0%, #1b1518 26%, #130e11 66%, #0c090a 100%);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.07),
+      0 30px 44px rgba(0,0,0,.55),
+      inset 0 1px 0 rgba(255,255,255,.12);
+  }
+  .deck::before{content:"";position:absolute;left:50%;top:-2px;transform:translateX(-50%);
+    width:300px;height:8px;border-radius:0 0 6px 6px;
+    background:linear-gradient(180deg,#050304,#171114);
+    box-shadow:inset 0 -1px 0 rgba(255,255,255,.10)}
+  .deck::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:0 0 26px 26px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.14) 16%, rgba(255,255,255,.20) 50%, rgba(255,255,255,.14) 84%, transparent)}
+  .keyboard{position:absolute;left:50%;top:14px;transform:translateX(-50%);
+    width:770px;height:52px;display:grid;grid-template-columns:repeat(14,1fr);grid-auto-rows:1fr;
+    gap:2px;padding:4px 5px;border-radius:6px;
+    background:linear-gradient(180deg,#0a0708,#0c080a);
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.8);opacity:.5;filter:blur(.3px)}
+  .keyboard i{display:block;border-radius:2px;
+    background:linear-gradient(180deg,#1c1619,#171114);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+  .trackpad{position:absolute;left:50%;top:72px;transform:translateX(-50%);
+    width:196px;height:16px;border-radius:4px;
+    background:linear-gradient(180deg,#1a1417,#110d0f);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04), 0 0 0 1px rgba(255,255,255,.03)}
+  .laptop-shadow{position:absolute;left:50%;top:1260px;transform:translateX(-50%);
+    width:1010px;height:64px;border-radius:50%;
+    background:radial-gradient(closest-side, rgba(0,0,0,.62), rgba(0,0,0,.28) 58%, transparent 78%);
+    filter:blur(12px);z-index:4}
+  .reflection{position:absolute;left:50%;top:1264px;transform:translateX(-50%);
+    width:820px;height:210px;z-index:3;overflow:hidden;
+    -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), transparent 82%);
+    mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), transparent 82%)}
+  .reflection img{width:100%;height:100%;object-fit:cover;object-position:50% 100%;display:block;
+    transform:scaleY(-1);filter:blur(9px) brightness(.5) saturate(.8);opacity:.5}
+
+  /* ---------- Tipografia ---------- */
+  .headline{position:absolute;left:0;right:0;top:410px;text-align:center;z-index:8;
+    pointer-events:none}
+  .headline .l1{font-family:"Anton",sans-serif;font-weight:400;font-size:124px;line-height:.9;
+    letter-spacing:.014em;text-transform:uppercase;color:#E1A0B4;
+    text-shadow:0 10px 34px rgba(0,0,0,.55)}
+  .headline .l2{font-family:"Anton",sans-serif;font-weight:400;font-size:150px;line-height:.86;
+    letter-spacing:.002em;text-transform:uppercase;color:#F7F1EC;
+    transform:skewX(-7.2deg);transform-origin:50% 100%;
+    margin-top:2px;
+    text-shadow:0 12px 38px rgba(0,0,0,.55)}
+
+  /* ---------- Topo / fundo ---------- */
+  .top{position:absolute;left:72px;right:72px;top:196px;display:flex;align-items:center;
+    justify-content:space-between;z-index:10}
+  .handle{display:flex;align-items:center;gap:12px;font-size:26px;font-weight:700;letter-spacing:-.01em;color:#F7F1EC;
+    text-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .handle img{width:32px;height:32px;border-radius:50%;object-fit:cover;
+    box-shadow:0 0 0 1px rgba(255,255,255,.18), 0 4px 10px rgba(0,0,0,.45)}
+  .top-label{font-size:22px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+    color:#F7F1EC;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+
+  .bottom{position:absolute;left:72px;right:72px;top:1658px;display:flex;align-items:center;
+    justify-content:space-between;z-index:10}
+  .bottom span{font-size:24px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    color:rgba(247,241,236,.94);text-shadow:0 2px 12px rgba(0,0,0,.65)}
+
+  /* ---------- Acabamento ---------- */
+  .grain{position:absolute;inset:0;z-index:20;pointer-events:none;opacity:.16;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .vignette{position:absolute;inset:0;z-index:21;pointer-events:none;
+    background:
+      linear-gradient(to bottom, rgba(0,0,0,.55) 0%, rgba(0,0,0,.18) 12%, transparent 24%, transparent 74%, rgba(0,0,0,.42) 92%, rgba(0,0,0,.62) 100%),
+      radial-gradient(130% 90% at 50% 46%, transparent 52%, rgba(0,0,0,.42) 100%)}
+</style>
+</head>
+<body>
+  <div id="story" role="img" aria-label="UFFA Store — O nosso novo site está no ar. uffastore.pt">
+    <!-- parede -->
+    <div class="wall"></div>
+    <div class="wall-seam"></div>
+    <div class="wall-vseam"></div>
+    <div class="backlight"></div>
+
+    <!-- secretária -->
+    <div class="desk"></div>
+    <div class="led l"></div>
+    <div class="led r"></div>
+
+    <!-- objetos -->
+    <svg class="plant" viewBox="0 0 250 410" aria-hidden="true">
+      <defs>
+        <linearGradient id="pot" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#050304"/>
+          <stop offset=".28" stop-color="#211619"/>
+          <stop offset=".55" stop-color="#2b1d21"/>
+          <stop offset=".8" stop-color="#140e10"/>
+          <stop offset="1" stop-color="#050304"/>
+        </linearGradient>
+        <linearGradient id="leafA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#3a4a2d"/>
+          <stop offset="1" stop-color="#151d15"/>
+        </linearGradient>
+        <linearGradient id="leafB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#4a5d3f"/>
+          <stop offset="1" stop-color="#1c251a"/>
+        </linearGradient>
+      </defs>
+      <!-- tronco e ramos -->
+      <g stroke="#2b3328" stroke-width="3" fill="none" stroke-linecap="round">
+        <path d="M126 322 C124 268 118 226 100 178"/>
+        <path d="M126 322 C130 262 140 220 158 176"/>
+        <path d="M126 322 C126 258 126 212 126 150"/>
+        <path d="M112 236 C96 214 82 200 62 190"/>
+        <path d="M142 226 C160 206 176 196 196 188"/>
+        <path d="M118 190 C108 168 104 150 104 128"/>
+      </g>
+      <!-- folhas -->
+      <g>
+        <ellipse cx="62" cy="188" rx="7" ry="20" fill="url(#leafB)" transform="rotate(-58 62 188)"/>
+        <ellipse cx="78" cy="200" rx="6" ry="18" fill="url(#leafA)" transform="rotate(-28 78 200)"/>
+        <ellipse cx="92" cy="184" rx="7" ry="21" fill="url(#leafB)" transform="rotate(-52 92 184)"/>
+        <ellipse cx="100" cy="160" rx="6" ry="19" fill="url(#leafA)" transform="rotate(-18 100 160)"/>
+        <ellipse cx="116" cy="146" rx="7" ry="22" fill="url(#leafB)" transform="rotate(-38 116 146)"/>
+        <ellipse cx="126" cy="128" rx="6" ry="20" fill="url(#leafA)" transform="rotate(-4 126 128)"/>
+        <ellipse cx="138" cy="140" rx="7" ry="21" fill="url(#leafB)" transform="rotate(28 138 140)"/>
+        <ellipse cx="150" cy="160" rx="6" ry="20" fill="url(#leafA)" transform="rotate(44 150 160)"/>
+        <ellipse cx="162" cy="176" rx="7" ry="22" fill="url(#leafB)" transform="rotate(56 162 176)"/>
+        <ellipse cx="182" cy="192" rx="6" ry="18" fill="url(#leafA)" transform="rotate(70 182 192)"/>
+        <ellipse cx="196" cy="186" rx="6" ry="17" fill="url(#leafB)" transform="rotate(82 196 186)"/>
+        <ellipse cx="104" cy="214" rx="6" ry="18" fill="url(#leafB)" transform="rotate(-64 104 214)"/>
+        <ellipse cx="146" cy="210" rx="6" ry="19" fill="url(#leafA)" transform="rotate(60 146 210)"/>
+        <ellipse cx="88" cy="232" rx="6" ry="17" fill="url(#leafA)" transform="rotate(-44 88 232)"/>
+        <ellipse cx="166" cy="226" rx="6" ry="18" fill="url(#leafB)" transform="rotate(48 166 226)"/>
+        <ellipse cx="110" cy="112" rx="5" ry="15" fill="url(#leafA)" transform="rotate(-24 110 112)"/>
+        <ellipse cx="142" cy="116" rx="5" ry="15" fill="url(#leafB)" transform="rotate(22 142 116)"/>
+      </g>
+      <!-- vaso -->
+      <path d="M66 330 h120 l-13 62 q-2 12 -14 12 h-66 q-12 0 -14 -12 z" fill="url(#pot)"/>
+      <ellipse cx="126" cy="330" rx="60" ry="11" fill="#1b1316"/>
+      <ellipse cx="126" cy="330" rx="60" ry="11" fill="none" stroke="rgba(255,205,215,.22)" stroke-width="1.2"/>
+      <path d="M74 338 q52 14 104 0" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1.4"/>
+    </svg>
+
+    <div class="speaker"></div>
+    <div class="slab"></div>
+
+    <!-- portátil -->
+    <div class="laptop-shadow"></div>
+    <div class="reflection"><img src="assets/site-home-dark.png" alt=""></div>
+    <div class="laptop">
+      <div class="lid">
+        <div class="display">
+          <img src="assets/site-home-dark.png" alt="Página inicial da UFFA Store em tema escuro">
+        </div>
+        <span class="cam"></span>
+        <span class="chin">UFFA Store</span>
+      </div>
+      <div class="deck">
+        <div class="keyboard"></div>
+        <div class="trackpad"></div>
+      </div>
+    </div>
+
+    <!-- headline -->
+    <div class="headline">
+      <div class="l1">NOSSO NOVO</div>
+      <div class="l2">SITE ESTÁ NO AR!</div>
+    </div>
+
+    <!-- topo -->
+    <div class="top">
+      <div class="handle">
+        <img src="../../public/uffastore-logo.jpg" alt="">
+        @uffastore.legit
+      </div>
+      <div class="top-label">Loja online</div>
+    </div>
+
+    <!-- base -->
+    <div class="rug"></div>
+    <div class="desk-edge"></div>
+    <div class="bottom">
+      <span>2026</span>
+      <span>Uffastore.pt</span>
+    </div>
+
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <script>
+    const kb = document.querySelector(".keyboard");
+    for (let i = 0; i < 70; i++) kb.appendChild(document.createElement("i"));
+  </script>
+</body>
+</html>

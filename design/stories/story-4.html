@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<title>UFFA · Story 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#0b0709}
+  #story{position:relative;width:1080px;height:1920px;overflow:hidden;
+    background:radial-gradient(1000px 900px at 50% 40%, #33202a 0%, #180e13 48%, #0d090b 100%);
+    font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .grain{position:absolute;inset:0;pointer-events:none;opacity:.16;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  .card{position:absolute;left:84px;right:84px;top:150px;bottom:150px;background:#f7f1ec;border-radius:44px;
+    box-shadow:0 60px 120px rgba(0,0,0,.55);overflow:hidden;color:#4a2b34}
+  .card-grain{position:absolute;inset:0;pointer-events:none;opacity:.1;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .card-ring{position:absolute;left:50%;top:120px;width:760px;height:760px;transform:translateX(-50%);border-radius:50%;
+    border:2px solid rgba(74,43,52,.10)}
+
+  .strip{position:absolute;left:0;right:0;top:56px;text-align:center;
+    font-size:18px;font-weight:800;letter-spacing:.36em;text-transform:uppercase;color:rgba(74,43,52,.55);padding-left:.36em}
+  .strip b{color:#b4657d}
+
+  .badge{position:absolute;left:50%;top:126px;transform:translateX(-50%);width:156px;height:156px;border-radius:50%;overflow:hidden;
+    outline:2px solid rgba(74,43,52,.35);outline-offset:7px;box-shadow:0 20px 36px rgba(74,43,52,.18)}
+  .badge img{width:100%;height:100%;object-fit:cover;display:block}
+
+  h1{position:absolute;left:0;right:0;top:352px;text-align:center;font-family:"Anton",sans-serif;font-weight:400;
+    line-height:.84;letter-spacing:.004em;text-transform:uppercase}
+  h1 .l1{display:block;font-size:112px;color:#4a2b34}
+  h1 .l2{display:block;font-size:112px;color:#4a2b34}
+  h1 .l3{display:block;font-size:186px;color:#e0a1b2;-webkit-text-stroke:4px #4a2b34;margin-top:10px}
+
+  .lede{position:absolute;left:96px;right:96px;top:900px;text-align:center;font-size:30px;line-height:1.55;
+    font-weight:500;color:rgba(74,43,52,.76)}
+  .lede b{font-weight:800;color:#4a2b34}
+
+  .perf{position:absolute;left:0;right:0;top:1090px;display:flex;align-items:center}
+  .perf .notch{width:64px;height:64px;border-radius:50%;background:#0d090b;flex:none}
+  .perf .notch.l{margin-left:-32px}
+  .perf .notch.r{margin-right:-32px}
+  .perf .dash{flex:1;border-top:3px dashed rgba(74,43,52,.28);margin:0 22px}
+
+  .details{position:absolute;left:96px;right:96px;top:1188px;display:flex;justify-content:space-between;text-align:center}
+  .details .item{flex:1;padding:0 8px}
+  .details .item + .item{border-left:2px solid rgba(74,43,52,.14)}
+  .details .k{font-family:"Anton",sans-serif;font-size:34px;color:#4a2b34;text-transform:uppercase;line-height:1}
+  .details .v{font-size:16px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:rgba(74,43,52,.55);margin-top:10px}
+
+  .cta{position:absolute;left:96px;right:96px;top:1306px;text-align:center}
+  .cta .k{font-size:19px;font-weight:800;letter-spacing:.4em;text-transform:uppercase;color:rgba(74,43,52,.55);padding-left:.4em}
+  .cta .url{display:inline-flex;align-items:center;gap:18px;margin-top:12px;font-family:"Anton",sans-serif;
+    font-size:88px;letter-spacing:.015em;color:#4a2b34;border-bottom:7px solid #4a2b34;padding-bottom:10px}
+  .cta .url .a{font-family:"Inter",sans-serif;font-size:50px;font-weight:600;color:#b4657d;line-height:1}
+
+  .foot{position:absolute;left:0;right:0;bottom:58px;text-align:center;
+    font-size:18px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:rgba(74,43,52,.5);padding-left:.3em}
+
+  .sticker{position:absolute;right:36px;top:300px;transform:rotate(12deg);width:150px;height:150px;border-radius:50%;
+    background:#e0a1b2;border:4px solid #4a2b34;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    color:#110b0e;box-shadow:0 18px 34px rgba(74,43,52,.28)}
+  .sticker .big{font-family:"Anton",sans-serif;font-size:38px;line-height:.9;text-transform:uppercase}
+  .sticker .small{font-size:13px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;margin-top:6px;opacity:.75}
+</style>
+</head>
+<body>
+  <div id="story" role="img" aria-label="UFFA Store story 4">
+    <div class="grain"></div>
+
+    <div class="card">
+      <div class="card-grain"></div>
+      <div class="card-ring"></div>
+
+      <div class="strip">Anúncio oficial <b>·</b> 2026</div>
+
+      <div class="badge"><img src="../../public/uffastore-logo.jpg" alt="UFFA Store"></div>
+
+      <div class="sticker"><span class="big">Já</span><span class="small">online</span></div>
+
+      <h1>
+        <span class="l1">A UFFA</span>
+        <span class="l2">está</span>
+        <span class="l3">online.</span>
+      </h1>
+
+      <p class="lede">
+        O novo site já está no ar. <b>Sneakers autenticadas</b>, pagamento seguro
+        e entrega em mãos no Porto — agora com a loja toda na palma da mão.
+      </p>
+
+      <div class="perf"><span class="notch l"></span><span class="dash"></span><span class="notch r"></span></div>
+
+      <div class="details">
+        <div class="item"><div class="k">Autêntico</div><div class="v">Selo UFFA</div></div>
+        <div class="item"><div class="k">Em mão</div><div class="v">Zona do Porto</div></div>
+        <div class="item"><div class="k">Seguro</div><div class="v">Checkout</div></div>
+      </div>
+
+      <div class="cta">
+        <div class="k">Acede já</div>
+        <div class="url">uffastore.pt <span class="a">↗</span></div>
+      </div>
+
+      <div class="foot">@uffastore.legit · Para quem pisa forte no estilo</div>
+    </div>
+  </div>
+</body>
+</html>

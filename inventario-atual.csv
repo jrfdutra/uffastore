@@ -1,0 +1,14 @@
+handle,title,sku,category,price,sizes_count,image_files
+air-force-1-07-white,Nike Air Force 1 '07 White,AF1-WHT,streetwear,0.20,18,"/images/nike-af1-floral-01.jpg,/images/nike-af1-floral-02.jpg,/images/nike-af1-floral-03.jpg"
+air-force-1-07-black,Nike Air Force 1 '07 Black,AF1-BLK,streetwear,0.20,18,"/images/nike-af1-floral-01.jpg,/images/nike-af1-floral-02.jpg,/images/nike-af1-floral-03.jpg"
+nike-dunk-low-panda,Nike Dunk Low Panda,DUNK-PANDA,streetwear,0.20,8,"/images/nike-af1-floral-01.jpg,/images/nike-af1-floral-02.jpg,/images/nike-af1-floral-03.jpg"
+nike-dunk-low-grey-fog,Nike Dunk Low Grey Fog,DUNK-GREY,streetwear,0.20,8,"/images/nike-af1-floral-01.jpg,/images/nike-af1-floral-02.jpg,/images/nike-af1-floral-03.jpg"
+nike-dunk-low-photon-dust,Nike Dunk Low Photon Dust,DUNK-PHOTON,streetwear,0.20,8,"/images/nike-af1-floral-01.jpg,/images/nike-af1-floral-02.jpg,/images/nike-af1-floral-03.jpg"
+porto-rose-low,Porto Rose Low,porto-rose-low,streetwear,0.20,10,
+bolhao-runner,Bolhão Runner,bolhao-runner,casual,0.20,10,
+cedofeita-court,Cedofeita Court,cedofeita-court,casual,0.20,10,
+invicta-01,Invicta 01,invicta-01,limited,0.20,10,
+rosa-norte,Rosa Norte,rosa-norte,sales,0.20,10,
+trindade-flow,Trindade Flow,trindade-flow,casual,0.20,10,
+galerias-low,Galerias Low,galerias-low,streetwear,0.20,10,
+afterdark-02,Afterdark 02,afterdark-02,limited,0.20,10,

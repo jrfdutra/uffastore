@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revisão de Agrupamento do Catálogo — Uffa Store</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 2rem; background: #0f0f11; color: #f3f3f5; }
+    h1 { color: #ff3b30; font-size: 2rem; border-bottom: 2px solid #2c2c2e; padding-bottom: 0.5rem; }
+    h2 { font-size: 1.4rem; color: #e5e5ea; margin-top: 2rem; }
+    p.intro { color: #aeaeb2; font-size: 1rem; max-width: 800px; }
+    .group-card { background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+    .group-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2c2c2e; padding-bottom: 1rem; margin-bottom: 1rem; }
+    .group-title { font-size: 1.25rem; font-weight: bold; color: #ffffff; }
+    .badge { font-size: 0.75rem; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 600; }
+    .badge-high { background: #30d158; color: #000; }
+    .badge-med { background: #ffd60a; color: #000; }
+    .table-agrupamento { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+    .table-agrupamento th, .table-agrupamento td { text-align: left; padding: 0.75rem; border-bottom: 1px solid #2c2c2e; }
+    .table-agrupamento th { color: #8e8e93; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; }
+    .table-agrupamento td { color: #d1d1d6; }
+    .thumbs-grid { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+    .thumb-box { width: 140px; text-align: center; }
+    .thumb-box img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; border: 1px solid #3a3a3c; }
+    .thumb-caption { font-size: 0.8rem; color: #8e8e93; margin-top: 0.4rem; word-break: break-all; }
+  </style>
+</head>
+<body>
+
+  <h1>Plano de Agrupamento e Nomes do Catálogo — Uffa Store</h1>
+  <p class="intro">
+    Este documento apresenta a proposta de agrupamento dos anúncios repetidos num único anúncio por modelo com seleção de <strong>Cor</strong> e <strong>Tamanho</strong> (com escalões de preço automáticos).
+  </p>
+
+  <!-- GRUPO 1 -->
+  <div class="group-card">
+    <div class="group-header">
+      <div class="group-title">1. Air Force (Normal)</div>
+      <span class="badge badge-high">Confiança Alta</span>
+    </div>
+    <p><strong>Handle Final:</strong> <code>air-force</code> | <strong>Opções:</strong> Cor (Branco, Preto) + Tamanho (Criança: 28-35 @ 129,99 €)</p>
+    <table class="table-agrupamento">
+      <thead>
+        <tr>
+          <th>Handle Antigo</th>
+          <th>Nome Antigo</th>
+          <th>Cor Atribuída</th>
+          <th>Escalão e Preço</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>air-force-1-07-white</code></td>
+          <td>Nike Air Force 1 '07 White</td>
+          <td>Branco</td>
+          <td>Criança (28-35): 129,99 €</td>
+        </tr>
+        <tr>
+          <td><code>air-force-1-07-black</code></td>
+          <td>Nike Air Force 1 '07 Black</td>
+          <td>Preto</td>
+          <td>Criança (28-35): 129,99 €</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GRUPO 2 -->
+  <div class="group-card">
+    <div class="group-header">
+      <div class="group-title">2. Air Force w/ Rope Laces</div>
+      <span class="badge badge-high">Confiança Alta</span>
+    </div>
+    <p><strong>Handle Final:</strong> <code>air-force-w-rope-laces</code> | <strong>Opções:</strong> Cor + Tamanho (GS: 36-39 @ 149,99 €, Sénior: 40+ @ 164,99 €)</p>
+    <table class="table-agrupamento">
+      <thead>
+        <tr>
+          <th>Handle Antigo / Origem</th>
+          <th>Nome Novo</th>
+          <th>Opções de Cor</th>
+          <th>Escalões e Preços</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Novos modelos com rope laces</td>
+          <td>Air Force w/ Rope Laces</td>
+          <td>Branco, Preto, Personalizado</td>
+          <td>GS (36-39): 149,99 €<br>Sénior (40+): 164,99 €</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GRUPO 3 -->
+  <div class="group-card">
+    <div class="group-header">
+      <div class="group-title">3. Nike Dunk w/ Rope Laces</div>
+      <span class="badge badge-high">Confiança Alta</span>
+    </div>
+    <p><strong>Handle Final:</strong> <code>nike-dunk-w-rope-laces</code> | <strong>Opções:</strong> Cor (Panda, Grey Fog, Photon Dust) + Tamanho (GS: 36-39 @ 149,99 €, Sénior: 40+ @ 164,99 €)</p>
+    <table class="table-agrupamento">
+      <thead>
+        <tr>
+          <th>Handle Antigo</th>
+          <th>Nome Antigo</th>
+          <th>Cor Atribuída</th>
+          <th>Escalões e Preços</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>nike-dunk-low-panda</code></td>
+          <td>Nike Dunk Low Panda</td>
+          <td>Panda</td>
+          <td>GS: 149,99 € | Sénior: 164,99 €</td>
+        </tr>
+        <tr>
+          <td><code>nike-dunk-low-grey-fog</code></td>
+          <td>Nike Dunk Low Grey Fog</td>
+          <td>Grey Fog</td>
+          <td>GS: 149,99 € | Sénior: 164,99 €</td>
+        </tr>
+        <tr>
+          <td><code>nike-dunk-low-photon-dust</code></td>
+          <td>Nike Dunk Low Photon Dust</td>
+          <td>Photon Dust</td>
+          <td>GS: 149,99 € | Sénior: 164,99 €</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GRUPO 4 -->
+  <div class="group-card">
+    <div class="group-header">
+      <div class="group-title">4. Air Force Floral w/ Rope Laces</div>
+      <span class="badge badge-high">Confiança Alta</span>
+    </div>
+    <p><strong>Handle Final:</strong> <code>air-force-floral-w-rope-laces</code> | <strong>Opções:</strong> Cor + Tamanho (GS: 36-39 @ 179,99 €, Sénior: 40+ @ 189,99 €)</p>
+  </div>
+
+  <!-- GRUPO 5 -->
+  <div class="group-card">
+    <div class="group-header">
+      <div class="group-title">5. Air Force Shine w/ Rope Laces</div>
+      <span class="badge badge-high">Confiança Alta</span>
+    </div>
+    <p><strong>Handle Final:</strong> <code>air-force-shine-w-rope-laces</code> | <strong>Opções:</strong> Cor + Tamanho (GS: 36-39 @ 169,99 €, Sénior: 40+ @ 189,99 €)</p>
+  </div>
+
+  <!-- GRUPO 6 -->
+  <div class="group-card">
+    <div class="group-header">
+      <div class="group-title">6. Air Force Lanvin w/ Rope Laces</div>
+      <span class="badge badge-high">Confiança Alta</span>
+    </div>
+    <p><strong>Handle Final:</strong> <code>air-force-lanvin-w-rope-laces</code> | <strong>Opções:</strong> Cor + Tamanho (GS: 36-39 @ 179,99 €, Sénior: 40+ @ 189,99 €)</p>
+  </div>
+
+</body>
+</html>

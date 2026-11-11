@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<title>UFFA · Stories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0d090b;color:#f7f1ec;font-family:Inter,system-ui,sans-serif;padding:48px 40px 72px}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;max-width:1560px;margin:0 auto 34px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand .u{font-family:Anton,sans-serif;font-size:52px;letter-spacing:.02em}
+  .brand .s{display:flex;flex-direction:column;gap:6px;padding-top:4px}
+  .brand .s span{font-family:Anton,sans-serif;font-size:16px;letter-spacing:.42em;color:#e0a1b2}
+  .brand .s i{display:block;height:5px;background:#e0a1b2}
+  .meta{text-align:right}
+  .meta h1{font-family:Anton,sans-serif;font-size:30px;letter-spacing:.06em;text-transform:uppercase}
+  .meta p{font-size:14px;letter-spacing:.22em;text-transform:uppercase;color:#9b8189;margin-top:6px}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:20px;max-width:1640px;margin:0 auto}
+  .card{background:#160e12;border:1px solid #2a1a20;border-radius:18px;overflow:hidden}
+  .card img{display:block;width:100%;aspect-ratio:9/16;object-fit:cover}
+  .cap{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-top:1px solid #2a1a20}
+  .cap b{font-family:Anton,sans-serif;font-weight:400;font-size:16px;letter-spacing:.06em;text-transform:uppercase}
+  .cap span{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#b4838f}
+  @media(max-width:1600px){.grid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:620px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="u">UFFA</span>
+      <span class="s"><span>STORE</span><i></i></span>
+    </div>
+    <div class="meta">
+      <h1>Stories · Lançamento do site</h1>
+      <p>6 modelos · 1080 × 1920 · Instagram Stories</p>
+    </div>
+  </header>
+  <div class="grid">
+    <div class="card"><img src="out/story-comercial.png" alt=""><div class="cap"><b>00 · Comercial</b><span>Produto</span></div></div>
+    <div class="card"><img src="out/story-lancamento.png" alt=""><div class="cap"><b>01 · Lançamento</b><span>Site</span></div></div>
+    <div class="card"><img src="out/story-1.png" alt=""><div class="cap"><b>02 · Manifesto</b><span>Dark</span></div></div>
+    <div class="card"><img src="out/story-2.png" alt=""><div class="cap"><b>03 · Editorial</b><span>Cream</span></div></div>
+    <div class="card"><img src="out/story-3.png" alt=""><div class="cap"><b>04 · Assinatura</b><span>Rosa</span></div></div>
+    <div class="card"><img src="out/story-4.png" alt=""><div class="cap"><b>05 · Anúncio</b><span>Ticket</span></div></div>
+  </div>
+</body>
+</html>
