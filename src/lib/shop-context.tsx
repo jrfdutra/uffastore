@@ -9,6 +9,7 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { copy, products as fallbackProducts, type Language, type Product } from "./shop-data";
+import { getConsolidatedAsProducts } from "./catalog-adapter";
 import { loadCatalog, saveCatalog, resetCatalogToDefault } from "./catalog";
 import { tr } from "./i18n";
 import { readStorage, removeStorage, writeStorage } from "./storage";
@@ -115,7 +116,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [ready, setReady] = useState(false);
-  const [catalog, setCatalog] = useState<Product[]>(fallbackProducts);
+  const [catalog, setCatalog] = useState<Product[]>(getConsolidatedAsProducts());
 
   useEffect(() => {
     let active = true;
