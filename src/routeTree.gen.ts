@@ -15,6 +15,7 @@ import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ConfirmacaoRouteImport } from './routes/confirmacao'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
+import { Route as ManualRouteImport } from './routes/manual'
 import { Route as OperacoesRouteImport } from './routes/operacoes'
 import { Route as RastreioRouteImport } from './routes/rastreio'
 import { Route as VerificarRouteImport } from './routes/verificar'
@@ -50,6 +51,11 @@ const FavoritosRoute = FavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManualRoute = ManualRouteImport.update({
+  id: '/manual',
+  path: '/manual',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OperacoesRoute = OperacoesRouteImport.update({
   id: '/operacoes',
   path: '/operacoes',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
   '/favoritos': typeof FavoritosRoute
+  '/manual': typeof ManualRoute
   '/operacoes': typeof OperacoesRoute
   '/rastreio': typeof RastreioRoute
   '/verificar': typeof VerificarRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
   '/favoritos': typeof FavoritosRoute
+  '/manual': typeof ManualRoute
   '/operacoes': typeof OperacoesRoute
   '/rastreio': typeof RastreioRoute
   '/verificar': typeof VerificarRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
   '/favoritos': typeof FavoritosRoute
+  '/manual': typeof ManualRoute
   '/operacoes': typeof OperacoesRoute
   '/rastreio': typeof RastreioRoute
   '/verificar': typeof VerificarRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/confirmacao'
     | '/favoritos'
+    | '/manual'
     | '/operacoes'
     | '/rastreio'
     | '/verificar'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/confirmacao'
     | '/favoritos'
+    | '/manual'
     | '/operacoes'
     | '/rastreio'
     | '/verificar'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/confirmacao'
     | '/favoritos'
+    | '/manual'
     | '/operacoes'
     | '/rastreio'
     | '/verificar'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   ConfirmacaoRoute: typeof ConfirmacaoRoute
   FavoritosRoute: typeof FavoritosRoute
+  ManualRoute: typeof ManualRoute
   OperacoesRoute: typeof OperacoesRoute
   RastreioRoute: typeof RastreioRoute
   VerificarRoute: typeof VerificarRoute
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FavoritosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/manual': {
+      id: '/manual'
+      path: '/manual'
+      fullPath: '/manual'
+      preLoaderRoute: typeof ManualRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/operacoes': {
       id: '/operacoes'
       path: '/operacoes'
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   ConfirmacaoRoute: ConfirmacaoRoute,
   FavoritosRoute: FavoritosRoute,
+  ManualRoute: ManualRoute,
   OperacoesRoute: OperacoesRoute,
   RastreioRoute: RastreioRoute,
   VerificarRoute: VerificarRoute,

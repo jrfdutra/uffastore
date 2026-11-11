@@ -5,8 +5,8 @@ import { heroSneaker, type Product } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 
-const AUTOPLAY_MS = 5200;
-const MAX_SLIDES = 8;
+const AUTOPLAY_MS = 5000;
+const MAX_SLIDES = 3;
 
 /**
  * Hero com carrossel das fotos dos produtos atuais.
@@ -48,7 +48,7 @@ export function HeroCarousel({ products, children }: { products: Product[]; chil
 
   return (
     <section
-      className="relative mt-0 min-h-[min(720px,78vh)] overflow-hidden bg-hero text-hero-foreground"
+      className="relative pt-16 min-h-[min(720px,78vh)] overflow-hidden bg-hero text-hero-foreground"
       aria-roledescription={hasCarousel ? "carousel" : undefined}
       aria-label={
         hasCarousel
