@@ -16,7 +16,7 @@ const NOTICE_KEY = "uffa-demo-notice-v1";
 
 export function DemoNotice() {
   const { language } = useShop();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   useEffect(() => {
     setOpen(readStorage("session", NOTICE_KEY) !== "1");
