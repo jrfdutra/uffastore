@@ -46,14 +46,19 @@ function WishlistPage() {
             <div>
               <Heart className="mx-auto mb-4 size-16 text-muted-foreground/40" />
               <h2 className="font-display text-3xl uppercase">
-                {tr(language, "A tua lista está vazia", "Your wishlist is empty", "Tu lista está vacía")}
+                {tr(
+                  language,
+                  "A tua lista está vazia",
+                  "Your wishlist is empty",
+                  "Tu lista está vacía",
+                )}
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 {tr(
                   language,
                   "Clica no ícone de coração nos produtos para guardá-los para mais tarde.",
                   "Click the heart icon on products to save them for later.",
-                  "Haz clic en el ícono de corazón en los productos para guardarlos para más tarde."
+                  "Haz clic en el ícono de corazón en los productos para guardarlos para más tarde.",
                 )}
               </p>
               <Button asChild className="mt-6 rounded-none">
@@ -67,7 +72,8 @@ function WishlistPage() {
         ) : (
           <div>
             <p className="mb-6 text-xs text-muted-foreground uppercase">
-              {favoriteProducts.length} {favoriteProducts.length === 1 ? "produto guardado" : "produtos guardados"}
+              {favoriteProducts.length}{" "}
+              {favoriteProducts.length === 1 ? "produto guardado" : "produtos guardados"}
             </p>
             <div className="grid grid-cols-2 gap-x-3 gap-y-10 xl:grid-cols-4">
               {favoriteProducts.map((p) => (

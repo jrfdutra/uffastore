@@ -33,13 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  categoryNames,
-  copy,
-  money,
-  type Category,
-  type Language,
-} from "@/lib/shop-data";
+import { categoryNames, copy, money, type Category, type Language } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { useEffect, useState, type ReactNode } from "react";
@@ -52,19 +46,23 @@ function CartDrawer() {
   const [couponCode, setCouponCode] = useState("");
 
   const handleShareWhatsApp = () => {
-    const itemsText = s.cart.map((item) => {
-      const p = s.catalog.find((c) => c.id === item.productId);
-      return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
-    }).join(", ");
+    const itemsText = s.cart
+      .map((item) => {
+        const p = s.catalog.find((c) => c.id === item.productId);
+        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+      })
+      .join(", ");
     const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.finalTotal)}\nVisita: ${window.location.origin}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const handleCopyCart = async () => {
-    const itemsText = s.cart.map((item) => {
-      const p = s.catalog.find((c) => c.id === item.productId);
-      return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
-    }).join(", ");
+    const itemsText = s.cart
+      .map((item) => {
+        const p = s.catalog.find((c) => c.id === item.productId);
+        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+      })
+      .join(", ");
     const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(s.finalTotal)}`;
     try {
       await navigator.clipboard.writeText(text);
@@ -187,7 +185,12 @@ function CartDrawer() {
             {/* Coupon input */}
             <div className="flex gap-2">
               <Input
-                placeholder={tr(s.language, "Código de desconto", "Discount code", "Código de descuento")}
+                placeholder={tr(
+                  s.language,
+                  "Código de desconto",
+                  "Discount code",
+                  "Código de descuento",
+                )}
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
                 className="h-10 rounded-none text-xs"
@@ -208,8 +211,14 @@ function CartDrawer() {
 
             {s.coupon && (
               <div className="flex items-center justify-between text-xs bg-primary/10 text-primary px-3 py-1.5 font-bold">
-                <span>Cupão: {s.coupon.code} (-{s.coupon.discountPercent}%)</span>
-                <button type="button" onClick={s.removeCoupon} className="underline hover:opacity-80">
+                <span>
+                  Cupão: {s.coupon.code} (-{s.coupon.discountPercent}%)
+                </span>
+                <button
+                  type="button"
+                  onClick={s.removeCoupon}
+                  className="underline hover:opacity-80"
+                >
                   {tr(s.language, "Remover", "Remove", "Eliminar")}
                 </button>
               </div>
@@ -220,7 +229,9 @@ function CartDrawer() {
               <div className="text-right">
                 {s.discountAmount > 0 ? (
                   <div>
-                    <span className="text-xs text-muted-foreground line-through block">{money(s.subtotal)}</span>
+                    <span className="text-xs text-muted-foreground line-through block">
+                      {money(s.subtotal)}
+                    </span>
                     <span className="text-primary price-outline">{money(s.finalTotal)}</span>
                   </div>
                 ) : (
@@ -268,6 +279,7 @@ function MobileNav() {
   const { language } = useShop(),
     t = copy[language];
   const [open, setOpen] = useState(false);
+  const location = useRouterState({ select: (state) => state.location });
   const close = () => setOpen(false);
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -288,12 +300,16 @@ function MobileNav() {
             </span>
           </SheetTitle>
           <SheetDescription>
-            {tr(language, "Para quem pisa forte no estilo!", "For those who step strong in style!", "¡Para quienes pisan fuerte en el estilo!")}
+            {tr(
+              language,
+              "Para quem pisa forte no estilo!",
+              "For those who step strong in style!",
+              "¡Para quienes pisan fuerte en el estilo!",
+            )}
           </SheetDescription>
         </SheetHeader>
         <nav className="mt-10 flex flex-col">
           {cats.map((c) => {
-            const location = useRouterState({ select: (state) => state.location });
             const isMobActive =
               location.pathname === "/catalogo" &&
               (location.search as { category?: string })?.category === c;
@@ -314,11 +330,19 @@ function MobileNav() {
               </Link>
             );
           })}
-          <Link to="/favoritos" onClick={close} className="mt-6 font-semibold text-primary flex items-center gap-2">
+          <Link
+            to="/favoritos"
+            onClick={close}
+            className="mt-6 font-semibold text-primary flex items-center gap-2"
+          >
             <Heart className="size-4" />
             {tr(language, "Lista de Desejos", "Wishlist", "Lista de Deseos")}
           </Link>
-          <Link to="/ajuda" onClick={close} className="mt-4 font-semibold text-primary flex items-center gap-2">
+          <Link
+            to="/ajuda"
+            onClick={close}
+            className="mt-4 font-semibold text-primary flex items-center gap-2"
+          >
             <HelpCircle className="size-4" />
             {tr(language, "Ajuda e Contactos", "Help & Contacts", "Ayuda y Contactos")}
           </Link>
@@ -358,7 +382,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-3">
             <MobileNav />
             <Link to="/" className="flex items-center gap-2.5 leading-none">
-              <span className="font-display text-4xl md:text-5xl uppercase tracking-wide">UFFA</span>
+              <span className="font-display text-4xl md:text-5xl uppercase tracking-wide">
+                UFFA
+              </span>
               <span className="flex flex-col gap-1">
                 <span className="font-display text-xs md:text-sm uppercase leading-none tracking-[0.28em]">
                   STORE
@@ -376,7 +402,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
                   to="/catalogo"
                   search={{ category: c }}
                   className={`group relative flex h-full items-center text-xs font-bold uppercase tracking-wider transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                    isActive ? "text-brand-foreground dark:text-brand" : "text-brand-foreground/85 hover:text-brand-foreground dark:text-brand/85 dark:hover:text-brand"
+                    isActive
+                      ? "text-brand-foreground dark:text-brand"
+                      : "text-brand-foreground/85 hover:text-brand-foreground dark:text-brand/85 dark:hover:text-brand"
                   }`}
                 >
                   <span className="relative py-1">
@@ -482,10 +510,20 @@ export function SiteShell({ children }: { children: ReactNode }) {
               </span>
             </Link>
             <p className="mt-3 text-sm font-semibold tracking-wide text-footer-foreground">
-              {tr(s.language, "Para quem pisa forte no estilo! 🎗️", "For those who step strong in style! 🎗️", "¡Para quienes pisan fuerte en el estilo! 🎗️")}
+              {tr(
+                s.language,
+                "Para quem pisa forte no estilo! 🎗️",
+                "For those who step strong in style! 🎗️",
+                "¡Para quienes pisan fuerte en el estilo! 🎗️",
+              )}
             </p>
             <p className="mt-2 text-xs text-footer-muted">
-              {tr(s.language, "Sapatilhas com selo de autenticidade · Entrega em mãos na zona do Porto", "Sneakers with authenticity seal · Hand delivery in Porto area", "Zapatillas con sello de autenticidad · Entrega en mano en la zona de Oporto")}
+              {tr(
+                s.language,
+                "Sapatilhas com selo de autenticidade · Entrega em mãos na zona do Porto",
+                "Sneakers with authenticity seal · Hand delivery in Porto area",
+                "Zapatillas con sello de autenticidad · Entrega en mano en la zona de Oporto",
+              )}
             </p>
             <p className="mt-3 flex items-center gap-2 text-sm text-footer-muted">
               <MapPin className="size-4" />
@@ -518,7 +556,12 @@ export function SiteShell({ children }: { children: ReactNode }) {
               {t.track}
             </Link>
             <Link to="/verificar" className="hover:text-brand">
-              {tr(s.language, "Verificar autenticidade", "Verify authenticity", "Verificar autenticidad")}
+              {tr(
+                s.language,
+                "Verificar autenticidade",
+                "Verify authenticity",
+                "Verificar autenticidad",
+              )}
             </Link>
           </nav>
         </div>

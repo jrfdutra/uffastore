@@ -88,7 +88,8 @@ let updated = 0;
 const missing = [];
 
 const productIdPattern = /^\s{4}id:\s*"([^"]+)",\s*$/;
-const sizePattern = /^(\s*\{\s*size:\s*(\d+),\s*stock:\s*\d+,\s*sku:\s*"[^"]*",\s*variantId:\s*")([^"]*)("\s*\},?\s*)$/;
+const sizePattern =
+  /^(\s*\{\s*size:\s*(\d+),\s*stock:\s*\d+,\s*sku:\s*"[^"]*",\s*variantId:\s*")([^"]*)("\s*\},?\s*)$/;
 
 const next = lines.map((line) => {
   const productMatch = line.match(productIdPattern);

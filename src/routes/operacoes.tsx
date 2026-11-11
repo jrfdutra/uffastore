@@ -153,12 +153,7 @@ function OpsGate({ onUnlock }: { onUnlock: () => void }) {
 
     if (cleanPassword !== OPS_ACCESS_KEY) {
       setError(
-        tr(
-          language,
-          "Palavra-passe incorreta.",
-          "Incorrect password.",
-          "Contraseña incorrecta.",
-        ),
+        tr(language, "Palavra-passe incorreta.", "Incorrect password.", "Contraseña incorrecta."),
       );
       return;
     }
@@ -230,11 +225,20 @@ function OpsGate({ onUnlock }: { onUnlock: () => void }) {
 
         <div className="mt-5 border border-dashed border-primary bg-primary/15 p-4">
           <p className="text-[10px] font-bold uppercase text-primary">
-            {tr(language, "Dados de Acesso Oficiais", "Official Credentials", "Credenciales Oficiales")}
+            {tr(
+              language,
+              "Dados de Acesso Oficiais",
+              "Official Credentials",
+              "Credenciales Oficiales",
+            )}
           </p>
           <div className="mt-2 space-y-1 text-xs font-medium">
-            <p>E-mail: <code className="font-mono font-bold">ops@uffastore.pt</code></p>
-            <p>Password: <code className="font-mono font-bold">{OPS_ACCESS_KEY}</code></p>
+            <p>
+              E-mail: <code className="font-mono font-bold">ops@uffastore.pt</code>
+            </p>
+            <p>
+              Password: <code className="font-mono font-bold">{OPS_ACCESS_KEY}</code>
+            </p>
           </div>
         </div>
 
@@ -396,155 +400,155 @@ function OpsDashboard({ onLock }: { onLock: () => void }) {
         <ModelsManagementView />
       ) : (
         <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-10">
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {stats.map((stat) => (
-            <div key={stat.label} className="border border-border bg-card p-4">
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-[10px] font-bold uppercase text-muted-foreground">
-                  {stat.label}
-                </p>
-                <stat.icon className="size-4 text-primary" />
-              </div>
-              <p className="mt-2 font-display text-4xl">{stat.value}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6 flex flex-col gap-3 border border-border bg-section p-4 md:flex-row md:items-center">
-          <div className="relative flex-1">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={tr(
-                language,
-                "Pesquisar por encomenda, nome ou contacto",
-                "Search by order, name or contact",
-                "Buscar por pedido, nombre o contacto",
-              )}
-              className="h-11 rounded-none bg-background pl-9"
-            />
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Select
-              value={statusFilter}
-              onValueChange={(value) => setStatusFilter(value as "all" | OrderStatus)}
-            >
-              <SelectTrigger className="h-11 w-full min-w-48 rounded-none bg-background md:w-56">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">
-                  {tr(language, "Todos os estados", "All statuses", "Todos los estados")}
-                </SelectItem>
-                {allStatuses.map((status) => (
-                  <SelectItem key={status} value={status}>
-                    {orderStatusInfo[status].label[language]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_460px]">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <h2 className="font-display text-2xl uppercase">
-                {tr(language, "Fila de encomendas", "Order queue", "Cola de pedidos")}
-              </h2>
-              <span className="text-xs text-muted-foreground">
-                {filtered.length} {tr(language, "resultados", "results", "resultados")}
-              </span>
-            </div>
-            {filtered.length === 0 ? (
-              <div className="border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-                {tr(
-                  language,
-                  "Nenhuma encomenda encontrada.",
-                  "No orders found.",
-                  "No se encontraron pedidos.",
-                )}
-              </div>
-            ) : (
-              <div className="max-h-[720px] space-y-2 overflow-auto pr-1">
-                {filtered.map((order) => {
-                  const status = orderStatusInfo[order.status];
-                  const isSelected = selectedNumber === order.number;
-                  return (
-                    <button
-                      key={order.id}
-                      type="button"
-                      onClick={() => setSelectedNumber(order.number)}
-                      className={`w-full border p-4 text-left transition ${
-                        isSelected
-                          ? "border-primary bg-primary/15"
-                          : "border-border bg-card hover:border-primary/50"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="font-mono text-xs font-bold">{order.number}</p>
-                          <p className="mt-1 truncate font-bold">{order.customerName}</p>
-                          <p className="mt-0.5 text-xs text-muted-foreground">
-                            {order.delivery === "shipping"
-                              ? tr(language, "Envio", "Shipping", "Envío")
-                              : tr(language, "Recolha", "Pickup", "Recogida")}{" "}
-                            · {formatDate(order.createdAt, language)}
-                          </p>
-                        </div>
-                        <div className="flex shrink-0 flex-col items-end gap-2">
-                          <span
-                            className={`inline-flex border px-2 py-1 text-[10px] font-bold uppercase ${status.tone}`}
-                          >
-                            {status.label[language]}
-                          </span>
-                          <span className="text-sm font-bold">{money(order.total)}</span>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          <div>
-            {selected ? (
-              <OrderEditor
-                key={selected.number}
-                order={selected}
-                onUpdated={(updated) => {
-                  setOrders(loadOrders());
-                  setSelectedNumber(updated.number);
-                }}
-              />
-            ) : (
-              <div className="grid min-h-72 place-items-center border border-dashed border-border p-8 text-center">
-                <div>
-                  <ClipboardList className="mx-auto size-9 text-muted-foreground" />
-                  <h2 className="mt-3 font-display text-2xl uppercase">
-                    {tr(
-                      language,
-                      "Seleciona uma encomenda",
-                      "Select an order",
-                      "Selecciona un pedido",
-                    )}
-                  </h2>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {tr(
-                      language,
-                      "Escolhe uma encomenda na lista para atualizar o estado de envio.",
-                      "Choose an order from the list to update its shipping status.",
-                      "Elige un pedido de la lista para actualizar su estado de envío.",
-                    )}
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="border border-border bg-card p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                    {stat.label}
                   </p>
+                  <stat.icon className="size-4 text-primary" />
                 </div>
+                <p className="mt-2 font-display text-4xl">{stat.value}</p>
               </div>
-            )}
+            ))}
+          </div>
+
+          <div className="mt-6 flex flex-col gap-3 border border-border bg-section p-4 md:flex-row md:items-center">
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={tr(
+                  language,
+                  "Pesquisar por encomenda, nome ou contacto",
+                  "Search by order, name or contact",
+                  "Buscar por pedido, nombre o contacto",
+                )}
+                className="h-11 rounded-none bg-background pl-9"
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Select
+                value={statusFilter}
+                onValueChange={(value) => setStatusFilter(value as "all" | OrderStatus)}
+              >
+                <SelectTrigger className="h-11 w-full min-w-48 rounded-none bg-background md:w-56">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">
+                    {tr(language, "Todos os estados", "All statuses", "Todos los estados")}
+                  </SelectItem>
+                  {allStatuses.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {orderStatusInfo[status].label[language]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_460px]">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="font-display text-2xl uppercase">
+                  {tr(language, "Fila de encomendas", "Order queue", "Cola de pedidos")}
+                </h2>
+                <span className="text-xs text-muted-foreground">
+                  {filtered.length} {tr(language, "resultados", "results", "resultados")}
+                </span>
+              </div>
+              {filtered.length === 0 ? (
+                <div className="border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+                  {tr(
+                    language,
+                    "Nenhuma encomenda encontrada.",
+                    "No orders found.",
+                    "No se encontraron pedidos.",
+                  )}
+                </div>
+              ) : (
+                <div className="max-h-[720px] space-y-2 overflow-auto pr-1">
+                  {filtered.map((order) => {
+                    const status = orderStatusInfo[order.status];
+                    const isSelected = selectedNumber === order.number;
+                    return (
+                      <button
+                        key={order.id}
+                        type="button"
+                        onClick={() => setSelectedNumber(order.number)}
+                        className={`w-full border p-4 text-left transition ${
+                          isSelected
+                            ? "border-primary bg-primary/15"
+                            : "border-border bg-card hover:border-primary/50"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="font-mono text-xs font-bold">{order.number}</p>
+                            <p className="mt-1 truncate font-bold">{order.customerName}</p>
+                            <p className="mt-0.5 text-xs text-muted-foreground">
+                              {order.delivery === "shipping"
+                                ? tr(language, "Envio", "Shipping", "Envío")
+                                : tr(language, "Recolha", "Pickup", "Recogida")}{" "}
+                              · {formatDate(order.createdAt, language)}
+                            </p>
+                          </div>
+                          <div className="flex shrink-0 flex-col items-end gap-2">
+                            <span
+                              className={`inline-flex border px-2 py-1 text-[10px] font-bold uppercase ${status.tone}`}
+                            >
+                              {status.label[language]}
+                            </span>
+                            <span className="text-sm font-bold">{money(order.total)}</span>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div>
+              {selected ? (
+                <OrderEditor
+                  key={selected.number}
+                  order={selected}
+                  onUpdated={(updated) => {
+                    setOrders(loadOrders());
+                    setSelectedNumber(updated.number);
+                  }}
+                />
+              ) : (
+                <div className="grid min-h-72 place-items-center border border-dashed border-border p-8 text-center">
+                  <div>
+                    <ClipboardList className="mx-auto size-9 text-muted-foreground" />
+                    <h2 className="mt-3 font-display text-2xl uppercase">
+                      {tr(
+                        language,
+                        "Seleciona uma encomenda",
+                        "Select an order",
+                        "Selecciona un pedido",
+                      )}
+                    </h2>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {tr(
+                        language,
+                        "Escolhe uma encomenda na lista para atualizar o estado de envio.",
+                        "Choose an order from the list to update its shipping status.",
+                        "Elige un pedido de la lista para actualizar su estado de envío.",
+                      )}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
       )}
     </div>
   );
@@ -833,8 +837,7 @@ function ModelsManagementView() {
         (product.sku && product.sku.toLowerCase().includes(q)) ||
         product.id.toLowerCase().includes(q);
 
-      const matchesCategory =
-        categoryFilter === "all" || product.category === categoryFilter;
+      const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
 
       const effective = getProductEffectiveStatus(product);
       const matchesStatus =
@@ -964,9 +967,7 @@ function ModelsManagementView() {
               <SelectItem value="all">
                 {tr(language, "Todos os Estados", "All Statuses", "Todos los Estados")}
               </SelectItem>
-              <SelectItem value="active">
-                {tr(language, "Ativo", "Active", "Activo")}
-              </SelectItem>
+              <SelectItem value="active">{tr(language, "Ativo", "Active", "Activo")}</SelectItem>
               <SelectItem value="soldout">
                 {tr(language, "Esgotado", "Sold Out", "Agotado")}
               </SelectItem>
@@ -998,11 +999,7 @@ function ModelsManagementView() {
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center gap-4">
                   <div className="relative size-16 shrink-0 overflow-hidden border border-border bg-muted">
-                    <img
-                      src={p.image}
-                      alt={p.name}
-                      className="h-full w-full object-cover"
-                    />
+                    <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
                     {effectiveStatus === "soldout" && (
                       <span className="absolute inset-0 bg-background/60 flex items-center justify-center font-display text-[8px] font-bold uppercase tracking-wider text-foreground">
                         ESGOTADO
@@ -1032,7 +1029,8 @@ function ModelsManagementView() {
                       {p.originalPrice ? (
                         <span className="ml-1.5 line-through">{money(p.originalPrice)}</span>
                       ) : null}{" "}
-                      · {totalStock} {tr(language, "unidades em stock", "units in stock", "unidades en stock")}
+                      · {totalStock}{" "}
+                      {tr(language, "unidades em stock", "units in stock", "unidades en stock")}
                     </p>
                   </div>
                 </div>
@@ -1091,7 +1089,7 @@ function ModelsManagementView() {
                         confirm(
                           language === "pt"
                             ? `Desejas realmente remover o modelo "${p.name}"?`
-                            : `Are you sure you want to delete model "${p.name}"?`
+                            : `Are you sure you want to delete model "${p.name}"?`,
                         )
                       ) {
                         deleteProduct(p.id);
@@ -1107,7 +1105,13 @@ function ModelsManagementView() {
               {/* Tabela de variantes e stock rápido */}
               <div className="mt-4 border-t border-border pt-3">
                 <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2">
-                  {tr(language, "Stock por Tamanho (Ajuste Rápido)", "Stock by Size (Quick Adjust)", "Stock por Talla (Ajuste Rápido)")}:
+                  {tr(
+                    language,
+                    "Stock por Tamanho (Ajuste Rápido)",
+                    "Stock by Size (Quick Adjust)",
+                    "Stock por Talla (Ajuste Rápido)",
+                  )}
+                  :
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {p.sizes.map((sz) => (
@@ -1214,7 +1218,9 @@ function ProductEditorDialog({
         <div className="mt-4 space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label className="text-xs font-bold uppercase">{tr(language, "Nome do Modelo", "Model Name", "Nombre")}</Label>
+              <Label className="text-xs font-bold uppercase">
+                {tr(language, "Nome do Modelo", "Model Name", "Nombre")}
+              </Label>
               <Input
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -1235,7 +1241,9 @@ function ProductEditorDialog({
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <Label className="text-xs font-bold uppercase">{tr(language, "Categoria", "Category", "Categoría")}</Label>
+              <Label className="text-xs font-bold uppercase">
+                {tr(language, "Categoria", "Category", "Categoría")}
+              </Label>
               <Select
                 value={formData.category}
                 onValueChange={(val) => setFormData({ ...formData, category: val as Category })}
@@ -1253,18 +1261,24 @@ function ProductEditorDialog({
             </div>
 
             <div>
-              <Label className="text-xs font-bold uppercase">{tr(language, "Preço (€)", "Price (€)", "Precio (€)")}</Label>
+              <Label className="text-xs font-bold uppercase">
+                {tr(language, "Preço (€)", "Price (€)", "Precio (€)")}
+              </Label>
               <Input
                 type="number"
                 step="0.01"
                 value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: Number.parseFloat(e.target.value) || 0 })}
+                onChange={(e) =>
+                  setFormData({ ...formData, price: Number.parseFloat(e.target.value) || 0 })
+                }
                 className="mt-1 rounded-none"
               />
             </div>
 
             <div>
-              <Label className="text-xs font-bold uppercase">{tr(language, "Preço Original (€)", "Original Price (€)", "Precio Original (€)")}</Label>
+              <Label className="text-xs font-bold uppercase">
+                {tr(language, "Preço Original (€)", "Original Price (€)", "Precio Original (€)")}
+              </Label>
               <Input
                 type="number"
                 step="0.01"
@@ -1289,7 +1303,9 @@ function ProductEditorDialog({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label className="text-xs font-bold uppercase">{tr(language, "Estado de Publicação", "Publication Status", "Estado")}</Label>
+              <Label className="text-xs font-bold uppercase">
+                {tr(language, "Estado de Publicação", "Publication Status", "Estado")}
+              </Label>
               <Select
                 value={formData.status ?? "active"}
                 onValueChange={(val) => setFormData({ ...formData, status: val as ProductStatus })}
@@ -1298,16 +1314,31 @@ function ProductEditorDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">{tr(language, "Ativo (Visível se houver stock)", "Active", "Activo")}</SelectItem>
-                  <SelectItem value="inactive">{tr(language, "Inativo (Oculto da loja)", "Inactive (Hidden)", "Inactivo (Oculto)")}</SelectItem>
-                  <SelectItem value="soldout">{tr(language, "Esgotado (Forçar selo ESGOTADO)", "Sold Out", "Agotado")}</SelectItem>
-                  <SelectItem value="comingsoon">{tr(language, "Em breve (Selo EM BREVE)", "Coming Soon", "Próximamente")}</SelectItem>
+                  <SelectItem value="active">
+                    {tr(language, "Ativo (Visível se houver stock)", "Active", "Activo")}
+                  </SelectItem>
+                  <SelectItem value="inactive">
+                    {tr(
+                      language,
+                      "Inativo (Oculto da loja)",
+                      "Inactive (Hidden)",
+                      "Inactivo (Oculto)",
+                    )}
+                  </SelectItem>
+                  <SelectItem value="soldout">
+                    {tr(language, "Esgotado (Forçar selo ESGOTADO)", "Sold Out", "Agotado")}
+                  </SelectItem>
+                  <SelectItem value="comingsoon">
+                    {tr(language, "Em breve (Selo EM BREVE)", "Coming Soon", "Próximamente")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <Label className="text-xs font-bold uppercase">{tr(language, "URL da Imagem Principal", "Image URL", "URL de Imagen")}</Label>
+              <Label className="text-xs font-bold uppercase">
+                {tr(language, "URL da Imagem Principal", "Image URL", "URL de Imagen")}
+              </Label>
               <Input
                 value={formData.image}
                 onChange={(e) => setFormData({ ...formData, image: e.target.value })}
@@ -1318,7 +1349,9 @@ function ProductEditorDialog({
           </div>
 
           <div>
-            <Label className="text-xs font-bold uppercase">{tr(language, "Descrição", "Description", "Descripción")}</Label>
+            <Label className="text-xs font-bold uppercase">
+              {tr(language, "Descrição", "Description", "Descripción")}
+            </Label>
             <Textarea
               value={formData.description.pt}
               onChange={(e) =>
@@ -1339,8 +1372,21 @@ function ProductEditorDialog({
 
           <div className="border-t border-border pt-4">
             <div className="flex items-center justify-between mb-2">
-              <Label className="text-xs font-bold uppercase">{tr(language, "Variantes e Stock por Tamanho", "Variants and Stock", "Variantes y Stock")}</Label>
-              <Button type="button" size="sm" variant="outline" onClick={handleAddSize} className="rounded-none text-xs">
+              <Label className="text-xs font-bold uppercase">
+                {tr(
+                  language,
+                  "Variantes e Stock por Tamanho",
+                  "Variants and Stock",
+                  "Variantes y Stock",
+                )}
+              </Label>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleAddSize}
+                className="rounded-none text-xs"
+              >
                 <Plus className="size-3 mr-1" />
                 {tr(language, "Novo Tamanho", "Add Size", "Nueva Talla")}
               </Button>
@@ -1348,7 +1394,10 @@ function ProductEditorDialog({
 
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {formData.sizes.map((s) => (
-                <div key={s.size} className="flex items-center justify-between border border-border bg-card p-2 text-xs">
+                <div
+                  key={s.size}
+                  className="flex items-center justify-between border border-border bg-card p-2 text-xs"
+                >
                   <div>
                     <span className="font-bold">EU {s.size}</span>
                   </div>
@@ -1357,7 +1406,9 @@ function ProductEditorDialog({
                       type="number"
                       min="0"
                       value={s.stock}
-                      onChange={(e) => handleSizeStockChange(s.size, Number.parseInt(e.target.value, 10) || 0)}
+                      onChange={(e) =>
+                        handleSizeStockChange(s.size, Number.parseInt(e.target.value, 10) || 0)
+                      }
                       className="w-12 border border-border bg-background p-1 text-center font-bold"
                     />
                     <button

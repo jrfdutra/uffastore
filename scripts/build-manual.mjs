@@ -69,10 +69,7 @@ function inline(value) {
   out = out.replace(/`([^`]+)`/g, "<code>$1</code>");
   out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   out = out.replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
-  out = out.replace(
-    /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2">$1</a>',
-  );
+  out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
   return out;
 }
 
@@ -114,10 +111,7 @@ function table(block) {
   const [head, ...rest] = rows;
   const headHtml = head.map((cell) => `<th>${inline(cell)}</th>`).join("");
   const bodyHtml = rest
-    .map(
-      (cells) =>
-        `<tr>${cells.map((cell) => `<td>${inline(cell)}</td>`).join("")}</tr>`,
-    )
+    .map((cells) => `<tr>${cells.map((cell) => `<td>${inline(cell)}</td>`).join("")}</tr>`)
     .join("");
   return `<div class="table-wrap"><table><thead><tr>${headHtml}</tr></thead><tbody>${bodyHtml}</tbody></table></div>`;
 }
@@ -325,9 +319,7 @@ const bodyHtml = renderBody();
 
 function navLabel(chapter) {
   if (chapter.kind === "chapter") {
-    const short = chapter.title
-      .toLowerCase()
-      .replace(/^\w/, (char) => char.toUpperCase());
+    const short = chapter.title.toLowerCase().replace(/^\w/, (char) => char.toUpperCase());
     return `<b>${chapter.code}</b><span>${esc(short)}</span>`;
   }
   if (chapter.kind === "annex") {
@@ -338,9 +330,7 @@ function navLabel(chapter) {
   return `<b>·</b><span>Índice</span>`;
 }
 
-const nav = chapters
-  .map((chapter) => `<a href="#${chapter.id}">${navLabel(chapter)}</a>`)
-  .join("");
+const nav = chapters.map((chapter) => `<a href="#${chapter.id}">${navLabel(chapter)}</a>`).join("");
 
 /* ------------------------------------------------------------------ */
 /* Documento                                                           */

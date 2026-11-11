@@ -140,7 +140,7 @@ function ProductDetail() {
                 s.language,
                 "Aviso: Este produto está marcado como inativo no painel de administração e não se encontra visível na loja pública.",
                 "Notice: This product is marked as inactive in administration and is not publicly visible.",
-                "Aviso: Este producto está marcado como inactivo en administración."
+                "Aviso: Este producto está marcado como inactivo en administración.",
               )}
             </div>
           )}
@@ -148,7 +148,9 @@ function ProductDetail() {
             {p.name}
           </h1>
           <div className="flex items-baseline gap-3 mt-5">
-            <span className={`font-display text-foreground font-bold ${Boolean(p.originalPrice) || p.category === "sales" ? "text-4xl md:text-5xl" : "text-3xl"}`}>
+            <span
+              className={`font-display text-foreground font-bold ${Boolean(p.originalPrice) || p.category === "sales" ? "text-4xl md:text-5xl" : "text-3xl"}`}
+            >
               {money(p.price)}
             </span>
             {p.originalPrice && (
@@ -208,8 +210,8 @@ function ProductDetail() {
             {isSoldOut
               ? tr(s.language, "Esgotado", "Sold out", "Agotado")
               : isComingSoon
-              ? tr(s.language, "Em breve", "Coming soon", "Próximamente")
-              : t.add}
+                ? tr(s.language, "Em breve", "Coming soon", "Próximamente")
+                : t.add}
           </Button>
           <div className="mt-7 grid grid-cols-2 gap-3 text-xs">
             <div className="flex gap-3 border border-border p-4">

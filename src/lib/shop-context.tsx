@@ -55,9 +55,9 @@ const WISHLIST_KEY = "uffa-wishlist";
 const LANGUAGES: Language[] = ["pt", "en", "es"];
 
 const VALID_COUPONS: Record<string, number> = {
-  "UFFA10": 10,
-  "PORTO20": 20,
-  "VIP15": 15,
+  UFFA10: 10,
+  PORTO20: 20,
+  VIP15: 15,
 };
 
 const ShopContext = createContext<ShopContextValue | null>(null);
@@ -171,7 +171,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         toast.error(
           language === "pt"
             ? "Este modelo não está disponível para encomenda."
-            : "This model is not available for order."
+            : "This model is not available for order.",
         );
         return;
       }
@@ -181,7 +181,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         toast.error(
           language === "pt"
             ? `O tamanho ${size} deste modelo está esgotado.`
-            : `Size ${size} of this model is sold out.`
+            : `Size ${size} of this model is sold out.`,
         );
         return;
       }
@@ -193,7 +193,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         toast.error(
           language === "pt"
             ? `Apenas existem ${variant.stock} unidades disponíveis no tamanho ${size}.`
-            : `Only ${variant.stock} units available in size ${size}.`
+            : `Only ${variant.stock} units available in size ${size}.`,
         );
         return;
       }
@@ -235,14 +235,16 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         toast.error(
           language === "pt"
             ? `Stock máximo atingido (${variant.stock} unidades disponíveis).`
-            : `Maximum stock reached (${variant.stock} units available).`
+            : `Maximum stock reached (${variant.stock} units available).`,
         );
         targetQty = variant.stock;
       }
 
       setCart((items) =>
         items.map((item) =>
-          item.productId === productId && item.size === size ? { ...item, quantity: targetQty } : item,
+          item.productId === productId && item.size === size
+            ? { ...item, quantity: targetQty }
+            : item,
         ),
       );
     },
@@ -268,7 +270,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       toast.success(
         language === "pt"
           ? `Modelo "${product.name}" guardado com sucesso.`
-          : `Model "${product.name}" saved successfully.`
+          : `Model "${product.name}" saved successfully.`,
       );
     },
     [language],
@@ -282,34 +284,33 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         return next;
       });
       toast.success(
-        language === "pt" ? "Modelo removido do catálogo." : "Model removed from catalog."
+        language === "pt" ? "Modelo removido do catálogo." : "Model removed from catalog.",
       );
     },
     [language],
   );
 
-  const updateStock = useCallback(
-    (productId: string, size: number, newStock: number) => {
-      setCatalog((prev) => {
-        const next = prev.map((p) => {
-          if (p.id !== productId) return p;
-          return {
-            ...p,
-            sizes: p.sizes.map((s) => (s.size === size ? { ...s, stock: Math.max(0, newStock) } : s)),
-          };
-        });
-        saveCatalog(next);
-        return next;
+  const updateStock = useCallback((productId: string, size: number, newStock: number) => {
+    setCatalog((prev) => {
+      const next = prev.map((p) => {
+        if (p.id !== productId) return p;
+        return {
+          ...p,
+          sizes: p.sizes.map((s) => (s.size === size ? { ...s, stock: Math.max(0, newStock) } : s)),
+        };
       });
-    },
-    [],
-  );
+      saveCatalog(next);
+      return next;
+    });
+  }, []);
 
   const resetCatalog = useCallback(() => {
     const defaults = resetCatalogToDefault();
     setCatalog(defaults);
     toast.success(
-      language === "pt" ? "Catálogo reposto para os valores originais." : "Catalog reset to defaults."
+      language === "pt"
+        ? "Catálogo reposto para os valores originais."
+        : "Catalog reset to defaults.",
     );
   }, [language]);
 

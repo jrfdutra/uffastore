@@ -1,5 +1,16 @@
-import fs from 'fs';
-import { Document, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType, BorderStyle, WidthType, Packer } from 'docx';
+import fs from "fs";
+import {
+  Document,
+  Paragraph,
+  TextRun,
+  Table,
+  TableRow,
+  TableCell,
+  AlignmentType,
+  BorderStyle,
+  WidthType,
+  Packer,
+} from "docx";
 
 const doc = new Document({
   sections: [
@@ -152,7 +163,8 @@ const doc = new Document({
               font: "Arial",
             }),
             new TextRun({
-              text: ", compreendendo especificamente:\n\n" +
+              text:
+                ", compreendendo especificamente:\n\n" +
                 "a) Registo, configuração e gestão técnica do domínio uffastore.pt;\n" +
                 "b) Instalação, configuração, estruturação e customização da plataforma WordPress (com sistema de comércio eletrónico / WooCommerce);\n" +
                 "c) Configuração e integração de gateways de pagamento bancário (métodos de pagamento digitais em Portugal);\n" +
@@ -192,7 +204,8 @@ const doc = new Document({
               font: "Arial",
             }),
             new TextRun({
-              text: ", a ser liquidado conforme acordo entre as partes (ex: 50% no início e 50% na entrega e colocação em produção).\n\n" +
+              text:
+                ", a ser liquidado conforme acordo entre as partes (ex: 50% no início e 50% na entrega e colocação em produção).\n\n" +
                 "3.2. Para os serviços de manutenção contínua, atualizações extraordinárias de catálogo de produtos, melhorias adicionais ou suporte técnico prestados após a conclusão do projeto base, será cobrada a tarifa horária de ",
               size: 22,
               font: "Arial",
@@ -204,7 +217,8 @@ const doc = new Document({
               font: "Arial",
             }),
             new TextRun({
-              text: ".\n\n" +
+              text:
+                ".\n\n" +
                 "3.3. As horas trabalhadas em regime de manutenção e atualização de catálogo serão registadas e reportadas mensalmente pelo PRESTADOR para efeitos de faturação e regularização.",
               size: 22,
               font: "Arial",
@@ -230,7 +244,8 @@ const doc = new Document({
           spacing: { after: 200 },
           children: [
             new TextRun({
-              text: "4.1. Compete ao PRESTADOR:\n" +
+              text:
+                "4.1. Compete ao PRESTADOR:\n" +
                 "a) Executar os serviços descritos na Cláusula 2 com zelo, qualidade e dentro dos padrões técnicos recomendados;\n" +
                 "b) Respeitar os prazos acordados para a entrega das etapas de desenvolvimento;\n" +
                 "c) Garantir a confidencialidade de todas as informações comerciais, estratégicas e credenciais de acesso fornecidas pela Uffa Store.\n\n" +
@@ -287,7 +302,8 @@ const doc = new Document({
           spacing: { after: 400 },
           children: [
             new TextRun({
-              text: "Qualquer alteração ou adenda a este termo apenas será válida se efetuada por escrito e assinada por ambas as partes. Para dirimir quaisquer litígios decorrentes do presente contrato, fica eleito o foro da comarca aplicável, com renúncia expressa a qualquer outro.\n\n" +
+              text:
+                "Qualquer alteração ou adenda a este termo apenas será válida se efetuada por escrito e assinada por ambas as partes. Para dirimir quaisquer litígios decorrentes do presente contrato, fica eleito o foro da comarca aplicável, com renúncia expressa a qualquer outro.\n\n" +
                 "E por estarem justos e contratados, assinam o presente instrumento em duas vias de igual teor.",
               size: 22,
               font: "Arial",
@@ -312,7 +328,8 @@ const doc = new Document({
           spacing: { before: 600, after: 100 },
           children: [
             new TextRun({
-              text: "\n\n___________________________________________________\n" +
+              text:
+                "\n\n___________________________________________________\n" +
                 "CONTRATANTE: Uffa Store\n" +
                 "Representante: Hugo Brandão\n\n\n\n" +
                 "___________________________________________________\n" +
@@ -328,5 +345,5 @@ const doc = new Document({
 });
 
 const buffer = await Packer.toBuffer(doc);
-fs.writeFileSync('docs/termo_prestacao_servicos_uffa_store.docx', buffer);
-console.log('Termo gerado com sucesso: docs/termo_prestacao_servicos_uffa_store.docx');
+fs.writeFileSync("docs/termo_prestacao_servicos_uffa_store.docx", buffer);
+console.log("Termo gerado com sucesso: docs/termo_prestacao_servicos_uffa_store.docx");

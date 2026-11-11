@@ -1,5 +1,6 @@
 const domain = import.meta.env["VITE_SHOPIFY_STORE_DOMAIN"] || "uffastore.myshopify.com";
-const token = import.meta.env["VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN"] || "cabe7b9d813cad638ad8a2812fc84f20";
+const token =
+  import.meta.env["VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN"] || "cabe7b9d813cad638ad8a2812fc84f20";
 
 const API_VERSION = "2026-07";
 
@@ -9,7 +10,10 @@ export function isShopifyConfigured() {
 
 type ShopifyResponse<T> = { data?: T; errors?: { message: string }[] };
 
-export async function shopifyFetch<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
+export async function shopifyFetch<T>(
+  query: string,
+  variables: Record<string, unknown> = {},
+): Promise<T> {
   const response = await fetch(`https://${domain}/api/${API_VERSION}/graphql.json`, {
     method: "POST",
     headers: {
@@ -22,8 +26,10 @@ export async function shopifyFetch<T>(query: string, variables: Record<string, u
   const json = (await response.json()) as ShopifyResponse<T>;
 
   if (!response.ok || json.errors?.length) {
-    console.error("Shopify error:", response.status, json.errors?.map(e => e.message).join(", "));
-    throw new Error(`Shopify API error: ${json.errors?.map((e) => e.message).join(", ") || response.statusText}`);
+    console.error("Shopify error:", response.status, json.errors?.map((e) => e.message).join(", "));
+    throw new Error(
+      `Shopify API error: ${json.errors?.map((e) => e.message).join(", ") || response.statusText}`,
+    );
   }
 
   if (!json.data) {

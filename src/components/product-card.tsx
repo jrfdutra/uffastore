@@ -18,7 +18,7 @@ export function ProductCard({ product }: { product: Product }) {
   const isSale = product.category === "sales" || Boolean(product.originalPrice);
   const isWishlisted = wishlist.includes(product.id);
   const availableSizes = product.sizes.filter((s) => s.stock > 0);
-  const defaultSize = availableSizes.length > 0 ? availableSizes[0]?.size ?? null : null;
+  const defaultSize = availableSizes.length > 0 ? (availableSizes[0]?.size ?? null) : null;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -89,7 +89,12 @@ export function ProductCard({ product }: { product: Product }) {
                 toggleWishlist(product.id);
               }}
               className="absolute right-2.5 top-2.5 z-20 grid size-10 place-items-center bg-background/85 backdrop-blur-sm text-foreground transition hover:bg-background hover:scale-110 active:scale-95 shadow-sm"
-              aria-label={tr(language, "Adicionar aos favoritos", "Add to wishlist", "Añadir a favoritos")}
+              aria-label={tr(
+                language,
+                "Adicionar aos favoritos",
+                "Add to wishlist",
+                "Añadir a favoritos",
+              )}
             >
               <Heart
                 className={`size-5 transition-colors ${
@@ -124,9 +129,7 @@ export function ProductCard({ product }: { product: Product }) {
                 <span className="text-[11px] text-muted-foreground line-through">
                   {money(product.originalPrice)}
                 </span>
-                <span className="text-lg font-bold text-foreground">
-                  {money(product.price)}
-                </span>
+                <span className="text-lg font-bold text-foreground">{money(product.price)}</span>
               </div>
             ) : isSale ? (
               <span className="text-lg font-bold text-foreground">{money(product.price)}</span>
@@ -159,8 +162,8 @@ export function ProductCard({ product }: { product: Product }) {
                     !inStock
                       ? "opacity-30 line-through cursor-not-allowed"
                       : isSelected
-                      ? "bg-primary text-primary-foreground font-black"
-                      : "bg-muted text-muted-foreground hover:bg-accent"
+                        ? "bg-primary text-primary-foreground font-black"
+                        : "bg-muted text-muted-foreground hover:bg-accent"
                   }`}
                 >
                   {sz.size}
@@ -181,14 +184,16 @@ export function ProductCard({ product }: { product: Product }) {
             isSoldOut || isComingSoon
               ? "bg-muted text-muted-foreground cursor-not-allowed hover:bg-muted"
               : added
-              ? "bg-green-600 text-white hover:bg-green-700"
-              : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                ? "bg-green-600 text-white hover:bg-green-700"
+                : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
           }`}
         >
           {isSoldOut ? (
             <span className="truncate">{tr(language, "Esgotado", "Sold Out", "Agotado")}</span>
           ) : isComingSoon ? (
-            <span className="truncate">{tr(language, "Em breve", "Coming soon", "Próximamente")}</span>
+            <span className="truncate">
+              {tr(language, "Em breve", "Coming soon", "Próximamente")}
+            </span>
           ) : added ? (
             <span className="flex items-center justify-center gap-1.5 truncate">
               <Check className="size-3.5 sm:size-4 shrink-0" />

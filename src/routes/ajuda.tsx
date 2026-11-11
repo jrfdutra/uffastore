@@ -1,6 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { HelpCircle, Package, RefreshCw, Mail, MapPin, Send, CheckCircle2, Instagram } from "lucide-react";
+import {
+  HelpCircle,
+  Package,
+  RefreshCw,
+  Mail,
+  MapPin,
+  Send,
+  CheckCircle2,
+  Instagram,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,7 +21,11 @@ export const Route = createFileRoute("/ajuda")({
   head: () => ({
     meta: [
       { title: "Ajuda e Contactos — Uffa Store" },
-      { name: "description", content: "Perguntas frequentes, pedidos, entregas, devoluções e contactos da Uffa Store no Porto." },
+      {
+        name: "description",
+        content:
+          "Perguntas frequentes, pedidos, entregas, devoluções e contactos da Uffa Store no Porto.",
+      },
       { property: "og:title", content: "Ajuda e Contactos — Uffa Store" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -34,11 +47,25 @@ function HelpPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !message) {
-      toast.error(tr(language, "Por favor preenche os campos obrigatórios.", "Please fill in required fields.", "Por favor completa los campos obligatorios."));
+      toast.error(
+        tr(
+          language,
+          "Por favor preenche os campos obrigatórios.",
+          "Please fill in required fields.",
+          "Por favor completa los campos obligatorios.",
+        ),
+      );
       return;
     }
     setSubmitted(true);
-    toast.success(tr(language, "Mensagem enviada com sucesso!", "Message sent successfully!", "¡Mensaje enviado con éxito!"));
+    toast.success(
+      tr(
+        language,
+        "Mensagem enviada com sucesso!",
+        "Message sent successfully!",
+        "¡Mensaje enviado con éxito!",
+      ),
+    );
   };
 
   return (
@@ -53,7 +80,7 @@ function HelpPage() {
             language,
             "Tudo o que precisas de saber sobre encomendas, entregas, trocas e suporte na UFFA Store.",
             "Everything you need to know about orders, shipping, exchanges and support at UFFA Store.",
-            "Todo lo que necesitas saber sobre pedidos, envíos, cambios y soporte en UFFA Store."
+            "Todo lo que necesitas saber sobre pedidos, envíos, cambios y soporte en UFFA Store.",
           )}
         </p>
       </div>
@@ -72,14 +99,42 @@ function HelpPage() {
               language,
               "Todas as encomendas são verificadas no Porto e preparadas com rigor. Podes escolher recolha em mãos grátis na zona do Porto ou envio expresso. O código de rastreio é disponibilizado após confirmação.",
               "All orders are verified in Porto and carefully prepared. You can choose free hand pickup in the Porto area or express shipping. Tracking is provided upon confirmation.",
-              "Todos los pedidos se verifican en Oporto y se preparan con rigor. Puedes elegir recogida en mano gratuita en Oporto o envío urgente."
+              "Todos los pedidos se verifican en Oporto y se preparan con rigor. Puedes elegir recogida en mano gratuita en Oporto o envío urgente.",
             )}
           </p>
           <ul className="space-y-2 text-xs text-muted-foreground list-disc pl-4">
-            <li>{tr(language, "Recolha em mãos: Grátis (Porto)", "Hand pickup: Free (Porto)", "Recogida en mano: Gratis (Oporto)")}</li>
-            <li>{tr(language, "Portugal Continental e Ilhas: 8,94 €", "Portugal Mainland & Islands: €8.94", "Portugal Continental e Islas: 8,94 €")}</li>
-            <li>{tr(language, "União Europeia: 24,00 € · Suíça: 34,00 €", "European Union: €24.00 · Switzerland: €34.00", "Unión Europea: 24,00 € · Suiza: 34,00 €")}</li>
-            <li>{tr(language, "Acompanhamento online via Portal de Encomendas", "Online tracking via Order Portal", "Seguimiento online vía Portal de Pedidos")}</li>
+            <li>
+              {tr(
+                language,
+                "Recolha em mãos: Grátis (Porto)",
+                "Hand pickup: Free (Porto)",
+                "Recogida en mano: Gratis (Oporto)",
+              )}
+            </li>
+            <li>
+              {tr(
+                language,
+                "Portugal Continental e Ilhas: 8,94 €",
+                "Portugal Mainland & Islands: €8.94",
+                "Portugal Continental e Islas: 8,94 €",
+              )}
+            </li>
+            <li>
+              {tr(
+                language,
+                "União Europeia: 24,00 € · Suíça: 34,00 €",
+                "European Union: €24.00 · Switzerland: €34.00",
+                "Unión Europea: 24,00 € · Suiza: 34,00 €",
+              )}
+            </li>
+            <li>
+              {tr(
+                language,
+                "Acompanhamento online via Portal de Encomendas",
+                "Online tracking via Order Portal",
+                "Seguimiento online vía Portal de Pedidos",
+              )}
+            </li>
           </ul>
         </div>
 
@@ -88,7 +143,12 @@ function HelpPage() {
           <div className="flex items-center gap-3">
             <RefreshCw className="size-6 text-primary" />
             <h2 className="font-display text-2xl uppercase">
-              {tr(language, "2. Devoluções e Reembolsos", "2. Returns & Refunds", "2. Devoluciones y Reembolsos")}
+              {tr(
+                language,
+                "2. Devoluções e Reembolsos",
+                "2. Returns & Refunds",
+                "2. Devoluciones y Reembolsos",
+              )}
             </h2>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
@@ -96,7 +156,7 @@ function HelpPage() {
               language,
               "A UFFA Store pratica uma política rigorosa de autenticidade. Salvo defeito de fabrico comprovado, não efetuamos trocas nem devoluções por escolha de tamanho ou arrependimento. Verifica sempre o guia de tamanhos antes de comprar.",
               "UFFA Store maintains a strict authenticity policy. Unless verified manufacturing defect, we do not offer exchanges or returns for size choice or change of mind.",
-              "UFFA Store mantiene una política estricta de autenticidad. Salvo defecto de fabricación comprobado, no realizamos cambios ni devoluciones."
+              "UFFA Store mantiene una política estricta de autenticidad. Salvo defecto de fabricación comprobado, no realizamos cambios ni devoluciones.",
             )}
           </p>
           <ul className="space-y-2 text-xs text-muted-foreground list-disc pl-4">
@@ -119,7 +179,7 @@ function HelpPage() {
               language,
               "Entra em contacto direto com a nossa equipa de suporte através do email oficial ou do formulário abaixo.",
               "Get in touch directly with our support team via official email or the form below.",
-              "Ponte en contacto directo con nuestro equipo de soporte a través del correo oficial o formulario."
+              "Ponte en contacto directo con nuestro equipo de soporte a través del correo oficial o formulario.",
             )}
           </p>
           <div className="space-y-3 text-sm">
@@ -154,7 +214,7 @@ function HelpPage() {
             language,
             "Envia a tua questão e responderemos o mais breve possível.",
             "Send your question and we will reply as soon as possible.",
-            "Envía tu pregunta y responderemos lo antes posible."
+            "Envía tu pregunta y responderemos lo antes posible.",
           )}
         </p>
 
@@ -169,7 +229,7 @@ function HelpPage() {
                 language,
                 "Obrigado pelo contacto. A nossa equipa responderá para atendimento@uffastore.pt em breve.",
                 "Thank you for contacting. Our team will reply to your email shortly.",
-                "Gracias por contactar. Nuestro equipo responderá pronto."
+                "Gracias por contactar. Nuestro equipo responderá pronto.",
               )}
             </p>
             <Button
@@ -220,7 +280,12 @@ function HelpPage() {
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
                 <label className="block text-xs font-bold uppercase mb-2">
-                  {tr(language, "Número de Encomenda (opcional)", "Order Number (optional)", "Número de Pedido (opcional)")}
+                  {tr(
+                    language,
+                    "Número de Encomenda (opcional)",
+                    "Order Number (optional)",
+                    "Número de Pedido (opcional)",
+                  )}
                 </label>
                 <Input
                   value={orderNo}
@@ -256,7 +321,11 @@ function HelpPage() {
               />
             </div>
 
-            <Button type="submit" size="lg" className="w-full h-12 rounded-none font-bold uppercase">
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full h-12 rounded-none font-bold uppercase"
+            >
               <Send className="size-4 mr-2" />
               {tr(language, "Enviar mensagem", "Send message", "Enviar mensaje")}
             </Button>

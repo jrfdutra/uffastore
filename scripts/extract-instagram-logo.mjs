@@ -97,7 +97,7 @@ async function main() {
       "--window-size=1280,1000",
       "about:blank",
     ],
-    { stdio: "ignore" }
+    { stdio: "ignore" },
   );
 
   try {
@@ -123,7 +123,9 @@ async function main() {
     await sleep(4000);
 
     // Avaliar elementos e meta tags
-    const info = await evaluate(cdp, `
+    const info = await evaluate(
+      cdp,
+      `
       (() => {
         const ogImage = document.querySelector('meta[property="og:image"]')?.content || null;
         const ogTitle = document.querySelector('meta[property="og:title"]')?.content || null;
@@ -142,7 +144,8 @@ async function main() {
 
         return { ogImage, ogTitle, imgs, title: document.title, url: location.href };
       })()
-    `);
+    `,
+    );
 
     console.log("Informações obtidas da página:", JSON.stringify(info, null, 2));
 

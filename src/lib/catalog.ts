@@ -1,5 +1,10 @@
 import grey from "@/assets/Gemini_Generated_Image_f4688zf4688zf468.jpg";
-import { products as fallbackProducts, type Category, type Product, type ProductStatus } from "./shop-data";
+import {
+  products as fallbackProducts,
+  type Category,
+  type Product,
+  type ProductStatus,
+} from "./shop-data";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 import {
   fetchShopifyProductByHandle,

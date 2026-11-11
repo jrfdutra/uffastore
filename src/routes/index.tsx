@@ -7,12 +7,7 @@ import { TrustStrip } from "@/components/trust-strip";
 import { OrderPortalPromo } from "@/components/order-portal-promo";
 import { OffCarousel } from "@/components/off-carousel";
 import { HeroCarousel } from "@/components/hero-carousel";
-import {
-  categoryNames,
-  copy,
-  heroSneaker as heroImage,
-  type Category,
-} from "@/lib/shop-data";
+import { categoryNames, copy, heroSneaker as heroImage, type Category } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 
 export const Route = createFileRoute("/")({
