@@ -85,7 +85,9 @@ function generateShopifyCsv() {
         const variantSku = `${cp.sku}-${color.colorSlug.toUpperCase()}-${sizeVariant.size}`;
         const variantPrice = sizeVariant.price.toFixed(2);
         const variantInventoryQty = sizeVariant.stock.toString();
-        const primaryImage = color.images[0] ?? "";
+        const primaryImage = color.images[0]
+          ? `https://raw.githubusercontent.com/jrfdutra/uffastore/main/public${color.images[0]}`
+          : "";
 
         const row = [
           isFirstRowForProduct ? handle : "",
@@ -145,7 +147,7 @@ function generateShopifyCsv() {
     }
   }
 
-  const csvPath = path.join(outputDir, "shopify-import-consolidado.csv");
+  const csvPath = path.join(outputDir, "shopify-import-consolidado-v2.csv");
   fs.writeFileSync(csvPath, rows.join("\n"), "utf8");
   console.log(`[DRY-RUN] CSV gerado com sucesso em: ${csvPath}`);
 }
