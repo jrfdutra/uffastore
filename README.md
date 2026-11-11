@@ -7,16 +7,17 @@ Inclui uma área de cliente para acompanhar encomendas de envio ou recolha, vali
 ## Desenvolvimento
 
 ```bash
-bun install       # ou: npm install
-bun run dev       # http://localhost:8080
-bun run build     # build de produção
-bun run lint
+npm install
+npm run dev       # http://localhost:8080
+npm run build     # build de produção
+npm run lint
 ```
 
 Validação rápida:
 
 ```bash
-npx tsc --noEmit
+npm run typecheck
+npm run lint
 npm run build
 ```
 
