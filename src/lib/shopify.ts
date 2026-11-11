@@ -1,6 +1,5 @@
 const domain = import.meta.env["VITE_SHOPIFY_STORE_DOMAIN"] || "uffastore.myshopify.com";
-const token =
-  import.meta.env["VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN"] || "cabe7b9d813cad638ad8a2812fc84f20";
+const token = import.meta.env["VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN"] || "";
 
 const API_VERSION = "2026-07";
 
@@ -186,9 +185,6 @@ export async function createCheckoutUrl(
 
   const discountCodes = couponCode ? [couponCode] : [];
   const pickupHandles = isPickup ? await fetchPickupHandles() : [];
-
-  console.log("DEBUG: domain being used:", domain);
-  console.log("DEBUG: token being used:", token ? "YES" : "NO");
 
   const data = await shopifyFetch<{
     cartCreate: {
