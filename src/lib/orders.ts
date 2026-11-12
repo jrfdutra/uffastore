@@ -250,8 +250,15 @@ function inDays(days: number) {
 function sendEmailNotification(order: Order, status: OrderStatus): EmailNotification {
   const statusLabel = orderStatusInfo[status].label.pt;
   const statusDesc = orderStatusInfo[status].description.pt;
-  const subject = `A tua encomenda UFFA ${order.number} tem novidades!`;
-  const body = `Olá, ${order.customerName || "Cliente"}! 💗\n\nTemos novidades sobre a tua encomenda!\n\nA tua encomenda #${order.number} foi atualizada e encontra-se agora no seguinte estado:\n\n[${statusLabel}] - ${statusDesc}\n\nContinuamos a acompanhar tudo para que recebas as tuas peças UFFA com toda a tranquilidade.\n\nObrigada por escolheres a UFFA. É um prazer fazer parte do teu estilo!\n\nCom carinho,\nEquipa UFFA\natendimento@uffastore.pt`;
+  
+  let subject = `A tua encomenda UFFA ${order.number} tem novidades!`;
+  let body = `Olá, ${order.customerName || "Cliente"}! 💗\n\nTemos novidades sobre a tua encomenda!\n\nA tua encomenda #${order.number} foi atualizada e encontra-se agora no seguinte estado:\n\n[${statusLabel}] - ${statusDesc}\n\nContinuamos a acompanhar tudo para que recebas as tuas peças UFFA com toda a tranquilidade.\n\nObrigada por escolheres a UFFA. É um prazer fazer parte do teu estilo!\n\nCom carinho,\nEquipa UFFA\natendimento@uffastore.pt`;
+
+  if (status === "confirmed") {
+    const authDetails = order.items.map(item => `- ${item.name} (Tamanho ${item.size}): N/S: ${item.serial} | Código de Autenticidade: ${item.authCode}`).join("\n");
+    subject = `Certificado de Autenticidade e Agradecimento · Encomenda UFFA ${order.number}`;
+    body = `Olá, ${order.customerName || "Cliente"}! 💗\n\nMuito obrigado pela tua compra na Uffa Store! É um enorme prazer fazer parte do teu estilo.\n\nEm anexo digital, enviamos o teu Certificado de Autenticidade Oficial UFFA para os artigos adquiridos:\n\n${authDetails}\n\nPodes verificar e validar a autenticidade dos teus ténis a qualquer momento em: https://www.uffastore.pt/verificar\n\nA tua encomenda foi confirmada com sucesso e já está a ser preparada com todo o cuidado.\n\nCom carinho e estilo,\nEquipa UFFA\natendimento@uffastore.pt`;
+  }
 
   return {
     id: makeId(),
