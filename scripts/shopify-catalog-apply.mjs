@@ -15,6 +15,8 @@ import { consolidatedProducts, FOTO_PADRAO } from "../src/lib/consolidated-catal
 
 const ROOT = resolve(import.meta.dirname, "..");
 const APPLY = process.argv.includes("--apply");
+/** Numa re-execução, evita voltar a carregar a fotografia já associada. */
+const SKIP_IMAGES = process.argv.includes("--skip-images");
 
 async function loadEnv() {
   const raw = await readFile(resolve(ROOT, ".env"), "utf8");
@@ -95,20 +97,22 @@ const PUBLISH = `
 `;
 
 const PRODUCT_BY_HANDLE = `
-  query ByHandle($handle: String!) {
-    product(handle: $handle) {
-      id
-      handle
-      title
-      status
-      options { name values }
-      variants(first: 100) {
-        nodes {
-          id
-          sku
-          price
-          inventoryQuantity
-          selectedOptions { name value }
+  query ByHandle($query: String!) {
+    products(first: 1, query: $query) {
+      nodes {
+        id
+        handle
+        title
+        status
+        options { name values }
+        variants(first: 100) {
+          nodes {
+            id
+            sku
+            price
+            inventoryQuantity
+            selectedOptions { name value }
+          }
         }
       }
     }
@@ -210,6 +214,7 @@ function buildInput(produto, imageUrl, existingId, locationId) {
         sku: variante.sku,
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
+        published: true,
         inventoryQuantities: [{ locationId, name: "available", quantity: variante.stock }],
       };
     });
@@ -224,7 +229,9 @@ function buildInput(produto, imageUrl, existingId, locationId) {
     status: "ACTIVE",
     productOptions,
     variants,
-    files: [{ originalSource: imageUrl, alt: produto.name, contentType: "IMAGE" }],
+    ...(imageUrl
+      ? { files: [{ originalSource: imageUrl, alt: produto.name, contentType: "IMAGE" }] }
+      : {}),
   };
 }
 
@@ -265,13 +272,16 @@ async function main() {
   if (!primaryLocation) throw new Error("Nenhuma localização de inventário encontrada.");
   console.log(`\nLocalização de inventário: ${primaryLocation.name}`);
 
-  const publications = await admin(PUBLICATIONS);
-  const onlineStore = publications.publications.nodes.find((p) => /online store/i.test(p.name));
-  console.log(`Publicação: ${onlineStore ? onlineStore.name : "(não encontrada)"}`);
-
-  console.log("\nA carregar a fotografia padrão…");
-  const imageUrl = await uploadImage();
-  console.log(`Imagem carregada: ${imageUrl}`);
+  let onlineStore = null;
+  try {
+    const publications = await admin(PUBLICATIONS);
+    onlineStore = publications.publications.nodes.find((p) => /online store/i.test(p.name)) ?? null;
+    console.log(`Publicação: ${onlineStore ? onlineStore.name : "(não encontrada)"}`);
+  } catch (error) {
+    console.warn(
+      `Aviso: sem acesso a publicações (${error.message}). A usar publicação por variante.`,
+    );
+  }
 
   console.log("\nA arquivar produtos antigos…");
   for (const p of toArchive) {
@@ -288,6 +298,8 @@ async function main() {
   const idsPorHandle = new Map();
   for (const produto of consolidatedProducts) {
     const existente = currentByHandle.get(produto.handle);
+    // Cada produto recebe o seu próprio upload da fotografia padrão.
+    const imageUrl = SKIP_IMAGES ? null : await uploadImage();
     const input = buildInput(produto, imageUrl, existente?.id, primaryLocation.id);
     const data = await admin(PRODUCT_SET, { input, synchronous: true });
     const errors = data.productSet.userErrors ?? [];
@@ -312,8 +324,8 @@ async function main() {
   console.log("\nA exportar variantId para o site…");
   const mapa = {};
   for (const produto of consolidatedProducts) {
-    const data = await admin(PRODUCT_BY_HANDLE, { handle: produto.handle });
-    const node = data.product;
+    const data = await admin(PRODUCT_BY_HANDLE, { query: `handle:${produto.handle}` });
+    const node = data.products.nodes[0];
     if (!node) {
       console.warn(`  ! ${produto.handle} não encontrado após sincronização`);
       continue;
@@ -342,8 +354,8 @@ async function main() {
   console.log("\n=== VERIFICAÇÃO ===");
   let problemas = 0;
   for (const produto of consolidatedProducts) {
-    const data = await admin(PRODUCT_BY_HANDLE, { handle: produto.handle });
-    const node = data.product;
+    const data = await admin(PRODUCT_BY_HANDLE, { query: `handle:${produto.handle}` });
+    const node = data.products.nodes[0];
     if (!node) {
       console.log(`✗ ${produto.handle}: não existe`);
       problemas += 1;
@@ -367,6 +379,39 @@ async function main() {
     console.log(`✗ Produtos antigos ainda ativos: ${aindaAtivos.map((p) => p.handle).join(", ")}`);
   } else {
     console.log("✓ Nenhum produto antigo ativo");
+  }
+
+  // Verificação pública: confirma que a Storefront API devolve os 6 modelos.
+  const storefrontDomain = env.VITE_SHOPIFY_STORE_DOMAIN || domain;
+  const storefrontToken = env.VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
+  if (storefrontToken) {
+    try {
+      const response = await fetch(`https://${storefrontDomain}/api/${version}/graphql.json`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Storefront-Access-Token": storefrontToken,
+        },
+        body: JSON.stringify({
+          query: `{ products(first: 50) { nodes { handle } } }`,
+        }),
+      });
+      const json = await response.json();
+      if (json.errors?.length) throw new Error(json.errors.map((e) => e.message).join(" | "));
+      const publicos = new Set(json.data.products.nodes.map((p) => p.handle));
+      const emFalta = consolidatedProducts
+        .map((produto) => produto.handle)
+        .filter((handle) => !publicos.has(handle));
+      if (emFalta.length) {
+        problemas += 1;
+        console.log(`✗ Em falta na loja pública: ${emFalta.join(", ")}`);
+      } else {
+        console.log(`✓ Loja pública mostra os 6 modelos (${publicos.size} produtos públicos)`);
+      }
+    } catch (error) {
+      problemas += 1;
+      console.log(`✗ Verificação da loja pública falhou: ${error.message}`);
+    }
   }
 
   console.log(

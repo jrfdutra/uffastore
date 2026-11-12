@@ -1,1 +1,154 @@
-{}
+{
+  "nike-dunk-w-rope-laces": {
+    "black": {
+      "36": "gid://shopify/ProductVariant/59868353102172",
+      "37": "gid://shopify/ProductVariant/59868353200476",
+      "38": "gid://shopify/ProductVariant/59868353298780",
+      "39": "gid://shopify/ProductVariant/59868353397084",
+      "40": "gid://shopify/ProductVariant/59868353495388",
+      "41": "gid://shopify/ProductVariant/59868353593692",
+      "42": "gid://shopify/ProductVariant/59868353691996",
+      "43": "gid://shopify/ProductVariant/59868353790300",
+      "44": "gid://shopify/ProductVariant/59868353888604",
+      "45": "gid://shopify/ProductVariant/59868353986908"
+    },
+    "pink": {
+      "36": "gid://shopify/ProductVariant/59868353134940",
+      "37": "gid://shopify/ProductVariant/59868353233244",
+      "38": "gid://shopify/ProductVariant/59868353331548",
+      "39": "gid://shopify/ProductVariant/59868353429852",
+      "40": "gid://shopify/ProductVariant/59868353528156",
+      "41": "gid://shopify/ProductVariant/59868353626460",
+      "42": "gid://shopify/ProductVariant/59868353724764",
+      "43": "gid://shopify/ProductVariant/59868353823068",
+      "44": "gid://shopify/ProductVariant/59868353921372",
+      "45": "gid://shopify/ProductVariant/59868354019676"
+    },
+    "white": {
+      "36": "gid://shopify/ProductVariant/59868353167708",
+      "37": "gid://shopify/ProductVariant/59868353266012",
+      "38": "gid://shopify/ProductVariant/59868353364316",
+      "39": "gid://shopify/ProductVariant/59868353462620",
+      "40": "gid://shopify/ProductVariant/59868353560924",
+      "41": "gid://shopify/ProductVariant/59868353659228",
+      "42": "gid://shopify/ProductVariant/59868353757532",
+      "43": "gid://shopify/ProductVariant/59868353855836",
+      "44": "gid://shopify/ProductVariant/59868353954140",
+      "45": "gid://shopify/ProductVariant/59868354052444"
+    }
+  },
+  "air-force-lanvin-w": {
+    "_": {
+      "36": "gid://shopify/ProductVariant/59868354707804",
+      "37": "gid://shopify/ProductVariant/59868354740572",
+      "38": "gid://shopify/ProductVariant/59868354773340",
+      "39": "gid://shopify/ProductVariant/59868354806108",
+      "40": "gid://shopify/ProductVariant/59868354838876",
+      "41": "gid://shopify/ProductVariant/59868354871644",
+      "42": "gid://shopify/ProductVariant/59868354904412",
+      "43": "gid://shopify/ProductVariant/59868354937180",
+      "44": "gid://shopify/ProductVariant/59868354969948",
+      "45": "gid://shopify/ProductVariant/59868355002716"
+    }
+  },
+  "air-force-floral-w-rope-laces": {
+    "orange": {
+      "36": "gid://shopify/ProductVariant/59868356870492",
+      "37": "gid://shopify/ProductVariant/59868356936028",
+      "38": "gid://shopify/ProductVariant/59868357001564",
+      "39": "gid://shopify/ProductVariant/59868357067100",
+      "40": "gid://shopify/ProductVariant/59868357132636",
+      "41": "gid://shopify/ProductVariant/59868357198172",
+      "42": "gid://shopify/ProductVariant/59868357263708",
+      "43": "gid://shopify/ProductVariant/59868357329244",
+      "44": "gid://shopify/ProductVariant/59868357394780",
+      "45": "gid://shopify/ProductVariant/59868357460316"
+    },
+    "pink": {
+      "36": "gid://shopify/ProductVariant/59868356903260",
+      "37": "gid://shopify/ProductVariant/59868356968796",
+      "38": "gid://shopify/ProductVariant/59868357034332",
+      "39": "gid://shopify/ProductVariant/59868357099868",
+      "40": "gid://shopify/ProductVariant/59868357165404",
+      "41": "gid://shopify/ProductVariant/59868357230940",
+      "42": "gid://shopify/ProductVariant/59868357296476",
+      "43": "gid://shopify/ProductVariant/59868357362012",
+      "44": "gid://shopify/ProductVariant/59868357427548",
+      "45": "gid://shopify/ProductVariant/59868357493084"
+    }
+  },
+  "floral-black": {
+    "black": {
+      "36": "gid://shopify/ProductVariant/59868358574428",
+      "37": "gid://shopify/ProductVariant/59868358607196",
+      "38": "gid://shopify/ProductVariant/59868358639964",
+      "39": "gid://shopify/ProductVariant/59868358672732",
+      "40": "gid://shopify/ProductVariant/59868358705500",
+      "41": "gid://shopify/ProductVariant/59868358738268",
+      "42": "gid://shopify/ProductVariant/59868358771036",
+      "43": "gid://shopify/ProductVariant/59868358803804",
+      "44": "gid://shopify/ProductVariant/59868358836572",
+      "45": "gid://shopify/ProductVariant/59868358869340"
+    }
+  },
+  "air-force-crianca": {
+    "black": {
+      "28": "gid://shopify/ProductVariant/59868359098716",
+      "29": "gid://shopify/ProductVariant/59868359164252",
+      "30": "gid://shopify/ProductVariant/59868359229788",
+      "31": "gid://shopify/ProductVariant/59868359295324",
+      "32": "gid://shopify/ProductVariant/59868359360860",
+      "33": "gid://shopify/ProductVariant/59868359426396",
+      "34": "gid://shopify/ProductVariant/59868359491932",
+      "35": "gid://shopify/ProductVariant/59868359557468"
+    },
+    "white": {
+      "28": "gid://shopify/ProductVariant/59868359131484",
+      "29": "gid://shopify/ProductVariant/59868359197020",
+      "30": "gid://shopify/ProductVariant/59868359262556",
+      "31": "gid://shopify/ProductVariant/59868359328092",
+      "32": "gid://shopify/ProductVariant/59868359393628",
+      "33": "gid://shopify/ProductVariant/59868359459164",
+      "34": "gid://shopify/ProductVariant/59868359524700",
+      "35": "gid://shopify/ProductVariant/59868359590236"
+    }
+  },
+  "air-force-w-rope-laces": {
+    "black": {
+      "36": "gid://shopify/ProductVariant/59868360245596",
+      "37": "gid://shopify/ProductVariant/59868360343900",
+      "38": "gid://shopify/ProductVariant/59868360442204",
+      "39": "gid://shopify/ProductVariant/59868360540508",
+      "40": "gid://shopify/ProductVariant/59868360638812",
+      "41": "gid://shopify/ProductVariant/59868360737116",
+      "42": "gid://shopify/ProductVariant/59868360835420",
+      "43": "gid://shopify/ProductVariant/59868360933724",
+      "44": "gid://shopify/ProductVariant/59868361032028",
+      "45": "gid://shopify/ProductVariant/59868361130332"
+    },
+    "gray": {
+      "36": "gid://shopify/ProductVariant/59868360278364",
+      "37": "gid://shopify/ProductVariant/59868360376668",
+      "38": "gid://shopify/ProductVariant/59868360474972",
+      "39": "gid://shopify/ProductVariant/59868360573276",
+      "40": "gid://shopify/ProductVariant/59868360671580",
+      "41": "gid://shopify/ProductVariant/59868360769884",
+      "42": "gid://shopify/ProductVariant/59868360868188",
+      "43": "gid://shopify/ProductVariant/59868360966492",
+      "44": "gid://shopify/ProductVariant/59868361064796",
+      "45": "gid://shopify/ProductVariant/59868361163100"
+    },
+    "pink": {
+      "36": "gid://shopify/ProductVariant/59868360311132",
+      "37": "gid://shopify/ProductVariant/59868360409436",
+      "38": "gid://shopify/ProductVariant/59868360507740",
+      "39": "gid://shopify/ProductVariant/59868360606044",
+      "40": "gid://shopify/ProductVariant/59868360704348",
+      "41": "gid://shopify/ProductVariant/59868360802652",
+      "42": "gid://shopify/ProductVariant/59868360900956",
+      "43": "gid://shopify/ProductVariant/59868360999260",
+      "44": "gid://shopify/ProductVariant/59868361097564",
+      "45": "gid://shopify/ProductVariant/59868361195868"
+    }
+  }
+}
