@@ -7,7 +7,8 @@ import { TrustStrip } from "@/components/trust-strip";
 import { OrderPortalPromo } from "@/components/order-portal-promo";
 import { OffCarousel } from "@/components/off-carousel";
 import { HeroCarousel } from "@/components/hero-carousel";
-import { categoryNames, copy, heroSneaker as heroImage, type Category } from "@/lib/shop-data";
+import { categoryNames, copy, type Category } from "@/lib/shop-data";
+import { FOTO_PADRAO } from "@/lib/consolidated-catalog";
 import { useShop } from "@/lib/shop-context";
 
 export const Route = createFileRoute("/")({
@@ -51,19 +52,23 @@ const hero = {
   },
 };
 
-const categoryImages = (catalog: { category: Category; image: string }[]) => ({
-  casual: catalog.find((p) => p.category === "casual")?.image ?? heroImage,
-  streetwear: catalog.find((p) => p.category === "streetwear")?.image ?? heroImage,
-  limited: catalog.find((p) => p.category === "limited")?.image ?? heroImage,
-  sales: catalog.find((p) => p.category === "sales")?.image ?? heroImage,
-});
+/**
+ * Capas das categorias: todas usam exatamente a fotografia padrão fornecida
+ * pela UFFA (mesmo ficheiro, sem recorte nem alterações), para o efeito de
+ * surpresa na página inicial.
+ */
+const categoryImages: Record<Category, string> = {
+  casual: FOTO_PADRAO,
+  streetwear: FOTO_PADRAO,
+  limited: FOTO_PADRAO,
+  sales: FOTO_PADRAO,
+};
 
 function Home() {
   const { language, catalog } = useShop();
-  const catImages = categoryImages(catalog);
   const t = copy[language],
     h = hero[language];
-  const cats = Object.keys(catImages) as Category[];
+  const cats = Object.keys(categoryImages) as Category[];
 
   return (
     <>
@@ -113,10 +118,10 @@ function Home() {
               className="group relative block aspect-[4/5] overflow-hidden bg-product"
             >
               <img
-                src={catImages[cat]}
+                src={categoryImages[cat]}
                 alt=""
-                width={1200}
-                height={900}
+                width={1664}
+                height={2080}
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
               />
