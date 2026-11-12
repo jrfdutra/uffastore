@@ -5,11 +5,19 @@ import { categoryNames, getProductEffectiveStatus, money, type Product } from "@
 import { useShop } from "@/lib/shop-context";
 import { VerifiedBadge } from "./verified-badge";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { tr } from "@/lib/i18n";
 
 export function ProductCard({ product }: { product: Product }) {
   const { language, addToCart, wishlist, toggleWishlist } = useShop();
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
   const [added, setAdded] = useState(false);
 
   const effectiveStatus = getProductEffectiveStatus(product);
@@ -17,19 +25,30 @@ export function ProductCard({ product }: { product: Product }) {
   const isComingSoon = effectiveStatus === "comingsoon";
   const isSale = product.category === "sales" || Boolean(product.originalPrice);
   const isWishlisted = wishlist.includes(product.id);
-  const availableSizes = product.sizes.filter((s) => s.stock > 0);
-  const defaultSize = availableSizes.length > 0 ? (availableSizes[0]?.size ?? null) : null;
+
+  const colors = product.colors ?? [];
+  const activeColor =
+    selectedColor && colors.some((color) => color.slug === selectedColor)
+      ? selectedColor
+      : colors[0]?.slug;
+
+  // Só variantes reais da cor ativa; sem opção de cor, todas contam.
+  const variants = product.sizes.filter((size) =>
+    activeColor ? size.color === activeColor : true,
+  );
+  const availableSizes = variants.filter((s) => s.stock > 0);
+  const defaultSize = availableSizes[0]?.size ?? null;
+  const activeSize = selectedSize ?? defaultSize;
+  const activeVariant = variants.find((size) => size.size === activeSize);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (isSoldOut || isComingSoon) return;
+    if (!activeVariant || activeVariant.stock <= 0) return;
 
-    const sizeToAdd = selectedSize ?? defaultSize;
-    if (!sizeToAdd) return;
-
-    addToCart(product.id, sizeToAdd);
+    addToCart(product.id, activeVariant.size, activeVariant.color);
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   };
@@ -42,12 +61,12 @@ export function ProductCard({ product }: { product: Product }) {
           params={{ productId: product.id }}
           className="block overflow-hidden bg-product focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <div className="relative aspect-[4/3] overflow-hidden">
+          <div className="relative aspect-[4/5] overflow-hidden">
             <img
               src={product.image}
               alt={product.name}
-              width={1200}
-              height={900}
+              width={1664}
+              height={2080}
               loading="lazy"
               className={`h-full w-full object-cover transition duration-500 group-hover:scale-[1.035] ${
                 isSoldOut ? "grayscale-[0.25] opacity-90" : ""
@@ -139,37 +158,63 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
         </div>
 
-        {availableSizes.length > 0 && (
-          <div className="mt-3 flex items-center gap-1 overflow-x-auto pb-1 text-xs">
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase mr-1">
-              Tam:
-            </span>
-            {product.sizes.map((sz) => {
-              const inStock = sz.stock > 0;
-              const isSelected = (selectedSize ?? defaultSize) === sz.size;
+        {variants.length > 0 && (
+          <div className="mt-3 space-y-2">
+            {colors.length > 1 && (
+              <div className="flex flex-wrap items-center gap-1">
+                <span className="mr-1 text-[10px] font-semibold uppercase text-muted-foreground">
+                  {tr(language, "Cor", "Colour", "Color")}:
+                </span>
+                {colors.map((color) => (
+                  <button
+                    key={color.slug}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSelectedColor(color.slug);
+                      setSelectedSize(null);
+                    }}
+                    aria-pressed={color.slug === activeColor}
+                    className={`h-6 border px-1.5 text-[10px] font-bold uppercase transition ${
+                      color.slug === activeColor
+                        ? "border-foreground bg-foreground text-background"
+                        : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {color.name}
+                  </button>
+                ))}
+              </div>
+            )}
 
-              return (
-                <button
-                  key={sz.size}
-                  type="button"
-                  disabled={!inStock}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (inStock) setSelectedSize(sz.size);
-                  }}
-                  className={`min-w-7 h-7 px-1 rounded text-[11px] font-bold transition ${
-                    !inStock
-                      ? "opacity-30 line-through cursor-not-allowed"
-                      : isSelected
-                        ? "bg-primary text-primary-foreground font-black"
-                        : "bg-muted text-muted-foreground hover:bg-accent"
-                  }`}
-                >
-                  {sz.size}
-                </button>
-              );
-            })}
+            <Select
+              value={activeSize ? String(activeSize) : undefined}
+              onValueChange={(value) => setSelectedSize(Number(value))}
+              disabled={isSoldOut || isComingSoon || availableSizes.length === 0}
+            >
+              <SelectTrigger
+                className="h-8 rounded-none border-border px-2 text-left text-[11px] font-semibold uppercase"
+                aria-label={tr(language, "Escolher tamanho", "Choose size", "Elegir talla")}
+              >
+                <SelectValue
+                  placeholder={tr(language, "Escolher tamanho", "Choose size", "Elegir talla")}
+                />
+              </SelectTrigger>
+              <SelectContent className="rounded-none">
+                {variants.map((sz) => (
+                  <SelectItem
+                    key={`${sz.color ?? "unica"}-${sz.size}`}
+                    value={String(sz.size)}
+                    disabled={sz.stock <= 0}
+                    className="rounded-none py-2 text-xs"
+                  >
+                    {sz.size}
+                    {sz.stock <= 0 ? ` — ${tr(language, "Esgotado", "Sold out", "Agotado")}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         )}
       </div>

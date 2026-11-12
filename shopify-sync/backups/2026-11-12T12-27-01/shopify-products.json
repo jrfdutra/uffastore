@@ -1,0 +1,2541 @@
+[
+  {
+    "id": "gid://shopify/Product/15965738434908",
+    "handle": "air-force-1-07-white",
+    "title": "Nike Air Force 1 '07 White",
+    "descriptionHtml": "<p>O ícone intemporal do basquetebol e da cultura urbana em pele premium branca.</p>",
+    "status": "ARCHIVED",
+    "productType": "streetwear",
+    "vendor": "Nike",
+    "tags": [
+      "air-force",
+      "nike",
+      "streetwear"
+    ],
+    "totalInventory": 90,
+    "publishedAt": null,
+    "featuredImage": {
+      "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/nike-af1-floral-01_74f67d0b-9809-4bb1-a7b5-49394ca026d7.jpg?v=1794267303",
+      "altText": null
+    },
+    "options": [
+      {
+        "name": "Escalão",
+        "values": [
+          "Criança",
+          "GS",
+          "Senior"
+        ]
+      },
+      {
+        "name": "Tamanho",
+        "values": [
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36",
+          "37",
+          "38",
+          "39",
+          "40",
+          "41",
+          "42",
+          "43",
+          "44",
+          "45"
+        ]
+      }
+    ],
+    "media": {
+      "nodes": [
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73055832047964",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/nike-af1-floral-01_74f67d0b-9809-4bb1-a7b5-49394ca026d7.jpg?v=1794267303"
+          }
+        },
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73055832080732",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/photo_2026-11-09_15-00-57_84dd7039-e454-4482-9b0c-ec5e9f88bd85.jpg?v=1794267303"
+          }
+        },
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73055832113500",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/photo_2026-11-09_15-01-02_c7be9f34-64f4-400f-8c11-a1310d5d8e9c.jpg?v=1794267303"
+          }
+        }
+      ]
+    },
+    "variants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/59816122810716",
+          "sku": "AF1-WHT-CR-28",
+          "title": "Criança / 28",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "28"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816122843484",
+          "sku": "AF1-WHT-CR-29",
+          "title": "Criança / 29",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "29"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816122876252",
+          "sku": "AF1-WHT-CR-30",
+          "title": "Criança / 30",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "30"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816122909020",
+          "sku": "AF1-WHT-CR-31",
+          "title": "Criança / 31",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "31"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816122941788",
+          "sku": "AF1-WHT-CR-32",
+          "title": "Criança / 32",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "32"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816122974556",
+          "sku": "AF1-WHT-CR-33",
+          "title": "Criança / 33",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "33"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123007324",
+          "sku": "AF1-WHT-CR-34",
+          "title": "Criança / 34",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "34"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123040092",
+          "sku": "AF1-WHT-CR-35",
+          "title": "Criança / 35",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "35"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123072860",
+          "sku": "AF1-WHT-GS-36",
+          "title": "GS / 36",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "36"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123105628",
+          "sku": "AF1-WHT-GS-37",
+          "title": "GS / 37",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "37"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123138396",
+          "sku": "AF1-WHT-GS-38",
+          "title": "GS / 38",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "38"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123171164",
+          "sku": "AF1-WHT-GS-39",
+          "title": "GS / 39",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "39"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123203932",
+          "sku": "AF1-WHT-SR-40",
+          "title": "Senior / 40",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "40"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123236700",
+          "sku": "AF1-WHT-SR-41",
+          "title": "Senior / 41",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "41"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123269468",
+          "sku": "AF1-WHT-SR-42",
+          "title": "Senior / 42",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "42"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123302236",
+          "sku": "AF1-WHT-SR-43",
+          "title": "Senior / 43",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "43"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123335004",
+          "sku": "AF1-WHT-SR-44",
+          "title": "Senior / 44",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "44"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816123367772",
+          "sku": "AF1-WHT-SR-45",
+          "title": "Senior / 45",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "45"
+            }
+          ],
+          "image": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "gid://shopify/Product/15965738500444",
+    "handle": "air-force-1-07-black",
+    "title": "Nike Air Force 1 '07 Black",
+    "descriptionHtml": "<p><span class=\"\">Personalização sobre a silhueta clássica do </span><b data-path-to-node=\"0\" data-index-in-node=\"62\" class=\"\">Nike Air Force 1 Low</b><span class=\"\"> (na cor preta),</span><span class=\"\"> destacando-se pelos detalhes de bordados florais com rosas vermelhas e pelos cordões grossos estilo </span><i data-path-to-node=\"0\" data-index-in-node=\"199\" class=\"\">rope laces</i><span>.</span></p>",
+    "status": "ARCHIVED",
+    "productType": "limited",
+    "vendor": "Nike",
+    "tags": [
+      "air-force",
+      "nike",
+      "streetwear"
+    ],
+    "totalInventory": 90,
+    "publishedAt": null,
+    "featuredImage": {
+      "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/1.webp?v=1794437569",
+      "altText": null
+    },
+    "options": [
+      {
+        "name": "Escalão",
+        "values": [
+          "Criança",
+          "GS",
+          "Senior"
+        ]
+      },
+      {
+        "name": "Tamanho",
+        "values": [
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36",
+          "37",
+          "38",
+          "39",
+          "40",
+          "41",
+          "42",
+          "43",
+          "44",
+          "45"
+        ]
+      }
+    ],
+    "media": {
+      "nodes": [
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73109381513564",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/1.webp?v=1794437569"
+          }
+        },
+        {
+          "mediaContentType": "VIDEO"
+        }
+      ]
+    },
+    "variants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/59816131035484",
+          "sku": "AF1-BLK-CR-28",
+          "title": "Criança / 28",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "28"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131068252",
+          "sku": "AF1-BLK-CR-29",
+          "title": "Criança / 29",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "29"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131101020",
+          "sku": "AF1-BLK-CR-30",
+          "title": "Criança / 30",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "30"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131133788",
+          "sku": "AF1-BLK-CR-31",
+          "title": "Criança / 31",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "31"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131166556",
+          "sku": "AF1-BLK-CR-32",
+          "title": "Criança / 32",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "32"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131199324",
+          "sku": "AF1-BLK-CR-33",
+          "title": "Criança / 33",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "33"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131232092",
+          "sku": "AF1-BLK-CR-34",
+          "title": "Criança / 34",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "34"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131264860",
+          "sku": "AF1-BLK-CR-35",
+          "title": "Criança / 35",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "35"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131297628",
+          "sku": "AF1-BLK-GS-36",
+          "title": "GS / 36",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "36"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131330396",
+          "sku": "AF1-BLK-GS-37",
+          "title": "GS / 37",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "37"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131363164",
+          "sku": "AF1-BLK-GS-38",
+          "title": "GS / 38",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "38"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131395932",
+          "sku": "AF1-BLK-GS-39",
+          "title": "GS / 39",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "39"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131428700",
+          "sku": "AF1-BLK-SR-40",
+          "title": "Senior / 40",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "40"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131461468",
+          "sku": "AF1-BLK-SR-41",
+          "title": "Senior / 41",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "41"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131494236",
+          "sku": "AF1-BLK-SR-42",
+          "title": "Senior / 42",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "42"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131527004",
+          "sku": "AF1-BLK-SR-43",
+          "title": "Senior / 43",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "43"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131559772",
+          "sku": "AF1-BLK-SR-44",
+          "title": "Senior / 44",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "44"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131592540",
+          "sku": "AF1-BLK-SR-45",
+          "title": "Senior / 45",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "45"
+            }
+          ],
+          "image": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "gid://shopify/Product/15965738533212",
+    "handle": "nike-dunk-low-panda",
+    "title": "Nike Dunk Low Panda | Fucsia w/ Rope Laces",
+    "descriptionHtml": "<p>O contraste preto e branco mais procurado das ruas. Visual intemporal e versátil.</p>",
+    "status": "ACTIVE",
+    "productType": "casual",
+    "vendor": "Nike",
+    "tags": [
+      "casual",
+      "dunk",
+      "nike"
+    ],
+    "totalInventory": 50,
+    "publishedAt": "2026-11-09T14:54:49Z",
+    "featuredImage": {
+      "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-03.webp?v=1794428649",
+      "altText": "Air Force Lanvin w/ Rope Laces - Lanvin Edition"
+    },
+    "options": [
+      {
+        "name": "Escalão",
+        "values": [
+          "GS",
+          "Senior"
+        ]
+      },
+      {
+        "name": "Tamanho",
+        "values": [
+          "36",
+          "37",
+          "38",
+          "39",
+          "40",
+          "41",
+          "42",
+          "43",
+          "44",
+          "45"
+        ]
+      }
+    ],
+    "media": {
+      "nodes": [
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73106480693596",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-03.webp?v=1794428649"
+          }
+        },
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73106479415644",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-01_f0099951-d23d-47ab-93cd-bfce5a978b0e.webp?v=1794428647"
+          }
+        },
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73106479939932",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-02.webp?v=1794428648"
+          }
+        }
+      ]
+    },
+    "variants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/59816131887452",
+          "sku": "DNK-PND-GS-36",
+          "title": "GS / 36",
+          "price": "149.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "36"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131920220",
+          "sku": "DNK-PND-GS-37",
+          "title": "GS / 37",
+          "price": "149.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "37"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131952988",
+          "sku": "DNK-PND-GS-38",
+          "title": "GS / 38",
+          "price": "149.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "38"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816131985756",
+          "sku": "DNK-PND-GS-39",
+          "title": "GS / 39",
+          "price": "149.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "39"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132018524",
+          "sku": "DNK-PND-SR-40",
+          "title": "Senior / 40",
+          "price": "164.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "40"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132051292",
+          "sku": "DNK-PND-SR-41",
+          "title": "Senior / 41",
+          "price": "164.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "41"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132084060",
+          "sku": "DNK-PND-SR-42",
+          "title": "Senior / 42",
+          "price": "164.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "42"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132116828",
+          "sku": "DNK-PND-SR-43",
+          "title": "Senior / 43",
+          "price": "164.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "43"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132149596",
+          "sku": "DNK-PND-SR-44",
+          "title": "Senior / 44",
+          "price": "164.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "44"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132182364",
+          "sku": "DNK-PND-SR-45",
+          "title": "Senior / 45",
+          "price": "164.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "45"
+            }
+          ],
+          "image": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "gid://shopify/Product/15965738598748",
+    "handle": "nike-dunk-low-grey-fog",
+    "title": "Nike Dunk Low Grey Fog",
+    "descriptionHtml": "<p>Tons neutros de cinza e branco com pele suave, inspirados no estilo colegial clássico.</p>",
+    "status": "ARCHIVED",
+    "productType": "casual",
+    "vendor": "Nike",
+    "tags": [
+      "casual",
+      "dunk",
+      "nike"
+    ],
+    "totalInventory": 90,
+    "publishedAt": null,
+    "featuredImage": {
+      "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/nike-af1-floral-01_f37fed71-33f0-4503-9329-fa9d1a94553b.jpg?v=1794267070",
+      "altText": null
+    },
+    "options": [
+      {
+        "name": "Escalão",
+        "values": [
+          "Criança",
+          "GS",
+          "Senior"
+        ]
+      },
+      {
+        "name": "Tamanho",
+        "values": [
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36",
+          "37",
+          "38",
+          "39",
+          "40",
+          "41",
+          "42",
+          "43",
+          "44",
+          "45"
+        ]
+      }
+    ],
+    "media": {
+      "nodes": [
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73055810519388",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/nike-af1-floral-01_f37fed71-33f0-4503-9329-fa9d1a94553b.jpg?v=1794267070"
+          }
+        },
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73055810552156",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/photo_2026-11-09_15-00-57_2b45850a-3b65-45cd-a879-3afea6f02680.jpg?v=1794267071"
+          }
+        },
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73055810584924",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/photo_2026-11-09_15-01-02.jpg?v=1794267070"
+          }
+        }
+      ]
+    },
+    "variants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/59816132673884",
+          "sku": "DNK-FOG-CR-28",
+          "title": "Criança / 28",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "28"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132706652",
+          "sku": "DNK-FOG-CR-29",
+          "title": "Criança / 29",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "29"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132739420",
+          "sku": "DNK-FOG-CR-30",
+          "title": "Criança / 30",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "30"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132772188",
+          "sku": "DNK-FOG-CR-31",
+          "title": "Criança / 31",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "31"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132804956",
+          "sku": "DNK-FOG-CR-32",
+          "title": "Criança / 32",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "32"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132837724",
+          "sku": "DNK-FOG-CR-33",
+          "title": "Criança / 33",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "33"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132870492",
+          "sku": "DNK-FOG-CR-34",
+          "title": "Criança / 34",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "34"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132903260",
+          "sku": "DNK-FOG-CR-35",
+          "title": "Criança / 35",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "35"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132936028",
+          "sku": "DNK-FOG-GS-36",
+          "title": "GS / 36",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "36"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816132968796",
+          "sku": "DNK-FOG-GS-37",
+          "title": "GS / 37",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "37"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816133001564",
+          "sku": "DNK-FOG-GS-38",
+          "title": "GS / 38",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "38"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816133034332",
+          "sku": "DNK-FOG-GS-39",
+          "title": "GS / 39",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "39"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816133067100",
+          "sku": "DNK-FOG-SR-40",
+          "title": "Senior / 40",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "40"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816133099868",
+          "sku": "DNK-FOG-SR-41",
+          "title": "Senior / 41",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "41"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816133132636",
+          "sku": "DNK-FOG-SR-42",
+          "title": "Senior / 42",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "42"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816133165404",
+          "sku": "DNK-FOG-SR-43",
+          "title": "Senior / 43",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "43"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816133198172",
+          "sku": "DNK-FOG-SR-44",
+          "title": "Senior / 44",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "44"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816133230940",
+          "sku": "DNK-FOG-SR-45",
+          "title": "Senior / 45",
+          "price": "0.20",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "45"
+            }
+          ],
+          "image": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "gid://shopify/Product/15965738828124",
+    "handle": "nike-dunk-low-photon-dust",
+    "title": "Nike Dunk Low Photon Dust",
+    "descriptionHtml": "<p>Estética minimalista com sobreposições subtis em cinzento claro e acabamento mate de alta precisão.</p>",
+    "status": "ARCHIVED",
+    "productType": "sales",
+    "vendor": "Nike",
+    "tags": [
+      "dunk",
+      "limited",
+      "nike"
+    ],
+    "totalInventory": 90,
+    "publishedAt": null,
+    "featuredImage": {
+      "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/photo_2026-11-09_15-00-57.jpg?v=1794264545",
+      "altText": null
+    },
+    "options": [
+      {
+        "name": "Escalão",
+        "values": [
+          "Criança",
+          "GS",
+          "Senior"
+        ]
+      },
+      {
+        "name": "Tamanho",
+        "values": [
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36",
+          "37",
+          "38",
+          "39",
+          "40",
+          "41",
+          "42",
+          "43",
+          "44",
+          "45"
+        ]
+      }
+    ],
+    "media": {
+      "nodes": [
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73055427297628",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/photo_2026-11-09_15-00-57.jpg?v=1794264545"
+          }
+        },
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73051087110492",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/nike-af1-floral-01.jpg?v=1794241544"
+          }
+        }
+      ]
+    },
+    "variants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/59816133919068",
+          "sku": "DNK-PHT-CR-28",
+          "title": "Criança / 28",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "28"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816133951836",
+          "sku": "DNK-PHT-CR-29",
+          "title": "Criança / 29",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "29"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816133984604",
+          "sku": "DNK-PHT-CR-30",
+          "title": "Criança / 30",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "30"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134017372",
+          "sku": "DNK-PHT-CR-31",
+          "title": "Criança / 31",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "31"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134050140",
+          "sku": "DNK-PHT-CR-32",
+          "title": "Criança / 32",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "32"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134082908",
+          "sku": "DNK-PHT-CR-33",
+          "title": "Criança / 33",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "33"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134115676",
+          "sku": "DNK-PHT-CR-34",
+          "title": "Criança / 34",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "34"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134148444",
+          "sku": "DNK-PHT-CR-35",
+          "title": "Criança / 35",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Criança"
+            },
+            {
+              "name": "Tamanho",
+              "value": "35"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134181212",
+          "sku": "DNK-PHT-GS-36",
+          "title": "GS / 36",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "36"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134213980",
+          "sku": "DNK-PHT-GS-37",
+          "title": "GS / 37",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "37"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134246748",
+          "sku": "DNK-PHT-GS-38",
+          "title": "GS / 38",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "38"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134279516",
+          "sku": "DNK-PHT-GS-39",
+          "title": "GS / 39",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "GS"
+            },
+            {
+              "name": "Tamanho",
+              "value": "39"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134312284",
+          "sku": "DNK-PHT-SR-40",
+          "title": "Senior / 40",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "40"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134345052",
+          "sku": "DNK-PHT-SR-41",
+          "title": "Senior / 41",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "41"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134377820",
+          "sku": "DNK-PHT-SR-42",
+          "title": "Senior / 42",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "42"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134410588",
+          "sku": "DNK-PHT-SR-43",
+          "title": "Senior / 43",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "43"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134443356",
+          "sku": "DNK-PHT-SR-44",
+          "title": "Senior / 44",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "44"
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": "gid://shopify/ProductVariant/59816134476124",
+          "sku": "DNK-PHT-SR-45",
+          "title": "Senior / 45",
+          "price": "0.01",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Escalão",
+              "value": "Senior"
+            },
+            {
+              "name": "Tamanho",
+              "value": "45"
+            }
+          ],
+          "image": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "gid://shopify/Product/15975056081244",
+    "handle": "air-force",
+    "title": "Air Force",
+    "descriptionHtml": "<p>O ícone intemporal do basquetebol e da cultura urbana em pele premium.</p>",
+    "status": "ARCHIVED",
+    "productType": "streetwear",
+    "vendor": "Uffa Store",
+    "tags": [
+      "air-force",
+      "streetwear",
+      "UffaCatalog"
+    ],
+    "totalInventory": 5,
+    "publishedAt": null,
+    "featuredImage": {
+      "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-01.webp?v=1794428645",
+      "altText": "Air Force - Branco"
+    },
+    "options": [
+      {
+        "name": "Color",
+        "values": [
+          "Branco"
+        ]
+      },
+      {
+        "name": "Size",
+        "values": [
+          "28"
+        ]
+      }
+    ],
+    "media": {
+      "nodes": [
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73106479251804",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-01.webp?v=1794428645"
+          }
+        }
+      ]
+    },
+    "variants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/59855499919708",
+          "sku": "AF1-BASE-BRANCO-28",
+          "title": "Branco / 28",
+          "price": "129.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Branco"
+            },
+            {
+              "name": "Size",
+              "value": "28"
+            }
+          ],
+          "image": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "gid://shopify/Product/15975056179548",
+    "handle": "air-force-w-rope-laces",
+    "title": "Air Force w/ Rope Laces",
+    "descriptionHtml": "<p>Air Force clássico com atacadores Rope Laces de alta resistência e estilo distintivo.</p>",
+    "status": "ARCHIVED",
+    "productType": "streetwear",
+    "vendor": "Uffa Store",
+    "tags": [
+      "air-force-rope",
+      "streetwear",
+      "UffaCatalog"
+    ],
+    "totalInventory": 5,
+    "publishedAt": null,
+    "featuredImage": {
+      "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-heic-01.webp?v=1794428646",
+      "altText": "Air Force w/ Rope Laces - Branco"
+    },
+    "options": [
+      {
+        "name": "Color",
+        "values": [
+          "Branco"
+        ]
+      },
+      {
+        "name": "Size",
+        "values": [
+          "36"
+        ]
+      }
+    ],
+    "media": {
+      "nodes": [
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73106479317340",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-heic-01.webp?v=1794428646"
+          }
+        }
+      ]
+    },
+    "variants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/59855500116316",
+          "sku": "AF1-ROPE-BRANCO-36",
+          "title": "Branco / 36",
+          "price": "149.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Branco"
+            },
+            {
+              "name": "Size",
+              "value": "36"
+            }
+          ],
+          "image": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "gid://shopify/Product/15975056245084",
+    "handle": "nike-dunk-w-rope-laces",
+    "title": "Nike Dunk w/ Rope Laces",
+    "descriptionHtml": "<p>Nike Dunk com atacadores Rope Laces e o visual urbano mais procurado.</p>",
+    "status": "ARCHIVED",
+    "productType": "limited",
+    "vendor": "Uffa Store",
+    "tags": [
+      "nike-dunk-rope",
+      "streetwear",
+      "UffaCatalog"
+    ],
+    "totalInventory": 5,
+    "publishedAt": null,
+    "featuredImage": {
+      "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-heic-05.webp?v=1794428647",
+      "altText": "Nike Dunk w/ Rope Laces - Panda"
+    },
+    "options": [
+      {
+        "name": "Color",
+        "values": [
+          "Panda"
+        ]
+      },
+      {
+        "name": "Size",
+        "values": [
+          "36"
+        ]
+      }
+    ],
+    "media": {
+      "nodes": [
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73106479350108",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-heic-05.webp?v=1794428647"
+          }
+        }
+      ]
+    },
+    "variants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/59855500214620",
+          "sku": "DUNK-ROPE-PANDA-36",
+          "title": "Panda / 36",
+          "price": "149.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Panda"
+            },
+            {
+              "name": "Size",
+              "value": "36"
+            }
+          ],
+          "image": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "gid://shopify/Product/15975056277852",
+    "handle": "air-force-floral-w-rope-laces",
+    "title": "Air Force Floral w/ Rope Laces",
+    "descriptionHtml": "<p>Edição especial Air Force Floral com acabamento exclusivo e Rope Laces.</p>",
+    "status": "ACTIVE",
+    "productType": "casual",
+    "vendor": "Uffa Store",
+    "tags": [
+      "air-force-floral-rope",
+      "limited",
+      "UffaCatalog"
+    ],
+    "totalInventory": 5,
+    "publishedAt": "2026-11-11T20:24:06Z",
+    "featuredImage": {
+      "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-heic-01.webp?v=1794428646",
+      "altText": "Air Force w/ Rope Laces - Branco"
+    },
+    "options": [
+      {
+        "name": "Color",
+        "values": [
+          "Floral White"
+        ]
+      },
+      {
+        "name": "Size",
+        "values": [
+          "36"
+        ]
+      }
+    ],
+    "media": {
+      "nodes": [
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73106479317340",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-heic-01.webp?v=1794428646"
+          }
+        },
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73109381513564",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/1.webp?v=1794437569"
+          }
+        },
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73055814025564",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/photo_2026-11-09_15-00-57_fbc436c5-c642-47f2-b988-e86fe5b311fb.jpg?v=1794267102"
+          }
+        }
+      ]
+    },
+    "variants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/59855500247388",
+          "sku": "AF1-FLORAL-FLORAL-36",
+          "title": "Floral White / 36",
+          "price": "179.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Floral White"
+            },
+            {
+              "name": "Size",
+              "value": "36"
+            }
+          ],
+          "image": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "gid://shopify/Product/15975056343388",
+    "handle": "air-force-shine-w-rope-laces",
+    "title": "Air Force Shine w/ Rope Laces",
+    "descriptionHtml": "<p>Air Force Shine com pormenores metalizados de destaque e Rope Laces.</p>",
+    "status": "UNLISTED",
+    "productType": "sales",
+    "vendor": "Uffa Store",
+    "tags": [
+      "air-force-shine-rope",
+      "limited",
+      "UffaCatalog"
+    ],
+    "totalInventory": 5,
+    "publishedAt": "2026-11-11T23:30:10Z",
+    "featuredImage": {
+      "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-02.webp?v=1794428648",
+      "altText": "Air Force Shine w/ Rope Laces - Shine Metallic"
+    },
+    "options": [
+      {
+        "name": "Color",
+        "values": [
+          "Shine Metallic"
+        ]
+      },
+      {
+        "name": "Size",
+        "values": [
+          "36"
+        ]
+      }
+    ],
+    "media": {
+      "nodes": [
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73106479939932",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-02.webp?v=1794428648"
+          }
+        }
+      ]
+    },
+    "variants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/59855500280156",
+          "sku": "AF1-SHINE-SHINE-36",
+          "title": "Shine Metallic / 36",
+          "price": "169.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Shine Metallic"
+            },
+            {
+              "name": "Size",
+              "value": "36"
+            }
+          ],
+          "image": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "gid://shopify/Product/15975056408924",
+    "handle": "air-force-lanvin-w-rope-laces",
+    "title": "Air Force Lanvin w/ Rope Laces",
+    "descriptionHtml": "<p>Air Force com inspiração Lanvin, design volumoso e Rope Laces.</p>",
+    "status": "ACTIVE",
+    "productType": "limited",
+    "vendor": "Uffa Store",
+    "tags": [
+      "air-force-lanvin-rope",
+      "limited",
+      "UffaCatalog"
+    ],
+    "totalInventory": 5,
+    "publishedAt": "2026-11-11T20:24:07Z",
+    "featuredImage": {
+      "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-03.webp?v=1794428649",
+      "altText": "Air Force Lanvin w/ Rope Laces - Lanvin Edition"
+    },
+    "options": [
+      {
+        "name": "Color",
+        "values": [
+          "Lanvin Edition"
+        ]
+      },
+      {
+        "name": "Size",
+        "values": [
+          "36"
+        ]
+      }
+    ],
+    "media": {
+      "nodes": [
+        {
+          "mediaContentType": "IMAGE",
+          "id": "gid://shopify/MediaImage/73106480693596",
+          "image": {
+            "url": "https://cdn.shopify.com/s/files/1/1070/6265/7372/files/material-03.webp?v=1794428649"
+          }
+        }
+      ]
+    },
+    "variants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/59855500378460",
+          "sku": "AF1-LANVIN-LANVIN-36",
+          "title": "Lanvin Edition / 36",
+          "price": "179.99",
+          "compareAtPrice": null,
+          "inventoryQuantity": 5,
+          "availableForSale": true,
+          "barcode": null,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Lanvin Edition"
+            },
+            {
+              "name": "Size",
+              "value": "36"
+            }
+          ],
+          "image": null
+        }
+      ]
+    }
+  }
+]

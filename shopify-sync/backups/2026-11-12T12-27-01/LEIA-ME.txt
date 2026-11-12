@@ -1,0 +1,13 @@
+Cópia de segurança do catálogo UFFA
+Data: 2026-11-12T12:27:01.080Z
+Loja: uffastore.myshopify.com
+Produtos exportados: 11
+Variantes exportadas: 88
+
+Ficheiros:
+- shopify-products.json: exportação completa (Admin API)
+- shopify-variants.csv: variantes em formato tabular
+- catalogo.json: catálogo local de preços/escalões
+- consolidated-catalog.ts: catálogo local consolidado
+
+Restauro: os produtos arquivados podem ser republicados no painel da Shopify.

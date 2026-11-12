@@ -26,6 +26,9 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Cópias de segurança de fotografias originais (ficheiros grandes, mantidos localmente)
+backup-fotos/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

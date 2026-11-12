@@ -48,13 +48,15 @@ const PRODUCTS_QUERY = `
         description
         productType
         tags
+        options { name values }
         featuredImage { url altText }
         images(first: 10) { nodes { url altText } }
         priceRange { minVariantPrice { amount currencyCode } }
-        variants(first: 50) {
+        variants(first: 100) {
           nodes {
             id
             title
+            sku
             availableForSale
             quantityAvailable
             price { amount currencyCode }
@@ -73,6 +75,7 @@ export type ShopifyProductNode = {
   description: string;
   productType: string;
   tags: string[];
+  options: { name: string; values: string[] }[];
   featuredImage: { url: string; altText: string | null } | null;
   images: { nodes: { url: string; altText: string | null }[] };
   priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
@@ -80,6 +83,7 @@ export type ShopifyProductNode = {
     nodes: {
       id: string;
       title: string;
+      sku: string | null;
       availableForSale: boolean;
       quantityAvailable: number | null;
       price: { amount: string; currencyCode: string };
@@ -247,6 +251,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
       description
       productType
       tags
+      options { name values }
       featuredImage { url altText }
       images(first: 10) { nodes { url altText } }
       priceRange { minVariantPrice { amount currencyCode } }
@@ -254,6 +259,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
         nodes {
           id
           title
+          sku
           availableForSale
           quantityAvailable
           price { amount currencyCode }

@@ -2,10 +2,11 @@ import {
   products as fallbackProducts,
   type Category,
   type Product,
-  type ProductStatus,
+  type ProductColor,
+  type ProductSize,
 } from "./shop-data";
 import { getConsolidatedAsProducts } from "./catalog-adapter";
-import { readStorage, removeStorage, writeStorage } from "./storage";
+import { removeStorage } from "./storage";
 import {
   fetchShopifyProductByHandle,
   fetchShopifyProducts,
@@ -13,9 +14,13 @@ import {
   type ShopifyProductNode,
 } from "./shopify";
 
-export const CATALOG_STORAGE_KEY = "uffa-custom-catalog-v3";
-export const productImagesByHandle: Record<string, string[]> = {};
-export const imageByHandle: Record<string, string> = {};
+/**
+ * Chave antiga onde o painel guardava uma cópia local do catálogo.
+ * Foi descontinuada: a Shopify é a única fonte de verdade. Mantém-se apenas
+ * para limpar dados obsoletos que provocavam imagens antigas no primeiro load.
+ */
+export const LEGACY_CATALOG_STORAGE_KEY = "uffa-custom-catalog-v3";
+
 const categories: Category[] = ["sales", "casual", "streetwear", "limited"];
 
 function toCategory(value: string): Category {
@@ -23,16 +28,64 @@ function toCategory(value: string): Category {
   return categories.includes(normalized as Category) ? (normalized as Category) : "casual";
 }
 
+/** Converte "Grey Fog" / "Azul Marinho" num slug estável. */
+export function colorSlug(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function optionValue(
+  options: { name: string; value: string }[],
+  pattern: RegExp,
+): string | undefined {
+  return options.find((option) => pattern.test(option.name))?.value;
+}
+
 function toProduct(node: ShopifyProductNode): Product {
-  const fallback =
-    getConsolidatedAsProducts().find((item) => item.id === node.handle) ?? fallbackProducts[0];
+  const fallback = getConsolidatedAsProducts().find((item) => item.id === node.handle);
   const description = node.description.replace(/<[^>]*>/g, "").trim();
   const shopifyImages = (node.images?.nodes ?? [])
     .map((image) => image.url)
     .filter((url): url is string => Boolean(url));
   const images = shopifyImages.length
     ? shopifyImages
-    : (fallback?.images ?? [fallback?.image ?? "/produtos/material-01.webp"]);
+    : (fallback?.images ?? [fallback?.image ?? "/produtos/uffa-modelo-padrao.webp"]);
+  const primaryImage = images[0] ?? "/produtos/uffa-modelo-padrao.webp";
+
+  // Cores reais da Shopify (opção "Cor"/"Color"), sem inventar valores.
+  const colorValues = node.options?.find((option) => /cor|color/i.test(option.name))?.values ?? [];
+  const colors: ProductColor[] = colorValues.map((value) => ({
+    name: value,
+    slug: colorSlug(value),
+    images,
+  }));
+
+  const sizes: ProductSize[] = (node.variants?.nodes ?? []).flatMap((variant) => {
+    const sizeValue = optionValue(variant.selectedOptions, /tamanho|size|escal/i);
+    const size = Number.parseInt(sizeValue ?? "", 10);
+    if (!Number.isFinite(size)) return [];
+
+    const colorValue = optionValue(variant.selectedOptions, /cor|color/i);
+    const slug = colorValue ? colorSlug(colorValue) : undefined;
+
+    return [
+      {
+        size,
+        stock: variant.quantityAvailable ?? 0,
+        ...(slug ? { color: slug } : {}),
+        ...(variant.sku ? { sku: variant.sku } : {}),
+        variantId: variant.id,
+        price: Number.parseFloat(variant.price.amount),
+      },
+    ];
+  });
+
+  const priceValues = sizes.map((size) => size.price ?? 0).filter((price) => price > 0);
 
   return {
     id: node.handle,
@@ -41,46 +94,30 @@ function toProduct(node: ShopifyProductNode): Product {
     category: node.productType
       ? toCategory(node.productType)
       : (fallback?.category ?? "streetwear"),
-    price: Number.parseFloat(node.priceRange.minVariantPrice.amount),
+    price: priceValues.length
+      ? Math.min(...priceValues)
+      : Number.parseFloat(node.priceRange.minVariantPrice.amount),
     status: fallback?.status ?? "active",
-    image: images[0] ?? "/produtos/material-01.webp",
+    image: primaryImage,
     ...(images.length ? { images } : {}),
     description: { pt: description, en: description, es: description },
-    sizes: fallback?.sizes ?? [],
+    colors,
+    sizes: sizes.length ? sizes : (fallback?.sizes ?? []),
     ...(fallback?.featured ? { featured: true } : {}),
   };
 }
 
-export function getStoredCatalog(): Product[] | null {
-  const raw = readStorage("local", CATALOG_STORAGE_KEY);
-  if (!raw) return null;
-  try {
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-  } catch {
-    // corrompido
-  }
-  return null;
-}
-
-export function saveCatalog(items: Product[]): void {
-  writeStorage("local", CATALOG_STORAGE_KEY, JSON.stringify(items));
+/** Remove a cópia local obsoleta do catálogo (causa de imagens antigas). */
+export function purgeLegacyCatalogCache(): void {
+  removeStorage("local", LEGACY_CATALOG_STORAGE_KEY);
 }
 
 export function resetCatalogToDefault(): Product[] {
-  removeStorage("local", CATALOG_STORAGE_KEY);
+  purgeLegacyCatalogCache();
   return getConsolidatedAsProducts();
 }
 
 export async function loadProduct(handle: string): Promise<Product | undefined> {
-  const stored = getStoredCatalog();
-  if (stored) {
-    const match = stored.find((item) => item.id === handle);
-    if (match) return match;
-  }
-
   const consolidatedList = getConsolidatedAsProducts();
   const local = consolidatedList.find((item) => item.id === handle);
   if (!isShopifyConfigured()) return local;
@@ -95,12 +132,12 @@ export async function loadProduct(handle: string): Promise<Product | undefined> 
   }
 }
 
+/**
+ * Carrega o catálogo a partir da Shopify. Esta função corre também no servidor,
+ * pelo que o primeiro render (SSR) e a hidratação usam exatamente os mesmos
+ * dados — sem troca de imagens depois do primeiro paint.
+ */
 export async function loadCatalog(): Promise<Product[]> {
-  const stored = getStoredCatalog();
-  if (stored && stored.length > 0) {
-    return stored;
-  }
-
   const consolidatedList = getConsolidatedAsProducts();
   if (!isShopifyConfigured()) return consolidatedList;
 
@@ -122,3 +159,5 @@ export async function loadCatalog(): Promise<Product[]> {
     return consolidatedList;
   }
 }
+
+export { fallbackProducts };

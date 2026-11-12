@@ -10,11 +10,21 @@ import {
 import { toast } from "sonner";
 import { copy, products as fallbackProducts, type Language, type Product } from "./shop-data";
 import { getConsolidatedAsProducts } from "./catalog-adapter";
-import { loadCatalog, saveCatalog, resetCatalogToDefault } from "./catalog";
+import { loadCatalog, resetCatalogToDefault } from "./catalog";
 import { tr } from "./i18n";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 
-export type CartItem = { productId: string; size: number; quantity: number };
+export type CartItem = {
+  productId: string;
+  size: number;
+  /** Slug da cor escolhida (quando o produto tem opções de cor). */
+  color?: string;
+  quantity: number;
+  /** Preço unitário da variante no momento da compra. */
+  unitPrice?: number;
+  /** ID da variante na Shopify, usado no checkout. */
+  variantId?: string;
+};
 export type Coupon = { code: string; discountPercent: number };
 
 type ShopContextValue = {
@@ -26,9 +36,9 @@ type ShopContextValue = {
   cart: CartItem[];
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
-  addToCart: (productId: string, size: number) => void;
-  removeFromCart: (productId: string, size: number) => void;
-  updateQuantity: (productId: string, size: number, quantity: number) => void;
+  addToCart: (productId: string, size: number, color?: string) => void;
+  removeFromCart: (productId: string, size: number, color?: string) => void;
+  updateQuantity: (productId: string, size: number, quantity: number, color?: string) => void;
   clearCart: () => void;
   count: number;
   subtotal: number;
@@ -78,7 +88,10 @@ function isCartItem(value: unknown): value is CartItem {
     typeof item.productId === "string" &&
     typeof item.size === "number" &&
     typeof item.quantity === "number" &&
-    item.quantity > 0
+    item.quantity > 0 &&
+    (item.color === undefined || typeof item.color === "string") &&
+    (item.unitPrice === undefined || typeof item.unitPrice === "number") &&
+    (item.variantId === undefined || typeof item.variantId === "string")
   );
 }
 
@@ -108,7 +121,14 @@ function readWishlist(): string[] {
   return [];
 }
 
-export function ShopProvider({ children }: { children: ReactNode }) {
+export function ShopProvider({
+  children,
+  initialCatalog,
+}: {
+  children: ReactNode;
+  /** Catálogo carregado no servidor (SSR) para evitar troca de imagens após a hidratação. */
+  initialCatalog?: Product[];
+}) {
   const [language, setLanguageState] = useState<Language>("pt");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -116,9 +136,13 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [ready, setReady] = useState(false);
-  const [catalog, setCatalog] = useState<Product[]>(getConsolidatedAsProducts());
+  const [catalog, setCatalog] = useState<Product[]>(
+    initialCatalog?.length ? initialCatalog : getConsolidatedAsProducts(),
+  );
+  const hasServerCatalog = Boolean(initialCatalog?.length);
 
   useEffect(() => {
+    if (hasServerCatalog) return;
     let active = true;
     loadCatalog().then((loaded) => {
       if (active && loaded.length) setCatalog(loaded);
@@ -126,7 +150,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [hasServerCatalog]);
 
   useEffect(() => {
     const savedLanguage = readStorage("local", LANGUAGE_KEY);
@@ -164,7 +188,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addToCart = useCallback(
-    (productId: string, size: number) => {
+    (productId: string, size: number, color?: string) => {
       const product = catalog.find((p) => p.id === productId);
       if (!product) return;
 
@@ -177,7 +201,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const variant = product.sizes.find((s) => s.size === size);
+      const variant = product.sizes.find(
+        (s) => s.size === size && (color ? s.color === color : true),
+      );
       if (!variant || variant.stock <= 0) {
         toast.error(
           language === "pt"
@@ -187,7 +213,12 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const existingItem = cart.find((item) => item.productId === productId && item.size === size);
+      const variantColor = variant.color;
+      const unitPrice = variant.price ?? product.price;
+      const matches = (item: CartItem) =>
+        item.productId === productId && item.size === size && item.color === variantColor;
+
+      const existingItem = cart.find(matches);
       const currentQty = existingItem?.quantity ?? 0;
 
       if (currentQty + 1 > variant.stock) {
@@ -200,10 +231,20 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       }
 
       setCart((items) => {
-        const hit = items.find((item) => item.productId === productId && item.size === size);
+        const hit = items.find(matches);
         return hit
           ? items.map((item) => (item === hit ? { ...item, quantity: item.quantity + 1 } : item))
-          : [...items, { productId, size, quantity: 1 }];
+          : [
+              ...items,
+              {
+                productId,
+                size,
+                ...(variantColor ? { color: variantColor } : {}),
+                quantity: 1,
+                unitPrice,
+                ...(variant.variantId ? { variantId: variant.variantId } : {}),
+              },
+            ];
       });
       toast.success(tr(language, "Adicionado ao carrinho", "Added to cart", "Añadido al carrito"), {
         action: {
@@ -215,21 +256,25 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     [catalog, cart, language],
   );
 
-  const removeFromCart = useCallback((productId: string, size: number) => {
+  const removeFromCart = useCallback((productId: string, size: number, color?: string) => {
     setCart((items) =>
-      items.filter((item) => !(item.productId === productId && item.size === size)),
+      items.filter(
+        (item) => !(item.productId === productId && item.size === size && item.color === color),
+      ),
     );
   }, []);
 
   const updateQuantity = useCallback(
-    (productId: string, size: number, quantity: number) => {
+    (productId: string, size: number, quantity: number, color?: string) => {
       if (quantity < 1) {
-        removeFromCart(productId, size);
+        removeFromCart(productId, size, color);
         return;
       }
 
       const product = catalog.find((p) => p.id === productId);
-      const variant = product?.sizes.find((s) => s.size === size);
+      const variant = product?.sizes.find(
+        (s) => s.size === size && (color ? s.color === color : true),
+      );
       let targetQty = quantity;
 
       if (variant && quantity > variant.stock) {
@@ -243,7 +288,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
       setCart((items) =>
         items.map((item) =>
-          item.productId === productId && item.size === size
+          item.productId === productId && item.size === size && item.color === color
             ? { ...item, quantity: targetQty }
             : item,
         ),
@@ -258,15 +303,12 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     (product: Product) => {
       setCatalog((prev) => {
         const index = prev.findIndex((p) => p.id === product.id);
-        let next: Product[];
         if (index >= 0) {
-          next = [...prev];
+          const next = [...prev];
           next[index] = product;
-        } else {
-          next = [product, ...prev];
+          return next;
         }
-        saveCatalog(next);
-        return next;
+        return [product, ...prev];
       });
       toast.success(
         language === "pt"
@@ -279,11 +321,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
   const deleteProduct = useCallback(
     (productId: string) => {
-      setCatalog((prev) => {
-        const next = prev.filter((p) => p.id !== productId);
-        saveCatalog(next);
-        return next;
-      });
+      setCatalog((prev) => prev.filter((p) => p.id !== productId));
       toast.success(
         language === "pt" ? "Modelo removido do catálogo." : "Model removed from catalog.",
       );
@@ -292,17 +330,15 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   );
 
   const updateStock = useCallback((productId: string, size: number, newStock: number) => {
-    setCatalog((prev) => {
-      const next = prev.map((p) => {
+    setCatalog((prev) =>
+      prev.map((p) => {
         if (p.id !== productId) return p;
         return {
           ...p,
           sizes: p.sizes.map((s) => (s.size === size ? { ...s, stock: Math.max(0, newStock) } : s)),
         };
-      });
-      saveCatalog(next);
-      return next;
-    });
+      }),
+    );
   }, []);
 
   const resetCatalog = useCallback(() => {
@@ -354,11 +390,14 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   );
 
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = cart.reduce(
-    (sum, item) =>
-      sum + (catalog.find((product) => product.id === item.productId)?.price ?? 0) * item.quantity,
-    0,
-  );
+  const subtotal = cart.reduce((sum, item) => {
+    const product = catalog.find((p) => p.id === item.productId);
+    const variantPrice = product?.sizes.find(
+      (s) => s.size === item.size && (item.color ? s.color === item.color : true),
+    )?.price;
+    const unitPrice = item.unitPrice ?? variantPrice ?? product?.price ?? 0;
+    return sum + unitPrice * item.quantity;
+  }, 0);
 
   const discountAmount = coupon ? (subtotal * coupon.discountPercent) / 100 : 0;
   const finalTotal = Math.max(0, subtotal - discountAmount);

@@ -9,50 +9,50 @@
       "tamanhos": [36, 37, 38, 39]
     },
     "senior": {
-      "nome": "Sénior",
+      "nome": "Senior (40+)",
       "tamanhos": [40, 41, 42, 43, 44, 45]
     }
   },
   "modelos": {
-    "air-force": {
-      "nomeBase": "Air Force",
+    "nike-dunk-rope": {
+      "nomeBase": "nike dunk w/ rope laces",
+      "precos": {
+        "gs": 149.99,
+        "senior": 164.99
+      }
+    },
+    "air-force-lanvin": {
+      "nomeBase": "Air Force lanvin w",
+      "precos": {
+        "gs": 179.99,
+        "senior": 189.99
+      }
+    },
+    "air-force-floral-rope": {
+      "nomeBase": "Floral air force w/ rope laces",
+      "precos": {
+        "gs": 179.99,
+        "senior": 189.99
+      }
+    },
+    "floral-black": {
+      "nomeBase": "Floral Black",
+      "precos": {
+        "gs": 179.99,
+        "senior": 189.99
+      }
+    },
+    "air-force-crianca": {
+      "nomeBase": "Air Force criança",
       "precos": {
         "crianca": 129.99
       }
     },
     "air-force-rope": {
-      "nomeBase": "Air Force w/ Rope Laces",
+      "nomeBase": "Air Force w/ Rope laces",
       "precos": {
         "gs": 149.99,
         "senior": 164.99
-      }
-    },
-    "nike-dunk-rope": {
-      "nomeBase": "Nike Dunk w/ Rope Laces",
-      "precos": {
-        "gs": 149.99,
-        "senior": 164.99
-      }
-    },
-    "air-force-floral-rope": {
-      "nomeBase": "Air Force Floral w/ Rope Laces",
-      "precos": {
-        "gs": 179.99,
-        "senior": 189.99
-      }
-    },
-    "air-force-shine-rope": {
-      "nomeBase": "Air Force Shine w/ Rope Laces",
-      "precos": {
-        "gs": 169.99,
-        "senior": 189.99
-      }
-    },
-    "air-force-lanvin-rope": {
-      "nomeBase": "Air Force Lanvin w/ Rope Laces",
-      "precos": {
-        "gs": 179.99,
-        "senior": 189.99
       }
     }
   }

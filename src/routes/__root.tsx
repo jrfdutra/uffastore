@@ -11,6 +11,7 @@ import type { ErrorComponentProps } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { ShopProvider } from "@/lib/shop-context";
+import { loadCatalog } from "@/lib/catalog";
 import { SiteShell } from "@/components/site-shell";
 import { DemoNotice } from "@/components/demo-notice";
 
@@ -74,6 +75,12 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  /**
+   * O catálogo é carregado no servidor antes do primeiro render.
+   * Assim, o HTML do SSR e a hidratação usam exatamente as mesmas imagens,
+   * eliminando o flash de fotografias antigas na página inicial.
+   */
+  loader: async () => ({ catalog: await loadCatalog() }),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -130,10 +137,11 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { catalog } = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ShopProvider>
+      <ShopProvider initialCatalog={catalog}>
         <SiteShell>
           <Outlet />
         </SiteShell>

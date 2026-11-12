@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test": "node --test src/lib/catalogo.test.ts src/lib/precos.test.ts src/lib/variantes.test.ts",
     "format": "prettier --write ."
   },
   "overrides": {

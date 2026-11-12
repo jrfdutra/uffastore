@@ -5,7 +5,7 @@ import green from "@/assets/Gemini_Generated_Image_wmmzi1wmmzi1wmmz.jpg";
 import greenAlt from "@/assets/b9d62cd4-00e2-45df-95df-701356309f59.jpg";
 import tan from "@/assets/e44536b4-0486-4401-9327-8f300ee11714.jpg";
 
-export const heroSneaker = "/produtos/material-01.webp";
+export const heroSneaker = "/produtos/uffa-modelo-padrao.webp";
 
 export type Language = "pt" | "en" | "es";
 export type Category = "casual" | "streetwear" | "limited" | "sales";
@@ -14,9 +14,18 @@ export type ProductStatus = "active" | "inactive" | "soldout" | "comingsoon";
 export type ProductSize = {
   size: number;
   stock: number;
+  /** Slug da cor da variante (quando o modelo tem opções de cor). */
   color?: string;
   sku?: string;
   variantId?: string;
+  /** Preço unitário da variante já com IVA. */
+  price?: number;
+};
+
+export type ProductColor = {
+  name: string;
+  slug: string;
+  images: string[];
 };
 
 export type Product = {
@@ -30,6 +39,8 @@ export type Product = {
   images?: string[];
   description: Record<Language, string>;
   sizes: ProductSize[];
+  /** Cores disponíveis. Vazio ou ausente quando o modelo não tem opção de cor. */
+  colors?: ProductColor[];
   status?: ProductStatus;
   featured?: boolean;
 };

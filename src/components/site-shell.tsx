@@ -107,27 +107,33 @@ function CartDrawer() {
             s.cart.map((item) => {
               const p = s.catalog.find((x) => x.id === item.productId);
               if (!p) return null;
+              const variant = p.sizes.find(
+                (sz) => sz.size === item.size && (item.color ? sz.color === item.color : true),
+              );
+              const unitPrice = item.unitPrice ?? variant?.price ?? p.price;
+              const colorName = p.colors?.find((c) => c.slug === item.color)?.name;
               return (
                 <div
-                  key={`${item.productId}-${item.size}`}
+                  key={`${item.productId}-${item.size}-${item.color ?? "unica"}`}
                   className="grid grid-cols-[84px_1fr] gap-3 border-b border-border pb-5"
                 >
                   <img
                     src={p.image}
                     alt=""
-                    width={1200}
-                    height={900}
-                    className="aspect-square h-full w-full bg-product object-cover"
+                    width={1664}
+                    height={2080}
+                    className="aspect-[4/5] h-full w-full bg-product object-cover"
                   />
                   <div>
                     <div className="flex justify-between gap-2">
                       <div>
                         <p className="font-bold">{p.name}</p>
                         <p className="text-xs text-muted-foreground">
+                          {colorName ? `${colorName} · ` : ""}
                           {t.size} {item.size}
                         </p>
                       </div>
-                      <p className="font-bold">{money(p.price * item.quantity)}</p>
+                      <p className="font-bold">{money(unitPrice * item.quantity)}</p>
                     </div>
                     <div className="mt-3 flex items-center justify-between">
                       <div className="flex items-center border border-border">
@@ -136,7 +142,12 @@ function CartDrawer() {
                           size="icon"
                           className="size-8 rounded-none"
                           onClick={() =>
-                            s.updateQuantity(item.productId, item.size, item.quantity - 1)
+                            s.updateQuantity(
+                              item.productId,
+                              item.size,
+                              item.quantity - 1,
+                              item.color,
+                            )
                           }
                           aria-label={tr(
                             s.language,
@@ -153,7 +164,12 @@ function CartDrawer() {
                           size="icon"
                           className="size-8 rounded-none"
                           onClick={() =>
-                            s.updateQuantity(item.productId, item.size, item.quantity + 1)
+                            s.updateQuantity(
+                              item.productId,
+                              item.size,
+                              item.quantity + 1,
+                              item.color,
+                            )
                           }
                           aria-label={tr(
                             s.language,
@@ -169,7 +185,7 @@ function CartDrawer() {
                         variant="ghost"
                         size="icon"
                         className="size-8"
-                        onClick={() => s.removeFromCart(item.productId, item.size)}
+                        onClick={() => s.removeFromCart(item.productId, item.size, item.color)}
                         aria-label={t.remove}
                       >
                         <Trash2 />

@@ -3,12 +3,12 @@ import catalogoData from "../data/catalogo.json" with { type: "json" };
 export type Escalao = "crianca" | "gs" | "senior";
 
 export type ModeloId =
-  | "air-force"
-  | "air-force-rope"
   | "nike-dunk-rope"
+  | "air-force-lanvin"
   | "air-force-floral-rope"
-  | "air-force-shine-rope"
-  | "air-force-lanvin-rope";
+  | "floral-black"
+  | "air-force-crianca"
+  | "air-force-rope";
 
 /**
  * Determina o escalão a que pertence um tamanho.

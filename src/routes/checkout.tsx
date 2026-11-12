@@ -169,7 +169,9 @@ function Checkout() {
               : `The model ${product?.name ?? item.productId} is no longer available.`,
           );
         }
-        const variant = product.sizes.find((sz) => sz.size === item.size);
+        const variant = product.sizes.find(
+          (sz) => sz.size === item.size && (item.color ? sz.color === item.color : true),
+        );
         if (!variant || variant.stock < item.quantity) {
           throw new Error(
             s.language === "pt"
@@ -181,11 +183,14 @@ function Checkout() {
 
       const items = s.cart.map((item) => {
         const product = s.catalog.find((p) => p.id === item.productId);
-        const variant = product?.sizes.find((sz) => sz.size === item.size);
-        if (!variant?.variantId) {
+        const variant = product?.sizes.find(
+          (sz) => sz.size === item.size && (item.color ? sz.color === item.color : true),
+        );
+        const variantId = variant?.variantId ?? item.variantId;
+        if (!variantId) {
           throw new Error(`Variant not found for ${item.productId} size ${item.size}`);
         }
-        return { variantId: variant.variantId, quantity: item.quantity };
+        return { variantId, quantity: item.quantity };
       });
 
       const checkout = await createShopifyCheckout(items, delivery, s.coupon?.code);
