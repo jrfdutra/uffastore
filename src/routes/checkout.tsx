@@ -100,6 +100,10 @@ function Checkout() {
 
   const [delivery, setDelivery] = useState<DeliveryOption>("pickup");
   const [payment, setPayment] = useState<"card" | "mbway" | "paypal" | "apple">("card");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [couponInput, setCouponInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -193,7 +197,12 @@ function Checkout() {
         return { variantId, quantity: item.quantity };
       });
 
-      const checkout = await createShopifyCheckout(items, delivery, s.coupon?.code);
+      const checkout = await createShopifyCheckout(items, delivery, s.coupon?.code, {
+        firstName,
+        lastName,
+        email,
+        phone,
+      });
       window.location.href = checkout.webUrl;
     } catch (err: unknown) {
       console.error(err);
@@ -277,7 +286,75 @@ function Checkout() {
 
           <section>
             <h2 className="mb-4 font-display text-3xl uppercase">
-              2. {s.language === "pt" ? "Pagamento" : s.language === "es" ? "Pago" : "Payment"}
+              2. {tr(s.language, "Dados do Cliente", "Customer Details", "Datos del Cliente")}
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase">
+                  {tr(s.language, "Nome Próprio *", "First Name *", "Nombre *")}
+                </label>
+                <Input
+                  required
+                  placeholder={tr(s.language, "Ex: João", "Ex: John", "Ej: Juan")}
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="rounded-none h-11"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase">
+                  {tr(s.language, "Apelido *", "Last Name *", "Apellido *")}
+                </label>
+                <Input
+                  required
+                  placeholder={tr(s.language, "Ex: Silva", "Ex: Smith", "Ej: Silva")}
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="rounded-none h-11"
+                />
+              </div>
+            </div>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase">
+                  {tr(s.language, "E-mail *", "E-mail *", "Correo electrónico *")}
+                </label>
+                <Input
+                  required
+                  type="email"
+                  placeholder="joao@exemplo.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="rounded-none h-11"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase">
+                  {tr(s.language, "Telemóvel *", "Phone *", "Teléfono *")}
+                </label>
+                <Input
+                  required
+                  type="tel"
+                  placeholder="912 345 678"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="rounded-none h-11"
+                />
+              </div>
+            </div>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              {tr(
+                s.language,
+                "* Estes dados preenchem automaticamente o checkout da Shopify para aceleração instantânea do pagamento.",
+                "* These details automatically prefill the Shopify checkout for instant payment.",
+                "* Estos datos rellenan automáticamente el checkout de Shopify.",
+              )}
+            </p>
+          </section>
+
+          <section>
+            <h2 className="mb-4 font-display text-3xl uppercase">
+              3. {s.language === "pt" ? "Pagamento" : s.language === "es" ? "Pago" : "Payment"}
             </h2>
             <div className="grid gap-3">
               <Choice

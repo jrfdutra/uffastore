@@ -142,6 +142,7 @@ export async function createCheckoutUrl(
   items: { variantId: string; quantity: number }[],
   delivery: string = "pickup",
   couponCode?: string,
+  buyer?: { email?: string; phone?: string; firstName?: string; lastName?: string },
 ) {
   const isPickup = delivery === "pickup";
   let deliveryLabel = "Recolha em mão no Porto (0,00 €)";
@@ -190,6 +191,43 @@ export async function createCheckoutUrl(
   const discountCodes = couponCode ? [couponCode] : [];
   const pickupHandles = isPickup ? await fetchPickupHandles() : [];
 
+  const buyerIdentity: any = {
+    ...(isPickup ? { countryCode: "PT" } : {}),
+    preferences: {
+      delivery: {
+        deliveryMethod: [isPickup ? "PICK_UP" : "SHIPPING"],
+        ...(isPickup && pickupHandles.length > 0 ? { pickupHandle: pickupHandles } : {}),
+      },
+    },
+  };
+
+  if (buyer) {
+    if (buyer.email) {
+      buyerIdentity.email = buyer.email;
+    }
+    if (buyer.phone) {
+      let formattedPhone = buyer.phone.replace(/\s+/g, "");
+      if (!formattedPhone.startsWith("+")) {
+        if (formattedPhone.length === 9) {
+          formattedPhone = `+351${formattedPhone}`;
+        } else {
+          formattedPhone = `+${formattedPhone}`;
+        }
+      }
+      buyerIdentity.phone = formattedPhone;
+    }
+    if (buyer.firstName || buyer.lastName) {
+      buyerIdentity.deliveryAddressPreferences = [
+        {
+          firstName: buyer.firstName || "",
+          lastName: buyer.lastName || "",
+          phone: buyerIdentity.phone || "",
+          country: "PT",
+        },
+      ];
+    }
+  }
+
   const data = await shopifyFetch<{
     cartCreate: {
       cart: { checkoutUrl: string };
@@ -204,17 +242,7 @@ export async function createCheckoutUrl(
       attributes,
       note,
       discountCodes,
-      buyerIdentity: {
-        // A recolha é sempre em Portugal; o envio não força o país para permitir
-        // que o cliente escolha o destino no checkout (UE, Suíça, etc.).
-        ...(isPickup ? { countryCode: "PT" } : {}),
-        preferences: {
-          delivery: {
-            deliveryMethod: [isPickup ? "PICK_UP" : "SHIPPING"],
-            ...(isPickup && pickupHandles.length > 0 ? { pickupHandle: pickupHandles } : {}),
-          },
-        },
-      },
+      buyerIdentity,
     },
   });
 
@@ -229,8 +257,9 @@ export async function createShopifyCheckout(
   items: { variantId: string; quantity: number }[],
   delivery: string = "pickup",
   couponCode?: string,
+  buyer?: { email?: string; phone?: string; firstName?: string; lastName?: string },
 ) {
-  const url = await createCheckoutUrl(items, delivery, couponCode);
+  const url = await createCheckoutUrl(items, delivery, couponCode, buyer);
   const separator = url.includes("?") ? "&" : "?";
   return { webUrl: `${url}${separator}skip_shop_pay=true` };
 }
