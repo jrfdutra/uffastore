@@ -15,7 +15,8 @@ const MAX_SLIDES = 3;
  */
 export function HeroCarousel({ products, children }: { products: Product[]; children: ReactNode }) {
   const { language } = useShop();
-  const slides = products.filter((product) => Boolean(product.image)).slice(0, MAX_SLIDES);
+  // Forçar apenas um slide com a fotografia padrão para garantir o efeito de surpresa
+  const slides = [{ id: "hero", name: "Uffa", image: heroSneaker }];
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
   const [selected, setSelected] = useState(0);
@@ -59,43 +60,21 @@ export function HeroCarousel({ products, children }: { products: Product[]; chil
       {slides.length > 0 ? (
         <div className="absolute inset-0 overflow-hidden" ref={emblaRef}>
           <div className="flex h-full touch-pan-y">
-            <div className="relative h-full min-w-0 shrink-0 grow-0 basis-full">
-              <img
-                src={heroSneaker}
-                alt="Uffa Store"
-                width={1664}
-                height={2080}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            {slides.map((product, index) => (
+            {slides.map((slide) => (
               <div
-                key={product.id}
+                key={slide.id}
                 className="relative h-full min-w-0 shrink-0 grow-0 basis-full"
                 role="group"
                 aria-roledescription="slide"
-                aria-label={`${index + 1} / ${slides.length}`}
               >
-                <Link
-                  to="/produto/$productId"
-                  params={{ productId: product.id }}
-                  aria-label={tr(
-                    language,
-                    `Ver ${product.name}`,
-                    `View ${product.name}`,
-                    `Ver ${product.name}`,
-                  )}
-                  className="group block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-hero-foreground"
-                >
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    width={1200}
-                    height={1600}
-                    draggable={false}
-                    className="h-full w-full select-none object-cover object-[center_52%] transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                  />
-                </Link>
+                <img
+                  src={slide.image}
+                  alt={slide.name}
+                  width={1664}
+                  height={2080}
+                  draggable={false}
+                  className="h-full w-full select-none object-cover transition-transform duration-700 ease-out"
+                />
               </div>
             ))}
           </div>
