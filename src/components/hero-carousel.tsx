@@ -59,6 +59,15 @@ export function HeroCarousel({ products, children }: { products: Product[]; chil
       {slides.length > 0 ? (
         <div className="absolute inset-0 overflow-hidden" ref={emblaRef}>
           <div className="flex h-full touch-pan-y">
+            <div className="relative h-full min-w-0 shrink-0 grow-0 basis-full">
+              <img
+                src={heroSneaker}
+                alt="Uffa Store"
+                width={1664}
+                height={2080}
+                className="h-full w-full object-cover"
+              />
+            </div>
             {slides.map((product, index) => (
               <div
                 key={product.id}

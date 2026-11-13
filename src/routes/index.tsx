@@ -58,10 +58,10 @@ const hero = {
  * surpresa na página inicial.
  */
 const categoryImages: Record<Category, string> = {
-  casual: FOTO_PADRAO,
-  streetwear: FOTO_PADRAO,
-  limited: FOTO_PADRAO,
-  sales: FOTO_PADRAO,
+  casual: "/produtos/uffa-modelo-padrao.webp",
+  streetwear: "/produtos/uffa-modelo-padrao.webp",
+  limited: "/produtos/uffa-modelo-padrao.webp",
+  sales: "/produtos/uffa-modelo-padrao.webp",
 };
 
 function Home() {
