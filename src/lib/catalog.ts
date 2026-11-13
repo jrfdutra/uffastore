@@ -5,6 +5,7 @@ import {
   type ProductColor,
   type ProductSize,
 } from "./shop-data";
+import { FOTO_PADRAO } from "./consolidated-catalog";
 import { getConsolidatedAsProducts } from "./catalog-adapter";
 import { removeStorage } from "./storage";
 import {
@@ -49,20 +50,15 @@ function optionValue(
 function toProduct(node: ShopifyProductNode): Product {
   const fallback = getConsolidatedAsProducts().find((item) => item.id === node.handle);
   const description = node.description.replace(/<[^>]*>/g, "").trim();
-  const shopifyImages = (node.images?.nodes ?? [])
-    .map((image) => image.url)
-    .filter((url): url is string => Boolean(url));
-  const images = shopifyImages.length
-    ? shopifyImages
-    : (fallback?.images ?? [fallback?.image ?? "/produtos/uffa-modelo-padrao.webp"]);
-  const primaryImage = images[0] ?? "/produtos/uffa-modelo-padrao.webp";
+  const images = [FOTO_PADRAO];
+  const primaryImage = FOTO_PADRAO;
 
   // Cores reais da Shopify (opção "Cor"/"Color"), sem inventar valores.
   const colorValues = node.options?.find((option) => /cor|color/i.test(option.name))?.values ?? [];
   const colors: ProductColor[] = colorValues.map((value) => ({
     name: value,
     slug: colorSlug(value),
-    images,
+    images: [FOTO_PADRAO],
   }));
 
   const sizes: ProductSize[] = (node.variants?.nodes ?? []).flatMap((variant) => {
