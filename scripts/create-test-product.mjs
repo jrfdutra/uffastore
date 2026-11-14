@@ -60,9 +60,9 @@ const PUBLISH = `
 
 async function main() {
   const locs = await admin(LOCATIONS);
-  const loc = locs.locations.nodes.find(l => l.isActive) || locs.locations.nodes[0];
+  const loc = locs.locations.nodes.find((l) => l.isActive) || locs.locations.nodes[0];
   const pubs = await admin(PUBLICATIONS);
-  const onlineStore = pubs.publications.nodes.find(p => /online store/i.test(p.name));
+  const onlineStore = pubs.publications.nodes.find((p) => /online store/i.test(p.name));
 
   const existing = await admin(BY_HANDLE, { query: "handle:teste" });
   const existingId = existing.products.nodes[0]?.id;
@@ -74,9 +74,7 @@ async function main() {
     vendor: "Uffa Store",
     productType: "sales",
     status: "ACTIVE",
-    productOptions: [
-      { name: "Tamanho", values: [{ name: "40" }] }
-    ],
+    productOptions: [{ name: "Tamanho", values: [{ name: "40" }] }],
     variants: [
       {
         optionValues: [{ optionName: "Tamanho", name: "40" }],
@@ -85,15 +83,15 @@ async function main() {
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
         inventoryQuantities: [{ locationId: loc.id, name: "available", quantity: 100 }],
-      }
+      },
     ],
     files: [
       {
         originalSource: "https://www.uffastore.pt/produtos/uffa-modelo-padrao.webp",
         alt: "Teste",
-        contentType: "IMAGE"
-      }
-    ]
+        contentType: "IMAGE",
+      },
+    ],
   };
 
   console.log("A criar/atualizar produto 'Teste' (0.50 €) na Shopify...");
@@ -110,7 +108,7 @@ async function main() {
     console.log(`A publicar na ${onlineStore.name}...`);
     const pubRes = await admin(PUBLISH, {
       id: product.id,
-      input: [{ publicationId: onlineStore.id }]
+      input: [{ publicationId: onlineStore.id }],
     });
     console.log("Resultado da publicação:", pubRes);
   }

@@ -51,7 +51,7 @@ async function main() {
   const productId = prod.productByHandle.id;
   console.log(`A publicar ${productId} (${prod.productByHandle.title}) em todas as publicações...`);
 
-  const publicationInputs = pubs.publications.nodes.map(p => ({ publicationId: p.id }));
+  const publicationInputs = pubs.publications.nodes.map((p) => ({ publicationId: p.id }));
   const res = await admin(PUBLISH, { id: productId, input: publicationInputs });
   console.log("Resultado:", res);
 }

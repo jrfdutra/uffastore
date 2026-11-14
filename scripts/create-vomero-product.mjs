@@ -116,7 +116,9 @@ async function main() {
     ],
   };
 
-  console.log(`${existingId ? "A atualizar" : "A criar"} "${TITLE}" (${PRICE} €, ${SIZES.length} tamanhos)...`);
+  console.log(
+    `${existingId ? "A atualizar" : "A criar"} "${TITLE}" (${PRICE} €, ${SIZES.length} tamanhos)...`,
+  );
   const res = await admin(PRODUCT_SET, { input, synchronous: true });
   if (res.productSet.userErrors.length > 0) {
     console.error("Erros:", res.productSet.userErrors);
@@ -124,7 +126,9 @@ async function main() {
   }
 
   const product = res.productSet.product;
-  console.log(`OK: ${product.id} | handle=${product.handle} | tipo=${product.productType} | stock=${product.totalInventory}`);
+  console.log(
+    `OK: ${product.id} | handle=${product.handle} | tipo=${product.productType} | stock=${product.totalInventory}`,
+  );
   console.log(`Variantes: ${product.variants.nodes.length}`);
 
   const pubs = await admin(PUBLICATIONS);
