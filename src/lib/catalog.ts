@@ -56,15 +56,17 @@ function optionValue(
 function toProduct(node: ShopifyProductNode): Product {
   const fallback = getConsolidatedAsProducts().find((item) => item.id === node.handle);
   const description = node.description.replace(/<[^>]*>/g, "").trim();
-  const images = [FOTO_PADRAO];
-  const primaryImage = FOTO_PADRAO;
+  const images = node.images?.nodes?.length
+    ? node.images.nodes.map((img) => img.url)
+    : [FOTO_PADRAO];
+  const primaryImage = images[0] || FOTO_PADRAO;
 
   // Cores reais da Shopify (opção "Cor"/"Color"), sem inventar valores.
   const colorValues = node.options?.find((option) => /cor|color/i.test(option.name))?.values ?? [];
   const colors: ProductColor[] = colorValues.map((value) => ({
     name: value,
     slug: colorSlug(value),
-    images: [FOTO_PADRAO],
+    images: images,
   }));
 
   const sizes: ProductSize[] = (node.variants?.nodes ?? []).flatMap((variant) => {
