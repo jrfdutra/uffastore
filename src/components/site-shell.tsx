@@ -307,14 +307,21 @@ function MobileNav() {
       </SheetTrigger>
       <SheetContent side="left" className="w-full">
         <SheetHeader className="items-start text-left">
-          <SheetTitle className="flex items-center gap-2.5 leading-none text-foreground dark:text-brand">
-            <span className="font-display text-4xl uppercase tracking-wide">UFFA</span>
-            <span className="flex flex-col gap-1">
-              <span className="font-display text-xs uppercase leading-none tracking-[0.28em]">
-                STORE
+          <SheetTitle asChild>
+            <Link
+              to="/"
+              onClick={close}
+              aria-label="UFFA Store — Início"
+              className="flex items-center gap-2.5 leading-none text-foreground dark:text-brand"
+            >
+              <span className="font-display text-4xl uppercase tracking-wide">UFFA</span>
+              <span className="flex flex-col gap-1">
+                <span className="font-display text-xs uppercase leading-none tracking-[0.28em]">
+                  STORE
+                </span>
+                <span aria-hidden className="h-[3px] w-full bg-current" />
               </span>
-              <span aria-hidden className="h-[3px] w-full bg-current" />
-            </span>
+            </Link>
           </SheetTitle>
           <SheetDescription>
             {tr(
@@ -401,7 +408,15 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex h-16 md:h-20 max-w-7xl items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-3">
             <MobileNav />
-            <Link to="/" className="flex items-center gap-2.5 leading-none">
+            <Link
+              to="/"
+              aria-label="UFFA Store — Início"
+              onClick={() => {
+                setCartOpen(false);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="flex items-center gap-2.5 leading-none"
+            >
               <span className="font-display text-4xl md:text-5xl uppercase tracking-wide">
                 UFFA
               </span>
@@ -520,7 +535,12 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <footer className="border-t border-border bg-footer text-footer-foreground">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-14 md:grid-cols-2 md:px-6 lg:grid-cols-[1.5fr_1fr]">
           <div>
-            <Link to="/" className="flex items-center gap-3 leading-none">
+            <Link
+              to="/"
+              aria-label="UFFA Store — Início"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="flex items-center gap-3 leading-none"
+            >
               <span className="font-display text-5xl uppercase tracking-wide text-brand">UFFA</span>
               <span className="flex flex-col gap-1.5">
                 <span className="font-display text-sm uppercase leading-none tracking-[0.28em] text-brand">
