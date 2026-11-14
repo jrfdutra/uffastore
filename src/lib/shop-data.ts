@@ -64,7 +64,9 @@ export function getProductEffectiveStatus(product: Product): ProductStatus {
 }
 
 /** Todas as categorias de um produto, sem duplicados e com a principal primeiro. */
-export function getProductCategories(product: Pick<Product, "category" | "categories">): Category[] {
+export function getProductCategories(
+  product: Pick<Product, "category" | "categories">,
+): Category[] {
   return Array.from(new Set<Category>([product.category, ...(product.categories ?? [])]));
 }
 

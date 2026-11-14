@@ -1212,7 +1212,8 @@ function ProductEditorDialog({
       if (isSelected && current.length === 1) return prev;
 
       const next = isSelected ? current.filter((c) => c !== category) : [...current, category];
-      const primary = isSelected && prev.category === category ? (next[0] ?? prev.category) : prev.category;
+      const primary =
+        isSelected && prev.category === category ? (next[0] ?? prev.category) : prev.category;
       const extras = next.filter((c) => c !== primary);
 
       const nextProduct: Product = { ...prev, category: primary };
