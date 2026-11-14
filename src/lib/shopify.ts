@@ -191,7 +191,19 @@ export async function createCheckoutUrl(
   const discountCodes = couponCode ? [couponCode] : [];
   const pickupHandles = isPickup ? await fetchPickupHandles() : [];
 
-  const buyerIdentity: any = {
+  const buyerIdentity: {
+    countryCode?: string;
+    email?: string;
+    phone?: string;
+    firstName?: string;
+    lastName?: string;
+    preferences: {
+      delivery: {
+        deliveryMethod: string[];
+        pickupHandle?: string[];
+      };
+    };
+  } = {
     ...(isPickup ? { countryCode: "PT" } : {}),
     preferences: {
       delivery: {
