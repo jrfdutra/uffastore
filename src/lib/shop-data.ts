@@ -33,6 +33,11 @@ export type Product = {
   sku?: string;
   name: string;
   category: Category;
+  /**
+   * Categorias adicionais. Permite que um produto apareça em mais do que uma
+   * categoria (ex.: "casual" + "sales" para entrar também nas Promoções).
+   */
+  categories?: Category[];
   price: number;
   originalPrice?: number;
   image: string;
@@ -56,6 +61,19 @@ export function getProductEffectiveStatus(product: Product): ProductStatus {
   const stock = getProductTotalStock(product);
   if (stock <= 0) return "soldout";
   return "active";
+}
+
+/** Todas as categorias de um produto, sem duplicados e com a principal primeiro. */
+export function getProductCategories(product: Pick<Product, "category" | "categories">): Category[] {
+  return Array.from(new Set<Category>([product.category, ...(product.categories ?? [])]));
+}
+
+/** Verdadeiro quando o produto pertence à categoria indicada (ou a "all"). */
+export function isProductInCategory(
+  product: Pick<Product, "category" | "categories">,
+  category: Category | "all",
+): boolean {
+  return category === "all" || getProductCategories(product).includes(category);
 }
 
 export const categoryNames: Record<Category, Record<Language, string>> = {

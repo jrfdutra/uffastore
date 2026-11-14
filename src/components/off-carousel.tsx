@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Tag } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { useShop } from "@/lib/shop-context";
+import { isProductInCategory } from "@/lib/shop-data";
 import { tr } from "@/lib/i18n";
 import useEmblaCarousel from "embla-carousel-react";
 
@@ -14,7 +15,9 @@ export function OffCarousel() {
     setMounted(true);
   }, []);
 
-  const saleProducts = catalog.filter((p) => p.category === "sales" || Boolean(p.originalPrice));
+  const saleProducts = catalog.filter(
+    (p) => isProductInCategory(p, "sales") || Boolean(p.originalPrice),
+  );
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,

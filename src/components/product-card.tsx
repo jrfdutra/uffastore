@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, ShoppingBag, Check, Heart } from "lucide-react";
-import { categoryNames, getProductEffectiveStatus, money, type Product } from "@/lib/shop-data";
+import {
+  categoryNames,
+  getProductEffectiveStatus,
+  isProductInCategory,
+  money,
+  type Product,
+} from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { VerifiedBadge } from "./verified-badge";
 import { Button } from "@/components/ui/button";
@@ -23,7 +29,7 @@ export function ProductCard({ product }: { product: Product }) {
   const effectiveStatus = getProductEffectiveStatus(product);
   const isSoldOut = effectiveStatus === "soldout";
   const isComingSoon = effectiveStatus === "comingsoon";
-  const isSale = product.category === "sales" || Boolean(product.originalPrice);
+  const isSale = isProductInCategory(product, "sales") || Boolean(product.originalPrice);
   const isWishlisted = wishlist.includes(product.id);
 
   const colors = product.colors ?? [];

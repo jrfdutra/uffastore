@@ -29,6 +29,12 @@ function toCategory(value: string): Category {
   return categories.includes(normalized as Category) ? (normalized as Category) : "casual";
 }
 
+/** Reconhece uma tag da Shopify como categoria (ex.: tag "sales"). */
+function asCategory(value: string): Category | undefined {
+  const normalized = value.trim().toLowerCase();
+  return categories.includes(normalized as Category) ? (normalized as Category) : undefined;
+}
+
 /** Converte "Grey Fog" / "Azul Marinho" num slug estável. */
 export function colorSlug(value: string): string {
   return value
@@ -83,13 +89,24 @@ function toProduct(node: ShopifyProductNode): Product {
 
   const priceValues = sizes.map((size) => size.price ?? 0).filter((price) => price > 0);
 
+  // Categoria principal = productType; categorias extra = tags da Shopify
+  // (ex.: um produto "casual" com a tag "sales" aparece também nas Promoções).
+  const primaryCategory: Category = node.productType
+    ? toCategory(node.productType)
+    : (fallback?.category ?? "streetwear");
+  const extraCategories = Array.from(
+    new Set<Category>([
+      ...(fallback?.categories ?? []),
+      ...(node.tags ?? []).map(asCategory).filter((tag): tag is Category => Boolean(tag)),
+    ]),
+  ).filter((category) => category !== primaryCategory);
+
   return {
     id: node.handle,
     sku: fallback?.sku ?? `UFFA-${node.handle.toUpperCase()}`,
     name: node.title,
-    category: node.productType
-      ? toCategory(node.productType)
-      : (fallback?.category ?? "streetwear"),
+    category: primaryCategory,
+    ...(extraCategories.length ? { categories: extraCategories } : {}),
     price: priceValues.length
       ? Math.min(...priceValues)
       : Number.parseFloat(node.priceRange.minVariantPrice.amount),

@@ -46,8 +46,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { tr } from "@/lib/i18n";
 import {
   categoryNames,
+  getProductCategories,
   getProductEffectiveStatus,
   getProductTotalStock,
+  isProductInCategory,
   money,
   type Category,
   type Product,
@@ -837,7 +839,8 @@ function ModelsManagementView() {
         (product.sku && product.sku.toLowerCase().includes(q)) ||
         product.id.toLowerCase().includes(q);
 
-      const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
+      const matchesCategory =
+        categoryFilter === "all" || isProductInCategory(product, categoryFilter as Category);
 
       const effective = getProductEffectiveStatus(product);
       const matchesStatus =
@@ -1013,7 +1016,9 @@ function ModelsManagementView() {
                         {p.sku || p.id}
                       </span>
                       <span className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 text-[10px] font-bold uppercase">
-                        {p.category}
+                        {getProductCategories(p)
+                          .map((category) => categoryNames[category][language])
+                          .join(" · ")}
                       </span>
                       {p.originalPrice && (
                         <span className="bg-destructive/10 text-destructive border border-destructive/20 px-2 py-0.5 text-[10px] font-bold uppercase">
@@ -1196,6 +1201,27 @@ function ProductEditorDialog({
     }));
   };
 
+  /**
+   * Alterna uma categoria mantendo sempre pelo menos uma. A primeira categoria
+   * é a principal (`category`) e as restantes vão para `categories`.
+   */
+  const handleToggleCategory = (category: Category) => {
+    setFormData((prev) => {
+      const current = getProductCategories(prev);
+      const isSelected = current.includes(category);
+      if (isSelected && current.length === 1) return prev;
+
+      const next = isSelected ? current.filter((c) => c !== category) : [...current, category];
+      const primary = isSelected && prev.category === category ? (next[0] ?? prev.category) : prev.category;
+      const extras = next.filter((c) => c !== primary);
+
+      const nextProduct: Product = { ...prev, category: primary };
+      if (extras.length) nextProduct.categories = extras;
+      else delete nextProduct.categories;
+      return nextProduct;
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-none border-2 border-foreground bg-background p-6">
@@ -1239,27 +1265,41 @@ function ProductEditorDialog({
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <Label className="text-xs font-bold uppercase">
-                {tr(language, "Categoria", "Category", "Categoría")}
-              </Label>
-              <Select
-                value={formData.category}
-                onValueChange={(val) => setFormData({ ...formData, category: val as Category })}
-              >
-                <SelectTrigger className="mt-1 rounded-none">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="casual">Casual</SelectItem>
-                  <SelectItem value="streetwear">Streetwear</SelectItem>
-                  <SelectItem value="limited">Limited</SelectItem>
-                  <SelectItem value="sales">Promoções</SelectItem>
-                </SelectContent>
-              </Select>
+          <div>
+            <Label className="text-xs font-bold uppercase">
+              {tr(language, "Categorias", "Categories", "Categorías")}
+            </Label>
+            <div className="mt-1 flex flex-wrap gap-2">
+              {(["casual", "streetwear", "limited", "sales"] as const).map((category) => {
+                const selected = getProductCategories(formData).includes(category);
+                return (
+                  <button
+                    key={category}
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() => handleToggleCategory(category)}
+                    className={`border px-3 py-1.5 text-xs font-bold uppercase tracking-wide transition ${
+                      selected
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                    }`}
+                  >
+                    {categoryNames[category][language]}
+                  </button>
+                );
+              })}
             </div>
+            <p className="mt-1.5 text-[11px] text-muted-foreground">
+              {tr(
+                language,
+                'Podes marcar mais do que uma. A primeira é a principal; "Promoções" faz o produto aparecer também na aba de promoções.',
+                'You can pick more than one. The first is the main one; "Sales" also lists the product in the sales tab.',
+                'Puedes marcar más de una. La primera es la principal; "Promociones" también muestra el producto en la pestaña de ofertas.',
+              )}
+            </p>
+          </div>
 
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <Label className="text-xs font-bold uppercase">
                 {tr(language, "Preço (€)", "Price (€)", "Precio (€)")}

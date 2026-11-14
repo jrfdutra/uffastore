@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
-import { categoryNames, copy, type Category } from "@/lib/shop-data";
+import { categoryNames, copy, isProductInCategory, type Category } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 const searchSchema = z.object({
@@ -51,7 +51,7 @@ function Catalog() {
       catalog.filter(
         (p) =>
           p.status !== "inactive" &&
-          (category === "all" || p.category === category) &&
+          isProductInCategory(p, category) &&
           p.name.toLowerCase().includes(query.toLowerCase()) &&
           p.price <= max &&
           (size === "all" || p.sizes.some((s) => s.size === size)),

@@ -13,7 +13,9 @@ import { VerifiedBadge } from "@/components/verified-badge";
 import {
   categoryNames,
   copy,
+  getProductCategories,
   getProductEffectiveStatus,
+  isProductInCategory,
   money,
   type ProductSize,
 } from "@/lib/shop-data";
@@ -206,9 +208,11 @@ function ProductDetail() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <p className="text-xs font-bold uppercase text-primary">
-                {categoryNames[p.category][s.language]}
+                {getProductCategories(p)
+                  .map((category) => categoryNames[category][s.language])
+                  .join(" · ")}
               </p>
-              {(p.category === "sales" || Boolean(p.originalPrice)) && !isSoldOut && (
+              {(isProductInCategory(p, "sales") || Boolean(p.originalPrice)) && !isSoldOut && (
                 <span className="bg-promo text-promo-foreground border-2 border-promo rounded-[4px] px-3.5 py-1 text-xs font-black uppercase tracking-widest shadow-md">
                   {tr(s.language, "PROMO", "PROMO", "PROMO")}
                 </span>
@@ -241,7 +245,7 @@ function ProductDetail() {
           </h1>
           <div className="flex items-baseline gap-3 mt-5">
             <span
-              className={`font-display text-foreground font-bold ${Boolean(p.originalPrice) || p.category === "sales" ? "text-4xl md:text-5xl" : "text-3xl"}`}
+              className={`font-display text-foreground font-bold ${Boolean(p.originalPrice) || isProductInCategory(p, "sales") ? "text-4xl md:text-5xl" : "text-3xl"}`}
             >
               {money(displayPrice)}
             </span>
