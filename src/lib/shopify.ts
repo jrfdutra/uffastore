@@ -203,7 +203,12 @@ export async function createCheckoutUrl(
         pickupHandle?: string[];
       };
     };
-    deliveryAddressPreferences?: any[];
+    deliveryAddressPreferences?: {
+      firstName: string;
+      lastName: string;
+      phone: string;
+      country: string;
+    }[];
   } = {
     ...(isPickup ? { countryCode: "PT" } : {}),
     preferences: {
