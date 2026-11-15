@@ -38,6 +38,10 @@ export function ProductCard({ product }: { product: Product }) {
       ? selectedColor
       : colors[0]?.slug;
 
+  // A fotografia acompanha a cor escolhida (cada variante tem a sua imagem na Shopify).
+  const colorImage = colors.find((color) => color.slug === activeColor)?.images?.[0];
+  const cardImage = colorImage ?? product.image;
+
   // Só variantes reais da cor ativa; sem opção de cor, todas contam.
   const variants = product.sizes.filter((size) =>
     activeColor ? size.color === activeColor : true,
@@ -69,7 +73,7 @@ export function ProductCard({ product }: { product: Product }) {
         >
           <div className="relative aspect-[4/5] overflow-hidden">
             <img
-              src={product.image}
+              src={cardImage}
               alt={product.name}
               width={1664}
               height={2080}

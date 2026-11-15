@@ -63,11 +63,30 @@ function toProduct(node: ShopifyProductNode): Product {
 
   // Cores reais da Shopify (opção "Cor"/"Color"), sem inventar valores.
   const colorValues = node.options?.find((option) => /cor|color/i.test(option.name))?.values ?? [];
-  const colors: ProductColor[] = colorValues.map((value) => ({
-    name: value,
-    slug: colorSlug(value),
-    images: images,
-  }));
+
+  // Fotografia própria de cada variante (na Shopify, a imagem é associada à variante).
+  // Isto permite que o seletor de cor troque a fotografia para o par certo.
+  const variantImagesByColor = new Map<string, string[]>();
+  for (const variant of node.variants?.nodes ?? []) {
+    const colorValue = optionValue(variant.selectedOptions, /cor|color/i);
+    const url = variant.image?.url;
+    if (!colorValue || !url) continue;
+    const slug = colorSlug(colorValue);
+    const list = variantImagesByColor.get(slug) ?? [];
+    if (!list.includes(url)) list.push(url);
+    variantImagesByColor.set(slug, list);
+  }
+
+  const colors: ProductColor[] = colorValues.map((value) => {
+    const slug = colorSlug(value);
+    const ownImages = variantImagesByColor.get(slug);
+    return {
+      name: value,
+      slug,
+      // Sem fotografia própria da cor, usa a galeria do produto.
+      images: ownImages?.length ? ownImages : images,
+    };
+  });
 
   const sizes: ProductSize[] = (node.variants?.nodes ?? []).flatMap((variant) => {
     const sizeValue = optionValue(variant.selectedOptions, /tamanho|size|escal/i);
