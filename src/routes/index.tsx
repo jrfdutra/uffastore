@@ -7,7 +7,13 @@ import { TrustStrip } from "@/components/trust-strip";
 import { OrderPortalPromo } from "@/components/order-portal-promo";
 import { OffCarousel } from "@/components/off-carousel";
 import { HeroCarousel } from "@/components/hero-carousel";
-import { categoryNames, copy, type Category } from "@/lib/shop-data";
+import {
+  categoryNames,
+  copy,
+  isProductInCategory,
+  type Category,
+  type Product,
+} from "@/lib/shop-data";
 import { FOTO_PADRAO } from "@/lib/consolidated-catalog";
 import { useShop } from "@/lib/shop-context";
 
@@ -53,22 +59,32 @@ const hero = {
 };
 
 /**
- * Capas das categorias: todas usam exatamente a fotografia padrão fornecida
- * pela UFFA (mesmo ficheiro, sem recorte nem alterações), para o efeito de
- * surpresa na página inicial.
+ * Capa de cada categoria: usa a fotografia real do primeiro produto da categoria,
+ * pela ordem do catálogo (a Shopify é a fonte de verdade). Quando nenhum produto
+ * da categoria tem fotografia própria, recorre à imagem padrão da UFFA.
  */
-const categoryImages: Record<Category, string> = {
-  casual: "/produtos/uffa-modelo-padrao.webp",
-  streetwear: "/produtos/uffa-modelo-padrao.webp",
-  limited: "/produtos/uffa-modelo-padrao.webp",
-  sales: "/produtos/uffa-modelo-padrao.webp",
-};
+function categoryCovers(catalog: Product[]): Record<Category, string> {
+  return (Object.keys(categoryNames) as Category[]).reduce(
+    (covers, category) => {
+      const cover = catalog.find(
+        (product) =>
+          isProductInCategory(product, category) &&
+          Boolean(product.image) &&
+          product.image !== FOTO_PADRAO,
+      );
+      covers[category] = cover?.image ?? FOTO_PADRAO;
+      return covers;
+    },
+    {} as Record<Category, string>,
+  );
+}
 
 function Home() {
   const { language, catalog } = useShop();
   const t = copy[language],
     h = hero[language];
-  const cats = Object.keys(categoryImages) as Category[];
+  const cats = Object.keys(categoryNames) as Category[];
+  const covers = categoryCovers(catalog);
 
   return (
     <>
@@ -118,7 +134,7 @@ function Home() {
               className="group relative block aspect-[4/5] overflow-hidden bg-product"
             >
               <img
-                src={categoryImages[cat]}
+                src={covers[cat]}
                 alt=""
                 width={1664}
                 height={2080}

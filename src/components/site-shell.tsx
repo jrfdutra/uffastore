@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Menu,
   Moon,
@@ -37,9 +37,22 @@ import { categoryNames, copy, money, type Category, type Language } from "@/lib/
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { company } from "@/lib/legal";
-import { useEffect, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+  type ReactNode,
+} from "react";
 
 const cats: Category[] = ["casual", "streetwear", "limited", "sales"];
+
+/** Sobe a página ao topo, respeitando quem prefere menos movimento. */
+function scrollPageToTop() {
+  if (typeof window === "undefined") return;
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+  window.scrollTo({ top: 0, left: 0, behavior: reduceMotion ? "auto" : "smooth" });
+}
 
 function CartDrawer() {
   const s = useShop(),
@@ -292,14 +305,21 @@ function CartDrawer() {
   );
 }
 
-function MobileNav() {
+function MobileNav({
+  open,
+  onOpenChange,
+  onHome,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onHome: (event?: ReactMouseEvent) => void;
+}) {
   const { language } = useShop(),
     t = copy[language];
-  const [open, setOpen] = useState(false);
   const location = useRouterState({ select: (state) => state.location });
-  const close = () => setOpen(false);
+  const close = () => onOpenChange(false);
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="lg:hidden" aria-label={t.menu}>
           <Menu />
@@ -310,7 +330,7 @@ function MobileNav() {
           <SheetTitle asChild>
             <Link
               to="/"
-              onClick={close}
+              onClick={onHome}
               aria-label="UFFA Store — Início"
               className="flex items-center gap-2.5 leading-none text-foreground dark:text-brand"
             >
@@ -391,9 +411,37 @@ export function SiteShell({ children }: { children: ReactNode }) {
   const s = useShop(),
     t = copy[s.language];
   const { setCartOpen } = s;
+  const navigate = useNavigate();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const location = useRouterState({ select: (state) => state.location });
   const pathname = location.pathname;
   const currentCategory = (location.search as { category?: string })?.category;
+
+  /**
+   * Clique na logo: fecha os menus abertos, garante que estamos na página
+   * inicial e só depois sobe ao topo — assim o scroll suave não é anulado
+   * pela reposição de posição do router.
+   */
+  const goHome = useCallback(
+    (event?: ReactMouseEvent) => {
+      if (event) {
+        // Deixa o browser tratar de abrir noutro separador/janela.
+        const modifier = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+        if (modifier || event.button !== 0) return;
+        event.preventDefault();
+      }
+      setCartOpen(false);
+      setMobileNavOpen(false);
+      if (pathname !== "/") {
+        void navigate({ to: "/", resetScroll: false }).then(() => {
+          requestAnimationFrame(scrollPageToTop);
+        });
+        return;
+      }
+      scrollPageToTop();
+    },
+    [navigate, pathname, setCartOpen],
+  );
 
   useEffect(() => setCartOpen(false), [pathname, setCartOpen]);
   useEffect(() => {
@@ -407,14 +455,11 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-brand-strong/20 bg-brand text-brand-foreground dark:border-brand/30 dark:bg-black dark:text-brand">
         <div className="mx-auto flex h-16 md:h-20 max-w-7xl items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-3">
-            <MobileNav />
+            <MobileNav open={mobileNavOpen} onOpenChange={setMobileNavOpen} onHome={goHome} />
             <Link
               to="/"
               aria-label="UFFA Store — Início"
-              onClick={() => {
-                setCartOpen(false);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
+              onClick={goHome}
               className="flex items-center gap-2.5 leading-none"
             >
               <span className="font-display text-4xl md:text-5xl uppercase tracking-wide">
@@ -538,7 +583,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <Link
               to="/"
               aria-label="UFFA Store — Início"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              onClick={goHome}
               className="flex items-center gap-3 leading-none"
             >
               <span className="font-display text-5xl uppercase tracking-wide text-brand">UFFA</span>

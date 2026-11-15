@@ -90,15 +90,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:locale", content: "pt_PT" },
       {
         property: "og:image",
-        content: "https://www.uffastore.pt/images/nike-af1-floral-01.jpg",
+        content: "https://www.uffastore.pt/images/floral-air-force.webp",
       },
       { property: "og:image:alt", content: "Uffa Store — sapatilhas autenticadas no Porto" },
-      { property: "og:image:width", content: "1920" },
-      { property: "og:image:height", content: "2560" },
+      { property: "og:image:width", content: "1600" },
+      { property: "og:image:height", content: "2000" },
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:image",
-        content: "https://www.uffastore.pt/images/nike-af1-floral-01.jpg",
+        content: "https://www.uffastore.pt/images/floral-air-force.webp",
       },
     ],
     links: [
