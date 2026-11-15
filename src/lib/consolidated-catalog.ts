@@ -39,9 +39,6 @@ export type ConsolidatedProduct = {
 /** Fotografia padrão fornecida pela UFFA para todos os novos modelos. */
 export const FOTO_PADRAO = "/produtos/uffa-modelo-padrao.webp";
 
-/** Tamanhos comercializados nos escalões GS (36-39) e Senior 40+ (40-45). */
-const TAMANHOS_GS_SENIOR = [36, 37, 38, 39, 40, 41, 42, 43, 44, 45];
-
 /** Tamanhos comercializados no escalão Criança (28-35). */
 const TAMANHOS_CRIANCA = [28, 29, 30, 31, 32, 33, 34, 35];
 
@@ -87,15 +84,34 @@ function gerarVariantes(
   );
 }
 
-export const consolidatedProducts: ConsolidatedProduct[] = [
+type ModeloBase = {
+  /** Handle base na Shopify; cada escalão acrescenta -gs ou -senior. */
+  handleBase: string;
+  sku: string;
+  name: string;
+  modeloId: ModeloId;
+  category: Category;
+  featured: boolean;
+  description: {
+    pt: string;
+    en: string;
+    es: string;
+  };
+  colors: ProductColorOption[];
+};
+
+/**
+ * Cada modelo é vendido em dois anúncios separados: GS (36–39) e Sénior (40–45).
+ * A Shopify é a fonte de verdade; esta lista serve de fallback e define a ordem
+ * em que os produtos aparecem no site.
+ */
+const modelos: ModeloBase[] = [
   {
-    id: "air-force-floral-rope-laces",
-    handle: "air-force-floral-w-rope-laces",
+    handleBase: "air-force-floral-w-rope-laces",
     sku: "AF1-FLORAL",
     name: "(FLORAL AIR FORCE W/ ROPE LACES)",
     modeloId: "air-force-floral-rope",
     category: "limited",
-    status: "active",
     featured: true,
     description: {
       pt: "Edição especial Air Force Floral com acabamento exclusivo e Rope Laces.",
@@ -103,22 +119,13 @@ export const consolidatedProducts: ConsolidatedProduct[] = [
       es: "Edición especial Air Force Floral con acabado exclusivo y Rope Laces.",
     },
     colors: [cor("Pink", "pink"), cor("Orange", "orange")],
-    sizes: gerarVariantes(
-      "air-force-floral-w-rope-laces",
-      "air-force-floral-rope",
-      "AF1-FLORAL",
-      [cor("Pink", "pink"), cor("Orange", "orange")],
-      TAMANHOS_GS_SENIOR,
-    ),
   },
   {
-    id: "nike-dunk-rope-laces",
-    handle: "nike-dunk-w-rope-laces",
+    handleBase: "nike-dunk-w-rope-laces",
     sku: "DUNK-ROPE",
     name: "Nike Dunk w/ Rope Laces",
     modeloId: "nike-dunk-rope",
     category: "streetwear",
-    status: "active",
     featured: true,
     description: {
       pt: "Nike Dunk com atacadores Rope Laces e o visual urbano mais procurado.",
@@ -126,22 +133,13 @@ export const consolidatedProducts: ConsolidatedProduct[] = [
       es: "Nike Dunk con Rope Laces y el look urbano más buscado.",
     },
     colors: [cor("White", "white"), cor("Black", "black"), cor("Pink", "pink")],
-    sizes: gerarVariantes(
-      "nike-dunk-w-rope-laces",
-      "nike-dunk-rope",
-      "DUNK-ROPE",
-      [cor("White", "white"), cor("Black", "black"), cor("Pink", "pink")],
-      TAMANHOS_GS_SENIOR,
-    ),
   },
   {
-    id: "air-force-lanvin-w",
-    handle: "air-force-lanvin-w",
+    handleBase: "air-force-lanvin-w",
     sku: "AF1-LANVIN",
     name: "Air Force Lanvin W",
     modeloId: "air-force-lanvin",
     category: "limited",
-    status: "active",
     featured: true,
     description: {
       pt: "Air Force com inspiração Lanvin e design volumoso, num único acabamento.",
@@ -150,22 +148,13 @@ export const consolidatedProducts: ConsolidatedProduct[] = [
     },
     // Modelo de cor única: não são criadas variantes de cor adicionais.
     colors: [],
-    sizes: gerarVariantes(
-      "air-force-lanvin-w",
-      "air-force-lanvin",
-      "AF1-LANVIN",
-      [],
-      TAMANHOS_GS_SENIOR,
-    ),
   },
   {
-    id: "floral-black",
-    handle: "floral-black",
+    handleBase: "floral-black",
     sku: "FLORAL-BLACK",
     name: "Floral Black",
     modeloId: "floral-black",
     category: "limited",
-    status: "active",
     featured: false,
     description: {
       pt: "Floral Black em acabamento totalmente preto, com o detalhe floral da coleção.",
@@ -173,14 +162,54 @@ export const consolidatedProducts: ConsolidatedProduct[] = [
       es: "Floral Black en acabado totalmente negro, con el detalle floral de la colección.",
     },
     colors: [cor("Black", "black")],
-    sizes: gerarVariantes(
-      "floral-black",
-      "floral-black",
-      "FLORAL-BLACK",
-      [cor("Black", "black")],
-      TAMANHOS_GS_SENIOR,
-    ),
   },
+  {
+    handleBase: "air-force-w-rope-laces",
+    sku: "AF1-ROPE",
+    name: "Air Force w/ Rope Laces",
+    modeloId: "air-force-rope",
+    category: "streetwear",
+    featured: true,
+    description: {
+      pt: "Air Force clássico com atacadores Rope Laces de alta resistência e estilo distintivo.",
+      en: "Classic Air Force with high-durability Rope Laces and a distinct style.",
+      es: "Air Force clásico con Rope Laces de alta resistencia y estilo distintivo.",
+    },
+    colors: [cor("Gray", "gray"), cor("Pink", "pink"), cor("Black", "black")],
+  },
+];
+
+/** Escalões comerciais: um anúncio para GS e outro para os tamanhos grandes. */
+const escaloesComerciais = [
+  { sufixo: "gs", etiqueta: "GS (36–39)", tamanhos: [36, 37, 38, 39], destaque: false },
+  {
+    sufixo: "senior",
+    etiqueta: "Sénior (40–45)",
+    tamanhos: [40, 41, 42, 43, 44, 45],
+    destaque: true,
+  },
+];
+
+export const consolidatedProducts: ConsolidatedProduct[] = [
+  ...modelos.flatMap((modelo) =>
+    escaloesComerciais.map((escalao) => {
+      const handle = `${modelo.handleBase}-${escalao.sufixo}`;
+      return {
+        id: handle,
+        handle,
+        sku: modelo.sku,
+        name: `${modelo.name} — ${escalao.etiqueta}`,
+        modeloId: modelo.modeloId,
+        category: modelo.category,
+        status: "active" as ProductStatus,
+        // Apenas a versão Sénior aparece em destaque, para não duplicar o mesmo par.
+        featured: modelo.featured && escalao.destaque,
+        description: modelo.description,
+        colors: modelo.colors,
+        sizes: gerarVariantes(handle, modelo.modeloId, modelo.sku, modelo.colors, escalao.tamanhos),
+      } satisfies ConsolidatedProduct;
+    }),
+  ),
   {
     id: "air-force-crianca",
     handle: "air-force-crianca",
@@ -202,29 +231,6 @@ export const consolidatedProducts: ConsolidatedProduct[] = [
       "AF1-CRIANCA",
       [cor("White", "white"), cor("Black", "black")],
       TAMANHOS_CRIANCA,
-    ),
-  },
-  {
-    id: "air-force-rope-laces",
-    handle: "air-force-w-rope-laces",
-    sku: "AF1-ROPE",
-    name: "Air Force w/ Rope Laces",
-    modeloId: "air-force-rope",
-    category: "streetwear",
-    status: "active",
-    featured: true,
-    description: {
-      pt: "Air Force clássico com atacadores Rope Laces de alta resistência e estilo distintivo.",
-      en: "Classic Air Force with high-durability Rope Laces and a distinct style.",
-      es: "Air Force clássico con Rope Laces de alta resistencia y estilo distintivo.",
-    },
-    colors: [cor("Gray", "gray"), cor("Pink", "pink"), cor("Black", "black")],
-    sizes: gerarVariantes(
-      "air-force-w-rope-laces",
-      "air-force-rope",
-      "AF1-ROPE",
-      [cor("Gray", "gray"), cor("Pink", "pink"), cor("Black", "black")],
-      TAMANHOS_GS_SENIOR,
     ),
   },
 ];

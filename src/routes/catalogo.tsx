@@ -11,7 +11,7 @@ import { tr } from "@/lib/i18n";
 const searchSchema = z.object({
   category: z.enum(["casual", "streetwear", "limited", "sales"]).optional(),
 });
-const sizeOptions: (number | "all")[] = ["all", 36, 37, 38, 39, 40, 41, 42, 43];
+const sizeOptions: (number | "all")[] = ["all", 36, 37, 38, 39, 40, 41, 42, 43, 44, 45];
 export const Route = createFileRoute("/catalogo")({
   validateSearch: (s) => searchSchema.parse(s),
   head: () => ({

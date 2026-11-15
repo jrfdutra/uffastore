@@ -61,7 +61,7 @@ export const Route = createFileRoute("/produto/$productId")({
 const ESCALAO_ETIQUETA: Record<Escalao, { pt: string; en: string; es: string; nota: string }> = {
   crianca: { pt: "Criança", en: "Kids", es: "Niño", nota: "28–35" },
   gs: { pt: "GS", en: "GS", es: "GS", nota: "36–39" },
-  senior: { pt: "Senior (40+)", en: "Senior (40+)", es: "Senior (40+)", nota: "40–45" },
+  senior: { pt: "Sénior", en: "Senior", es: "Sénior", nota: "40–45" },
 };
 
 function ProductDetail() {
@@ -301,29 +301,38 @@ function ProductDetail() {
                       {tr(s.language, "Categoria", "Category", "Categoría")}
                     </span>
                   </div>
-                  <Select value={activeEscalao} onValueChange={handleEscalaoChange}>
-                    <SelectTrigger
-                      className="h-12 rounded-none border-border px-3 text-left text-sm font-semibold uppercase"
-                      aria-label={tr(
-                        s.language,
-                        "Escolher categoria de tamanho",
-                        "Choose size category",
-                        "Elegir categoría de talla",
-                      )}
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-none">
-                      {escaloesDisponiveis.map((escalao) => (
-                        <SelectItem key={escalao} value={escalao} className="rounded-none py-2.5">
-                          {ESCALAO_ETIQUETA[escalao][s.language]}{" "}
-                          <span className="text-muted-foreground">
-                            · {ESCALAO_ETIQUETA[escalao].nota}
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {escaloesDisponiveis.length === 1 && activeEscalao ? (
+                    <div className="flex h-12 items-center border border-border px-3 text-sm font-semibold uppercase">
+                      {ESCALAO_ETIQUETA[activeEscalao][s.language]}
+                      <span className="ml-1.5 text-muted-foreground">
+                        · {ESCALAO_ETIQUETA[activeEscalao].nota}
+                      </span>
+                    </div>
+                  ) : (
+                    <Select value={activeEscalao} onValueChange={handleEscalaoChange}>
+                      <SelectTrigger
+                        className="h-12 rounded-none border-border px-3 text-left text-sm font-semibold uppercase"
+                        aria-label={tr(
+                          s.language,
+                          "Escolher categoria de tamanho",
+                          "Choose size category",
+                          "Elegir categoría de talla",
+                        )}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-none">
+                        {escaloesDisponiveis.map((escalao) => (
+                          <SelectItem key={escalao} value={escalao} className="rounded-none py-2.5">
+                            {ESCALAO_ETIQUETA[escalao][s.language]}{" "}
+                            <span className="text-muted-foreground">
+                              · {ESCALAO_ETIQUETA[escalao].nota}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
 
                 <div>
