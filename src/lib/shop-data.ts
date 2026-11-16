@@ -42,6 +42,10 @@ export type Product = {
   originalPrice?: number;
   image: string;
   images?: string[];
+  /** URL do vídeo do produto (quando existe na Shopify). */
+  video?: string;
+  /** Cor a que o vídeo pertence (só é mostrado nessa cor). */
+  videoColor?: string;
   description: Record<Language, string>;
   sizes: ProductSize[];
   /** Cores disponíveis. Vazio ou ausente quando o modelo não tem opção de cor. */

@@ -17,6 +17,7 @@ export function getConsolidatedAsProducts(): Product[] {
       status: cp.status,
       image: primaryImage,
       images: primaryColor?.images ?? [primaryImage],
+      ...(cp.videoColor ? { videoColor: cp.videoColor } : {}),
       featured: cp.featured,
       description: cp.description,
       colors: cp.colors.map((color) => ({

@@ -51,6 +51,14 @@ const PRODUCTS_QUERY = `
         options { name values }
         featuredImage { url altText }
         images(first: 10) { nodes { url altText } }
+        media(first: 10) {
+          nodes {
+            mediaContentType
+            ... on Video {
+              sources { url mimeType }
+            }
+          }
+        }
         priceRange { minVariantPrice { amount currencyCode } }
         variants(first: 100) {
           nodes {
@@ -79,6 +87,12 @@ export type ShopifyProductNode = {
   options: { name: string; values: string[] }[];
   featuredImage: { url: string; altText: string | null } | null;
   images: { nodes: { url: string; altText: string | null }[] };
+  media?: {
+    nodes: {
+      mediaContentType: string;
+      sources?: { url: string; mimeType: string }[];
+    }[];
+  };
   priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
   variants: {
     nodes: {
@@ -303,6 +317,14 @@ const PRODUCT_BY_HANDLE_QUERY = `
       options { name values }
       featuredImage { url altText }
       images(first: 10) { nodes { url altText } }
+      media(first: 10) {
+        nodes {
+          mediaContentType
+          ... on Video {
+            sources { url mimeType }
+          }
+        }
+      }
       priceRange { minVariantPrice { amount currencyCode } }
       variants(first: 100) {
         nodes {

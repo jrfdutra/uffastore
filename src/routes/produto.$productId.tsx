@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
-import { BadgeCheck, Box, Hand, Rotate3D } from "lucide-react";
+import { BadgeCheck, Box, Hand, Play, Rotate3D } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -118,6 +118,11 @@ function ProductDetail() {
   const gallery = colorGallery?.length ? colorGallery : p.images?.length ? p.images : [p.image];
   const currentImage = gallery[activeImage] ?? gallery[0] ?? p.image;
 
+  // O vídeo só aparece na cor a que pertence (ex.: Floral Orange).
+  const videoUrl = p.video && (!p.videoColor || p.videoColor === activeColor) ? p.video : undefined;
+  const showingVideo = Boolean(videoUrl) && activeImage === gallery.length;
+  const currentMedia = showingVideo ? videoUrl : currentImage;
+
   const handleColorChange = (slug: string) => {
     setSelectedColor(slug);
     setSelected(undefined);
@@ -150,6 +155,7 @@ function ProductDetail() {
           <div
             className="relative overflow-hidden bg-product touch-none"
             onPointerDown={(e) => {
+              if (showingVideo) return;
               drag.current = e.clientX;
               (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
             }}
@@ -162,22 +168,33 @@ function ProductDetail() {
             onPointerUp={() => (drag.current = null)}
             onPointerCancel={() => (drag.current = null)}
           >
-            <img
-              src={currentImage}
-              alt={p.name}
-              width={1664}
-              height={2080}
-              className="aspect-[4/5] h-full w-full object-cover transition-transform duration-75"
-              style={{ transform }}
-            />
-            <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-background px-3 py-2 text-xs font-bold uppercase text-foreground">
-              <Rotate3D className="size-4 text-primary" />
-              {s.language === "pt"
-                ? "Arrasta para rodar 360°"
-                : s.language === "es"
-                  ? "Arrastra para girar 360°"
-                  : "Drag to rotate 360°"}
-            </div>
+            {showingVideo ? (
+              <video
+                src={currentMedia}
+                controls
+                playsInline
+                className="aspect-[4/5] h-full w-full bg-black object-cover"
+              />
+            ) : (
+              <img
+                src={currentMedia}
+                alt={p.name}
+                width={1664}
+                height={2080}
+                className="aspect-[4/5] h-full w-full object-cover transition-transform duration-75"
+                style={{ transform }}
+              />
+            )}
+            {!showingVideo && (
+              <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-background px-3 py-2 text-xs font-bold uppercase text-foreground">
+                <Rotate3D className="size-4 text-primary" />
+                {s.language === "pt"
+                  ? "Arrasta para rodar 360°"
+                  : s.language === "es"
+                    ? "Arrastra para girar 360°"
+                    : "Drag to rotate 360°"}
+              </div>
+            )}
           </div>
           <div className="mt-3 grid grid-cols-3 gap-3">
             {gallery.map((image, i) => (
@@ -202,6 +219,31 @@ function ProductDetail() {
                 />
               </Button>
             ))}
+            {videoUrl && (
+              <Button
+                variant="ghost"
+                className={`h-auto rounded-none bg-product p-0 ${showingVideo ? "ring-2 ring-primary" : ""}`}
+                onClick={() => {
+                  setActiveImage(gallery.length);
+                  setAngle(0);
+                }}
+                aria-label={`${p.name} — ${s.language === "pt" ? "vídeo" : "video"}`}
+                aria-pressed={showingVideo}
+              >
+                <span className="relative block w-full">
+                  <video
+                    src={videoUrl}
+                    muted
+                    playsInline
+                    preload="metadata"
+                    className="aspect-[4/5] w-full bg-black object-cover"
+                  />
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/25">
+                    <Play className="size-6 fill-white text-white" />
+                  </span>
+                </span>
+              </Button>
+            )}
           </div>
         </div>
         <div className="lg:sticky lg:top-28 lg:self-start">
