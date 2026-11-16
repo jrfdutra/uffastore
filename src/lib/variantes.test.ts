@@ -19,20 +19,20 @@ test("Cada cor tem apenas as variantes dessa cor", () => {
   const dunk = produto("nike-dunk-w-rope-laces-gs");
   for (const cor of dunk.colors) {
     const variantes = variantesPorCor(dunk.sizes, cor.colorSlug);
-    assert.equal(variantes.length, 8, `cor ${cor.colorSlug}`);
+    assert.equal(variantes.length, 6, `cor ${cor.colorSlug}`);
     assert.ok(variantes.every((variante) => variante.color === cor.colorSlug));
   }
 
   const dunkSenior = produto("nike-dunk-w-rope-laces-senior");
   for (const cor of dunkSenior.colors) {
-    assert.equal(variantesPorCor(dunkSenior.sizes, cor.colorSlug).length, 11);
+    assert.equal(variantesPorCor(dunkSenior.sizes, cor.colorSlug).length, 9);
   }
 });
 
 test("Modelos de cor única devolvem todas as variantes", () => {
   const lanvin = produto("air-force-lanvin-w-gs");
-  assert.equal(variantesPorCor(lanvin.sizes, undefined).length, 8);
-  assert.equal(variantesPorCor(produto("air-force-lanvin-w-senior").sizes, undefined).length, 11);
+  assert.equal(variantesPorCor(lanvin.sizes, undefined).length, 6);
+  assert.equal(variantesPorCor(produto("air-force-lanvin-w-senior").sizes, undefined).length, 9);
 });
 
 test("Cada anúncio apresenta apenas o seu escalão", () => {
@@ -49,7 +49,7 @@ test("Tamanhos por escalão", () => {
     tamanhosDoEscalao(variantesPorCor(crianca.sizes, "white"), "crianca").map(
       (variante) => variante.size,
     ),
-    [28, 28.5, 29, 29.5, 30, 30.5, 31, 31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5],
+    [28, 28.5, 29.5, 30, 31, 31.5, 32, 33, 33.5, 34, 35],
   );
 
   const dunkGs = produto("nike-dunk-w-rope-laces-gs");
@@ -57,7 +57,7 @@ test("Tamanhos por escalão", () => {
     tamanhosDoEscalao(variantesPorCor(dunkGs.sizes, "white"), "gs").map(
       (variante) => variante.size,
     ),
-    [36, 36.5, 37, 37.5, 38, 38.5, 39, 39.5],
+    [36, 36.5, 37.5, 38, 38.5, 39],
   );
 
   const dunkSenior = produto("nike-dunk-w-rope-laces-senior");
@@ -65,7 +65,7 @@ test("Tamanhos por escalão", () => {
     tamanhosDoEscalao(variantesPorCor(dunkSenior.sizes, "white"), "senior").map(
       (variante) => variante.size,
     ),
-    [40, 40.5, 41, 41.5, 42, 42.5, 43, 43.5, 44, 44.5, 45],
+    [40, 40.5, 41, 42, 42.5, 43, 44, 44.5, 45],
   );
 });
 
@@ -80,7 +80,7 @@ test("O preço acompanha o escalão selecionado (Dunk)", () => {
 test("O preço acompanha o escalão selecionado (Criança)", () => {
   const crianca = produto("air-force-crianca");
   const variantes = tamanhosDoEscalao(variantesPorCor(crianca.sizes, "black"), "crianca");
-  assert.equal(variantes.length, 16);
+  assert.equal(variantes.length, 11);
   assert.ok(variantes.every((variante) => variante.price === 129.99));
 });
 
@@ -114,7 +114,7 @@ test("Uma variante sem stock não é selecionável", () => {
     variante.size === 38 && variante.color === "white" ? { ...variante, stock: 0 } : variante,
   );
   assert.equal(varianteSelecionavel(semStock, "white", "gs", 38), undefined);
-  assert.ok(varianteSelecionavel(semStock, "white", "gs", 37));
+  assert.ok(varianteSelecionavel(semStock, "white", "gs", 36.5));
 });
 
 test("O preço mínimo apresentado por cor está correto", () => {

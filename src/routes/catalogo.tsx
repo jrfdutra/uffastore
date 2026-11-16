@@ -15,23 +15,22 @@ const searchSchema = z.object({
 
 const sizeGroups = [
   {
-    name: { pt: "Criança (28–35.5)", en: "Kids (28–35.5)", es: "Niño (28–35.5)" },
+    name: { pt: "Criança (28–35)", en: "Kids (28–35)", es: "Niño (28–35)" },
     key: "crianca" as const,
-    sizes: [28, 28.5, 29, 29.5, 30, 30.5, 31, 31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5],
+    // Escala Criança da Nike (sem 29, 30.5, 32.5 nem 34.5).
+    sizes: [28, 28.5, 29.5, 30, 31, 31.5, 32, 33, 33.5, 34, 35],
   },
   {
-    name: {
-      pt: "GS / Juvenil (36–39.5)",
-      en: "GS / Junior (36–39.5)",
-      es: "GS / Juvenil (36–39.5)",
-    },
+    name: { pt: "GS (36–39)", en: "GS (36–39)", es: "GS (36–39)" },
     key: "gs" as const,
-    sizes: [36, 36.5, 37, 37.5, 38, 38.5, 39, 39.5],
+    // Escala GS/Júnior da Nike (sem 37 nem 39.5).
+    sizes: [36, 36.5, 37.5, 38, 38.5, 39],
   },
   {
     name: { pt: "Sénior (40–45)", en: "Senior (40–45)", es: "Sénior (40–45)" },
     key: "senior" as const,
-    sizes: [40, 40.5, 41, 41.5, 42, 42.5, 43, 43.5, 44, 44.5, 45],
+    // Escala adulto da Nike (sem 41.5 nem 43.5).
+    sizes: [40, 40.5, 41, 42, 42.5, 43, 44, 44.5, 45],
   },
 ];
 
@@ -199,10 +198,7 @@ function Catalog() {
             {/* Tamanhos individuais dentro do agrupamento selecionado */}
             <div className="mt-3 flex flex-wrap gap-1.5">
               {(selectedSizeGroup === "all"
-                ? [
-                    36, 36.5, 37, 37.5, 38, 38.5, 39, 39.5, 40, 40.5, 41, 41.5, 42, 42.5, 43, 43.5,
-                    44, 44.5, 45,
-                  ]
+                ? sizeGroups.flatMap((group) => group.sizes)
                 : (sizeGroups.find((g) => g.key === selectedSizeGroup)?.sizes ?? [])
               ).map((v) => (
                 <Button

@@ -20,7 +20,7 @@ test("Air Force Criança só tem preço de criança (129,99 €)", () => {
 });
 
 test("Air Force w/ Rope Laces tem preços GS (149,99 €) e Senior (164,99 €)", () => {
-  assert.equal(precoPorTamanho("air-force-rope", 37), 149.99);
+  assert.equal(precoPorTamanho("air-force-rope", 38), 149.99);
   assert.equal(precoPorTamanho("air-force-rope", 42), 164.99);
   assert.throws(() => precoPorTamanho("air-force-rope", 30), /Preço não definido/);
 });
@@ -68,11 +68,11 @@ test("Os escalões usam a nomenclatura pedida", () => {
   assert.equal(catalogoData.escaloes.senior.nome, "Senior (40+)");
   assert.deepEqual(
     catalogoData.escaloes.crianca.tamanhos,
-    [28, 28.5, 29, 29.5, 30, 30.5, 31, 31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5],
+    [28, 28.5, 29.5, 30, 31, 31.5, 32, 33, 33.5, 34, 35],
   );
-  assert.deepEqual(catalogoData.escaloes.gs.tamanhos, [36, 36.5, 37, 37.5, 38, 38.5, 39, 39.5]);
+  assert.deepEqual(catalogoData.escaloes.gs.tamanhos, [36, 36.5, 37.5, 38, 38.5, 39]);
   assert.deepEqual(
     catalogoData.escaloes.senior.tamanhos,
-    [40, 40.5, 41, 41.5, 42, 42.5, 43, 43.5, 44, 44.5, 45],
+    [40, 40.5, 41, 42, 42.5, 43, 44, 44.5, 45],
   );
 });

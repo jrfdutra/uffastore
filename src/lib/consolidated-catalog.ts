@@ -41,10 +41,8 @@ export type ConsolidatedProduct = {
 /** Fotografia padrão fornecida pela UFFA para todos os novos modelos. */
 export const FOTO_PADRAO = "/produtos/uffa-modelo-padrao.webp";
 
-/** Tamanhos comercializados no escalão Criança (28-35.5). */
-const TAMANHOS_CRIANCA = [
-  28, 28.5, 29, 29.5, 30, 30.5, 31, 31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5,
-];
+/** Tamanhos comercializados no escalão Criança (28–35), segundo a escala da Nike. */
+const TAMANHOS_CRIANCA = [28, 28.5, 29.5, 30, 31, 31.5, 32, 33, 33.5, 34, 35];
 
 /** Stock inicial de cada variante comercializável (cor + tamanho). */
 const STOCK_INICIAL = 5;
@@ -192,13 +190,15 @@ const escaloesComerciais = [
   {
     sufixo: "gs",
     etiqueta: "GS (36–39)",
-    tamanhos: [36, 36.5, 37, 37.5, 38, 38.5, 39, 39.5],
+    // Escala GS da Nike (sem 37 nem 39.5).
+    tamanhos: [36, 36.5, 37.5, 38, 38.5, 39],
     destaque: false,
   },
   {
     sufixo: "senior",
     etiqueta: "Sénior (40–45)",
-    tamanhos: [40, 40.5, 41, 41.5, 42, 42.5, 43, 43.5, 44, 44.5, 45],
+    // Escala adulto da Nike (sem 41.5 nem 43.5).
+    tamanhos: [40, 40.5, 41, 42, 42.5, 43, 44, 44.5, 45],
     destaque: true,
   },
 ];

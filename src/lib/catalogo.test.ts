@@ -34,20 +34,20 @@ test("Nike Dunk w/ Rope Laces: cores White, Black e Pink", () => {
     gs.colors.map((cor) => cor.colorName),
     ["White", "Black", "Pink"],
   );
-  assert.equal(gs.sizes.length, 24);
+  assert.equal(gs.sizes.length, 18);
 
   const senior = porHandle("nike-dunk-w-rope-laces-senior");
-  assert.equal(senior.sizes.length, 33);
+  assert.equal(senior.sizes.length, 27);
 });
 
 test("Air Force Lanvin W não inventa cores", () => {
   const gs = porHandle("air-force-lanvin-w-gs");
   assert.equal(gs.colors.length, 0);
-  assert.equal(gs.sizes.length, 8);
+  assert.equal(gs.sizes.length, 6);
   assert.ok(gs.sizes.every((variante) => variante.color === undefined));
 
   const senior = porHandle("air-force-lanvin-w-senior");
-  assert.equal(senior.sizes.length, 11);
+  assert.equal(senior.sizes.length, 9);
 });
 
 test("Floral Air Force w/ Rope Laces: cores Pink e Orange", () => {
@@ -61,8 +61,8 @@ test("Floral Air Force w/ Rope Laces: cores Pink e Orange", () => {
       ["Pink", "Orange"],
     );
   }
-  assert.equal(porHandle("air-force-floral-w-rope-laces-gs").sizes.length, 16);
-  assert.equal(porHandle("air-force-floral-w-rope-laces-senior").sizes.length, 22);
+  assert.equal(porHandle("air-force-floral-w-rope-laces-gs").sizes.length, 12);
+  assert.equal(porHandle("air-force-floral-w-rope-laces-senior").sizes.length, 18);
 });
 
 test("Floral Black é um produto independente com cor Black", () => {
@@ -73,11 +73,11 @@ test("Floral Black é um produto independente com cor Black", () => {
       ["Black"],
     );
   }
-  assert.equal(porHandle("floral-black-gs").sizes.length, 8);
-  assert.equal(porHandle("floral-black-senior").sizes.length, 11);
+  assert.equal(porHandle("floral-black-gs").sizes.length, 6);
+  assert.equal(porHandle("floral-black-senior").sizes.length, 9);
 });
 
-test("Air Force Criança: White e Black, tamanhos 28 a 35.5, 129,99 €", () => {
+test("Air Force Criança: White e Black, tamanhos 28 a 35, 129,99 €", () => {
   const produto = porHandle("air-force-crianca");
   assert.deepEqual(
     produto.colors.map((cor) => cor.colorName),
@@ -86,12 +86,9 @@ test("Air Force Criança: White e Black, tamanhos 28 a 35.5, 129,99 €", () => 
   const tamanhos = [...new Set(produto.sizes.map((variante) => variante.size))].sort(
     (a, b) => a - b,
   );
-  assert.deepEqual(
-    tamanhos,
-    [28, 28.5, 29, 29.5, 30, 30.5, 31, 31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5],
-  );
+  assert.deepEqual(tamanhos, [28, 28.5, 29.5, 30, 31, 31.5, 32, 33, 33.5, 34, 35]);
   assert.ok(produto.sizes.every((variante) => variante.price === 129.99));
-  assert.equal(produto.sizes.length, 32);
+  assert.equal(produto.sizes.length, 22);
 });
 
 test("Air Force w/ Rope Laces: cores Gray, Pink e Black", () => {
@@ -100,15 +97,15 @@ test("Air Force w/ Rope Laces: cores Gray, Pink e Black", () => {
     gs.colors.map((cor) => cor.colorName),
     ["Gray", "Pink", "Black"],
   );
-  assert.equal(gs.sizes.length, 24);
-  assert.equal(porHandle("air-force-w-rope-laces-senior").sizes.length, 33);
+  assert.equal(gs.sizes.length, 18);
+  assert.equal(porHandle("air-force-w-rope-laces-senior").sizes.length, 27);
 });
 
 test("Cada produto só tem tamanhos do seu escalão", () => {
   for (const produto of consolidatedProducts) {
     if (produto.handle.endsWith("-gs")) {
       assert.ok(
-        produto.sizes.every((variante) => variante.size >= 36 && variante.size <= 39.5),
+        produto.sizes.every((variante) => variante.size >= 36 && variante.size <= 39),
         `${produto.handle} tem tamanhos fora do GS`,
       );
     }
