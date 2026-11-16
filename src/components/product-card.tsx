@@ -29,7 +29,7 @@ export function ProductCard({ product }: { product: Product }) {
   const effectiveStatus = getProductEffectiveStatus(product);
   const isSoldOut = effectiveStatus === "soldout";
   const isComingSoon = effectiveStatus === "comingsoon";
-  const isSale = isProductInCategory(product, "sales") || Boolean(product.originalPrice);
+  const isSale = isProductInCategory(product, "promocoes") || Boolean(product.originalPrice);
   const isWishlisted = wishlist.includes(product.id);
 
   const colors = product.colors ?? [];

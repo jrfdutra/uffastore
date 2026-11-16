@@ -8,7 +8,7 @@ import tan from "@/assets/e44536b4-0486-4401-9327-8f300ee11714.jpg";
 export const heroSneaker = "/produtos/uffa-modelo-padrao.webp";
 
 export type Language = "pt" | "en" | "es";
-export type Category = "casual" | "streetwear" | "limited" | "sales";
+export type Category = "promocoes" | "lifestyle" | "running" | "limited";
 export type ProductStatus = "active" | "inactive" | "soldout" | "comingsoon";
 
 export type ProductSize = {
@@ -35,7 +35,7 @@ export type Product = {
   category: Category;
   /**
    * Categorias adicionais. Permite que um produto apareça em mais do que uma
-   * categoria (ex.: "casual" + "sales" para entrar também nas Promoções).
+   * categoria (ex.: "lifestyle" + "promocoes" para entrar também nas Promoções).
    */
   categories?: Category[];
   price: number;
@@ -83,10 +83,10 @@ export function isProductInCategory(
 }
 
 export const categoryNames: Record<Category, Record<Language, string>> = {
-  casual: { pt: "Casual", en: "Casual", es: "Casual" },
-  streetwear: { pt: "Streetwear", en: "Streetwear", es: "Streetwear" },
-  limited: { pt: "Edições limitadas", en: "Limited editions", es: "Ediciones limitadas" },
-  sales: { pt: "Promoções", en: "Sales", es: "Promocões" },
+  promocoes: { pt: "Promoções", en: "Sales", es: "Promociones" },
+  lifestyle: { pt: "Lifestyle", en: "Lifestyle", es: "Lifestyle" },
+  running: { pt: "Running", en: "Running", es: "Running" },
+  limited: { pt: "Edições Limitadas", en: "Limited Editions", es: "Ediciones Limitadas" },
 };
 
 export const products: Product[] = [
@@ -94,7 +94,7 @@ export const products: Product[] = [
     id: "air-force-1-07-white",
     sku: "AF1-WHT",
     name: "Nike Air Force 1 '07 White",
-    category: "streetwear",
+    category: "running",
     price: 0.2,
     status: "active",
     image: white,
@@ -219,7 +219,7 @@ export const products: Product[] = [
     id: "air-force-1-07-black",
     sku: "AF1-BLK",
     name: "Nike Air Force 1 '07 Black",
-    category: "streetwear",
+    category: "running",
     price: 0.2,
     status: "active",
     image: navy,
@@ -344,7 +344,7 @@ export const products: Product[] = [
     id: "nike-dunk-low-panda",
     sku: "DNK-PND",
     name: "Nike Dunk Low Panda",
-    category: "casual",
+    category: "lifestyle",
     price: 0.2,
     status: "active",
     image: green,
@@ -469,7 +469,7 @@ export const products: Product[] = [
     id: "nike-dunk-low-grey-fog",
     sku: "DNK-FOG",
     name: "Nike Dunk Low Grey Fog",
-    category: "casual",
+    category: "lifestyle",
     price: 0.2,
     status: "active",
     image: greenAlt,

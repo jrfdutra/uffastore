@@ -859,7 +859,7 @@ function ModelsManagementView() {
       id: `uffa-model-${Date.now().toString(36)}`,
       sku: `UFFA-${Math.floor(100 + Math.random() * 900)}`,
       name: "",
-      category: "casual",
+      category: "lifestyle",
       price: 0.2,
       status: "active",
       image: "",
@@ -955,10 +955,10 @@ function ModelsManagementView() {
               <SelectItem value="all">
                 {tr(language, "Todas as Categorias", "All Categories", "Todas las Categorías")}
               </SelectItem>
-              <SelectItem value="casual">Casual</SelectItem>
-              <SelectItem value="streetwear">Streetwear</SelectItem>
-              <SelectItem value="limited">Limited</SelectItem>
-              <SelectItem value="sales">Promoções</SelectItem>
+              <SelectItem value="promocoes">Promoções</SelectItem>
+              <SelectItem value="lifestyle">Lifestyle</SelectItem>
+              <SelectItem value="running">Running</SelectItem>
+              <SelectItem value="limited">Edições Limitadas</SelectItem>
             </SelectContent>
           </Select>
 
@@ -1271,7 +1271,7 @@ function ProductEditorDialog({
               {tr(language, "Categorias", "Categories", "Categorías")}
             </Label>
             <div className="mt-1 flex flex-wrap gap-2">
-              {(["casual", "streetwear", "limited", "sales"] as const).map((category) => {
+              {(["lifestyle", "running", "limited", "promocoes"] as const).map((category) => {
                 const selected = getProductCategories(formData).includes(category);
                 return (
                   <button
@@ -1294,7 +1294,7 @@ function ProductEditorDialog({
               {tr(
                 language,
                 'Podes marcar mais do que uma. A primeira é a principal; "Promoções" faz o produto aparecer também na aba de promoções.',
-                'You can pick more than one. The first is the main one; "Sales" also lists the product in the sales tab.',
+                'You can pick more than one. The first is the main one; "promocoes" also lists the product in the sales tab.',
                 'Puedes marcar más de una. La primera es la principal; "Promociones" también muestra el producto en la pestaña de ofertas.',
               )}
             </p>

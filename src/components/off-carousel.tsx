@@ -16,7 +16,7 @@ export function OffCarousel() {
   }, []);
 
   const saleProducts = catalog.filter(
-    (p) => isProductInCategory(p, "sales") || Boolean(p.originalPrice),
+    (p) => isProductInCategory(p, "promocoes") || Boolean(p.originalPrice),
   );
 
   const [emblaRef, emblaApi] = useEmblaCarousel({

@@ -45,7 +45,7 @@ import {
   type ReactNode,
 } from "react";
 
-const cats: Category[] = ["casual", "streetwear", "limited", "sales"];
+const cats: Category[] = ["promocoes", "lifestyle", "running", "limited"];
 
 /** Sobe a página ao topo, respeitando quem prefere menos movimento. */
 function scrollPageToTop() {

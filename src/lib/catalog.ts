@@ -22,16 +22,23 @@ import {
  */
 export const LEGACY_CATALOG_STORAGE_KEY = "uffa-custom-catalog-v3";
 
-const categories: Category[] = ["sales", "casual", "streetwear", "limited"];
+const categories: Category[] = ["promocoes", "lifestyle", "running", "limited"];
 
 function toCategory(value: string): Category {
   const normalized = value.trim().toLowerCase();
-  return categories.includes(normalized as Category) ? (normalized as Category) : "casual";
+  if (normalized.includes("promo") || normalized.includes("sale")) return "promocoes";
+  if (normalized.includes("run") || normalized.includes("vomero")) return "running";
+  if (normalized.includes("limit")) return "limited";
+  return categories.includes(normalized as Category) ? (normalized as Category) : "lifestyle";
 }
 
-/** Reconhece uma tag da Shopify como categoria (ex.: tag "sales"). */
+/** Reconhece uma tag da Shopify como categoria (ex.: tag "promocoes" ou "sales"). */
 function asCategory(value: string): Category | undefined {
   const normalized = value.trim().toLowerCase();
+  if (normalized === "sales" || normalized.includes("promo")) return "promocoes";
+  if (normalized === "casual" || normalized === "streetwear") return "lifestyle";
+  if (normalized.includes("run")) return "running";
+  if (normalized.includes("limit")) return "limited";
   return categories.includes(normalized as Category) ? (normalized as Category) : undefined;
 }
 
@@ -116,10 +123,14 @@ function toProduct(node: ShopifyProductNode): Product {
   const priceValues = sizes.map((size) => size.price ?? 0).filter((price) => price > 0);
 
   // Categoria principal = productType; categorias extra = tags da Shopify
-  // (ex.: um produto "casual" com a tag "sales" aparece também nas Promoções).
-  const primaryCategory: Category = node.productType
-    ? toCategory(node.productType)
-    : (fallback?.category ?? "streetwear");
+  // (ex.: um produto "lifestyle" com a tag "promocoes" aparece também nas Promoções).
+  // O handle ajuda a classificar modelos de running conhecidos (ex.: Vomero).
+  const isRunningHandle = /vomero|pegasus|running/i.test(node.handle);
+  const primaryCategory: Category = isRunningHandle
+    ? "running"
+    : node.productType
+      ? toCategory(node.productType)
+      : (fallback?.category ?? "lifestyle");
   const extraCategories = Array.from(
     new Set<Category>([
       ...(fallback?.categories ?? []),

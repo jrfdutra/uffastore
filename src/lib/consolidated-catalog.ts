@@ -42,7 +42,9 @@ export type ConsolidatedProduct = {
 export const FOTO_PADRAO = "/produtos/uffa-modelo-padrao.webp";
 
 /** Tamanhos comercializados no escalão Criança (28-35.5). */
-const TAMANHOS_CRIANCA = [28, 28.5, 29, 29.5, 30, 30.5, 31, 31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5];
+const TAMANHOS_CRIANCA = [
+  28, 28.5, 29, 29.5, 30, 30.5, 31, 31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5,
+];
 
 /** Stock inicial de cada variante comercializável (cor + tamanho). */
 const STOCK_INICIAL = 5;
@@ -131,7 +133,7 @@ const modelos: ModeloBase[] = [
     sku: "DUNK-ROPE",
     name: "Nike Dunk w/ Rope Laces",
     modeloId: "nike-dunk-rope",
-    category: "streetwear",
+    category: "lifestyle",
     featured: true,
     description: {
       pt: "Nike Dunk com atacadores Rope Laces e o visual urbano mais procurado.",
@@ -174,7 +176,7 @@ const modelos: ModeloBase[] = [
     sku: "AF1-ROPE",
     name: "Air Force w/ Rope Laces",
     modeloId: "air-force-rope",
-    category: "streetwear",
+    category: "lifestyle",
     featured: true,
     description: {
       pt: "Air Force clássico com atacadores Rope Laces de alta resistência e estilo distintivo.",
@@ -228,7 +230,7 @@ export const consolidatedProducts: ConsolidatedProduct[] = [
     sku: "AF1-CRIANCA",
     name: "Air Force Criança",
     modeloId: "air-force-crianca",
-    category: "casual",
+    category: "lifestyle",
     status: "active",
     featured: false,
     description: {

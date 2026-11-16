@@ -86,7 +86,10 @@ test("Air Force Criança: White e Black, tamanhos 28 a 35.5, 129,99 €", () => 
   const tamanhos = [...new Set(produto.sizes.map((variante) => variante.size))].sort(
     (a, b) => a - b,
   );
-  assert.deepEqual(tamanhos, [28, 28.5, 29, 29.5, 30, 30.5, 31, 31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5]);
+  assert.deepEqual(
+    tamanhos,
+    [28, 28.5, 29, 29.5, 30, 30.5, 31, 31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5],
+  );
   assert.ok(produto.sizes.every((variante) => variante.price === 129.99));
   assert.equal(produto.sizes.length, 32);
 });
