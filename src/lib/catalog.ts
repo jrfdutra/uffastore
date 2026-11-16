@@ -61,6 +61,11 @@ function toProduct(node: ShopifyProductNode): Product {
     : [FOTO_PADRAO];
   const primaryImage = images[0] || FOTO_PADRAO;
 
+  // Vídeo do produto (Shopify), quando existe. Usa a primeira fonte mp4.
+  const video = node.media?.nodes
+    ?.find((item) => item.mediaContentType === "VIDEO")
+    ?.sources?.find((source) => source.mimeType === "video/mp4")?.url;
+
   // Cores reais da Shopify (opção "Cor"/"Color"), sem inventar valores.
   const colorValues = node.options?.find((option) => /cor|color/i.test(option.name))?.values ?? [];
 
@@ -90,7 +95,7 @@ function toProduct(node: ShopifyProductNode): Product {
 
   const sizes: ProductSize[] = (node.variants?.nodes ?? []).flatMap((variant) => {
     const sizeValue = optionValue(variant.selectedOptions, /tamanho|size|escal/i);
-    const size = Number.parseInt(sizeValue ?? "", 10);
+    const size = Number.parseFloat(sizeValue ?? "");
     if (!Number.isFinite(size)) return [];
 
     const colorValue = optionValue(variant.selectedOptions, /cor|color/i);
@@ -134,6 +139,8 @@ function toProduct(node: ShopifyProductNode): Product {
     status: fallback?.status ?? "active",
     image: primaryImage,
     ...(images.length ? { images } : {}),
+    ...(video ? { video } : {}),
+    ...(fallback?.videoColor ? { videoColor: fallback.videoColor } : {}),
     description: { pt: description, en: description, es: description },
     colors,
     sizes: sizes.length ? sizes : (fallback?.sizes ?? []),

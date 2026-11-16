@@ -34,13 +34,15 @@ export type ConsolidatedProduct = {
   };
   colors: ProductColorOption[];
   sizes: ProductSizeVariant[];
+  /** Cor a que o vídeo do produto pertence (ex.: "orange"), quando aplicável. */
+  videoColor?: string;
 };
 
 /** Fotografia padrão fornecida pela UFFA para todos os novos modelos. */
 export const FOTO_PADRAO = "/produtos/uffa-modelo-padrao.webp";
 
-/** Tamanhos comercializados no escalão Criança (28-35). */
-const TAMANHOS_CRIANCA = [28, 29, 30, 31, 32, 33, 34, 35];
+/** Tamanhos comercializados no escalão Criança (28-35.5). */
+const TAMANHOS_CRIANCA = [28, 28.5, 29, 29.5, 30, 30.5, 31, 31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5];
 
 /** Stock inicial de cada variante comercializável (cor + tamanho). */
 const STOCK_INICIAL = 5;
@@ -98,6 +100,8 @@ type ModeloBase = {
     es: string;
   };
   colors: ProductColorOption[];
+  /** Cor a que o vídeo pertence, para só o mostrar na variante certa. */
+  videoColor?: string;
 };
 
 /**
@@ -119,6 +123,8 @@ const modelos: ModeloBase[] = [
       es: "Edición especial Air Force Floral con acabado exclusivo y Rope Laces.",
     },
     colors: [cor("Pink", "pink"), cor("Orange", "orange")],
+    // O vídeo existente mostra a versão Orange.
+    videoColor: "orange",
   },
   {
     handleBase: "nike-dunk-w-rope-laces",
@@ -181,11 +187,16 @@ const modelos: ModeloBase[] = [
 
 /** Escalões comerciais: um anúncio para GS e outro para os tamanhos grandes. */
 const escaloesComerciais = [
-  { sufixo: "gs", etiqueta: "GS (36–39)", tamanhos: [36, 37, 38, 39], destaque: false },
+  {
+    sufixo: "gs",
+    etiqueta: "GS (36–39)",
+    tamanhos: [36, 36.5, 37, 37.5, 38, 38.5, 39, 39.5],
+    destaque: false,
+  },
   {
     sufixo: "senior",
     etiqueta: "Sénior (40–45)",
-    tamanhos: [40, 41, 42, 43, 44, 45],
+    tamanhos: [40, 40.5, 41, 41.5, 42, 42.5, 43, 43.5, 44, 44.5, 45],
     destaque: true,
   },
 ];
@@ -206,6 +217,7 @@ export const consolidatedProducts: ConsolidatedProduct[] = [
         featured: modelo.featured && escalao.destaque,
         description: modelo.description,
         colors: modelo.colors,
+        ...(modelo.videoColor ? { videoColor: modelo.videoColor } : {}),
         sizes: gerarVariantes(handle, modelo.modeloId, modelo.sku, modelo.colors, escalao.tamanhos),
       } satisfies ConsolidatedProduct;
     }),

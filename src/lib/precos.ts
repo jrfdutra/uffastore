@@ -14,8 +14,8 @@ export type ModeloId =
  * Determina o escalão a que pertence um tamanho.
  */
 export function escalaoPorTamanho(tamanho: number): Escalao {
-  if (tamanho >= 28 && tamanho <= 35) return "crianca";
-  if (tamanho >= 36 && tamanho <= 39) return "gs";
+  if (tamanho >= 28 && tamanho <= 35.5) return "crianca";
+  if (tamanho >= 36 && tamanho <= 39.5) return "gs";
   if (tamanho >= 40) return "senior";
   throw new Error(`Tamanho ${tamanho} fora dos escalões válidos (28+).`);
 }

@@ -11,7 +11,12 @@ import { tr } from "@/lib/i18n";
 const searchSchema = z.object({
   category: z.enum(["casual", "streetwear", "limited", "sales"]).optional(),
 });
-const sizeOptions: (number | "all")[] = ["all", 36, 37, 38, 39, 40, 41, 42, 43, 44, 45];
+/** Tamanhos disponíveis para filtro (inclui meios tamanhos como na Nike). */
+const sizeOptions: (number | "all")[] = [
+  "all",
+  36, 36.5, 37, 37.5, 38, 38.5, 39, 39.5,
+  40, 40.5, 41, 41.5, 42, 42.5, 43, 43.5, 44, 44.5, 45,
+];
 export const Route = createFileRoute("/catalogo")({
   validateSearch: (s) => searchSchema.parse(s),
   head: () => ({

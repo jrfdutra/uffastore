@@ -66,7 +66,7 @@ test("Os escalões usam a nomenclatura pedida", () => {
   assert.equal(catalogoData.escaloes.crianca.nome, "Criança");
   assert.equal(catalogoData.escaloes.gs.nome, "GS");
   assert.equal(catalogoData.escaloes.senior.nome, "Senior (40+)");
-  assert.deepEqual(catalogoData.escaloes.crianca.tamanhos, [28, 29, 30, 31, 32, 33, 34, 35]);
-  assert.deepEqual(catalogoData.escaloes.gs.tamanhos, [36, 37, 38, 39]);
-  assert.deepEqual(catalogoData.escaloes.senior.tamanhos, [40, 41, 42, 43, 44, 45]);
+  assert.deepEqual(catalogoData.escaloes.crianca.tamanhos, [28, 28.5, 29, 29.5, 30, 30.5, 31, 31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5]);
+  assert.deepEqual(catalogoData.escaloes.gs.tamanhos, [36, 36.5, 37, 37.5, 38, 38.5, 39, 39.5]);
+  assert.deepEqual(catalogoData.escaloes.senior.tamanhos, [40, 40.5, 41, 41.5, 42, 42.5, 43, 43.5, 44, 44.5, 45]);
 });
