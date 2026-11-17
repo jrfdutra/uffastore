@@ -23,14 +23,12 @@ export const Route = createFileRoute("/")({
       { title: "Uffa Store — Para quem pisa forte no estilo!" },
       {
         name: "description",
-        content:
-          "Sapatilhas com selo de autenticidade. Entrega em mãos na zona do Porto. Devolução gratuita em 14 dias.",
+        content: "Sapatilhas com selo de autenticidade. Entrega em mãos na zona do Porto.",
       },
       { property: "og:title", content: "Uffa Store — Para quem pisa forte no estilo!" },
       {
         property: "og:description",
-        content:
-          "Sapatilhas com selo de autenticidade. Entrega em mãos na zona do Porto. Devolução gratuita em 14 dias.",
+        content: "Sapatilhas com selo de autenticidade. Entrega em mãos na zona do Porto.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -44,17 +42,17 @@ const hero = {
   pt: {
     eyebrow: "Sapatilhas com selo de autenticidade · Porto",
     title: "PARA QUEM PISA FORTE NO ESTILO.",
-    text: "Sapatilhas com selo de autenticidade. Entrega em mãos na zona do Porto. Devolução gratuita em 14 dias.",
+    text: "Sapatilhas com selo de autenticidade. Entrega em mãos na zona do Porto.",
   },
   en: {
     eyebrow: "Authentic certified sneakers · Porto",
     title: "STEP STRONG IN STYLE.",
-    text: "Sneakers with authenticity seal. Hand delivery in the Porto area. Free 14-day returns.",
+    text: "Sneakers with authenticity seal. Hand delivery in the Porto area.",
   },
   es: {
     eyebrow: "Zapatillas con sello de autenticidad · Oporto",
     title: "PARA QUIENES PISAN FUERTE EN EL ESTILO.",
-    text: "Zapatillas con sello de autenticidad. Entrega en mano en la zona de Oporto. Devolución gratuita en 14 días.",
+    text: "Zapatillas con sello de autenticidad. Entrega en mano en la zona de Oporto.",
   },
 };
 

@@ -14,7 +14,6 @@ import { Route as AjudaRouteImport } from './routes/ajuda'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ConfirmacaoRouteImport } from './routes/confirmacao'
-import { Route as DevolucoesRouteImport } from './routes/devolucoes'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as ManualRouteImport } from './routes/manual'
 import { Route as OperacoesRouteImport } from './routes/operacoes'
@@ -47,11 +46,6 @@ const CheckoutRoute = CheckoutRouteImport.update({
 const ConfirmacaoRoute = ConfirmacaoRouteImport.update({
   id: '/confirmacao',
   path: '/confirmacao',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DevolucoesRoute = DevolucoesRouteImport.update({
-  id: '/devolucoes',
-  path: '/devolucoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FavoritosRoute = FavoritosRouteImport.update({
@@ -101,7 +95,6 @@ export interface FileRoutesByFullPath {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
-  '/devolucoes': typeof DevolucoesRoute
   '/favoritos': typeof FavoritosRoute
   '/manual': typeof ManualRoute
   '/operacoes': typeof OperacoesRoute
@@ -117,7 +110,6 @@ export interface FileRoutesByTo {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
-  '/devolucoes': typeof DevolucoesRoute
   '/favoritos': typeof FavoritosRoute
   '/manual': typeof ManualRoute
   '/operacoes': typeof OperacoesRoute
@@ -134,7 +126,6 @@ export interface FileRoutesById {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/confirmacao': typeof ConfirmacaoRoute
-  '/devolucoes': typeof DevolucoesRoute
   '/favoritos': typeof FavoritosRoute
   '/manual': typeof ManualRoute
   '/operacoes': typeof OperacoesRoute
@@ -152,7 +143,6 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
-    | '/devolucoes'
     | '/favoritos'
     | '/manual'
     | '/operacoes'
@@ -168,7 +158,6 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
-    | '/devolucoes'
     | '/favoritos'
     | '/manual'
     | '/operacoes'
@@ -184,7 +173,6 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/confirmacao'
-    | '/devolucoes'
     | '/favoritos'
     | '/manual'
     | '/operacoes'
@@ -201,7 +189,6 @@ export interface RootRouteChildren {
   CatalogoRoute: typeof CatalogoRoute
   CheckoutRoute: typeof CheckoutRoute
   ConfirmacaoRoute: typeof ConfirmacaoRoute
-  DevolucoesRoute: typeof DevolucoesRoute
   FavoritosRoute: typeof FavoritosRoute
   ManualRoute: typeof ManualRoute
   OperacoesRoute: typeof OperacoesRoute
@@ -247,13 +234,6 @@ declare module '@tanstack/react-router' {
       path: '/confirmacao'
       fullPath: '/confirmacao'
       preLoaderRoute: typeof ConfirmacaoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/devolucoes': {
-      id: '/devolucoes'
-      path: '/devolucoes'
-      fullPath: '/devolucoes'
-      preLoaderRoute: typeof DevolucoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/favoritos': {
@@ -321,7 +301,6 @@ const rootRouteChildren: RootRouteChildren = {
   CatalogoRoute: CatalogoRoute,
   CheckoutRoute: CheckoutRoute,
   ConfirmacaoRoute: ConfirmacaoRoute,
-  DevolucoesRoute: DevolucoesRoute,
   FavoritosRoute: FavoritosRoute,
   ManualRoute: ManualRoute,
   OperacoesRoute: OperacoesRoute,

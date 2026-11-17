@@ -69,8 +69,8 @@ function PrivacyPage() {
           body: (
             <ul className="list-disc space-y-2 pl-4">
               <li>
-                <strong>Execução do contrato:</strong> processar encomendas, entregas, devoluções e
-                apoio ao cliente.
+                <strong>Execução do contrato:</strong> processar encomendas, entregas e apoio ao
+                cliente.
               </li>
               <li>
                 <strong>Obrigação legal:</strong> faturação, contabilidade e conservação de registos

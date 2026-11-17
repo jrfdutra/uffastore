@@ -1,15 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import {
-  HelpCircle,
-  Package,
-  RefreshCw,
-  Mail,
-  MapPin,
-  Send,
-  CheckCircle2,
-  Instagram,
-} from "lucide-react";
+import { HelpCircle, Package, Mail, MapPin, Send, CheckCircle2, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,8 +14,7 @@ export const Route = createFileRoute("/ajuda")({
       { title: "Ajuda e Contactos — Uffa Store" },
       {
         name: "description",
-        content:
-          "Perguntas frequentes, pedidos, entregas, devoluções e contactos da Uffa Store no Porto.",
+        content: "Perguntas frequentes, pedidos, entregas e contactos da Uffa Store no Porto.",
       },
       { property: "og:title", content: "Ajuda e Contactos — Uffa Store" },
       { property: "og:type", content: "website" },
@@ -78,14 +68,14 @@ function HelpPage() {
         <p className="mt-3 text-muted-foreground text-sm md:text-base">
           {tr(
             language,
-            "Tudo o que precisas de saber sobre encomendas, entregas, trocas e suporte na UFFA Store.",
-            "Everything you need to know about orders, shipping, exchanges and support at UFFA Store.",
-            "Todo lo que necesitas saber sobre pedidos, envíos, cambios y soporte en UFFA Store.",
+            "Tudo o que precisas de saber sobre encomendas, entregas e suporte na UFFA Store.",
+            "Everything you need to know about orders, shipping and support at UFFA Store.",
+            "Todo lo que necesitas saber sobre pedidos, envíos y soporte en UFFA Store.",
           )}
         </p>
       </div>
 
-      <div className="mt-16 grid gap-12 lg:grid-cols-3">
+      <div className="mt-16 grid gap-12 lg:grid-cols-2">
         {/* Section A: Pedidos e Entregas */}
         <div className="border border-border bg-card p-6 md:p-8 space-y-4">
           <div className="flex items-center gap-3">
@@ -138,71 +128,12 @@ function HelpPage() {
           </ul>
         </div>
 
-        {/* Section B: Devoluções e Reembolsos */}
-        <div className="border border-border bg-card p-6 md:p-8 space-y-4">
-          <div className="flex items-center gap-3">
-            <RefreshCw className="size-6 text-primary" />
-            <h2 className="font-display text-2xl uppercase">
-              {tr(
-                language,
-                "2. Devoluções e Reembolsos",
-                "2. Returns & Refunds",
-                "2. Devoluciones y Reembolsos",
-              )}
-            </h2>
-          </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {tr(
-              language,
-              "Tens 14 dias, a contar da receção, para devolver a tua encomenda sem necessidade de justificação. Os artigos devem estar sem uso e na embalagem original. Produtos com defeito são recolhidos e substituídos ou reembolsados por nossa conta.",
-              "You have 14 days from delivery to return your order without justification. Items must be unused and in their original packaging. Defective products are collected and replaced or refunded at our expense.",
-              "Tienes 14 días desde la recepción para devolver tu pedido sin necesidad de justificación. Los artículos deben estar sin uso y en su embalaje original. Los productos defectuosos se recogen y sustituyen o reembolsan por nuestra cuenta.",
-            )}
-          </p>
-          <ul className="space-y-2 text-xs text-muted-foreground list-disc pl-4">
-            <li>
-              {tr(
-                language,
-                "14 dias de livre resolução",
-                "14-day right of withdrawal",
-                "14 días de libre resolución",
-              )}
-            </li>
-            <li>
-              {tr(
-                language,
-                "Artigos com defeito: contacto em 48h",
-                "Defective items: contact within 48h",
-                "Artículos defectuosos: contacto en 48h",
-              )}
-            </li>
-            <li>
-              {tr(
-                language,
-                "Reembolsos processados via Shopify Payments",
-                "Refunds processed via Shopify Payments",
-                "Reembolsos procesados vía Shopify Payments",
-              )}
-            </li>
-            <li>
-              <Link to="/devolucoes" className="text-primary underline">
-                {tr(
-                  language,
-                  "Ver política de devoluções",
-                  "See returns policy",
-                  "Ver política de devoluciones",
-                )}
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* Section C: Contactos Rápidos */}
+        {/* Section B: Contactos Rápidos */}
         <div className="border border-border bg-card p-6 md:p-8 space-y-4">
           <div className="flex items-center gap-3">
             <Mail className="size-6 text-primary" />
             <h2 className="font-display text-2xl uppercase">
-              {tr(language, "3. Canais Oficiais", "3. Official Channels", "3. Canales Oficiales")}
+              {tr(language, "2. Canais Oficiais", "2. Official Channels", "2. Canales Oficiales")}
             </h2>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">

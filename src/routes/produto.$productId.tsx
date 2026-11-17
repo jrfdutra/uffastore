@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
-import { BadgeCheck, Box, Hand, Play, Rotate3D } from "lucide-react";
+import { BadgeCheck, Hand, Play, Rotate3D } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -484,10 +484,6 @@ function ProductDetail() {
             <div className="flex gap-3 border border-border p-4">
               <Hand className="size-5 text-primary" />
               <span>{t.pickup}</span>
-            </div>
-            <div className="col-span-2 flex gap-3 border border-border p-4">
-              <Box className="size-5 text-primary" />
-              <span>{t.noReturns}</span>
             </div>
           </div>
         </div>

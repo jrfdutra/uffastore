@@ -71,24 +71,10 @@ function TermsPage() {
           ),
         },
         {
-          heading: "5. Direito de livre resolução",
+          heading: "5. Garantia e defeitos",
           body: (
             <p>
-              Nos termos da lei, tens direito a resolver o contrato no prazo de 14 dias a contar da
-              receção do produto, sem necessidade de justificação. Consulta a{" "}
-              <a className="text-primary underline" href="/devolucoes">
-                política de devoluções
-              </a>{" "}
-              para saber como exercer este direito.
-            </p>
-          ),
-        },
-        {
-          heading: "6. Garantia e defeitos",
-          body: (
-            <p>
-              Os produtos beneficiam da garantia legal de conformidade de 3 anos para bens móveis
-              novos. Se o produto apresentar defeito, contacta-nos em{" "}
+              Se o produto apresentar defeito, contacta-nos em{" "}
               <a className="text-primary underline" href={`mailto:${company.email}`}>
                 {company.email}
               </a>{" "}
@@ -97,7 +83,7 @@ function TermsPage() {
           ),
         },
         {
-          heading: "7. Responsabilidade",
+          heading: "6. Responsabilidade",
           body: (
             <p>
               A Uffa Store não é responsável por atrasos causados por transportadoras, casos de
@@ -107,30 +93,11 @@ function TermsPage() {
           ),
         },
         {
-          heading: "8. Propriedade intelectual",
+          heading: "7. Propriedade intelectual",
           body: (
             <p>
               A marca, logótipo, fotografias e textos do site pertencem à Uffa Store ou são
               utilizados com autorização. É proibida a reprodução sem consentimento escrito.
-            </p>
-          ),
-        },
-        {
-          heading: "9. Lei aplicável e resolução de litígios",
-          body: (
-            <p>
-              Aplica-se a lei portuguesa. Em caso de litígio, o consumidor pode recorrer às
-              entidades de resolução alternativa de litígios de consumo competentes ou ao Livro de
-              Reclamações Eletrónico, disponível em{" "}
-              <a
-                className="text-primary underline"
-                href={company.complaintsBook}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                livroreclamacoes.pt
-              </a>
-              .
             </p>
           ),
         },
