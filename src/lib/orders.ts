@@ -1,4 +1,5 @@
 import { localeByLanguage } from "./i18n";
+import { generatePairCode, pairCount } from "./pair-code";
 import { products, type Language, type Product } from "./shop-data";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 
@@ -177,7 +178,7 @@ export const demoAccess = {
   accessCode: "UFFA-7K3M-9QX2",
 } as const;
 
-export const demoAuthCode = "UFFA-AUTH-4K7P-2M9Q";
+export const demoAuthCode = "UFFA-4K7P2M";
 
 const ORDERS_KEY = "uffa-orders-v1";
 const ATTEMPTS_KEY = "uffa-order-attempts-v1";
@@ -258,11 +259,11 @@ function sendEmailNotification(order: Order, status: OrderStatus): EmailNotifica
     const authDetails = order.items
       .map(
         (item) =>
-          `- ${item.name} (Tamanho ${item.size}): N/S: ${item.serial} | Código de Autenticidade: ${item.authCode}`,
+          `- ${item.name} (Tamanho ${item.size}): N/S: ${item.serial} | Código do par: ${item.authCode}`,
       )
       .join("\n");
     subject = `Certificado de Autenticidade e Agradecimento · Encomenda UFFA ${order.number}`;
-    body = `Olá, ${order.customerName || "Cliente"}! 💗\n\nMuito obrigado pela tua compra na Uffa Store! É um enorme prazer fazer parte do teu estilo.\n\nEm anexo digital, enviamos o teu Certificado de Autenticidade Oficial UFFA para os artigos adquiridos:\n\n${authDetails}\n\nPodes verificar e validar a autenticidade dos teus ténis a qualquer momento em: https://www.uffastore.pt/verificar\n\nA tua encomenda foi confirmada com sucesso e já está a ser preparada com todo o cuidado.\n\nCom carinho e estilo,\nEquipa UFFA\natendimento@uffastore.pt`;
+    body = `Olá, ${order.customerName || "Cliente"}! 💗\n\nMuito obrigado pela tua compra na Uffa Store! É um enorme prazer fazer parte do teu estilo.\n\nEm anexo digital, enviamos o teu Certificado de Autenticidade Oficial UFFA para os artigos adquiridos:\n\n${authDetails}\n\nCom o código do par podes consultar a situação de entrega e validar a autenticidade a qualquer momento em: https://www.uffastore.pt/verificar\n\nA tua encomenda foi confirmada com sucesso e já está a ser preparada com todo o cuidado.\n\nCom carinho e estilo,\nEquipa UFFA\natendimento@uffastore.pt`;
   }
 
   return {
@@ -338,7 +339,7 @@ function seedOrders(): Order[] {
           size: 40,
           quantity: 1,
           unitPrice: court.price,
-          authCode: "UFFA-AUTH-8R3T-6N1W",
+          authCode: "UFFA-8R3T6N",
           serial: "UFFA-2026-104288",
         },
       ],
@@ -402,7 +403,7 @@ function seedOrders(): Order[] {
           size: 42,
           quantity: 1,
           unitPrice: invicta.price,
-          authCode: "UFFA-AUTH-9C2L-7B4X",
+          authCode: "UFFA-9C2L7B",
           serial: "UFFA-2026-104512",
         },
       ],
@@ -500,20 +501,38 @@ export function createOrder(input: {
   const number = generateOrderNumber(existing);
   const now = new Date();
 
+  // Um par físico = um código. Se a linha do carrinho tiver quantidade 2,
+  // geramos dois itens (cada um com o seu código e número de série), para que
+  // cada par tenha o seu certificado e possa ser localizado individualmente.
+  const usedCodes = new Set(
+    existing.flatMap((order) => order.items.map((item) => normalizeCode(item.authCode))),
+  );
+  const nextAuthCode = () => {
+    for (let attempt = 0; attempt < 50; attempt += 1) {
+      const candidate = generateAuthCode();
+      if (!usedCodes.has(normalizeCode(candidate))) {
+        usedCodes.add(normalizeCode(candidate));
+        return candidate;
+      }
+    }
+    const fallback = generateAuthCode();
+    usedCodes.add(normalizeCode(fallback));
+    return fallback;
+  };
+
   const items: OrderItem[] = input.cart.flatMap((line) => {
     const product = products.find((candidate) => candidate.id === line.productId);
     if (!product) return [];
-    return [
-      {
-        productId: product.id,
-        name: product.name,
-        size: line.size,
-        quantity: line.quantity,
-        unitPrice: product.price,
-        authCode: generateAuthCode(),
-        serial: generateSerial(),
-      },
-    ];
+    const pairs = pairCount(line.quantity);
+    return Array.from({ length: pairs }, () => ({
+      productId: product.id,
+      name: product.name,
+      size: line.size,
+      quantity: 1,
+      unitPrice: product.price,
+      authCode: nextAuthCode(),
+      serial: generateSerial(),
+    }));
   });
 
   if (items.length === 0) throw new Error("O carrinho está vazio.");
@@ -751,13 +770,34 @@ export function verifyAuthCode(input: string): AuthVerification | null {
   if (!code) return null;
   for (const order of loadOrders()) {
     for (const item of order.items) {
-      if (normalizeCode(item.authCode) === code) {
+      if (
+        normalizeCode(item.authCode) === code ||
+        normalizeCode(item.serial) === code ||
+        normalizeCode(`${order.number}${item.serial}`) === code
+      ) {
         const product = products.find((candidate) => candidate.id === item.productId);
         if (product) return { order, item, product };
       }
     }
   }
   return null;
+}
+
+/** Progresso público da entrega de uma encomenda (sem dados pessoais). */
+export function getDeliveryProgress(order: Order) {
+  const flow = statusFlow[order.delivery];
+  const index = flow.indexOf(order.status);
+  const total = flow.length;
+  const completed = order.status === "cancelled" ? 0 : Math.max(0, index + 1);
+  return {
+    flow,
+    index,
+    total,
+    completed,
+    percent: total > 0 ? Math.round((completed / total) * 100) : 0,
+    isFinal: isFinalStatus(order.status),
+    lastEvent: order.events.length > 0 ? order.events[order.events.length - 1] : null,
+  };
 }
 
 export function normalizeOrderNumber(value: string) {
@@ -841,7 +881,8 @@ function generateAccessCode() {
 }
 
 function generateAuthCode() {
-  return `UFFA-AUTH-${randomToken(4)}-${randomToken(4)}`;
+  // Código curto e fácil de ditar: UFFA-XXXXXX (sem letras/números ambíguos).
+  return generatePairCode();
 }
 
 function generateTrackingCode(number: string) {

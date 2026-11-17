@@ -212,14 +212,24 @@ function Confirmation() {
                   <h2 className="font-display text-2xl uppercase">
                     {tr(language, "Itens", "Items", "Artículos")}
                   </h2>
-                  <span className="text-xs text-muted-foreground">{order.items.length}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {order.items.length} {tr(language, "pares", "pairs", "pares")}
+                  </span>
                 </div>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  {tr(
+                    language,
+                    "Cada par tem o seu código único para consultar a entrega e a autenticidade.",
+                    "Each pair has its own unique code to check delivery and authenticity.",
+                    "Cada par tiene su propio código único para consultar la entrega y la autenticidad.",
+                  )}
+                </p>
                 <div className="mt-3">
                   {order.items.map((item) => {
                     const product = catalog.find((candidate) => candidate.id === item.productId);
                     return (
                       <div
-                        key={`${item.productId}-${item.size}`}
+                        key={item.authCode || `${item.productId}-${item.size}`}
                         className="grid grid-cols-[64px_1fr] gap-3 border-b border-border py-4 last:border-b-0"
                       >
                         {product && (
@@ -236,8 +246,8 @@ function Confirmation() {
                             <div>
                               <p className="text-sm font-bold">{item.name}</p>
                               <p className="text-xs text-muted-foreground">
-                                {tr(language, "Tamanho", "Size", "Talla")} {item.size} ·{" "}
-                                {item.quantity}x
+                                {tr(language, "Tamanho", "Size", "Talla")} {item.size}
+                                {item.quantity > 1 ? ` · ${item.quantity}x` : ""}
                               </p>
                             </div>
                             <p className="text-sm font-bold">
@@ -246,13 +256,21 @@ function Confirmation() {
                           </div>
                           <div className="mt-2 flex flex-wrap items-center gap-2 border border-primary/20 bg-primary/15 px-2 py-1.5">
                             <ShieldCheck className="size-3.5 text-primary" />
+                            <span className="text-[10px] font-bold uppercase text-primary">
+                              {tr(language, "Código do par", "Pair code", "Código del par")}
+                            </span>
                             <code className="font-mono text-[11px] font-bold">{item.authCode}</code>
                             <Link
                               to="/verificar"
                               search={{ codigo: item.authCode }}
                               className="ml-auto text-[10px] font-bold uppercase text-primary hover:underline"
                             >
-                              {tr(language, "Verificar", "Verify", "Verificar")}
+                              {tr(
+                                language,
+                                "Entrega & autenticidade",
+                                "Delivery & authenticity",
+                                "Entrega y autenticidad",
+                              )}
                             </Link>
                           </div>
                         </div>

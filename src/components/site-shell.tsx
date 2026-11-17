@@ -45,7 +45,7 @@ import {
   type ReactNode,
 } from "react";
 
-const cats: Category[] = ["promocoes", "lifestyle", "running", "limited"];
+const cats: Category[] = ["promocoes", "lifestyle", "running", "limited", "personalizacao"];
 
 /** Sobe a página ao topo, respeitando quem prefere menos movimento. */
 function scrollPageToTop() {
@@ -375,21 +375,6 @@ function MobileNav({
             );
           })}
           <Link
-            to="/catalogo"
-            search={{ category: "personalizacao" }}
-            onClick={close}
-            className={`border-b border-border py-4 font-display text-3xl uppercase flex items-center justify-between ${
-              location.pathname === "/catalogo" && (location.search as { category?: string })?.category === "personalizacao"
-                ? "text-primary font-black"
-                : "text-foreground"
-            }`}
-          >
-            <span>{categoryNames.personalizacao[language]}</span>
-            {location.pathname === "/catalogo" && (location.search as { category?: string })?.category === "personalizacao" && (
-              <span className="size-2 rounded-full bg-primary" aria-hidden="true" />
-            )}
-          </Link>
-          <Link
             to="/favoritos"
             onClick={close}
             className="mt-6 font-semibold text-primary flex items-center gap-2"
@@ -411,9 +396,9 @@ function MobileNav({
           <Link to="/verificar" onClick={close} className="mt-3 font-semibold text-primary">
             {tr(
               language,
-              "Verificar autenticidade",
-              "Verify authenticity",
-              "Verificar autenticidad",
+              "Código do par e entrega",
+              "Pair code & delivery",
+              "Código del par y entrega",
             )}
           </Link>
         </nav>
@@ -658,9 +643,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <Link to="/verificar" className="hover:text-brand">
               {tr(
                 s.language,
-                "Verificar autenticidade",
-                "Verify authenticity",
-                "Verificar autenticidad",
+                "Código do par e entrega",
+                "Pair code & delivery",
+                "Código del par y entrega",
               )}
             </Link>
             <span aria-hidden className="my-2 h-px w-12 bg-footer-border" />

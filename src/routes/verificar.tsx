@@ -4,6 +4,7 @@ import { z } from "zod";
 import {
   ArrowRight,
   BadgeCheck,
+  CalendarDays,
   CheckCircle2,
   Copy,
   ExternalLink,
@@ -11,6 +12,7 @@ import {
   LockKeyhole,
   Search,
   ShieldCheck,
+  Truck,
   XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -20,22 +22,32 @@ import { Label } from "@/components/ui/label";
 import { tr } from "@/lib/i18n";
 import { categoryNames, type Language } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
-import { demoAuthCode, formatDate, verifyAuthCode, type AuthVerification } from "@/lib/orders";
+import {
+  demoAuthCode,
+  formatDate,
+  formatDateTime,
+  getDeliveryProgress,
+  orderStatusInfo,
+  verifyAuthCode,
+  type AuthVerification,
+  type Order,
+} from "@/lib/orders";
 
 export const Route = createFileRoute("/verificar")({
   validateSearch: (search) => z.object({ codigo: z.string().optional() }).parse(search),
   head: () => ({
     meta: [
-      { title: "Verificar autenticidade — Uffa Store" },
+      { title: "Código do par e entrega — Uffa Store" },
       {
         name: "description",
         content:
-          "Valida o código exclusivo do teu par UFFA e confirma a autenticidade, o número de série e a edição.",
+          "Introduz o código do teu par UFFA para confirmar a autenticidade, o número de série e a situação da entrega.",
       },
-      { property: "og:title", content: "Verificar autenticidade — Uffa Store" },
+      { property: "og:title", content: "Código do par e entrega — Uffa Store" },
       {
         property: "og:description",
-        content: "Cada par UFFA tem um código de autenticidade único. Confirma o teu.",
+        content:
+          "Cada par UFFA tem um código único. Confirma a autenticidade e acompanha a entrega.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -102,9 +114,9 @@ function VerificationPage() {
             <p className="mt-5 max-w-2xl text-background/70">
               {tr(
                 language,
-                "Cada par vendido pela UFFA recebe um código de autenticidade único. Introduz o código para confirmar o produto, o tamanho, o número de série e a edição.",
-                "Every pair sold by UFFA receives a unique authenticity code. Enter the code to confirm the product, size, serial number and edition.",
-                "Cada par vendido por UFFA recibe un código de autenticidad único. Introduce el código para confirmar el producto, la talla, el número de serie y la edición.",
+                "Cada par vendido pela UFFA recebe um código único. Introduz o código para confirmar a autenticidade e consultar a situação de entrega — sem expor os teus dados pessoais.",
+                "Every pair sold by UFFA receives a unique code. Enter the code to confirm authenticity and check the delivery status — without exposing your personal data.",
+                "Cada par vendido por UFFA recibe un código único. Introduce el código para confirmar la autenticidad y consultar el estado de la entrega — sin exponer tus datos personales.",
               )}
             </p>
             <div className="mt-7 flex flex-wrap gap-2 text-[11px] font-bold uppercase">
@@ -152,12 +164,7 @@ function VerificationPage() {
               </span>
               <div>
                 <h2 className="font-display text-3xl uppercase">
-                  {tr(
-                    language,
-                    "Código de autenticidade",
-                    "Authenticity code",
-                    "Código de autenticidad",
-                  )}
+                  {tr(language, "Código do par", "Pair code", "Código del par")}
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {tr(
@@ -184,7 +191,7 @@ function VerificationPage() {
                     setResult(null);
                   }
                 }}
-                placeholder="UFFA-AUTH-XXXX-XXXX"
+                placeholder="UFFA-XXXXXX"
                 autoComplete="off"
                 spellCheck={false}
                 className="h-14 rounded-none font-mono text-base uppercase tracking-wider"
@@ -193,9 +200,9 @@ function VerificationPage() {
               <p className="text-[11px] text-muted-foreground">
                 {tr(
                   language,
-                  "Formato UFFA-AUTH-XXXX-XXXX. Não distingue maiúsculas de minúsculas.",
-                  "Format UFFA-AUTH-XXXX-XXXX. Case-insensitive.",
-                  "Formato UFFA-AUTH-XXXX-XXXX. No distingue mayúsculas de minúsculas.",
+                  "Formato UFFA-XXXXXX. Também aceita o número de série. Não distingue maiúsculas de minúsculas.",
+                  "Format UFFA-XXXXXX. The serial number also works. Case-insensitive.",
+                  "Formato UFFA-XXXXXX. También acepta el número de serie. No distingue mayúsculas de minúsculas.",
                 )}
               </p>
             </div>
@@ -204,9 +211,9 @@ function VerificationPage() {
               <Search />
               {tr(
                 language,
-                "Verificar autenticidade",
-                "Verify authenticity",
-                "Verificar autenticidad",
+                "Consultar par e entrega",
+                "Check pair & delivery",
+                "Consultar par y entrega",
               )}
             </Button>
 
@@ -267,18 +274,18 @@ function VerificationPage() {
                   ),
                   text: tr(
                     language,
-                    "Cada linha da encomenda recebe um código e um número de série.",
-                    "Each order line receives a code and a serial number.",
-                    "Cada línea del pedido recibe un código y un número de serie.",
+                    "Cada par recebe o seu código e número de série.",
+                    "Each pair receives its own code and serial number.",
+                    "Cada par recibe su código y número de serie.",
                   ),
                 },
                 {
                   title: tr(language, "Associado ao par", "Linked to the pair", "Asociado al par"),
                   text: tr(
                     language,
-                    "O código confirma produto, tamanho, edição e data de registo.",
-                    "The code confirms product, size, edition and registration date.",
-                    "El código confirma producto, talla, edición y fecha de registro.",
+                    "O código confirma produto, tamanho, edição e a situação da entrega.",
+                    "The code confirms product, size, edition and delivery status.",
+                    "El código confirma producto, talla, edición y el estado de la entrega.",
                   ),
                 },
                 {
@@ -396,7 +403,7 @@ function ValidResult({ result }: { result: AuthVerification }) {
         <div>
           <div className="grid gap-3 sm:grid-cols-2">
             <Detail
-              label={tr(language, "Código exclusivo", "Exclusive code", "Código exclusivo")}
+              label={tr(language, "Código do par", "Pair code", "Código del par")}
               value={item.authCode}
               mono
               copy
@@ -420,6 +427,8 @@ function ValidResult({ result }: { result: AuthVerification }) {
               value="UFFA Store · Porto"
             />
           </div>
+
+          <PairDelivery order={order} />
 
           <div className="mt-5 flex flex-wrap gap-2">
             <Button asChild variant="outline" className="rounded-none">
@@ -448,6 +457,90 @@ function ValidResult({ result }: { result: AuthVerification }) {
         </div>
       </div>
     </section>
+  );
+}
+
+function PairDelivery({ order }: { order: Order }) {
+  const { language } = useShop();
+  const status = orderStatusInfo[order.status];
+  const progress = getDeliveryProgress(order);
+
+  return (
+    <div className="mt-5 border border-border bg-background p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="flex items-center gap-2 text-xs font-bold uppercase text-primary">
+          <Truck className="size-4" />
+          {tr(language, "Situação da entrega", "Delivery status", "Estado de la entrega")}
+        </p>
+        <span
+          className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-bold uppercase ${status.tone}`}
+        >
+          {status.label[language]}
+        </span>
+      </div>
+
+      <div className="mt-3 h-1.5 w-full bg-muted">
+        <div
+          className="h-full bg-primary transition-all duration-500"
+          style={{ width: `${progress.percent}%` }}
+        />
+      </div>
+      <p className="mt-2 text-xs text-muted-foreground">{status.description[language]}</p>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <Detail label={tr(language, "Encomenda", "Order", "Pedido")} value={order.number} mono />
+        <Detail
+          label={tr(language, "Transportador", "Carrier", "Transportista")}
+          value={
+            order.carrier ?? tr(language, "Recolha na loja", "Store pickup", "Recogida en tienda")
+          }
+        />
+        <Detail
+          label={tr(language, "Código de rastreio", "Tracking code", "Código de seguimiento")}
+          value={order.trackingCode ?? "—"}
+          mono
+        />
+        <Detail
+          label={tr(language, "Entrega prevista", "Estimated delivery", "Entrega prevista")}
+          value={formatDate(order.estimatedDelivery, language)}
+        />
+      </div>
+
+      {progress.lastEvent && (
+        <p className="mt-3 flex items-start gap-2 border-t border-border pt-3 text-[11px] text-muted-foreground">
+          <CalendarDays className="mt-0.5 size-3.5 shrink-0 text-primary" />
+          <span>
+            {tr(language, "Última atualização", "Last update", "Última actualización")}:{" "}
+            {formatDateTime(progress.lastEvent.at, language)}
+            {progress.lastEvent.location ? ` · ${progress.lastEvent.location}` : ""}
+          </span>
+        </p>
+      )}
+
+      <div className="mt-3 border-t border-border pt-3">
+        <Link
+          to="/rastreio"
+          search={{ order: order.number }}
+          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase text-primary hover:underline"
+        >
+          {tr(
+            language,
+            "Ver detalhes completos da encomenda",
+            "See full order details",
+            "Ver detalles completos del pedido",
+          )}
+          <ArrowRight className="size-3.5" />
+        </Link>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          {tr(
+            language,
+            "O acesso completo pede o número da encomenda, o contacto e o código de exclusividade.",
+            "Full access requires the order number, contact and exclusive code.",
+            "El acceso completo pide el número de pedido, el contacto y el código de exclusividad.",
+          )}
+        </p>
+      </div>
+    </div>
   );
 }
 

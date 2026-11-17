@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import {
@@ -143,9 +143,11 @@ function AccessLanding({
   onUnlock: (order: Order) => void;
 }) {
   const { language } = useShop();
+  const navigate = useNavigate();
   const [orderNumber, setOrderNumber] = useState(initialOrder);
   const [contact, setContact] = useState("");
   const [accessCode, setAccessCode] = useState("");
+  const [pairCode, setPairCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -213,6 +215,13 @@ function AccessLanding({
     setContact(demoAccess.contact);
     setAccessCode(demoAccess.accessCode);
     setError(null);
+  };
+
+  const openPairStatus = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const value = pairCode.trim();
+    if (!value) return;
+    void navigate({ to: "/verificar", search: { codigo: value } });
   };
 
   const steps = [
@@ -522,6 +531,47 @@ function AccessLanding({
               </ol>
             </div>
 
+            <div className="border border-border bg-card p-6">
+              <p className="flex items-center gap-2 text-xs font-bold uppercase text-primary">
+                <ShieldCheck className="size-4" />
+                {tr(language, "Consulta rápida", "Quick lookup", "Consulta rápida")}
+              </p>
+              <h2 className="mt-3 font-display text-3xl uppercase">
+                {tr(
+                  language,
+                  "Só tens o código do par?",
+                  "Only have the pair code?",
+                  "¿Solo tienes el código del par?",
+                )}
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {tr(
+                  language,
+                  "Não precisas do número da encomenda nem do contacto. Introduz o código do par para ver a autenticidade e a situação da entrega.",
+                  "You don't need the order number or contact. Enter the pair code to see authenticity and the delivery status.",
+                  "No necesitas el número del pedido ni el contacto. Introduce el código del par para ver la autenticidad y el estado de la entrega.",
+                )}
+              </p>
+              <form onSubmit={openPairStatus} className="mt-4 space-y-2">
+                <Label htmlFor="pair-code">
+                  {tr(language, "Código do par", "Pair code", "Código del par")}
+                </Label>
+                <Input
+                  id="pair-code"
+                  value={pairCode}
+                  onChange={(event) => setPairCode(event.target.value)}
+                  placeholder="UFFA-XXXXXX"
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="h-12 rounded-none font-mono uppercase tracking-wider"
+                />
+                <Button type="submit" variant="outline" className="w-full rounded-none">
+                  {tr(language, "Consultar par", "Check pair", "Consultar par")}
+                  <ArrowRight />
+                </Button>
+              </form>
+            </div>
+
             <div className="border border-dashed border-primary bg-primary/15 p-6">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-xs font-bold uppercase text-primary">
@@ -619,13 +669,13 @@ function AccessLanding({
             <p className="mt-2 max-w-md text-sm text-muted-foreground">
               {tr(
                 language,
-                "Cada par vendido tem um código de autenticidade único. Confirma aqui se é genuíno.",
-                "Every pair sold has a unique authenticity code. Confirm here that it's genuine.",
-                "Cada par vendido tiene un código de autenticidad único. Confirma aquí que es genuino.",
+                "Cada par vendido tem um código único. Confirma a autenticidade e acompanha a situação da entrega.",
+                "Every pair sold has a unique code. Confirm authenticity and follow the delivery status.",
+                "Cada par vendido tiene un código único. Confirma la autenticidad y sigue el estado de la entrega.",
               )}
             </p>
             <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold uppercase text-primary">
-              {tr(language, "Verificar código", "Verify code", "Verificar código")}
+              {tr(language, "Consultar par", "Check pair", "Consultar par")}
               <ArrowRight className="size-4 transition group-hover:translate-x-1" />
             </span>
           </Link>
@@ -1044,7 +1094,7 @@ function ItemsCard({ order }: { order: Order }) {
           {tr(language, "Itens", "Items", "Artículos")}
         </h2>
         <span className="text-xs text-muted-foreground">
-          {order.items.length} {tr(language, "referências", "references", "referencias")}
+          {order.items.length} {tr(language, "pares", "pairs", "pares")}
         </span>
       </div>
 
@@ -1053,7 +1103,7 @@ function ItemsCard({ order }: { order: Order }) {
           const product = catalog.find((candidate) => candidate.id === item.productId);
           return (
             <div
-              key={`${item.productId}-${item.size}`}
+              key={item.authCode || `${item.productId}-${item.size}`}
               className="grid gap-4 border-b border-border py-5 last:border-b-0 sm:grid-cols-[96px_1fr]"
             >
               {product && (
@@ -1073,7 +1123,8 @@ function ItemsCard({ order }: { order: Order }) {
                     </p>
                     <h3 className="mt-1 font-bold">{item.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {tr(language, "Tamanho", "Size", "Talla")} {item.size} · {item.quantity}x
+                      {tr(language, "Tamanho", "Size", "Talla")} {item.size}
+                      {item.quantity > 1 ? ` · ${item.quantity}x` : ""}
                     </p>
                   </div>
                   <p className="font-bold">{money(item.unitPrice * item.quantity)}</p>
@@ -1082,12 +1133,7 @@ function ItemsCard({ order }: { order: Order }) {
                 <div className="mt-4 flex flex-wrap items-center gap-2 border border-primary/20 bg-primary/15 px-3 py-2">
                   <ShieldCheck className="size-4 text-primary" />
                   <span className="text-[10px] font-bold uppercase text-primary">
-                    {tr(
-                      language,
-                      "Código de autenticidade",
-                      "Authenticity code",
-                      "Código de autenticidad",
-                    )}
+                    {tr(language, "Código do par", "Pair code", "Código del par")}
                   </span>
                   <code className="font-mono text-xs font-bold">{item.authCode}</code>
                   <Button
@@ -1100,12 +1146,7 @@ function ItemsCard({ order }: { order: Order }) {
                       copyText(
                         item.authCode,
                         language,
-                        tr(
-                          language,
-                          "Código de autenticidade",
-                          "Authenticity code",
-                          "Código de autenticidad",
-                        ),
+                        tr(language, "Código do par", "Pair code", "Código del par"),
                       )
                     }
                   >
@@ -1113,7 +1154,12 @@ function ItemsCard({ order }: { order: Order }) {
                   </Button>
                   <Button asChild variant="link" size="sm" className="ml-auto h-auto p-0 text-xs">
                     <Link to="/verificar" search={{ codigo: item.authCode }}>
-                      {tr(language, "Verificar", "Verify", "Verificar")}
+                      {tr(
+                        language,
+                        "Entrega & autenticidade",
+                        "Delivery & authenticity",
+                        "Entrega y autenticidad",
+                      )}
                       <ExternalLink />
                     </Link>
                   </Button>

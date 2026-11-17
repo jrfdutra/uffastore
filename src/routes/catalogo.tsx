@@ -147,7 +147,7 @@ function Catalog() {
               {tr(language, "Categoria", "Category", "Categoría")}
             </legend>
             <div className="flex flex-wrap gap-2 lg:flex-col">
-              {(["all", "promocoes", "lifestyle", "running", "limited", "personalizacao"] as const).map((c) => (
+              {(["all", "promocoes", "lifestyle", "running", "limited"] as const).map((c) => (
                 <Button
                   key={c}
                   variant={category === c ? "default" : "outline"}
@@ -296,7 +296,12 @@ function Catalog() {
                 {tr(language, "Em Desenvolvimento", "Under Construction", "En Construcción")}
               </span>
               <h2 className="font-display text-4xl uppercase md:text-5xl mb-3">
-                {tr(language, "Serviço de Personalização", "Customization Service", "Servicio de Personalización")}
+                {tr(
+                  language,
+                  "Serviço de Personalização",
+                  "Customization Service",
+                  "Servicio de Personalización",
+                )}
               </h2>
               <p className="max-w-md mx-auto text-muted-foreground text-sm leading-relaxed mb-8">
                 {tr(
