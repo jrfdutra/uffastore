@@ -664,7 +664,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         </div>
         <div className="border-t border-footer-border px-4 py-5 text-center text-xs text-footer-muted">
           <p>
-            © 2026 {company.legalName} · {company.nif} · {company.address}
+            © 2026 {company.legalName} · {company.credit} · {company.address}
           </p>
           <p className="mt-1">
             {tr(

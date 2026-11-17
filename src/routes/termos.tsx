@@ -64,8 +64,8 @@ function TermsPage() {
           body: (
             <p>
               A encomenda é confirmada após pagamento. Oferecemos recolha em mãos no Porto e envio
-              para Portugal Continental e Ilhas, União Europeia e Suíça. Os prazos de entrega são
-              indicativos e podem variar em períodos de maior procura. O código de rastreio é
+              para Portugal Continental e Ilhas, União Europeia e Suíça. O prazo de entrega é de 7 a
+              10 dias úteis e pode variar em períodos de maior procura. O código de rastreio é
               disponibilizado após expedição.
             </p>
           ),

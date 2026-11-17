@@ -14,6 +14,7 @@ export const company = {
   phone: "A preencher",
   complaintsBook: "https://www.livroreclamacoes.pt/inicio",
   country: "Portugal",
+  credit: "OrbitDev",
 } as const;
 
 export const legalLastUpdated = "11 de novembro de 2026";
