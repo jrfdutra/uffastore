@@ -31,7 +31,7 @@ function TermsPage() {
           body: (
             <p>
               O site é explorado por <strong>{company.legalName}</strong>, com sede em{" "}
-              {company.address}, NIF {company.nif}. Contacto:{" "}
+              {company.address}. Contacto:{" "}
               <a className="text-primary underline" href={`mailto:${company.email}`}>
                 {company.email}
               </a>
