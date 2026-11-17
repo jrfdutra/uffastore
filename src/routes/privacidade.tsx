@@ -142,24 +142,7 @@ function PrivacyPage() {
           ),
         },
         {
-          heading: "8. Reclamações",
-          body: (
-            <p>
-              Podes apresentar reclamação à Comissão Nacional de Proteção de Dados (CNPD), em{" "}
-              <a
-                className="text-primary underline"
-                href="https://www.cnpd.pt"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                www.cnpd.pt
-              </a>
-              , sem prejuízo de contacto prévio connosco.
-            </p>
-          ),
-        },
-        {
-          heading: "9. Alterações",
+          heading: "8. Alterações",
           body: (
             <p>
               Podemos atualizar esta política. A data da última atualização está indicada no topo.
