@@ -212,20 +212,12 @@ export async function createCheckoutUrl(
     countryCode?: string;
     email?: string;
     phone?: string;
-    firstName?: string;
-    lastName?: string;
     preferences: {
       delivery: {
         deliveryMethod: string[];
         pickupHandle?: string[];
       };
     };
-    deliveryAddressPreferences?: {
-      firstName: string;
-      lastName: string;
-      phone: string;
-      country: string;
-    }[];
   } = {
     ...(isPickup ? { countryCode: "PT" } : {}),
     preferences: {
@@ -250,16 +242,6 @@ export async function createCheckoutUrl(
         }
       }
       buyerIdentity.phone = formattedPhone;
-    }
-    if (buyer.firstName || buyer.lastName) {
-      buyerIdentity.deliveryAddressPreferences = [
-        {
-          firstName: buyer.firstName || "",
-          lastName: buyer.lastName || "",
-          phone: buyerIdentity.phone || "",
-          country: "PT",
-        },
-      ];
     }
   }
 
