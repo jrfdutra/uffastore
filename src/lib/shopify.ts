@@ -275,10 +275,13 @@ export async function createShopifyCheckout(
   delivery: string = "pickup",
   couponCode?: string,
   buyer?: { email?: string; phone?: string; firstName?: string; lastName?: string },
+  returnUrl?: string,
 ) {
   const url = await createCheckoutUrl(items, delivery, couponCode, buyer);
+  const params = new URLSearchParams({ skip_shop_pay: "true" });
+  if (returnUrl) params.set("return_url", returnUrl);
   const separator = url.includes("?") ? "&" : "?";
-  return { webUrl: `${url}${separator}skip_shop_pay=true` };
+  return { webUrl: `${url}${separator}${params.toString()}` };
 }
 
 export async function fetchShopifyProducts(first = 50) {

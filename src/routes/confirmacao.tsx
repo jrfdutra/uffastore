@@ -16,11 +16,12 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { tr } from "@/lib/i18n";
 import { formatDate, getOrderByNumber, type Order } from "@/lib/orders";
+import { readPendingCheckout, type PendingCheckout } from "@/lib/checkout-session";
 import { money } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 
 export const Route = createFileRoute("/confirmacao")({
-  validateSearch: (search) => z.object({ order: z.string() }).parse(search),
+  validateSearch: (search) => z.object({ order: z.string().optional() }).parse(search),
   head: () => ({
     meta: [
       { title: "Encomenda confirmada — Uffa Store" },
@@ -39,12 +40,18 @@ function Confirmation() {
   const { language, catalog } = useShop();
   const { order: orderNumber } = Route.useSearch();
   const [order, setOrder] = useState<Order | null>(null);
+  const [pending, setPending] = useState<PendingCheckout | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    setOrder(getOrderByNumber(orderNumber));
+    if (orderNumber) setOrder(getOrderByNumber(orderNumber));
+    setPending(readPendingCheckout());
     setLoaded(true);
   }, [orderNumber]);
+
+  if (loaded && !order) {
+    return <ThankYou pending={pending} />;
+  }
 
   const copyValue = async (value: string, label: string) => {
     try {
@@ -85,31 +92,9 @@ function Confirmation() {
         </div>
       )}
 
-      {loaded && !order && (
-        <div className="mx-auto max-w-3xl px-4 py-14 text-center md:px-6">
-          <Package className="mx-auto size-10 text-primary" />
-          <h2 className="mt-4 font-display text-4xl uppercase">
-            {tr(language, "Encomenda registada.", "Order registered.", "Pedido registado.")}
-          </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">
-            {tr(
-              language,
-              "Não encontrámos os detalhes completos neste dispositivo. Abre o portal e introduz os dados da compra.",
-              "We couldn't find the full details on this device. Open the portal and enter your purchase details.",
-              "No encontramos los detalles completos en este dispositivo. Abre el portal e introduce los datos de la compra.",
-            )}
-          </p>
-          <Button asChild className="mt-6 rounded-none">
-            <Link to="/rastreio" search={{ order: orderNumber }}>
-              {tr(language, "Abrir portal", "Open portal", "Abrir portal")}
-              <ArrowRight />
-            </Link>
-          </Button>
-        </div>
-      )}
-
       {order && (
         <div className="mx-auto max-w-6xl px-4 py-10 md:px-6 md:py-14">
+          {" "}
           <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
             <div className="space-y-6">
               <section className="border-2 border-dashed border-primary bg-primary/15 p-6 text-center md:p-8">
@@ -417,6 +402,190 @@ function Confirmation() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function ThankYou({ pending }: { pending: PendingCheckout | null }) {
+  const { language, catalog } = useShop();
+  const greeting = pending?.customerName?.trim();
+
+  return (
+    <div>
+      <section className="border-b border-border bg-section">
+        <div className="mx-auto max-w-4xl px-4 py-14 text-center md:px-6 md:py-20">
+          <CheckCircle2 className="mx-auto size-16 text-primary" />
+          <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-primary">
+            {tr(language, "Pagamento concluído", "Payment complete", "Pago completado")}
+          </p>
+          <h1 className="mt-3 font-display text-5xl uppercase leading-[.9] md:text-7xl">
+            {greeting
+              ? tr(
+                  language,
+                  `Obrigado, ${greeting}!`,
+                  `Thank you, ${greeting}!`,
+                  `¡Gracias, ${greeting}!`,
+                )
+              : tr(
+                  language,
+                  "Obrigado pela tua compra!",
+                  "Thank you for your purchase!",
+                  "¡Gracias por tu compra!",
+                )}
+          </h1>
+          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+            {tr(
+              language,
+              "A tua encomenda foi registada e já está a ser preparada. Vais receber a confirmação com o número de encomenda por email.",
+              "Your order is registered and already being prepared. You'll receive the confirmation with the order number by email.",
+              "Tu pedido está registrado y ya se está preparando. Recibirás la confirmación con el número de pedido por email.",
+            )}
+          </p>
+          {pending?.email && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              <Mail className="mr-1 inline size-3.5" />
+              {pending.email}
+            </p>
+          )}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-4xl px-4 py-10 md:px-6 md:py-14">
+        {pending ? (
+          <div className="grid gap-6 md:grid-cols-[1fr_300px]">
+            <section className="border border-border bg-card p-6">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="font-display text-2xl uppercase">
+                  {tr(language, "Detalhes da encomenda", "Order details", "Detalles del pedido")}
+                </h2>
+                <span className="text-xs text-muted-foreground">
+                  {pending.items.reduce((sum, item) => sum + item.quantity, 0)}{" "}
+                  {tr(language, "pares", "pairs", "pares")}
+                </span>
+              </div>
+              <div className="mt-3">
+                {pending.items.map((item) => {
+                  const product = catalog.find((candidate) => candidate.id === item.productId);
+                  return (
+                    <div
+                      key={`${item.productId}-${item.size}-${item.color ?? ""}`}
+                      className="grid grid-cols-[64px_1fr] gap-3 border-b border-border py-4 last:border-b-0"
+                    >
+                      {product && (
+                        <img
+                          src={product.image}
+                          alt={item.name}
+                          width={1200}
+                          height={900}
+                          className="aspect-square w-16 bg-product object-cover"
+                        />
+                      )}
+                      <div>
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <div>
+                            <p className="text-sm font-bold">{item.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {tr(language, "Tamanho", "Size", "Talla")} {item.size}
+                              {item.quantity > 1 ? ` · ${item.quantity}x` : ""}
+                            </p>
+                          </div>
+                          <p className="text-sm font-bold">
+                            {money(item.unitPrice * item.quantity)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            <aside className="space-y-6">
+              <section className="border border-border bg-card p-6">
+                <h2 className="font-display text-2xl uppercase">
+                  {tr(language, "Resumo", "Summary", "Resumen")}
+                </h2>
+                <div className="mt-4 space-y-2 text-sm">
+                  <div className="flex justify-between gap-3">
+                    <span className="text-muted-foreground">
+                      {tr(language, "Subtotal", "Subtotal", "Subtotal")}
+                    </span>
+                    <span>{money(pending.subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between gap-3">
+                    <span className="text-muted-foreground">
+                      {tr(language, "Portes", "Shipping", "Envío")}
+                    </span>
+                    <span>
+                      {pending.shipping > 0
+                        ? money(pending.shipping)
+                        : tr(language, "Grátis", "Free", "Gratis")}
+                    </span>
+                  </div>
+                  <div className="flex justify-between gap-3 border-t border-border pt-2 text-base font-bold">
+                    <span>Total</span>
+                    <span>{money(pending.total)}</span>
+                  </div>
+                </div>
+                <dl className="mt-4 space-y-2 border-t border-border pt-4 text-xs">
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-muted-foreground">
+                      {tr(language, "Entrega", "Delivery", "Entrega")}
+                    </dt>
+                    <dd className="text-right">{pending.deliveryLabel}</dd>
+                  </div>
+                  {pending.coupon && (
+                    <div className="flex justify-between gap-3">
+                      <dt className="text-muted-foreground">
+                        {tr(language, "Desconto", "Discount", "Descuento")}
+                      </dt>
+                      <dd className="font-mono">{pending.coupon}</dd>
+                    </div>
+                  )}
+                </dl>
+              </section>
+
+              <section className="border border-border bg-section p-6">
+                <p className="flex items-start gap-2 text-xs text-muted-foreground">
+                  <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
+                  {tr(
+                    language,
+                    "O pagamento foi processado no checkout seguro da Shopify. Guarda o email de confirmação para acompanhar a encomenda.",
+                    "Payment was processed on Shopify's secure checkout. Keep the confirmation email to follow your order.",
+                    "El pago se procesó en el checkout seguro de Shopify. Guarda el email de confirmación para seguir tu pedido.",
+                  )}
+                </p>
+              </section>
+            </aside>
+          </div>
+        ) : (
+          <div className="border border-border bg-card p-6 text-center">
+            <Package className="mx-auto size-9 text-primary" />
+            <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
+              {tr(
+                language,
+                "Não encontrámos os detalhes desta compra neste dispositivo. Consulta o email de confirmação enviado pela Shopify.",
+                "We couldn't find this purchase's details on this device. Check the confirmation email sent by Shopify.",
+                "No encontramos los detalles de esta compra en este dispositivo. Consulta el email de confirmación enviado por Shopify.",
+              )}
+            </p>
+          </div>
+        )}
+
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <Button asChild size="lg" className="h-12 rounded-none">
+            <Link to="/">
+              {tr(language, "Voltar ao início", "Back to home", "Volver al inicio")}
+              <ArrowRight />
+            </Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="h-12 rounded-none">
+            <Link to="/rastreio">
+              {tr(language, "Seguir a minha encomenda", "Track my order", "Seguir mi pedido")}
+            </Link>
+          </Button>
+        </div>
+      </section>
     </div>
   );
 }

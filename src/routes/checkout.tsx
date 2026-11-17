@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { copy, money } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
+import { savePendingCheckout } from "@/lib/checkout-session";
 import { createShopifyCheckout } from "@/lib/shopify";
 
 export type DeliveryOption = "pickup" | "continental" | "islands" | "eu" | "switzerland";
@@ -197,12 +198,43 @@ function Checkout() {
         return { variantId, quantity: item.quantity };
       });
 
-      const checkout = await createShopifyCheckout(items, delivery, s.coupon?.code, {
-        firstName,
-        lastName,
+      // Guarda os detalhes da compra antes de sair para a Shopify, para os poder
+      // mostrar na página de agradecimento quando o cliente regressar.
+      savePendingCheckout({
+        at: new Date().toISOString(),
+        customerName: `${firstName} ${lastName}`.trim(),
         email,
-        phone,
+        deliveryKey: delivery,
+        deliveryLabel: deliveryRates[delivery].title[s.language],
+        items: s.cart.map((item) => {
+          const product = s.catalog.find((p) => p.id === item.productId);
+          return {
+            productId: item.productId,
+            name: product?.name ?? item.productId,
+            size: item.size,
+            color: item.color,
+            quantity: item.quantity,
+            unitPrice: product?.price ?? item.unitPrice ?? 0,
+          };
+        }),
+        subtotal: s.subtotal,
+        shipping,
+        total: grandTotal,
+        coupon: s.coupon?.code,
       });
+
+      const checkout = await createShopifyCheckout(
+        items,
+        delivery,
+        s.coupon?.code,
+        {
+          firstName,
+          lastName,
+          email,
+          phone,
+        },
+        `${window.location.origin}/confirmacao`,
+      );
       window.location.href = checkout.webUrl;
     } catch (err: unknown) {
       console.error(err);
@@ -369,9 +401,9 @@ function Checkout() {
                 )}
                 detail={tr(
                   s.language,
-                  "Aceita MB WAY, Cartão de Crédito/Débito (Visa, Mastercard), PayPal, Apple Pay, Google Pay",
-                  "Accepts MB WAY, Credit/Debit Card, PayPal, Apple Pay, Google Pay",
-                  "Acepta MB WAY, Tarjeta de Crédito/Débito, PayPal, Apple Pay, Google Pay",
+                  "Aceita MB WAY, Cartão de Crédito/Débito (Visa, Mastercard), PayPal e Multibanco",
+                  "Accepts MB WAY, Credit/Debit Card (Visa, Mastercard), PayPal and Multibanco",
+                  "Acepta MB WAY, Tarjeta de Crédito/Débito (Visa, Mastercard), PayPal y Multibanco",
                 )}
               />
             </div>
