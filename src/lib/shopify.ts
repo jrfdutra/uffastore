@@ -83,6 +83,7 @@ export type ShopifyProductNode = {
   title: string;
   description: string;
   productType: string;
+  vendor?: string;
   tags: string[];
   options: { name: string; values: string[] }[];
   featuredImage: { url: string; altText: string | null } | null;

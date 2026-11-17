@@ -10,7 +10,7 @@ import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 
 const searchSchema = z.object({
-  category: z.enum(["promocoes", "lifestyle", "running", "limited"]).optional(),
+  category: z.enum(["promocoes", "lifestyle", "running", "limited", "personalizacao"]).optional(),
 });
 
 const sizeGroups = [
@@ -147,7 +147,7 @@ function Catalog() {
               {tr(language, "Categoria", "Category", "Categoría")}
             </legend>
             <div className="flex flex-wrap gap-2 lg:flex-col">
-              {(["all", "promocoes", "lifestyle", "running", "limited"] as const).map((c) => (
+              {(["all", "promocoes", "lifestyle", "running", "limited", "personalizacao"] as const).map((c) => (
                 <Button
                   key={c}
                   variant={category === c ? "default" : "outline"}

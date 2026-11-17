@@ -178,6 +178,14 @@ function Home() {
                 <ProductCard key={p.id} product={p} />
               ))}
           </div>
+          <div className="mt-10 flex justify-center">
+            <Button asChild size="lg" variant="outline" className="h-12 rounded-none px-8">
+              <Link to="/catalogo">
+                {language === "pt" ? "Ver mais" : language === "es" ? "Ver más" : "See more"}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 

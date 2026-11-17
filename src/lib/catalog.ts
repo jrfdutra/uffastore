@@ -22,10 +22,11 @@ import {
  */
 export const LEGACY_CATALOG_STORAGE_KEY = "uffa-custom-catalog-v3";
 
-const categories: Category[] = ["promocoes", "lifestyle", "running", "limited"];
+const categories: Category[] = ["promocoes", "lifestyle", "running", "limited", "personalizacao"];
 
 function toCategory(value: string): Category {
   const normalized = value.trim().toLowerCase();
+  if (normalized.includes("person") || normalized.includes("custom")) return "personalizacao";
   if (normalized.includes("promo") || normalized.includes("sale")) return "promocoes";
   if (normalized.includes("run") || normalized.includes("vomero")) return "running";
   if (normalized.includes("limit")) return "limited";
@@ -35,6 +36,7 @@ function toCategory(value: string): Category {
 /** Reconhece uma tag da Shopify como categoria (ex.: tag "promocoes" ou "sales"). */
 function asCategory(value: string): Category | undefined {
   const normalized = value.trim().toLowerCase();
+  if (normalized.includes("person") || normalized.includes("custom")) return "personalizacao";
   if (normalized === "sales" || normalized.includes("promo")) return "promocoes";
   if (normalized === "casual" || normalized === "streetwear") return "lifestyle";
   if (normalized.includes("run")) return "running";
@@ -142,6 +144,11 @@ function toProduct(node: ShopifyProductNode): Product {
     id: node.handle,
     sku: fallback?.sku ?? `UFFA-${node.handle.toUpperCase()}`,
     name: node.title,
+    ...(node.vendor?.trim()
+      ? { brand: node.vendor.trim() }
+      : fallback?.brand
+        ? { brand: fallback.brand }
+        : {}),
     category: primaryCategory,
     ...(extraCategories.length ? { categories: extraCategories } : {}),
     price: priceValues.length

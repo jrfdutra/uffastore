@@ -45,7 +45,7 @@ import {
   type ReactNode,
 } from "react";
 
-const cats: Category[] = ["promocoes", "lifestyle", "running", "limited"];
+const cats: Category[] = ["promocoes", "lifestyle", "running", "limited", "personalizacao"];
 
 /** Sobe a página ao topo, respeitando quem prefere menos movimento. */
 function scrollPageToTop() {
@@ -473,7 +473,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               </span>
             </Link>
           </div>
-          <nav className="hidden h-full items-center gap-6 lg:flex">
+          <nav className="hidden h-full items-center gap-4 xl:gap-6 lg:flex">
             {cats.map((c) => {
               const isActive = pathname === "/catalogo" && currentCategory === c;
               return (
@@ -660,17 +660,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <Link to="/termos" className="hover:text-brand">
               {tr(s.language, "Termos e Condições", "Terms & Conditions", "Términos y Condiciones")}
             </Link>
-            <Link to="/devolucoes" className="hover:text-brand">
-              {tr(s.language, "Devoluções e Reembolsos", "Returns & Refunds", "Devoluciones")}
-            </Link>
-            <a
-              href={company.complaintsBook}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-brand"
-            >
-              {tr(s.language, "Livro de Reclamações", "Complaints Book", "Libro de Reclamaciones")}
-            </a>
           </nav>
         </div>
         <div className="border-t border-footer-border px-4 py-5 text-center text-xs text-footer-muted">

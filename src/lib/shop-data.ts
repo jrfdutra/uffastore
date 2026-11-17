@@ -8,7 +8,7 @@ import tan from "@/assets/e44536b4-0486-4401-9327-8f300ee11714.jpg";
 export const heroSneaker = "/produtos/uffa-modelo-padrao.webp";
 
 export type Language = "pt" | "en" | "es";
-export type Category = "promocoes" | "lifestyle" | "running" | "limited";
+export type Category = "promocoes" | "lifestyle" | "running" | "limited" | "personalizacao";
 export type ProductStatus = "active" | "inactive" | "soldout" | "comingsoon";
 
 export type ProductSize = {
@@ -32,6 +32,8 @@ export type Product = {
   id: string;
   sku?: string;
   name: string;
+  /** Marca do produto (na Shopify, o campo vendor). Usada no filtro de marca. */
+  brand?: string;
   category: Category;
   /**
    * Categorias adicionais. Permite que um produto apareça em mais do que uma
@@ -76,10 +78,30 @@ export function getProductCategories(
 
 /** Verdadeiro quando o produto pertence à categoria indicada (ou a "all"). */
 export function isProductInCategory(
-  product: Pick<Product, "category" | "categories">,
+  product: Pick<Product, "category" | "categories"> & Partial<Pick<Product, "name" | "id">>,
   category: Category | "all",
 ): boolean {
-  return category === "all" || getProductCategories(product).includes(category);
+  if (category === "all") return true;
+  if (category === "personalizacao") {
+    const nameLower = (product.name || "").toLowerCase();
+    const idLower = (product.id || "").toLowerCase();
+    const isCustomized =
+      nameLower.includes("rope") ||
+      nameLower.includes("cord") ||
+      nameLower.includes("floral") ||
+      nameLower.includes("perolas") ||
+      nameLower.includes("pérolas") ||
+      nameLower.includes("chapa") ||
+      nameLower.includes("lanvin") ||
+      idLower.includes("rope") ||
+      idLower.includes("floral") ||
+      idLower.includes("perolas") ||
+      idLower.includes("chapa-dourada") ||
+      idLower.includes("cute-cord") ||
+      idLower.includes("lanvin");
+    return getProductCategories(product).includes("personalizacao") || isCustomized;
+  }
+  return getProductCategories(product).includes(category);
 }
 
 export const categoryNames: Record<Category, Record<Language, string>> = {
@@ -87,6 +109,7 @@ export const categoryNames: Record<Category, Record<Language, string>> = {
   lifestyle: { pt: "Lifestyle", en: "Lifestyle", es: "Lifestyle" },
   running: { pt: "Running", en: "Running", es: "Running" },
   limited: { pt: "Edições Limitadas", en: "Limited Editions", es: "Ediciones Limitadas" },
+  personalizacao: { pt: "Personalização", en: "Customization", es: "Personalización" },
 };
 
 export const products: Product[] = [
