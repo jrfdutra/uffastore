@@ -158,7 +158,7 @@ function HelpPage() {
               <Instagram className="size-4 text-primary" />
               @uffastore.legit
             </a>
-            <p className="flex items-center gap-2 text-muted-foreground text-xs">
+            <p className="flex items-center gap-2 font-semibold">
               <MapPin className="size-4 text-primary" />
               Porto, Portugal
             </p>
