@@ -70,7 +70,7 @@ async function main() {
   const input = {
     ...(existingId ? { id: existingId } : { handle: "teste" }),
     title: "Teste",
-    descriptionHtml: "<p>Produto exclusivo para testes de checkout (0,50 €).</p>",
+    descriptionHtml: "<p>Produto exclusivo para testes de checkout (1,00 €).</p>",
     vendor: "Uffa Store",
     productType: "sales",
     status: "ACTIVE",
@@ -78,8 +78,8 @@ async function main() {
     variants: [
       {
         optionValues: [{ optionName: "Tamanho", name: "40" }],
-        price: "0.50",
-        sku: "TESTE-050",
+        price: "1.00",
+        sku: "TESTE-100",
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
         inventoryQuantities: [{ locationId: loc.id, name: "available", quantity: 100 }],
@@ -94,7 +94,7 @@ async function main() {
     ],
   };
 
-  console.log("A criar/atualizar produto 'Teste' (0.50 €) na Shopify...");
+  console.log("A criar/atualizar produto 'Teste' (1.00 €) na Shopify...");
   const res = await admin(PRODUCT_SET, { input, synchronous: true });
   if (res.productSet.userErrors.length > 0) {
     console.error("Erros:", res.productSet.userErrors);
