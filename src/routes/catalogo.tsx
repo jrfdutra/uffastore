@@ -276,19 +276,21 @@ function Catalog() {
         </aside>
 
         <div>
-          <div className="relative mb-8">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t.search}
-              aria-label={t.search}
-              className="h-12 rounded-none pl-10"
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-              {list.length} {t.results}
-            </span>
-          </div>
+          {category !== "personalizacao" && (
+            <div className="relative mb-8">
+              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={t.search}
+                aria-label={t.search}
+                className="h-12 rounded-none pl-10"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                {list.length} {t.results}
+              </span>
+            </div>
+          )}
 
           {category === "personalizacao" ? (
             <div className="py-24 text-center border border-dashed border-border bg-card/50 p-8">
