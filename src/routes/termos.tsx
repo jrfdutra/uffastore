@@ -78,7 +78,8 @@ function TermsPage() {
               <a className="text-primary underline" href={`mailto:${company.email}`}>
                 {company.email}
               </a>{" "}
-              com prova de compra e fotografias do defeito.
+              com prova de compra e fotografias do defeito. O par não pode ser utilizado: pares com
+              sinais de uso não são aceites para análise.
             </p>
           ),
         },
