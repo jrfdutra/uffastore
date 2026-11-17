@@ -45,7 +45,7 @@ import {
   type ReactNode,
 } from "react";
 
-const cats: Category[] = ["promocoes", "lifestyle", "running", "limited", "personalizacao"];
+const cats: Category[] = ["promocoes", "lifestyle", "running", "limited"];
 
 /** Sobe a página ao topo, respeitando quem prefere menos movimento. */
 function scrollPageToTop() {
@@ -374,6 +374,21 @@ function MobileNav({
               </Link>
             );
           })}
+          <Link
+            to="/catalogo"
+            search={{ category: "personalizacao" }}
+            onClick={close}
+            className={`border-b border-border py-4 font-display text-3xl uppercase flex items-center justify-between ${
+              location.pathname === "/catalogo" && (location.search as { category?: string })?.category === "personalizacao"
+                ? "text-primary font-black"
+                : "text-foreground"
+            }`}
+          >
+            <span>{categoryNames.personalizacao[language]}</span>
+            {location.pathname === "/catalogo" && (location.search as { category?: string })?.category === "personalizacao" && (
+              <span className="size-2 rounded-full bg-primary" aria-hidden="true" />
+            )}
+          </Link>
           <Link
             to="/favoritos"
             onClick={close}

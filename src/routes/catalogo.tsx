@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, SlidersHorizontal, Check } from "lucide-react";
 import { z } from "zod";
 import { useMemo, useState } from "react";
@@ -290,13 +290,37 @@ function Catalog() {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-3 gap-y-10 xl:grid-cols-3">
-            {list.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
+          {category === "personalizacao" ? (
+            <div className="py-24 text-center border border-dashed border-border bg-card/50 p-8">
+              <span className="inline-block px-3 py-1 mb-4 text-xs font-bold uppercase tracking-widest bg-primary/10 text-primary rounded-full">
+                {tr(language, "Em Desenvolvimento", "Under Construction", "En Construcción")}
+              </span>
+              <h2 className="font-display text-4xl uppercase md:text-5xl mb-3">
+                {tr(language, "Serviço de Personalização", "Customization Service", "Servicio de Personalización")}
+              </h2>
+              <p className="max-w-md mx-auto text-muted-foreground text-sm leading-relaxed mb-8">
+                {tr(
+                  language,
+                  "Estamos a preparar uma experiência exclusiva para personalizares os teus pares com Rope Laces, pendentes, pérolas e chapas à medida. Brevemente disponível!",
+                  "We are preparing an exclusive experience for you to customize your pairs with rope laces, charms, pearls, and custom tags. Coming soon!",
+                  "Estamos preparando una experiencia exclusiva para personalizar tus pares con cordones especiales, dijes, perlas y chapas a medida. ¡Próximamente disponible!",
+                )}
+              </p>
+              <Button asChild className="rounded-none font-bold uppercase tracking-wider">
+                <Link to="/catalogo" search={{}}>
+                  {tr(language, "Explorar Catálogo", "Explore Catalog", "Explorar Catálogo")}
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-x-3 gap-y-10 xl:grid-cols-3">
+              {list.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          )}
 
-          {!list.length && (
+          {category !== "personalizacao" && !list.length && (
             <p className="py-20 text-center text-muted-foreground">
               {tr(
                 language,
