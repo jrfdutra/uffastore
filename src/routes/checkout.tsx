@@ -11,6 +11,7 @@ import {
   Copy,
   CreditCard,
   ShieldCheck,
+  Wallet,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -452,7 +453,7 @@ function Checkout() {
                 icon={
                   <div className="flex items-center gap-2">
                     <CreditCard className="text-primary size-5" />
-                    <ShieldCheck className="text-primary size-5" />
+                    <Wallet className="text-primary size-5" />
                   </div>
                 }
                 title={tr(
