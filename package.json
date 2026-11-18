@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "node --test src/lib/catalogo.test.ts src/lib/precos.test.ts src/lib/variantes.test.ts src/lib/orders.test.ts src/lib/pares.test.ts",
+    "test:e2e": "playwright test",
     "format": "prettier --write ."
   },
   "overrides": {
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "^2.23.1",
+    "@playwright/test": "^1.65.1",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",

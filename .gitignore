@@ -29,6 +29,12 @@ dist-ssr
 # Cópias de segurança de fotografias originais (ficheiros grandes, mantidos localmente)
 backup-fotos/
 
+# Playwright
+e2e-report/
+test-results/
+playwright-report/
+blob-report/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

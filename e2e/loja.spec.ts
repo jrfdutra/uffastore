@@ -1,0 +1,366 @@
+import { test, expect, type Page } from "@playwright/test";
+
+/**
+ * Fluxo de compra ponta a ponta da UFFA Store.
+ *
+ * Nenhum pagamento real acontece: as chamadas GraphQL à Shopify para criar o
+ * checkout são intercetadas e respondem com dados simulados.
+ */
+
+const PENDING_KEY = "uffa-pending-checkout-v1";
+const CART_KEY = "uffa-cart";
+const MOCK_CHECKOUT_URL = "https://mock-shopify.test/checkout?token=abc123";
+
+/** Produto real da loja com todas as variantes em stock (verificado via API). */
+const PRODUTO_COM_STOCK = "nike-air-force";
+
+/**
+ * O aviso de "versão demo" abre como modal na primeira visita e bloqueia
+ * cliques. Marcamo-lo como visto antes de cada teste.
+ */
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    try {
+      window.sessionStorage.setItem("uffa-demo-notice-v1", "1");
+    } catch {
+      /* ignorar */
+    }
+  });
+});
+
+/** Limpa o estado local da loja (carrinho, cupão, encomenda pendente). */
+async function limparEstado(page: Page) {
+  await page.goto("/");
+  await page.evaluate(() => window.localStorage.clear());
+}
+
+/** Interceta o GraphQL da Shopify: só o cartCreate é simulado. */
+async function mockShopify(page: Page, mode: "ok" | "erro" = "ok") {
+  await page.route("**/graphql.json", async (route) => {
+    const body = route.request().postData() ?? "";
+    if (!body.includes("cartCreate")) return route.continue();
+
+    if (mode === "erro") {
+      return route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ errors: [{ message: "Shopify indisponível (simulado)" }] }),
+      });
+    }
+
+    return route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: { cartCreate: { cart: { checkoutUrl: MOCK_CHECKOUT_URL }, userErrors: [] } },
+      }),
+    });
+  });
+
+  // Página final do checkout simulado (para onde o browser é redirecionado).
+  await page.route("https://mock-shopify.test/**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "text/html; charset=utf-8",
+      body: "<!doctype html><title>Checkout simulado</title><h1>Checkout simulado da Shopify</h1>",
+    }),
+  );
+}
+
+/** Abre a página de um produto que se sabe ter stock. */
+async function abrirProduto(page: Page, handle = PRODUTO_COM_STOCK) {
+  await page.goto(`/produto/${handle}`);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+}
+
+/**
+ * Escolhe o primeiro tamanho disponível e adiciona ao carrinho.
+ * Repete as interações até a hidratação do React estar concluída (SSR primeiro).
+ */
+async function adicionarAoCarrinho(page: Page) {
+  const seletorTamanho = page.getByRole("combobox", { name: "Seleciona um tamanho" });
+  await expect(seletorTamanho).toBeEnabled();
+
+  await expect(async () => {
+    await seletorTamanho.click();
+    await expect(page.getByRole("listbox")).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 30_000 });
+
+  // Teclado em vez de clique: evita problemas de estabilidade/scroll do dropdown.
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("listbox")).toBeHidden();
+
+  await expect(async () => {
+    await page.getByRole("button", { name: "Adicionar ao carrinho" }).click();
+    await expect(page.getByRole("button", { name: /^Carrinho \(1\)/ })).toBeVisible({
+      timeout: 2000,
+    });
+  }).toPass({ timeout: 30_000 });
+}
+
+async function abrirCarrinho(page: Page) {
+  await page.getByRole("button", { name: /^Carrinho \(/ }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+}
+
+test.describe("Loja — navegação e catálogo", () => {
+  test("a homepage carrega e o menu leva ao catálogo", async ({ page }) => {
+    await page.goto("/");
+    await expect(page).toHaveTitle(/Uffa/i);
+    await expect(page.getByRole("link", { name: "UFFA Store — Início" }).first()).toBeVisible();
+
+    await page.getByRole("link", { name: "Lifestyle" }).first().click();
+    await page.waitForURL(/\/catalogo/);
+    await expect(page.getByPlaceholder("Pesquisar sneakers")).toBeVisible();
+    await expect(page.locator("article").first()).toBeVisible();
+  });
+
+  test("o catálogo lista produtos e a pesquisa filtra resultados", async ({ page }) => {
+    await page.goto("/catalogo");
+    const cartoes = page.locator("article");
+    await expect(cartoes.first()).toBeVisible();
+    const total = await cartoes.count();
+    expect(total).toBeGreaterThan(5);
+
+    const pesquisa = page.getByPlaceholder("Pesquisar sneakers");
+
+    // Repete até o React estar hidratado (o valor só persiste depois disso).
+    await expect(async () => {
+      await pesquisa.fill("zzzzzzzz");
+      await expect(page.locator("article")).toHaveCount(0, { timeout: 2000 });
+    }).toPass({ timeout: 30_000 });
+
+    await expect(async () => {
+      await pesquisa.fill("dunk");
+      const filtrados = await page.locator("article").count();
+      expect(filtrados).toBeGreaterThan(0);
+      expect(filtrados).toBeLessThan(total);
+    }).toPass({ timeout: 30_000 });
+  });
+
+  test("a página de produto mostra tamanhos, preço e permite escolher", async ({ page }) => {
+    await limparEstado(page);
+    await abrirProduto(page);
+    await expect(page.getByRole("combobox", { name: "Seleciona um tamanho" })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Adicionar ao carrinho|Seleciona um tamanho/ }),
+    ).toBeVisible();
+  });
+
+  test("produto inexistente não rebenta a aplicação", async ({ page }) => {
+    await page.goto("/produto/nao-existe-este-produto");
+    await expect(page.locator("body")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  });
+});
+
+test.describe("Carrinho", () => {
+  test("adicionar, aumentar quantidade e remover", async ({ page }) => {
+    await limparEstado(page);
+    await abrirProduto(page);
+    await adicionarAoCarrinho(page);
+
+    await abrirCarrinho(page);
+    const dialog = page.getByRole("dialog");
+    await dialog.getByRole("button", { name: "Aumentar quantidade" }).click();
+    await expect(dialog.locator("span.w-8").first()).toHaveText("2");
+
+    await dialog.getByRole("button", { name: "Remover" }).click();
+    await expect(dialog.getByText("O teu carrinho está vazio.")).toBeVisible();
+
+    // Fecha o drawer para o botão do cabeçalho voltar à árvore de acessibilidade.
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("button", { name: /^Carrinho \(0\)/ })).toBeVisible();
+  });
+
+  test("o carrinho sobrevive a um refresh", async ({ page }) => {
+    await limparEstado(page);
+    await abrirProduto(page);
+    await adicionarAoCarrinho(page);
+
+    await page.reload();
+    await expect(page.getByRole("button", { name: /^Carrinho \(1\)/ })).toBeVisible();
+    const guardado = await page.evaluate((key) => window.localStorage.getItem(key), CART_KEY);
+    expect(guardado).toBeTruthy();
+  });
+});
+
+test.describe("Cupões", () => {
+  test("cupão inválido é rejeitado e cupão válido aplica 10%", async ({ page }) => {
+    await limparEstado(page);
+    await abrirProduto(page);
+    await adicionarAoCarrinho(page);
+    await abrirCarrinho(page);
+
+    const dialog = page.getByRole("dialog");
+    const campo = dialog.getByPlaceholder("Código de desconto");
+
+    await campo.fill("NAOEXISTE");
+    await dialog.getByRole("button", { name: "Aplicar" }).click();
+    await expect(page.getByText("Cupão inválido ou expirado.")).toBeVisible();
+    await expect(dialog.getByText(/Cupão:/)).toHaveCount(0);
+
+    await campo.fill("UFFA10");
+    await dialog.getByRole("button", { name: "Aplicar" }).click();
+    await expect(dialog.getByText("Cupão: UFFA10 (-10%)")).toBeVisible();
+  });
+});
+
+test.describe("Checkout", () => {
+  test("carrinho vazio mostra o estado vazio e não permite pagar", async ({ page }) => {
+    await limparEstado(page);
+    await page.goto("/checkout");
+    await expect(page.getByText("O teu carrinho está vazio.")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Pagar agora" })).toHaveCount(0);
+  });
+
+  test("campos obrigatórios impedem o envio", async ({ page }) => {
+    await limparEstado(page);
+    await abrirProduto(page);
+    await adicionarAoCarrinho(page);
+    await page.goto("/checkout");
+
+    await expect(page.getByRole("button", { name: "Pagar agora" })).toBeVisible();
+    await page.getByRole("button", { name: "Pagar agora" }).click();
+
+    // Validação nativa do browser: continua no checkout e o primeiro campo é inválido.
+    await expect(page).toHaveURL(/\/checkout/);
+    const nomeInvalido = await page.evaluate(() => {
+      const campo = document.querySelector<HTMLInputElement>("form input[required]");
+      return campo ? !campo.checkValidity() : false;
+    });
+    expect(nomeInvalido).toBe(true);
+  });
+
+  test("e-mail inválido é bloqueado pela validação do formulário", async ({ page }) => {
+    await limparEstado(page);
+    await abrirProduto(page);
+    await adicionarAoCarrinho(page);
+    await page.goto("/checkout");
+
+    await page.getByPlaceholder("Ex: João").fill("João");
+    await page.getByPlaceholder("Ex: Silva").fill("Silva");
+    await page.getByPlaceholder("joao@exemplo.com").fill("nao-e-email");
+    await page.getByPlaceholder("912 345 678").fill("912345678");
+    await page.getByRole("button", { name: "Pagar agora" }).click();
+
+    await expect(page).toHaveURL(/\/checkout/);
+    const emailInvalido = await page.evaluate(() => {
+      const campo = document.querySelector<HTMLInputElement>('form input[type="email"]');
+      return campo ? !campo.checkValidity() : false;
+    });
+    expect(emailInvalido).toBe(true);
+  });
+
+  test("falha da Shopify mostra mensagem de erro e mantém o carrinho", async ({ page }) => {
+    await limparEstado(page);
+    await mockShopify(page, "erro");
+    await abrirProduto(page);
+    await adicionarAoCarrinho(page);
+    await page.goto("/checkout");
+
+    await page.getByPlaceholder("Ex: João").fill("João");
+    await page.getByPlaceholder("Ex: Silva").fill("Silva");
+    await page.getByPlaceholder("joao@exemplo.com").fill("joao@exemplo.com");
+    await page.getByPlaceholder("912 345 678").fill("912345678");
+    await page.getByRole("button", { name: "Pagar agora" }).click();
+
+    await expect(page.getByText(/Shopify indisponível \(simulado\)/)).toBeVisible();
+    await expect(page).toHaveURL(/\/checkout/);
+    await expect(page.getByRole("button", { name: /^Carrinho \(1\)/ })).toBeVisible();
+  });
+
+  test("sucesso guarda a compra e redireciona para o checkout da Shopify", async ({ page }) => {
+    await limparEstado(page);
+    await mockShopify(page, "ok");
+    await abrirProduto(page);
+    await adicionarAoCarrinho(page);
+    await page.goto("/checkout");
+
+    await page.getByPlaceholder("Ex: João").fill("João");
+    await page.getByPlaceholder("Ex: Silva").fill("Silva");
+    await page.getByPlaceholder("joao@exemplo.com").fill("joao@exemplo.com");
+    await page.getByPlaceholder("912 345 678").fill("912345678");
+    await page.getByRole("button", { name: "Pagar agora" }).click();
+
+    await page.waitForURL(/mock-shopify\.test/, { timeout: 30_000 });
+    expect(page.url()).toContain("skip_shop_pay=true");
+    expect(page.url()).toContain("return_url=");
+
+    // A compra fica guardada no localStorage da origem da loja (não da Shopify).
+    const estado = await page.context().storageState();
+    const origem = estado.origins.find((item) => item.origin.includes("localhost:8080"));
+    const guardado = origem?.localStorage.find((item) => item.name === PENDING_KEY)?.value;
+    expect(guardado).toBeTruthy();
+    const dados = JSON.parse(guardado as string);
+    expect(dados.customerName).toBe("João Silva");
+    expect(dados.email).toBe("joao@exemplo.com");
+    expect(dados.items.length).toBeGreaterThan(0);
+    expect(dados.items[0].authCode).toMatch(/^UFFA-/);
+  });
+});
+
+test.describe("Confirmação", () => {
+  test("mostra os detalhes da compra pendente e os códigos de par", async ({ page }) => {
+    await limparEstado(page);
+    const pendente = {
+      at: new Date().toISOString(),
+      customerName: "Maria Teste",
+      email: "maria@exemplo.com",
+      deliveryKey: "pickup",
+      deliveryLabel: "Receber em mão no Porto",
+      items: [
+        {
+          productId: PRODUTO_COM_STOCK,
+          name: "Nike Air Force 1",
+          size: 42,
+          quantity: 1,
+          unitPrice: 120,
+          authCode: "UFFA-ABC123",
+        },
+      ],
+      subtotal: 120,
+      shipping: 0,
+      total: 120,
+    };
+    await page.addInitScript(
+      ([key, valor]) => window.localStorage.setItem(key, valor),
+      [PENDING_KEY, JSON.stringify(pendente)] as const,
+    );
+
+    await page.goto("/confirmacao");
+    await expect(page.getByText("Maria Teste")).toBeVisible();
+    await expect(page.getByText("UFFA-ABC123")).toBeVisible();
+    await expect(page.getByText(/120,00/).first()).toBeVisible();
+  });
+
+  test("sem compra pendente a página continua a funcionar", async ({ page }) => {
+    await limparEstado(page);
+    await page.goto("/confirmacao");
+    await expect(page.getByRole("heading", { name: /Obrigado/i })).toBeVisible();
+  });
+});
+
+test.describe("Mobile", () => {
+  test("menu mobile e compra completa até ao checkout @mobile", async ({ page }) => {
+    await limparEstado(page);
+
+    await expect(async () => {
+      await page.getByRole("button", { name: "Menu" }).click();
+      await expect(page.getByRole("dialog")).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 30_000 });
+
+    const menu = page.getByRole("dialog");
+    await expect(menu).toBeVisible();
+    await menu.getByRole("link", { name: "Lifestyle" }).click();
+    await page.waitForURL(/\/catalogo/);
+
+    await abrirProduto(page);
+    await adicionarAoCarrinho(page);
+    await abrirCarrinho(page);
+    await page.getByRole("dialog").getByRole("link", { name: "Finalizar compra" }).click();
+    await page.waitForURL(/\/checkout/);
+    await expect(page.getByRole("button", { name: "Pagar agora" })).toBeVisible();
+  });
+});
