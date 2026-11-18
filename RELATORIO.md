@@ -14,20 +14,22 @@
 
 | Área | Antes | Depois |
 | --- | --- | --- |
-| Peso total do site estático (`public/` + assets) | 9,55 MB | **7,92 MB** (−17%) |
+| Peso do site estático no build (`.vercel/output/static`) | 9,55 MB | **1,77 MB** (−81%) |
+| Peso de `public/` | 6,79 MB | **0,68 MB** (−90%) |
 | Peso das imagens otimizadas | 3,07 MB | **0,95 MB** (−2,06 MB) |
 | Componentes shadcn existentes | 46 | **8** (os que são usados) |
 | Dependências de produção (`dependencies`) | 53 | **22** (total 72 → 42, já com `@playwright/test` em dev) |
 | CSS compilado | 104 KB | **69 KB** (−34%) |
 | JS principal (`index-*.js`) | 472 KB raw / 143 KB gzip | 472 KB raw / **143 KB gzip** (igual) |
 | Vulnerabilidades `npm audit` (produção) | 13 (12 high, 1 moderate) | **12 high** |
+| Rotas internas | incluía `/operacoes` com password no browser | **removida** |
 | Testes unitários | 38/38 | **38/38** |
 | Testes E2E | não existiam | **15/15** (desktop + mobile) |
 
-**Três achados que exigem decisão sua** (detalhe na secção 7):
+**Único achado que ainda exige decisão sua** (detalhe na secção 7):
 1. **Todos os preços da Shopify estão a 0,00 €** — a loja mostra `0,00 €` em produção.
-2. Painel `/operacoes` protegido por password escrita no código e enviada ao browser.
-3. 29 ficheiros (~6,1 MB) em `public/` não são usados pelo site, e `backup-fotos/` (86 MB) está dentro do repositório.
+
+Já resolvidos nesta branch: o painel `/operacoes` (password no código) foi **removido**, e os 29 ficheiros órfãos de `public/` (~6,1 MB) foram **arquivados** em `Arquivos Old/`.
 
 ---
 
@@ -83,7 +85,7 @@ Removidos **38 componentes** de `src/components/ui/` + `src/hooks/use-mobile.tsx
 
 | # | Gravidade | Achado | Detalhe |
 | --- | --- | --- | --- |
-| 1 | **Alta** | Password do painel interno no bundle | `src/routes/operacoes.tsx` valida `OPS_ACCESS_KEY = "UFFA-OPS-2026"` no cliente. Qualquer pessoa vê a password em `operacoes-*.js`. O "login" é só `sessionStorage`. Como os dados são de demonstração (localStorage), não há fuga de dados reais, mas **não é autenticação**. |
+| 1 | ~~Alta~~ **Resolvido** | Password do painel interno no bundle | O painel `/operacoes` foi **removido** (commit `64a0bb6`). A rota devolve `NotFound`, a password `UFFA-OPS-2026` desapareceu do código e do bundle, e o `routeTree` foi regenerado. |
 | 2 | **Alta** | `zod < 4.6.6` (GHSA-mrhx-c7xc-m3w5) | Consumo de memória ao validar coleções grandes. Correção exige `zod@4.6.7` (breaking). Usado em `validateSearch` de rotas. |
 | 3 | **Alta** | `vite` (Windows) | `launch-editor` não escapa `%` nos argumentos → execução de comandos em dev no Windows. Só afeta desenvolvimento, não produção. |
 | 4 | **Alta** | Cadeia `picomatch`/`fdir`/`tinyglobby`/`unplugin`/`@tanstack/*` | ReDoS em tooling de build. Correção exige subir a stack TanStack (breaking). Não vai para o bundle final. |
@@ -114,9 +116,12 @@ Verificação visual feita com screenshots da homepage e da página de produto a
 
 ### 4.3 CSS e bundle
 - CSS: **104 KB → 69 KB raw** (−34%) — consequência direta da remoção dos 38 componentes shadcn (o Tailwind v4 só gera as classes usadas).
-- JS principal: 472 KB raw / 143 KB gzip — **sem alteração**. As rotas já eram code-split (`checkout`, `rastreio`, `operacoes`, `verificar`, etc. em chunks separados).
+- JS principal: 472 KB raw / 143 KB gzip — **sem alteração**. As rotas já eram code-split (`checkout`, `rastreio`, `verificar`, etc. em chunks separados).
 
-### 4.4 O que **não** mexi (e porquê)
+### 4.4 Peso do site estático
+Depois de comprimir imagens **e** de arquivar os 29 ficheiros órfãos de `public/`, o diretório `.vercel/output/static` passou de **9,55 MB para 1,77 MB** (−81%). `public/` ficou com 12 ficheiros / 0,68 MB.
+
+### 4.5 O que **não** mexi (e porquê)
 - **Code splitting adicional**: o chunk `index-*.js` (472 KB raw) inclui React, router, `embla-carousel`, Radix select/dialog, `sonner` e `lucide-react`. Fazer split manual aqui é arriscado (dependências do shell) e o ganho estimado é moderado; fica como recomendação.
 - **Fontes**: já usam `display=swap` via Google Fonts com `preconnect`. Não há `@font-face` local.
 - **Cache**: a Vercel já serve `assets/*` com hash e cache longo por omissão. Não alterei headers para não arriscar cache negativo em HTML.
@@ -177,22 +182,22 @@ A Storefront API devolve `0.0 EUR` para **todos** os produtos e variantes, e a p
 - Causa provável: preços não preenchidos na Shopify, ou o mercado/`market` associado ao token não tem preços definidos.
 - **Ação necessária:** preencher os preços no Admin da Shopify (ou corrigir o mercado) antes de abrir vendas. Não alterei nada aqui.
 
-### 7.2 Autenticação do painel `/operacoes`
-A password `UFFA-OPS-2026` está no JavaScript enviado ao browser. Se o painel for só demonstração, aceitável; se um dia gerir encomendas reais, tem de passar para o servidor (ex.: rota protegida com sessão + password em variável de ambiente).
+### 7.2 Autenticação do painel `/operacoes` — **resolvido**
+O painel foi **removido** (commit `64a0bb6`) a teu pedido. Já não existe rota, ligação, chunk nem password no site. A documentação (`docs/manual-site.md`, `docs/portal-encomendas.md`, guias de apresentação e o comando `.opencode/commands/uffavercel.md`) foi atualizada para refletir a remoção. Se um dia for preciso gerir encomendas, deve nascer como backoffice separado, com autenticação no servidor.
 
-### 7.3 Ficheiros em `public/` sem referências (~6,1 MB)
-Não apaguei nada. Confirmado que só aparecem em backups/CSV de `shopify-sync` e em `scripts/convert-images.mjs`:
+### 7.3 Ficheiros em `public/` sem referências (~6,1 MB) — **arquivados**
+Não foram apagados: foram movidos para **`Arquivos Old/`** (fora de `public/`, por isso não entram no deploy) com um `LEIA-ME.md` que explica o conteúdo e como repor cada ficheiro com `git mv`.
 
 ```
-images/nike-af1-floral-01.jpg (656 KB) · -02.jpg (719 KB) · -03.jpg (582 KB)
-produtos/material-heic-01..07.webp (≈3,2 MB no total)
-produtos/thumbs/material-heic-01..07.webp + material-01..05.webp (≈0,7 MB)
-produtos/nike-vomero-5.webp (114 KB)
-produtos/material-01..05.webp (≈0,2 MB)
-payments/visa.svg (a Visa é SVG inline no checkout)
+Arquivos Old/images/nike-af1-floral-01.jpg · -02.jpg · -03.jpg
+Arquivos Old/produtos/material-heic-01..07.webp
+Arquivos Old/produtos/thumbs/material-heic-01..07.webp + material-01..05.webp
+Arquivos Old/produtos/nike-vomero-5.webp
+Arquivos Old/produtos/material-01..05.webp
+Arquivos Old/payments/visa.svg (a Visa é SVG inline no checkout)
 ```
 
-**Decisão:** apagar, ou manter como arquivo? Se quiseres, removo num commit isolado.
+A única referência externa era o artefacto `design/stories/story-comercial.html`, cujo caminho foi atualizado para `../../Arquivos Old/images/nike-af1-floral-02.jpg`. Commit `ae6cc42`.
 
 ### 7.4 `backup-fotos/` dentro do repositório (86,34 MB)
 Está no `.gitignore`, mas os ficheiros **já foram commitados** antes disso, por isso continuam versionados (MOV/HEIC originais). Recomendo `git rm --cached` + manter localmente, mas isso reescreve o histórico do próximo clone (não o histórico passado). **Não mexi** — decide tu.
@@ -218,5 +223,8 @@ Recomendo `Content-Security-Policy-Report-Only` primeiro, com recolha de violaç
 | `e1810e2` | Repõe o logotipo em `src/assets` (mantido por segurança) |
 | `4bfeebe` | Suite E2E Playwright (desktop + mobile) |
 | `e3ca4de` | Prettier no spec/config do Playwright |
+| `bcfbcff` | Relatório final da auditoria |
+| `64a0bb6` | Remove o painel interno `/operacoes` e atualiza a documentação |
+| `ae6cc42` | Arquiva 29 ficheiros órfãos em `Arquivos Old/` (estático 7,92 → 1,77 MB) |
 
 **`main` continua em `d9d4649`, intacta.**
