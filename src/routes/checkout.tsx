@@ -19,6 +19,7 @@ import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { savePendingCheckout } from "@/lib/checkout-session";
 import { createShopifyCheckout } from "@/lib/shopify";
+import { generatePairCode, pairCount } from "@/lib/pair-code";
 
 export type DeliveryOption = "pickup" | "continental" | "islands" | "eu" | "switzerland";
 
@@ -206,16 +207,18 @@ function Checkout() {
         email,
         deliveryKey: delivery,
         deliveryLabel: deliveryRates[delivery].title[s.language],
-        items: s.cart.map((item) => {
+        items: s.cart.flatMap((item) => {
           const product = s.catalog.find((p) => p.id === item.productId);
-          return {
+          const pairs = pairCount(item.quantity);
+          return Array.from({ length: pairs }, () => ({
             productId: item.productId,
             name: product?.name ?? item.productId,
             size: item.size,
             color: item.color,
-            quantity: item.quantity,
+            quantity: 1,
             unitPrice: product?.price ?? item.unitPrice ?? 0,
-          };
+            authCode: generatePairCode(),
+          }));
         }),
         subtotal: s.subtotal,
         shipping,
@@ -389,15 +392,49 @@ function Checkout() {
               3. {s.language === "pt" ? "Pagamento" : s.language === "es" ? "Pago" : "Payment"}
             </h2>
             <div className="grid gap-3">
+              <div className="border-2 border-primary bg-primary/15 p-4 sm:flex sm:items-center sm:justify-between gap-4">
+                <div>
+                  <p className="font-bold uppercase text-xs text-primary flex items-center gap-1.5 mb-1">
+                    <Smartphone className="size-4" />
+                    {tr(
+                      s.language,
+                      "Apple Pay & Google Pay no topo",
+                      "Apple Pay & Google Pay at top",
+                      "Apple Pay & Google Pay arriba",
+                    )}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {tr(
+                      s.language,
+                      "Disponível no topo do checkout da Shopify para pagamento instantâneo com 1 clique.",
+                      "Available at top of Shopify checkout for instant 1-click payment.",
+                      "Disponible en la parte superior del checkout para pago instantáneo.",
+                    )}
+                  </p>
+                </div>
+                <div className="mt-3 sm:mt-0 flex items-center gap-2 shrink-0">
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg"
+                    alt="Apple Pay"
+                    className="h-7 bg-background px-2 py-1 border border-border"
+                  />
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo_%282020%29.svg"
+                    alt="Google Pay"
+                    className="h-7 bg-background px-2 py-1 border border-border"
+                  />
+                </div>
+              </div>
+
               <Choice
                 active={true}
                 onClick={() => {}}
                 icon={<CreditCard className="text-primary" />}
                 title={tr(
                   s.language,
-                  "Pagamento Seguro via Shopify",
-                  "Secure Payment via Shopify",
-                  "Pago Seguro vía Shopify",
+                  "Checkout Seguro Shopify (MB WAY, Cartão, PayPal, Multibanco)",
+                  "Shopify Secure Checkout (MB WAY, Card, PayPal)",
+                  "Checkout Seguro Shopify (MB WAY, Tarjeta, PayPal)",
                 )}
                 detail={tr(
                   s.language,

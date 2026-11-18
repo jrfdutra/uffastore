@@ -113,6 +113,7 @@ const CART_CREATE_MUTATION = `
   mutation cartCreate($input: CartInput) {
     cartCreate(input: $input) {
       cart {
+        id
         checkoutUrl
       }
       userErrors {
@@ -132,6 +133,20 @@ const PICKUP_LOCATIONS_QUERY = `
         address {
           countryCode
         }
+      }
+    }
+  }
+`;
+
+const CART_SHIPPING_ADDRESS_UPDATE_MUTATION = `
+  mutation cartShippingAddressUpdate($cartId: ID!, $shippingAddress: MailingAddressInput!) {
+    cartShippingAddressUpdate(cartId: $cartId, shippingAddress: $shippingAddress) {
+      cart {
+        checkoutUrl
+      }
+      userErrors {
+        field
+        message
       }
     }
   }

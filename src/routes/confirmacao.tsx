@@ -468,7 +468,7 @@ function ThankYou({ pending }: { pending: PendingCheckout | null }) {
                   const product = catalog.find((candidate) => candidate.id === item.productId);
                   return (
                     <div
-                      key={`${item.productId}-${item.size}-${item.color ?? ""}`}
+                      key={`${item.authCode ?? ""}-${item.productId}-${item.size}`}
                       className="grid grid-cols-[64px_1fr] gap-3 border-b border-border py-4 last:border-b-0"
                     >
                       {product && (
@@ -493,6 +493,27 @@ function ThankYou({ pending }: { pending: PendingCheckout | null }) {
                             {money(item.unitPrice * item.quantity)}
                           </p>
                         </div>
+                        {item.authCode && (
+                          <div className="mt-2 flex flex-wrap items-center gap-2 border border-primary/20 bg-primary/15 px-2 py-1.5">
+                            <ShieldCheck className="size-3.5 text-primary" />
+                            <span className="text-[10px] font-bold uppercase text-primary">
+                              {tr(language, "Código do par", "Pair code", "Código del par")}
+                            </span>
+                            <code className="font-mono text-[11px] font-bold">{item.authCode}</code>
+                            <Link
+                              to="/verificar"
+                              search={{ codigo: item.authCode }}
+                              className="ml-auto text-[10px] font-bold uppercase text-primary hover:underline"
+                            >
+                              {tr(
+                                language,
+                                "Entrega & autenticidade",
+                                "Delivery & authenticity",
+                                "Entrega y autenticidad",
+                              )}
+                            </Link>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -528,6 +549,12 @@ function ThankYou({ pending }: { pending: PendingCheckout | null }) {
                   </div>
                 </div>
                 <dl className="mt-4 space-y-2 border-t border-border pt-4 text-xs">
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-muted-foreground">
+                      {tr(language, "Data", "Date", "Fecha")}
+                    </dt>
+                    <dd>{formatDate(pending.at, language)}</dd>
+                  </div>
                   <div className="flex justify-between gap-3">
                     <dt className="text-muted-foreground">
                       {tr(language, "Entrega", "Delivery", "Entrega")}

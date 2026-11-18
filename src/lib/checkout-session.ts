@@ -16,6 +16,7 @@ export type PendingCheckoutItem = {
   color?: string | undefined;
   quantity: number;
   unitPrice: number;
+  authCode: string;
 };
 
 export type PendingCheckout = {
@@ -42,7 +43,8 @@ function isItem(value: unknown): value is PendingCheckoutItem {
     typeof item.size === "number" &&
     typeof item.quantity === "number" &&
     item.quantity > 0 &&
-    typeof item.unitPrice === "number"
+    typeof item.unitPrice === "number" &&
+    typeof item.authCode === "string"
   );
 }
 
