@@ -16,7 +16,6 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ConfirmacaoRouteImport } from './routes/confirmacao'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as ManualRouteImport } from './routes/manual'
-import { Route as OperacoesRouteImport } from './routes/operacoes'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as RastreioRouteImport } from './routes/rastreio'
 import { Route as TermosRouteImport } from './routes/termos'
@@ -58,11 +57,6 @@ const ManualRoute = ManualRouteImport.update({
   path: '/manual',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OperacoesRoute = OperacoesRouteImport.update({
-  id: '/operacoes',
-  path: '/operacoes',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
@@ -97,7 +91,6 @@ export interface FileRoutesByFullPath {
   '/confirmacao': typeof ConfirmacaoRoute
   '/favoritos': typeof FavoritosRoute
   '/manual': typeof ManualRoute
-  '/operacoes': typeof OperacoesRoute
   '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
   '/termos': typeof TermosRoute
@@ -112,7 +105,6 @@ export interface FileRoutesByTo {
   '/confirmacao': typeof ConfirmacaoRoute
   '/favoritos': typeof FavoritosRoute
   '/manual': typeof ManualRoute
-  '/operacoes': typeof OperacoesRoute
   '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
   '/termos': typeof TermosRoute
@@ -128,7 +120,6 @@ export interface FileRoutesById {
   '/confirmacao': typeof ConfirmacaoRoute
   '/favoritos': typeof FavoritosRoute
   '/manual': typeof ManualRoute
-  '/operacoes': typeof OperacoesRoute
   '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
   '/termos': typeof TermosRoute
@@ -145,7 +136,6 @@ export interface FileRouteTypes {
     | '/confirmacao'
     | '/favoritos'
     | '/manual'
-    | '/operacoes'
     | '/privacidade'
     | '/rastreio'
     | '/termos'
@@ -160,7 +150,6 @@ export interface FileRouteTypes {
     | '/confirmacao'
     | '/favoritos'
     | '/manual'
-    | '/operacoes'
     | '/privacidade'
     | '/rastreio'
     | '/termos'
@@ -175,7 +164,6 @@ export interface FileRouteTypes {
     | '/confirmacao'
     | '/favoritos'
     | '/manual'
-    | '/operacoes'
     | '/privacidade'
     | '/rastreio'
     | '/termos'
@@ -191,7 +179,6 @@ export interface RootRouteChildren {
   ConfirmacaoRoute: typeof ConfirmacaoRoute
   FavoritosRoute: typeof FavoritosRoute
   ManualRoute: typeof ManualRoute
-  OperacoesRoute: typeof OperacoesRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   RastreioRoute: typeof RastreioRoute
   TermosRoute: typeof TermosRoute
@@ -250,13 +237,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManualRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/operacoes': {
-      id: '/operacoes'
-      path: '/operacoes'
-      fullPath: '/operacoes'
-      preLoaderRoute: typeof OperacoesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/privacidade': {
       id: '/privacidade'
       path: '/privacidade'
@@ -303,7 +283,6 @@ const rootRouteChildren: RootRouteChildren = {
   ConfirmacaoRoute: ConfirmacaoRoute,
   FavoritosRoute: FavoritosRoute,
   ManualRoute: ManualRoute,
-  OperacoesRoute: OperacoesRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   RastreioRoute: RastreioRoute,
   TermosRoute: TermosRoute,

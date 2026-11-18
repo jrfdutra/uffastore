@@ -138,7 +138,6 @@ Home → Catálogo → Produto → Carrinho → Checkout → Confirmação
 | Público | O que precisa | Onde encontra |
 | --- | --- | --- |
 | Cliente final | Escolher, comprar e acompanhar | Site público, checkout, portal |
-| Equipa de operações | Atualizar estados e comunicar | `/operacoes` |
 | Marketing | Mostrar produto, preço e prova | Home, catálogo, autenticidade |
 | Parceiros | Perceber o modelo | Apresentação e este manual |
 
@@ -156,7 +155,6 @@ Home → Catálogo → Produto → Carrinho → Checkout → Confirmação
 | Confirmação | `/confirmacao?order=UFFA-XXXXX` | Cliente |
 | Portal de rastreio | `/rastreio` | Cliente com três fatores |
 | Verificação | `/verificar` | Público |
-| Operações | `/operacoes` | Equipa com chave |
 | Favoritos | `/favoritos` | Público |
 | Ajuda | `/ajuda` | Público |
 
@@ -615,52 +613,15 @@ O certificado mostra:
 
 ## 10 / OPERAÇÕES
 
-### Gerir sem folhas de cálculo.
+### Painel removido.
 
-Painel interno de demonstração para atualizar estado, previsão, rastreio, transportador e nota pública.
+O painel interno de operações (`/operacoes`) foi **removido** em 18/11/2026 por
+não ser utilizado. Deixou de existir rota, ligação e palavra-passe no site.
 
-![Figura 10.1 — Painel de operações: indicadores, fila e detalhe](assets/screenshots/13-operacoes-painel.png)
+A gestão do estado das encomendas passa a ser feita fora do site.
 
-<a id="cap-10-1"></a>
-
-### 10.1 Entrada e indicadores
-
-- **Chave demo:** `UFFA-OPS-2026`.
-- Indicadores: total, em trânsito, prontas para recolha e concluídas.
-- Sessão terminada pelo botão **Sair**.
-
-<a id="cap-10-2"></a>
-
-### 10.2 Fila e pesquisa
-
-- Pesquisa por número, nome ou contacto.
-- Filtro por estado.
-- Fila ordenada pela última atualização.
-- Cada linha mostra número, cliente, estado e entrega.
-
-<a id="cap-10-3"></a>
-
-### 10.3 Editor e avanço de estado
-
-![Figura 10.2 — Editor de encomenda com estado, previsão, rastreio e nota pública](assets/screenshots/crops/operacoes-editor-limpo-v2.png)
-
-- Estado, previsão, rastreio, transportador e nota pública.
-- **Avançar para…** move para o estado seguinte permitido.
-- O editor adapta-se ao tipo de entrega: rastreio e transportador só aparecem em envios.
-- Cada gravação cria um evento no histórico.
-
-<a id="cap-10-4"></a>
-
-### 10.4 Credenciais, histórico e reposição
-
-- **Copiar** gera credenciais e link do portal para enviar ao cliente.
-- **Histórico** lista os últimos movimentos.
-- **Repor demo** restaura as encomendas de exemplo.
-- As alterações refletem-se de imediato no portal do cliente.
-
-> **Atenção.** O painel é uma demonstração local. Em produção exige autenticação real, registo de auditoria e persistência no servidor.
-
-> **Checklist de demonstração.** Entrar, filtrar “Em trânsito”, avançar `UFFA-48217`, copiar credenciais e mostrar o portal atualizado.
+> **Nota histórica.** As instruções e imagens desta secção em versões anteriores
+> do manual deixaram de se aplicar.
 
 ---
 

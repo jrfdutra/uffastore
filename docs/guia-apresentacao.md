@@ -2,6 +2,10 @@
 
 Documento de apoio à apresentação `docs/apresentacao-uffa.pptx` e à demonstração ao vivo do portal.
 
+> **Nota (18/11/2026).** O painel interno `/operacoes` foi **removido** do site.
+> Sempre que este guia falar desse painel, lê-o como histórico — não existe rota
+> nem chave de acesso.
+
 ## 1. Sessão
 
 | Item             | Detalhe                                                                                                |

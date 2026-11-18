@@ -70,12 +70,10 @@ Ao receber `uffavercel`, executar automaticamente as fases abaixo, sem pedir par
 ## FASE 5 — Smoke tests obrigatórios
 
 Testar `https://www.uffastore.pt` nas rotas:
-`/`, `/catalogo`, `/checkout`, `/ajuda`, `/rastreio`, `/favoritos`, `/operacoes`.
+`/`, `/catalogo`, `/checkout`, `/ajuda`, `/rastreio`, `/favoritos`.
 
 - Todas devem devolver **200** e **não** conter `This page didn't load`
   nem `Cannot find any route`.
-- Em `/operacoes`: fazer login (`ops@uffastore.pt` / `UFFA-OPS-2026`) e confirmar
-  que o dashboard abre (Gestão de Modelos / Encomendas) sem erros na consola.
 - Verificar headers de segurança na resposta.
 
 ## FASE 6 — Relatório

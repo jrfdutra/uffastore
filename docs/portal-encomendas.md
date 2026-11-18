@@ -24,9 +24,12 @@ A área interna de operações permite à equipa atualizar o estado, o rastreio,
 | `/rastreio?order=UFFA-XXXXX`            | Cliente       | Pré-preenche o número da encomenda no formulário de acesso.                             |
 | `/verificar`                            | Público       | Valida um código de autenticidade sem expor dados pessoais.                             |
 | `/verificar?codigo=UFFA-AUTH-XXXX-XXXX` | Público       | Abre o resultado da verificação diretamente a partir de um link.                        |
-| `/operacoes`                            | Equipa (demo) | Painel interno para gerir estados, rastreio, previsão e notas.                          |
 
-A home, o header, o menu mobile e o footer têm ligações para `/rastreio`, `/verificar` e `/operacoes`.
+A home, o header, o menu mobile e o footer têm ligações para `/rastreio` e `/verificar`.
+
+> **Nota (18/11/2026).** O painel interno `/operacoes` foi removido por não ser
+> utilizado. As referências a esse painel mais abaixo neste documento são
+> históricas.
 
 ## 3. Jornada do cliente
 
@@ -79,7 +82,7 @@ Confirmada → Em preparação → Pronta para recolha → Recolhida
 Cancelada
 ```
 
-O estado `Cancelada` pode ser selecionado no painel de operações em qualquer momento. Os estados finais (`Entregue`, `Recolhida`, `Cancelada`) não têm estado seguinte.
+O estado `Cancelada` pode ser selecionado no backoffice em qualquer momento. Os estados finais (`Entregue`, `Recolhida`, `Cancelada`) não têm estado seguinte.
 
 Cada mudança de estado acrescenta um evento ao histórico com data/hora. O histórico é apresentado por ordem cronológica inversa no painel e por ordem de progressão na linha temporal do cliente.
 
@@ -148,11 +151,10 @@ type OrderEvent = {
 | `uffa-orders-v1`         | `localStorage`   | Lista de encomendas e histórico.               |
 | `uffa-order-attempts-v1` | `localStorage`   | Tentativas falhadas e bloqueios por encomenda. |
 | `uffa-order-session-v1`  | `sessionStorage` | Sessão do cliente com expiração de 30 minutos. |
-| `uffa-ops-session-v1`    | `sessionStorage` | Sessão do painel de operações.                 |
 | `uffa-cart`              | `localStorage`   | Carrinho (já existente na loja).               |
 | `uffa-theme`             | `localStorage`   | Tema claro/escuro (já existente na loja).      |
 
-Na primeira visita, `loadOrders()` cria duas encomendas de demonstração. O botão **Repor demo** em `/operacoes` volta a criar esses dados.
+Na primeira visita, `loadOrders()` cria duas encomendas de demonstração.
 
 ## 8. Dados de demonstração
 
@@ -173,29 +175,11 @@ Na primeira visita, `loadOrders()` cria duas encomendas de demonstração. O bot
 
 ### Painel de operações
 
-> **Âmbito da demo:** a confirmação, o portal e o painel de operações leem as encomendas guardadas em `uffa-orders-v1`. Encomendas concluídas na Shopify não são sincronizadas automaticamente para este armazenamento local.
+> **Âmbito da demo:** a confirmação e o portal leem as encomendas guardadas em `uffa-orders-v1`. Encomendas concluídas na Shopify não são sincronizadas automaticamente para este armazenamento local.
 
-- Chave demo: `UFFA-OPS-2026`
-- A chave é validada no browser. Em produção, tem de ser substituída por autenticação real com perfis e permissões.
+> **Nota (18/11/2026).** O painel de operações foi removido por não ser utilizado.
 
-## 9. Painel de operações
-
-Funcionalidades disponíveis em `/operacoes`:
-
-- cartões de resumo: total, em trânsito, prontas para recolha e concluídas;
-- pesquisa por número, nome ou contacto;
-- filtro por estado;
-- fila de encomendas ordenada por atualização;
-- editor com estado, previsão, rastreio, transportador e nota pública;
-- botão **Avançar para…** para o estado seguinte do fluxo;
-- botão **Copiar** com número, contacto, código exclusivo e link do portal;
-- histórico dos últimos movimentos;
-- reposição dos dados de demonstração;
-- bloqueio da sessão com **Sair**.
-
-O editor adapta-se ao tipo de entrega: rastreio e transportador só aparecem em encomendas de envio.
-
-## 10. Verificação de autenticidade
+## 9. Verificação de autenticidade
 
 `/verificar` procura o código em todas as encomendas guardadas. Se encontrar, apresenta:
 
@@ -211,7 +195,7 @@ O editor adapta-se ao tipo de entrega: rastreio e transportador só aparecem em 
 
 Se não encontrar, apresenta **Código inválido**, o código introduzido e um contacto direto para a equipa. A verificação nunca mostra nome, email, telefone ou morada.
 
-## 11. Responsividade e idiomas
+## 10. Responsividade e idiomas
 
 - Layout mobile-first com navegação própria para telemóvel.
 - Linha temporal vertical em ecrãs pequenos e horizontal em ecrãs grandes.
@@ -219,7 +203,7 @@ Se não encontrar, apresenta **Código inválido**, o código introduzido e um c
 - Textos em PT, EN e ES através de `tr(language, pt, en, es)` em `src/lib/i18n.ts`.
 - Tema claro e escuro suportados pelo sistema de temas existente.
 
-## 12. Produção: o que falta
+## 11. Produção: o que falta
 
 A demonstração usa `localStorage` para ser fácil de apresentar sem infraestrutura. Para produção, o modelo recomendado é:
 
@@ -234,7 +218,7 @@ A demonstração usa `localStorage` para ser fácil de apresentar sem infraestru
 9. **Integração com transportador** para atualizar o rastreio automaticamente.
 10. **RGPD** — retenção, minimização, direito ao apagamento e registo de acessos.
 
-## 13. Testes manuais
+## 12. Testes manuais
 
 Checklist usada na validação:
 
@@ -245,9 +229,6 @@ Checklist usada na validação:
 - [x] Terminar sessão e confirmar que o dashboard deixa de estar acessível.
 - [x] Introduzir um código de autenticidade válido em `/verificar`.
 - [x] Introduzir um código inválido e confirmar a mensagem de erro.
-- [x] Entrar em `/operacoes` com a chave demo.
-- [x] Avançar o estado de uma encomenda e confirmar a atualização no portal.
-- [x] Repor os dados demo.
 - [x] Testar o portal em viewport mobile (390 px).
 
 Comandos de validação:
@@ -255,12 +236,12 @@ Comandos de validação:
 ```bash
 npm run build
 npx tsc --noEmit
-npx eslint src/lib/orders.ts src/routes/rastreio.tsx src/routes/verificar.tsx src/routes/operacoes.tsx src/routes/checkout.tsx src/routes/confirmacao.tsx src/components/order-portal-promo.tsx
+npx eslint src/lib/orders.ts src/routes/rastreio.tsx src/routes/verificar.tsx src/routes/checkout.tsx src/routes/confirmacao.tsx src/components/order-portal-promo.tsx
 ```
 
 > O lint global ainda reporta problemas pré-existentes de formatação/CRLF em ficheiros não alterados. Os ficheiros novos e modificados estão formatados.
 
-## 14. Capturas
+## 13. Capturas
 
 As capturas usadas na apresentação estão em `docs/assets/screenshots/` e os recortes em `docs/assets/screenshots/crops/`.
 
@@ -272,12 +253,11 @@ As capturas usadas na apresentação estão em `docs/assets/screenshots/` e os r
 | `07-rastreio-acesso.png`    | Formulário de acesso ao portal.                |
 | `08-rastreio-dashboard.png` | Dashboard de envio completo.                   |
 | `11-verificar-valido.png`   | Certificado de autenticidade válido.           |
-| `13-operacoes-painel.png`   | Painel de operações com encomenda selecionada. |
 | `15-rastreio-recolha.png`   | Dashboard de recolha pronta.                   |
 | `16-verificar-invalido.png` | Resultado de código inválido.                  |
 | `14-rastreio-mobile.png`    | Portal em viewport mobile.                     |
 
-## 15. Ficheiros principais
+## 14. Ficheiros principais
 
 | Ficheiro                                | Responsabilidade                                                |
 | --------------------------------------- | --------------------------------------------------------------- |
@@ -285,7 +265,6 @@ As capturas usadas na apresentação estão em `docs/assets/screenshots/` e os r
 | `src/lib/i18n.ts`                       | Helper de tradução inline PT/EN/ES.                             |
 | `src/routes/rastreio.tsx`               | Portal do cliente e dashboard.                                  |
 | `src/routes/verificar.tsx`              | Verificação pública de autenticidade.                           |
-| `src/routes/operacoes.tsx`              | Painel interno de demonstração.                                 |
 | `src/routes/checkout.tsx`               | Criação da encomenda no checkout.                               |
 | `src/routes/confirmacao.tsx`            | Confirmação e próximos passos.                                  |
 | `src/components/order-portal-promo.tsx` | Bloco promocional na home.                                      |
