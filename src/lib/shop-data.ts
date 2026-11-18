@@ -1,9 +1,9 @@
-import navy from "@/assets/78e737e0-4cab-4dee-b928-4e7e4d451907.jpg";
-import white from "@/assets/7c2838ae-c293-4a40-946c-1a482d19369c.jpg";
-import grey from "@/assets/Gemini_Generated_Image_f4688zf4688zf468.jpg";
-import green from "@/assets/Gemini_Generated_Image_wmmzi1wmmzi1wmmz.jpg";
-import greenAlt from "@/assets/b9d62cd4-00e2-45df-95df-701356309f59.jpg";
-import tan from "@/assets/e44536b4-0486-4401-9327-8f300ee11714.jpg";
+import navy from "@/assets/78e737e0-4cab-4dee-b928-4e7e4d451907.webp";
+import white from "@/assets/7c2838ae-c293-4a40-946c-1a482d19369c.webp";
+import grey from "@/assets/Gemini_Generated_Image_f4688zf4688zf468.webp";
+import green from "@/assets/Gemini_Generated_Image_wmmzi1wmmzi1wmmz.webp";
+import greenAlt from "@/assets/b9d62cd4-00e2-45df-95df-701356309f59.webp";
+import tan from "@/assets/e44536b4-0486-4401-9327-8f300ee11714.webp";
 
 export const heroSneaker = "/produtos/uffa-modelo-padrao.webp";
 

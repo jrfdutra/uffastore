@@ -94,6 +94,9 @@ export function HeroCarousel({ children }: { children: ReactNode }) {
                   alt={slide.name}
                   width={2400}
                   height={1031}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "low"}
+                  decoding={index === 0 ? "sync" : "async"}
                   draggable={false}
                   className={`h-full w-full select-none object-cover transition-transform duration-700 ease-out ${
                     slide.hideSlogan ? "object-center md:object-right" : "object-center"
