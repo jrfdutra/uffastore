@@ -324,10 +324,10 @@ test.describe("Confirmação", () => {
       shipping: 0,
       total: 120,
     };
-    await page.addInitScript(
-      ([key, valor]) => window.localStorage.setItem(key, valor),
-      [PENDING_KEY, JSON.stringify(pendente)] as const,
-    );
+    await page.addInitScript(([key, valor]) => window.localStorage.setItem(key, valor), [
+      PENDING_KEY,
+      JSON.stringify(pendente),
+    ] as const);
 
     await page.goto("/confirmacao");
     await expect(page.getByText("Maria Teste")).toBeVisible();
