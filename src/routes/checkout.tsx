@@ -22,7 +22,6 @@ import { tr } from "@/lib/i18n";
 import { savePendingCheckout } from "@/lib/checkout-session";
 import { createShopifyCheckout } from "@/lib/shopify";
 import { generatePairCode, pairCount } from "@/lib/pair-code";
-import { createOrder } from "@/lib/orders";
 
 export type DeliveryOption = "pickup" | "continental" | "islands" | "eu" | "switzerland";
 
@@ -254,58 +253,6 @@ function Checkout() {
     }
   };
 
-  const handleFakeCheckout = () => {
-    if (!firstName || !lastName || !email) {
-      toast.error(
-        tr(
-          s.language,
-          "Por favor preenche pelo menos o nome, apelido e email para simular a compra.",
-          "Please fill at least name, last name and email to simulate purchase.",
-          "Por favor rellena al menos nombre, apellido y email para simular.",
-        ),
-      );
-      return;
-    }
-    try {
-      const order = createOrder({
-        customerName: `${firstName} ${lastName}`.trim(),
-        contact: email,
-        delivery: delivery === "pickup" ? "pickup" : "shipping",
-        address: delivery === "pickup" ? "" : "Rua de Teste 123, 4000-000 Porto",
-        payment: "mbway",
-        cart: s.cart.map((item) => ({
-          productId: item.productId,
-          size: item.size,
-          quantity: item.quantity,
-        })),
-      });
-
-      savePendingCheckout({
-        at: order.createdAt,
-        customerName: order.customerName,
-        email: order.contact,
-        deliveryKey: delivery,
-        deliveryLabel: deliveryRates[delivery].title[s.language],
-        items: order.items.map((i) => ({
-          productId: i.productId,
-          name: i.name,
-          size: i.size,
-          quantity: i.quantity,
-          unitPrice: i.unitPrice,
-          authCode: i.authCode,
-        })),
-        subtotal: order.subtotal,
-        shipping: order.shipping,
-        total: order.total,
-      });
-
-      s.clearCart();
-      window.location.href = `/confirmacao?order=${order.number}`;
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Erro ao simular compra");
-    }
-  };
-
   if (!s.cart.length)
     return (
       <div className="mx-auto grid min-h-[55vh] max-w-xl place-items-center px-4 text-center">
@@ -452,8 +399,8 @@ function Checkout() {
                 onClick={() => {}}
                 icon={
                   <div className="flex items-center gap-2">
-                    <CreditCard className="text-primary size-5" />
-                    <Wallet className="text-primary size-5" />
+                    <CreditCard className="size-5" />
+                    <Wallet className="size-5" />
                   </div>
                 }
                 title={tr(
@@ -639,79 +586,37 @@ function Checkout() {
             {loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              tr(s.language, "Pagar na Shopify", "Pay on Shopify", "Pagar en Shopify")
+              tr(s.language, "Pagar agora", "Pay now", "Pagar ahora")
             )}
           </Button>
 
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            onClick={handleFakeCheckout}
-            className="mt-3 h-12 w-full rounded-none font-bold uppercase tracking-wider border-primary text-primary hover:bg-primary/10"
-          >
-            {tr(
-              s.language,
-              "⚡ Simular Compra de Teste (Fake)",
-              "⚡ Simulate Test Purchase (Fake)",
-              "⚡ Simular Compra de Prueba (Fake)",
-            )}
-          </Button>
-
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-muted-foreground border border-border bg-section p-3">
-            {/* Apple Pay */}
-            <div
-              className="flex items-center gap-1 bg-background px-2.5 py-1 border border-border rounded-sm"
-              title="Apple Pay"
-            >
-              <svg className="h-4 w-auto fill-current text-foreground" viewBox="0 0 170 70">
-                <path d="M37.3 22.8c-2.4 2.8-5.8 4.7-9.4 4.8-0.2-2.3 0.8-4.7 2.2-6.5 1.7-2.1 4.7-3.8 7.3-3.9 0.2 2.4-0.1 4.2-0.1 5.6zM38.8 28c-3.1 0-6.1 1.8-7.9 1.8s-4.6-1.7-7.6-1.7c-4 0-7.7 2.3-9.7 5.9-4.2 7.3-1.1 18.2 2.9 24.2 2 2.9 4.3 6.1 7.4 6s3-1.9 5.7-1.9 3.6 1.9 5.7 1.9c3.1 0 5.1-3 7.1-5.9 2.3-3.3 3.2-6.5 3.3-6.7-0.1 0-6.2-2.4-6.3-9.5-0.1-5.9 4.8-8.7 5-8.8-2.8-4.1-7.2-4.5-8.7-4.7z" />
-                <path d="M83.4 25.1h-7.1v32.6h7.1c6.7 0 11.2-4.1 11.2-16.3s-4.5-16.3-11.2-16.3zm3.7 24.5c-1.3 1.9-3.7 2.6-6.1 2.6h-1.3V31.5h1.3c2.4 0 4.8 0.7 6.1 2.6 1.6 2.3 2.1 6.1 2.1 10s-0.5 7.7-2.1 10z" />
-                <path d="M123.5 25.1h-7.1v32.6h7.1c6.7 0 11.2-4.1 11.2-16.3s-4.5-16.3-11.2-16.3zm3.7 24.5c-1.3 1.9-3.7 2.6-6.1 2.6h-1.3V31.5h1.3c2.4 0 4.8 0.7 6.1 2.6 1.6 2.3 2.1 6.1 2.1 10s-0.5 7.7-2.1 10z" />
-                <path d="M154.5 57.7c4 0 7.3-1.7 8.9-4.8l-5.6-2.3c-0.8 1-2 1.8-3.3 1.8-2.1 0-3.6-1.1-4.2-3.2l15.1-6.3-0.5-1.3c-1.2-3.4-4.8-6.1-9-6.1-5.6 0-10.2 4.4-10.2 11.1 0 6.5 4.3 11.1 9.8 11.1zm-0.4-19c2.1 0 3.8 1.1 4.5 2.8l-9.9 4.1c-0.2-3.5 2.4-6.9 5.4-6.9z" />
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 border border-border bg-section p-3">
+            <span className="flex h-8 items-center rounded-sm border border-border bg-white px-2.5">
+              <img src="/payments/apple-pay.svg" alt="Apple Pay" className="h-4 w-auto" />
+            </span>
+            <span className="flex h-8 items-center rounded-sm border border-border bg-white px-2.5">
+              <img src="/payments/google-pay.svg" alt="Google Pay" className="h-4 w-auto" />
+            </span>
+            <span className="flex h-8 items-center rounded-sm border border-border bg-white px-2.5">
+              <svg className="h-3.5 w-auto" viewBox="0 0 24 24" role="img" aria-label="Visa">
+                <path
+                  fill="#1434CB"
+                  d="M9.112 8.262L5.97 15.758H3.92L2.374 9.775c-.094-.368-.175-.503-.461-.658C1.447 8.864.677 8.627 0 8.479l.046-.217h3.3a.904.904 0 01.894.764l.817 4.338 2.018-5.102zm8.033 5.049c.008-1.979-2.736-2.088-2.717-2.972.006-.269.262-.555.822-.628a3.66 3.66 0 011.913.336l.34-1.59a5.207 5.207 0 00-1.814-.333c-1.917 0-3.266 1.02-3.278 2.479-.012 1.079.963 1.68 1.698 2.04.756.367 1.01.603 1.006.931-.005.504-.602.725-1.16.734-.975.015-1.54-.263-1.992-.473l-.351 1.642c.453.208 1.289.39 2.156.398 2.037 0 3.37-1.006 3.377-2.564m5.061 2.447H24l-1.565-7.496h-1.656a.883.883 0 00-.826.55l-2.909 6.946h2.036l.405-1.12h2.488zm-2.163-2.656l1.02-2.815.588 2.815zm-8.16-4.84l-1.603 7.496H8.34l1.605-7.496z"
+                />
               </svg>
-            </div>
-
-            {/* Google Pay */}
-            <div
-              className="flex items-center gap-1 bg-background px-2.5 py-1 border border-border rounded-sm"
-              title="Google Pay"
-            >
-              <span className="font-bold text-xs tracking-tighter text-foreground">G Pay</span>
-            </div>
-
-            {/* Visa */}
-            <div
-              className="flex items-center bg-background px-2.5 py-1 border border-border rounded-sm font-black italic text-blue-600 text-xs tracking-widest"
-              title="Visa"
-            >
-              VISA
-            </div>
-
-            {/* Mastercard */}
-            <div
-              className="flex items-center gap-0.5 bg-background px-2.5 py-1 border border-border rounded-sm"
-              title="Mastercard"
-            >
-              <div className="size-3 rounded-full bg-red-600 opacity-90" />
-              <div className="size-3 rounded-full bg-amber-500 opacity-90 -ml-1.5" />
-            </div>
-
-            {/* PayPal */}
-            <div
-              className="flex items-center font-bold text-blue-800 bg-background px-2.5 py-1 border border-border rounded-sm text-xs italic"
-              title="PayPal"
-            >
-              PayPal
-            </div>
-
-            {/* MB WAY */}
-            <div
-              className="flex items-center font-black text-red-600 bg-background px-2.5 py-1 border border-border rounded-sm text-[11px] tracking-tight"
-              title="MB WAY"
-            >
-              MB<span className="text-emerald-600 font-bold ml-0.5">WAY</span>
-            </div>
+            </span>
+            <span className="flex h-8 items-center rounded-sm border border-border bg-white px-2.5">
+              <img src="/payments/mastercard.svg" alt="Mastercard" className="h-5 w-auto" />
+            </span>
+            <span className="flex h-8 items-center rounded-sm border border-border bg-white px-2.5">
+              <img src="/payments/paypal.svg" alt="PayPal" className="h-4 w-auto" />
+            </span>
+            <span className="flex h-8 items-center rounded-sm border border-border bg-white px-2.5">
+              <span className="text-[13px] font-black leading-none tracking-tight">
+                <span className="text-[#E31B23]">MB</span>{" "}
+                <span className="text-[#009639]">WAY</span>
+              </span>
+            </span>
           </div>
 
           {error && <p className="mt-3 text-center text-xs font-bold text-destructive">{error}</p>}
