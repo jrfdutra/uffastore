@@ -590,60 +590,13 @@ function Checkout() {
             )}
           </Button>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-muted-foreground border border-border bg-section p-3">
-            {/* Apple Pay */}
-            <div
-              className="flex items-center gap-1 bg-background px-2.5 py-1 border border-border rounded-sm"
-              title="Apple Pay"
-            >
-              <svg className="h-4 w-auto fill-current text-foreground" viewBox="0 0 170 70">
-                <path d="M37.3 22.8c-2.4 2.8-5.8 4.7-9.4 4.8-0.2-2.3 0.8-4.7 2.2-6.5 1.7-2.1 4.7-3.8 7.3-3.9 0.2 2.4-0.1 4.2-0.1 5.6zM38.8 28c-3.1 0-6.1 1.8-7.9 1.8s-4.6-1.7-7.6-1.7c-4 0-7.7 2.3-9.7 5.9-4.2 7.3-1.1 18.2 2.9 24.2 2 2.9 4.3 6.1 7.4 6s3-1.9 5.7-1.9 3.6 1.9 5.7 1.9c3.1 0 5.1-3 7.1-5.9 2.3-3.3 3.2-6.5 3.3-6.7-0.1 0-6.2-2.4-6.3-9.5-0.1-5.9 4.8-8.7 5-8.8-2.8-4.1-7.2-4.5-8.7-4.7z" />
-                <path d="M83.4 25.1h-7.1v32.6h7.1c6.7 0 11.2-4.1 11.2-16.3s-4.5-16.3-11.2-16.3zm3.7 24.5c-1.3 1.9-3.7 2.6-6.1 2.6h-1.3V31.5h1.3c2.4 0 4.8 0.7 6.1 2.6 1.6 2.3 2.1 6.1 2.1 10s-0.5 7.7-2.1 10z" />
-                <path d="M123.5 25.1h-7.1v32.6h7.1c6.7 0 11.2-4.1 11.2-16.3s-4.5-16.3-11.2-16.3zm3.7 24.5c-1.3 1.9-3.7 2.6-6.1 2.6h-1.3V31.5h1.3c2.4 0 4.8 0.7 6.1 2.6 1.6 2.3 2.1 6.1 2.1 10s-0.5 7.7-2.1 10z" />
-                <path d="M154.5 57.7c4 0 7.3-1.7 8.9-4.8l-5.6-2.3c-0.8 1-2 1.8-3.3 1.8-2.1 0-3.6-1.1-4.2-3.2l15.1-6.3-0.5-1.3c-1.2-3.4-4.8-6.1-9-6.1-5.6 0-10.2 4.4-10.2 11.1 0 6.5 4.3 11.1 9.8 11.1zm-0.4-19c2.1 0 3.8 1.1 4.5 2.8l-9.9 4.1c-0.2-3.5 2.4-6.9 5.4-6.9z" />
-              </svg>
-            </div>
-
-            {/* Google Pay */}
-            <div
-              className="flex items-center gap-1 bg-background px-2.5 py-1 border border-border rounded-sm"
-              title="Google Pay"
-            >
-              <span className="font-bold text-xs tracking-tighter text-foreground">G Pay</span>
-            </div>
-
-            {/* Visa */}
-            <div
-              className="flex items-center bg-background px-2.5 py-1 border border-border rounded-sm font-black italic text-blue-600 text-xs tracking-widest"
-              title="Visa"
-            >
-              VISA
-            </div>
-
-            {/* Mastercard */}
-            <div
-              className="flex items-center gap-0.5 bg-background px-2.5 py-1 border border-border rounded-sm"
-              title="Mastercard"
-            >
-              <div className="size-3 rounded-full bg-red-600 opacity-90" />
-              <div className="size-3 rounded-full bg-amber-500 opacity-90 -ml-1.5" />
-            </div>
-
-            {/* PayPal */}
-            <div
-              className="flex items-center font-bold text-blue-800 bg-background px-2.5 py-1 border border-border rounded-sm text-xs italic"
-              title="PayPal"
-            >
-              PayPal
-            </div>
-
-            {/* MB WAY */}
-            <div
-              className="flex items-center font-black text-red-600 bg-background px-2.5 py-1 border border-border rounded-sm text-[11px] tracking-tight"
-              title="MB WAY"
-            >
-              MB<span className="text-emerald-600 font-bold ml-0.5">WAY</span>
-            </div>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground border border-border bg-section p-3">
+            <span className="px-2 py-1 bg-background border border-border">Apple Pay</span>
+            <span className="px-2 py-1 bg-background border border-border">Google Pay</span>
+            <span className="px-2 py-1 bg-background border border-border">Visa</span>
+            <span className="px-2 py-1 bg-background border border-border">Mastercard</span>
+            <span className="px-2 py-1 bg-background border border-border">PayPal</span>
+            <span className="px-2 py-1 bg-background border border-border">MB WAY</span>
           </div>
 
           {error && <p className="mt-3 text-center text-xs font-bold text-destructive">{error}</p>}
