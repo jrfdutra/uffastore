@@ -10,6 +10,7 @@ import {
   MessageSquare,
   Copy,
   CreditCard,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import { tr } from "@/lib/i18n";
 import { savePendingCheckout } from "@/lib/checkout-session";
 import { createShopifyCheckout } from "@/lib/shopify";
 import { generatePairCode, pairCount } from "@/lib/pair-code";
+import { createOrder } from "@/lib/orders";
 
 export type DeliveryOption = "pickup" | "continental" | "islands" | "eu" | "switzerland";
 
@@ -251,6 +253,58 @@ function Checkout() {
     }
   };
 
+  const handleFakeCheckout = () => {
+    if (!firstName || !lastName || !email) {
+      toast.error(
+        tr(
+          s.language,
+          "Por favor preenche pelo menos o nome, apelido e email para simular a compra.",
+          "Please fill at least name, last name and email to simulate purchase.",
+          "Por favor rellena al menos nombre, apellido y email para simular.",
+        ),
+      );
+      return;
+    }
+    try {
+      const order = createOrder({
+        customerName: `${firstName} ${lastName}`.trim(),
+        contact: email,
+        delivery: delivery === "pickup" ? "pickup" : "shipping",
+        address: delivery === "pickup" ? "" : "Rua de Teste 123, 4000-000 Porto",
+        payment: "mbway",
+        cart: s.cart.map((item) => ({
+          productId: item.productId,
+          size: item.size,
+          quantity: item.quantity,
+        })),
+      });
+
+      savePendingCheckout({
+        at: order.createdAt,
+        customerName: order.customerName,
+        email: order.contact,
+        deliveryKey: delivery,
+        deliveryLabel: deliveryRates[delivery].title[s.language],
+        items: order.items.map((i) => ({
+          productId: i.productId,
+          name: i.name,
+          size: i.size,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice,
+          authCode: i.authCode,
+        })),
+        subtotal: order.subtotal,
+        shipping: order.shipping,
+        total: order.total,
+      });
+
+      s.clearCart();
+      window.location.href = `/confirmacao?order=${order.number}`;
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Erro ao simular compra");
+    }
+  };
+
   if (!s.cart.length)
     return (
       <div className="mx-auto grid min-h-[55vh] max-w-xl place-items-center px-4 text-center">
@@ -392,44 +446,15 @@ function Checkout() {
               3. {s.language === "pt" ? "Pagamento" : s.language === "es" ? "Pago" : "Payment"}
             </h2>
             <div className="grid gap-3">
-              <div className="border-2 border-primary bg-primary/15 p-4 sm:flex sm:items-center sm:justify-between gap-4">
-                <div>
-                  <p className="font-bold uppercase text-xs text-primary flex items-center gap-1.5 mb-1">
-                    <Smartphone className="size-4" />
-                    {tr(
-                      s.language,
-                      "Apple Pay & Google Pay no topo",
-                      "Apple Pay & Google Pay at top",
-                      "Apple Pay & Google Pay arriba",
-                    )}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {tr(
-                      s.language,
-                      "Disponível no topo do checkout da Shopify para pagamento instantâneo com 1 clique.",
-                      "Available at top of Shopify checkout for instant 1-click payment.",
-                      "Disponible en la parte superior del checkout para pago instantáneo.",
-                    )}
-                  </p>
-                </div>
-                <div className="mt-3 sm:mt-0 flex items-center gap-2 shrink-0">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg"
-                    alt="Apple Pay"
-                    className="h-7 bg-background px-2 py-1 border border-border"
-                  />
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo_%282020%29.svg"
-                    alt="Google Pay"
-                    className="h-7 bg-background px-2 py-1 border border-border"
-                  />
-                </div>
-              </div>
-
               <Choice
                 active={true}
                 onClick={() => {}}
-                icon={<CreditCard className="text-primary" />}
+                icon={
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="text-primary size-5" />
+                    <ShieldCheck className="text-primary size-5" />
+                  </div>
+                }
                 title={tr(
                   s.language,
                   "Checkout Seguro Shopify (MB WAY, Cartão, PayPal, Multibanco)",
@@ -613,36 +638,32 @@ function Checkout() {
             {loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              tr(s.language, "Pagar agora", "Pay now", "Pagar ahora")
+              tr(s.language, "Pagar na Shopify", "Pay on Shopify", "Pagar en Shopify")
             )}
           </Button>
 
-          <div className="mt-4 flex flex-wrap justify-center gap-3 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg"
-              alt="Apple Pay"
-              className="h-5"
-            />
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo_%282020%29.svg"
-              alt="Google Pay"
-              className="h-5"
-            />
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
-              alt="Visa"
-              className="h-3 mt-1"
-            />
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
-              alt="Mastercard"
-              className="h-5"
-            />
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-              alt="PayPal"
-              className="h-5"
-            />
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={handleFakeCheckout}
+            className="mt-3 h-12 w-full rounded-none font-bold uppercase tracking-wider border-primary text-primary hover:bg-primary/10"
+          >
+            {tr(
+              s.language,
+              "⚡ Simular Compra de Teste (Fake)",
+              "⚡ Simulate Test Purchase (Fake)",
+              "⚡ Simular Compra de Prueba (Fake)",
+            )}
+          </Button>
+
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground border border-border bg-section p-3">
+            <span className="px-2 py-1 bg-background border border-border">Apple Pay</span>
+            <span className="px-2 py-1 bg-background border border-border">Google Pay</span>
+            <span className="px-2 py-1 bg-background border border-border">Visa</span>
+            <span className="px-2 py-1 bg-background border border-border">Mastercard</span>
+            <span className="px-2 py-1 bg-background border border-border">PayPal</span>
+            <span className="px-2 py-1 bg-background border border-border">MB WAY</span>
           </div>
 
           {error && <p className="mt-3 text-center text-xs font-bold text-destructive">{error}</p>}
