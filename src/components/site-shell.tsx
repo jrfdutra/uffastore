@@ -33,7 +33,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categoryNames, copy, money, type Category, type Language } from "@/lib/shop-data";
+import {
+  categoryNames,
+  copy,
+  money,
+  type Category,
+  type Language,
+  type Product,
+} from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { company } from "@/lib/legal";
@@ -45,7 +52,21 @@ import {
   type ReactNode,
 } from "react";
 
-const cats: Category[] = ["promocoes", "lifestyle", "running", "limited", "personalizacao"];
+const cats: Category[] = [
+  "blackfriday",
+  "lifestyle",
+  "running",
+  "limited",
+  "personalizacao",
+];
+
+/** Etiqueta do tamanho de um item do carrinho ("Único" quando não há escala). */
+function sizeLabel(product: Product | undefined, size: number, color?: string): string | number {
+  const match = product?.sizes.find(
+    (variant) => variant.size === size && (!color || variant.color === color),
+  );
+  return match?.label ?? (size > 0 ? size : "Único");
+}
 
 /** Sobe a página ao topo, respeitando quem prefere menos movimento. */
 function scrollPageToTop() {
@@ -63,7 +84,7 @@ function CartDrawer() {
     const itemsText = s.cart
       .map((item) => {
         const p = s.catalog.find((c) => c.id === item.productId);
-        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${sizeLabel(p, item.size, item.color)})`;
       })
       .join(", ");
     const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.finalTotal)}\nVisita: ${window.location.origin}`;
@@ -74,7 +95,7 @@ function CartDrawer() {
     const itemsText = s.cart
       .map((item) => {
         const p = s.catalog.find((c) => c.id === item.productId);
-        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${sizeLabel(p, item.size, item.color)})`;
       })
       .join(", ");
     const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(s.finalTotal)}`;
@@ -121,13 +142,17 @@ function CartDrawer() {
               const p = s.catalog.find((x) => x.id === item.productId);
               if (!p) return null;
               const variant = p.sizes.find(
-                (sz) => sz.size === item.size && (item.color ? sz.color === item.color : true),
+                (sz) =>
+                  sz.size === item.size &&
+                  (item.color ? sz.color === item.color : true) &&
+                  (item.cord ? sz.cord === item.cord : true),
               );
               const unitPrice = item.unitPrice ?? variant?.price ?? p.price;
               const colorName = p.colors?.find((c) => c.slug === item.color)?.name;
+              const cordName = p.cords?.find((c) => c.slug === item.cord)?.name;
               return (
                 <div
-                  key={`${item.productId}-${item.size}-${item.color ?? "unica"}`}
+                  key={`${item.productId}-${item.size}-${item.color ?? "unica"}-${item.cord ?? "cord"}`}
                   className="grid grid-cols-[84px_1fr] gap-3 border-b border-border pb-5"
                 >
                   <img
@@ -143,6 +168,7 @@ function CartDrawer() {
                         <p className="font-bold">{p.name}</p>
                         <p className="text-xs text-muted-foreground">
                           {colorName ? `${colorName} · ` : ""}
+                          {cordName ? `${cordName} · ` : ""}
                           {t.size} {item.size}
                         </p>
                       </div>
@@ -160,6 +186,7 @@ function CartDrawer() {
                               item.size,
                               item.quantity - 1,
                               item.color,
+                              item.cord,
                             )
                           }
                           aria-label={tr(
@@ -182,6 +209,7 @@ function CartDrawer() {
                               item.size,
                               item.quantity + 1,
                               item.color,
+                              item.cord,
                             )
                           }
                           aria-label={tr(
@@ -198,7 +226,9 @@ function CartDrawer() {
                         variant="ghost"
                         size="icon"
                         className="size-8"
-                        onClick={() => s.removeFromCart(item.productId, item.size, item.color)}
+                        onClick={() =>
+                          s.removeFromCart(item.productId, item.size, item.color, item.cord)
+                        }
                         aria-label={t.remove}
                       >
                         <Trash2 />

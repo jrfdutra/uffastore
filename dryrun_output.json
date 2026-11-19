@@ -1,0 +1,699 @@
+{
+  "dryRunRows": [
+    {
+      "ref": "P01",
+      "modelo": "CAMPUS 00 OFFWHITE",
+      "marca": "ADIDAS",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "129.99 € (comp: 179.99 €)",
+          "mudanca": "Criar com Price: 129.99 € | Compare: 179.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P02",
+      "modelo": "SUPERSTAR",
+      "marca": "ADIDAS",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "124.99 € (comp: 164.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P03",
+      "modelo": "SUPERSTAR",
+      "marca": "ADIDAS",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "119.99 € (comp: 164.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P04",
+      "modelo": "CAMPUS 00 W/ DOUBLE LACES",
+      "marca": "ADIDAS",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "84.99 € (comp: 129.99 €)",
+          "mudanca": "Criar com Price: 84.99 € | Compare: 129.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P05",
+      "modelo": "CAMPUS 00",
+      "marca": "ADIDAS",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "124.99 € (comp: 169.99 €)",
+          "mudanca": "Criar com Price: 124.99 € | Compare: 169.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P06",
+      "modelo": "SUPERSTAR (LIMITADAS) OFFWHITE",
+      "marca": "ADIDAS",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "124.99 € (comp: 179.99 €)",
+          "mudanca": "Criar com Price: 124.99 € | Compare: 179.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P07",
+      "modelo": "530",
+      "marca": "NEW BALANCE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Cor: Branco e Vermelho",
+          "atual": "N/A (produto novo)",
+          "novo": "54.99 € (comp: 89.99 €)",
+          "mudanca": "Criar com Price: 54.99 € | Compare: 89.99 €",
+          "statusVariante": "NOVA"
+        },
+        {
+          "variante": "Cor: Branco e Verde",
+          "atual": "N/A (produto novo)",
+          "novo": "29.99 € (comp: 89.99 €)",
+          "mudanca": "Criar com Price: 29.99 € | Compare: 89.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P08",
+      "modelo": "DUNK LOW",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "119.99 € (comp: 164.99 €)",
+          "mudanca": "Criar com Price: 119.99 € | Compare: 164.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P09",
+      "modelo": "AIR FORCE W/ ROPE LACES",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "139.99 € (comp: 164.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P10",
+      "modelo": "AIR FORCE W/ ROPE LACES",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "139.99 € (comp: 164.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P11",
+      "modelo": "AIR FORCE PEROLAS SIMBOLO S/ ROPE LACES",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "99.98 € (comp: 139.99 €)",
+          "mudanca": "Criar com Price: 99.98 € | Compare: 139.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P12",
+      "modelo": "AIR FORCE PEROLAS SIMBOLO W/ ROPE LACES",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "124.99 € (comp: 174.99 €)",
+          "mudanca": "Criar com Price: 124.99 € | Compare: 174.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P13",
+      "modelo": "AIR FORCE CHAPA DOURADA S/ ROPE LACES",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "99.98 € (comp: 129.99 €)",
+          "mudanca": "Criar com Price: 99.98 € | Compare: 129.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P14",
+      "modelo": "AIR FORCE CHAPA DOURADA",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "124.99 € (comp: 174.99 €)",
+          "mudanca": "Criar com Price: 124.99 € | Compare: 174.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P15",
+      "modelo": "AIR FORCE BRANCA COM CINZA",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "119.99 € (comp: 164.99 €)",
+          "mudanca": "Criar com Price: 119.99 € | Compare: 164.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P16",
+      "modelo": "VOMERO 5 RNR",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Cute Cord: Sem Cute Cord",
+          "atual": "Ignorado",
+          "novo": "69.99 € (comp: 89.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        },
+        {
+          "variante": "Cute Cord: Com Cute Cord",
+          "atual": "Ignorado",
+          "novo": "89.99 € (comp: 109.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P17",
+      "modelo": "AIR MORE UPTEMPO LOW",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "159.99 € (comp: 240.00 €)",
+          "mudanca": "Criar com Price: 159.99 € | Compare: 240.00 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P18",
+      "modelo": "DUNK PANDA W/ ROPE LACES",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "139.99 € (comp: 164.99 €)",
+          "mudanca": "Criar com Price: 139.99 € | Compare: 164.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P19",
+      "modelo": "DUNK",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "79.99 € (comp: 134.99 €)",
+          "mudanca": "Criar com Price: 79.99 € | Compare: 134.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P20",
+      "modelo": "JORDAN 1º PAR DA LOJA",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "699.99 € (comp: 164.99 €)",
+          "mudanca": "Criar com Price: 699.99 € | Compare: 164.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P21",
+      "modelo": "JORDAN SKYLINE",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "79.99 € (comp: 99.99 €)",
+          "mudanca": "Criar com Price: 79.99 € | Compare: 99.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P22",
+      "modelo": "JORDAN SKYLINE W/ ROPE LACES",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "124.99 € (comp: 149.99 €)",
+          "mudanca": "Criar com Price: 124.99 € | Compare: 149.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P23",
+      "modelo": "VOMERO 5",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "79.99 € (comp: 114.90 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P24",
+      "modelo": "P6000",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "74.99 € (comp: 114.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P25",
+      "modelo": "VOMERO 5",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "79.99 € (comp: 114.90 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P26",
+      "modelo": "VOMERO 5",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "79.99 € (comp: 114.90 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P27",
+      "modelo": "P6000",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "74.99 € (comp: 114.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P28",
+      "modelo": "VALENTINE DAY DUNK",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "84.99 € (comp: 139.99 €)",
+          "mudanca": "Criar com Price: 84.99 € | Compare: 139.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P29",
+      "modelo": "AIR FORCE",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "94.99 € (comp: 179.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P30",
+      "modelo": "DUNK LOW PANDA ULTIMATE",
+      "marca": "NIKE",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "104.99 € (comp: 129.99 €)",
+          "mudanca": "Criar com Price: 104.99 € | Compare: 129.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P31",
+      "modelo": "P6000",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "69.99 € (comp: 119.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P32",
+      "modelo": "VOMERO 5 RNR",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Cute Cord: Sem Cute Cord",
+          "atual": "Ignorado",
+          "novo": "69.99 € (comp: 89.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        },
+        {
+          "variante": "Cute Cord: Com Cute Cord",
+          "atual": "Ignorado",
+          "novo": "94.99 € (comp: 124.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P33",
+      "modelo": "AIR FORCE",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "154.99 € (comp: 179.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P34",
+      "modelo": "AIR FORCE",
+      "marca": "NIKE",
+      "categoria": "AMBÍGUO",
+      "acao": "IGNORAR",
+      "motivo": "Observação indica título repetido",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "Ignorado",
+          "novo": "104.99 € (comp: 149.99 €)",
+          "mudanca": "Sem alteração (Observação indica título repetido)",
+          "statusVariante": "IGNORADO"
+        }
+      ]
+    },
+    {
+      "ref": "P35",
+      "modelo": "CARINA STREET",
+      "marca": "PUMA",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Rope Laces: Sem Rope Laces",
+          "atual": "N/A (produto novo)",
+          "novo": "44.99 € (comp: 89.99 €)",
+          "mudanca": "Criar com Price: 44.99 € | Compare: 89.99 €",
+          "statusVariante": "NOVA"
+        },
+        {
+          "variante": "Rope Laces: Com Rope Laces",
+          "atual": "N/A (produto novo)",
+          "novo": "69.99 € (comp: 124.99 €)",
+          "mudanca": "Criar com Price: 69.99 € | Compare: 124.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P36",
+      "modelo": "CA PRO CLASSIC",
+      "marca": "PUMA",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "69.99 € (comp: 99.98 €)",
+          "mudanca": "Criar com Price: 69.99 € | Compare: 99.98 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    },
+    {
+      "ref": "P37",
+      "modelo": "KNU SKOOL W/ ROPE LACES",
+      "marca": "VANS",
+      "categoria": "NOVO",
+      "acao": "CRIAR",
+      "motivo": "",
+      "shopifyId": "-",
+      "diffs": [
+        {
+          "variante": "Default Title",
+          "atual": "N/A (produto novo)",
+          "novo": "99.98 € (comp: 154.99 €)",
+          "mudanca": "Criar com Price: 99.98 € | Compare: 154.99 €",
+          "statusVariante": "NOVA"
+        }
+      ]
+    }
+  ],
+  "totalShopifyProducts": 30
+}

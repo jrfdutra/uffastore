@@ -14,6 +14,7 @@ export type PendingCheckoutItem = {
   name: string;
   size: number;
   color?: string | undefined;
+  cord?: string | undefined;
   quantity: number;
   unitPrice: number;
   authCode: string;

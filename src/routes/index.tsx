@@ -81,7 +81,9 @@ function Home() {
   const { language, catalog } = useShop();
   const t = copy[language],
     h = hero[language];
-  const cats = (Object.keys(categoryNames) as Category[]).filter((c) => c !== "personalizacao");
+  const cats = (Object.keys(categoryNames) as Category[]).filter(
+    (c) => c !== "personalizacao" && c !== "promocoes",
+  );
   const covers = categoryCovers(catalog);
 
   return (

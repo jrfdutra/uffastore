@@ -68,6 +68,7 @@ const PRODUCTS_QUERY = `
             availableForSale
             quantityAvailable
             price { amount currencyCode }
+            compareAtPrice { amount currencyCode }
             selectedOptions { name value }
             image { url altText }
           }
@@ -103,6 +104,7 @@ export type ShopifyProductNode = {
       availableForSale: boolean;
       quantityAvailable: number | null;
       price: { amount: string; currencyCode: string };
+      compareAtPrice: { amount: string; currencyCode: string } | null;
       selectedOptions: { name: string; value: string }[];
       image: { url: string; altText: string | null } | null;
     }[];
@@ -335,6 +337,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
           availableForSale
           quantityAvailable
           price { amount currencyCode }
+          compareAtPrice { amount currencyCode }
           selectedOptions { name value }
           image { url altText }
         }

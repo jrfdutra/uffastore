@@ -19,6 +19,8 @@ export type CartItem = {
   size: number;
   /** Slug da cor escolhida (quando o produto tem opções de cor). */
   color?: string;
+  /** Slug da opção Cute Cord escolhida (quando o produto tem essa opção). */
+  cord?: string;
   quantity: number;
   /** Preço unitário da variante no momento da compra. */
   unitPrice?: number;
@@ -36,9 +38,15 @@ type ShopContextValue = {
   cart: CartItem[];
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
-  addToCart: (productId: string, size: number, color?: string) => void;
-  removeFromCart: (productId: string, size: number, color?: string) => void;
-  updateQuantity: (productId: string, size: number, quantity: number, color?: string) => void;
+  addToCart: (productId: string, size: number, color?: string, cord?: string) => void;
+  removeFromCart: (productId: string, size: number, color?: string, cord?: string) => void;
+  updateQuantity: (
+    productId: string,
+    size: number,
+    quantity: number,
+    color?: string,
+    cord?: string,
+  ) => void;
   clearCart: () => void;
   count: number;
   subtotal: number;
@@ -90,6 +98,7 @@ function isCartItem(value: unknown): value is CartItem {
     typeof item.quantity === "number" &&
     item.quantity > 0 &&
     (item.color === undefined || typeof item.color === "string") &&
+    (item.cord === undefined || typeof item.cord === "string") &&
     (item.unitPrice === undefined || typeof item.unitPrice === "number") &&
     (item.variantId === undefined || typeof item.variantId === "string")
   );
@@ -188,7 +197,7 @@ export function ShopProvider({
   }, []);
 
   const addToCart = useCallback(
-    (productId: string, size: number, color?: string) => {
+    (productId: string, size: number, color?: string, cord?: string) => {
       const product = catalog.find((p) => p.id === productId);
       if (!product) return;
 
@@ -202,7 +211,10 @@ export function ShopProvider({
       }
 
       const variant = product.sizes.find(
-        (s) => s.size === size && (color ? s.color === color : true),
+        (s) =>
+          s.size === size &&
+          (color ? s.color === color : true) &&
+          (cord ? s.cord === cord : true),
       );
       if (!variant || variant.stock <= 0) {
         toast.error(
@@ -214,9 +226,13 @@ export function ShopProvider({
       }
 
       const variantColor = variant.color;
+      const variantCord = variant.cord;
       const unitPrice = variant.price ?? product.price;
       const matches = (item: CartItem) =>
-        item.productId === productId && item.size === size && item.color === variantColor;
+        item.productId === productId &&
+        item.size === size &&
+        item.color === variantColor &&
+        item.cord === variantCord;
 
       const existingItem = cart.find(matches);
       const currentQty = existingItem?.quantity ?? 0;
@@ -240,6 +256,7 @@ export function ShopProvider({
                 productId,
                 size,
                 ...(variantColor ? { color: variantColor } : {}),
+                ...(variantCord ? { cord: variantCord } : {}),
                 quantity: 1,
                 unitPrice,
                 ...(variant.variantId ? { variantId: variant.variantId } : {}),
@@ -256,24 +273,36 @@ export function ShopProvider({
     [catalog, cart, language],
   );
 
-  const removeFromCart = useCallback((productId: string, size: number, color?: string) => {
-    setCart((items) =>
-      items.filter(
-        (item) => !(item.productId === productId && item.size === size && item.color === color),
-      ),
-    );
-  }, []);
+  const removeFromCart = useCallback(
+    (productId: string, size: number, color?: string, cord?: string) => {
+      setCart((items) =>
+        items.filter(
+          (item) =>
+            !(
+              item.productId === productId &&
+              item.size === size &&
+              item.color === color &&
+              item.cord === cord
+            ),
+        ),
+      );
+    },
+    [],
+  );
 
   const updateQuantity = useCallback(
-    (productId: string, size: number, quantity: number, color?: string) => {
+    (productId: string, size: number, quantity: number, color?: string, cord?: string) => {
       if (quantity < 1) {
-        removeFromCart(productId, size, color);
+        removeFromCart(productId, size, color, cord);
         return;
       }
 
       const product = catalog.find((p) => p.id === productId);
       const variant = product?.sizes.find(
-        (s) => s.size === size && (color ? s.color === color : true),
+        (s) =>
+          s.size === size &&
+          (color ? s.color === color : true) &&
+          (cord ? s.cord === cord : true),
       );
       let targetQty = quantity;
 
@@ -288,7 +317,10 @@ export function ShopProvider({
 
       setCart((items) =>
         items.map((item) =>
-          item.productId === productId && item.size === size && item.color === color
+          item.productId === productId &&
+          item.size === size &&
+          item.color === color &&
+          item.cord === cord
             ? { ...item, quantity: targetQty }
             : item,
         ),
@@ -393,7 +425,10 @@ export function ShopProvider({
   const subtotal = cart.reduce((sum, item) => {
     const product = catalog.find((p) => p.id === item.productId);
     const variantPrice = product?.sizes.find(
-      (s) => s.size === item.size && (item.color ? s.color === item.color : true),
+      (s) =>
+        s.size === item.size &&
+        (item.color ? s.color === item.color : true) &&
+        (item.cord ? s.cord === item.cord : true),
     )?.price;
     const unitPrice = item.unitPrice ?? variantPrice ?? product?.price ?? 0;
     return sum + unitPrice * item.quantity;

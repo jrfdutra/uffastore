@@ -5,22 +5,40 @@ import type { ProductSize } from "./shop-data";
 export const ORDEM_ESCALOES: Escalao[] = ["crianca", "gs", "senior"];
 
 /**
- * Variantes reais de uma cor. Sem cor (modelos de cor única), devolve todas.
+ * Variantes reais de uma cor (e, quando indicado, de uma opção Cute Cord).
+ * Sem cor/cord (modelos sem essa opção), devolve todas.
  */
-export function variantesPorCor(sizes: ProductSize[], color?: string): ProductSize[] {
-  return sizes.filter((size) => (color ? size.color === color : true));
+export function variantesPorCor(
+  sizes: ProductSize[],
+  color?: string,
+  cord?: string,
+): ProductSize[] {
+  return sizes.filter(
+    (size) => (color ? size.color === color : true) && (cord ? size.cord === cord : true),
+  );
+}
+
+/** Verdadeiro para peças vendidas como tamanho único (sem escala numérica). */
+export function isTamanhoUnico(size: ProductSize): boolean {
+  return Boolean(size.label) || size.size <= 0;
 }
 
 /** Escalões que existem efetivamente nas variantes recebidas, por ordem. */
 export function escaloesDisponiveis(sizes: ProductSize[]): Escalao[] {
-  const presentes = new Set(sizes.map((size) => escalaoPorTamanho(size.size)));
+  const presentes = new Set(
+    sizes.filter((size) => !isTamanhoUnico(size)).map((size) => escalaoPorTamanho(size.size)),
+  );
   return ORDEM_ESCALOES.filter((escalao) => presentes.has(escalao));
 }
 
 /** Tamanhos de um escalão, ordenados e apenas os que pertencem a esse escalão. */
 export function tamanhosDoEscalao(sizes: ProductSize[], escalao?: Escalao): ProductSize[] {
   return sizes
-    .filter((size) => (escalao ? escalaoPorTamanho(size.size) === escalao : true))
+    .filter((size) =>
+      escalao
+        ? !isTamanhoUnico(size) && escalaoPorTamanho(size.size) === escalao
+        : true,
+    )
     .sort((a, b) => a.size - b.size);
 }
 
@@ -30,9 +48,10 @@ export function varianteSelecionavel(
   color: string | undefined,
   escalao: Escalao | undefined,
   tamanho: number | undefined,
+  cord?: string,
 ): ProductSize | undefined {
   if (tamanho === undefined) return undefined;
-  const variante = tamanhosDoEscalao(variantesPorCor(sizes, color), escalao).find(
+  const variante = tamanhosDoEscalao(variantesPorCor(sizes, color, cord), escalao).find(
     (size) => size.size === tamanho,
   );
   return variante && variante.stock > 0 ? variante : undefined;
@@ -43,8 +62,9 @@ export function precoApresentado(
   sizes: ProductSize[],
   color: string | undefined,
   precoBase: number,
+  cord?: string,
 ): number {
-  const variantes = variantesPorCor(sizes, color);
+  const variantes = variantesPorCor(sizes, color, cord);
   if (!variantes.length) return precoBase;
   return Math.min(...variantes.map((variante) => variante.price ?? precoBase));
 }

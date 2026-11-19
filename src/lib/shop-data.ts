@@ -8,7 +8,13 @@ import tan from "@/assets/e44536b4-0486-4401-9327-8f300ee11714.webp";
 export const heroSneaker = "/produtos/uffa-modelo-padrao.webp";
 
 export type Language = "pt" | "en" | "es";
-export type Category = "promocoes" | "lifestyle" | "running" | "limited" | "personalizacao";
+export type Category =
+  | "promocoes"
+  | "lifestyle"
+  | "running"
+  | "limited"
+  | "personalizacao"
+  | "blackfriday";
 export type ProductStatus = "active" | "inactive" | "soldout" | "comingsoon";
 
 export type ProductSize = {
@@ -16,10 +22,19 @@ export type ProductSize = {
   stock: number;
   /** Slug da cor da variante (quando o modelo tem opções de cor). */
   color?: string;
+  /** Slug da opção Cute Cord da variante (quando o modelo tem essa opção). */
+  cord?: string;
   sku?: string;
   variantId?: string;
   /** Preço unitário da variante já com IVA. */
   price?: number;
+  /** Preço antes do desconto (compareAtPrice na Shopify), já com IVA. */
+  compareAtPrice?: number;
+  /**
+   * Etiqueta a mostrar em vez do número. Usada nos modelos vendidos como
+   * peça única ("Único"), que não têm escala de tamanhos na Shopify.
+   */
+  label?: string;
 };
 
 export type ProductColor = {
@@ -52,6 +67,8 @@ export type Product = {
   sizes: ProductSize[];
   /** Cores disponíveis. Vazio ou ausente quando o modelo não tem opção de cor. */
   colors?: ProductColor[];
+  /** Opções de Cute Cord. Vazio ou ausente quando o modelo não tem essa opção. */
+  cords?: ProductColor[];
   status?: ProductStatus;
   featured?: boolean;
 };
@@ -110,6 +127,11 @@ export const categoryNames: Record<Category, Record<Language, string>> = {
   running: { pt: "Running", en: "Running", es: "Running" },
   limited: { pt: "Edições Limitadas", en: "Limited Editions", es: "Ediciones Limitadas" },
   personalizacao: { pt: "Personalização", en: "Customization", es: "Personalización" },
+  blackfriday: {
+    pt: "Promoções - Black Friday",
+    en: "Sales - Black Friday",
+    es: "Promociones - Black Friday",
+  },
 };
 
 export const products: Product[] = [

@@ -29,7 +29,13 @@ export function ProductCard({ product }: { product: Product }) {
   const effectiveStatus = getProductEffectiveStatus(product);
   const isSoldOut = effectiveStatus === "soldout";
   const isComingSoon = effectiveStatus === "comingsoon";
-  const isSale = isProductInCategory(product, "promocoes") || Boolean(product.originalPrice);
+  const hasDiscount = Boolean(product.originalPrice && product.originalPrice > product.price);
+  const isSale = isProductInCategory(product, "promocoes") || hasDiscount;
+  const isBlackFriday = isProductInCategory(product, "blackfriday");
+  const discountPercent =
+    product.originalPrice && product.originalPrice > product.price
+      ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+      : 0;
   const isWishlisted = wishlist.includes(product.id);
 
   const colors = product.colors ?? [];
@@ -38,13 +44,27 @@ export function ProductCard({ product }: { product: Product }) {
       ? selectedColor
       : colors[0]?.slug;
 
+  // O cartão não tem seletor de Cute Cord: usa a opção mais barata (normalmente "Sem").
+  const cords = product.cords ?? [];
+  const cordPrice = (slug: string) =>
+    Math.min(
+      ...product.sizes
+        .filter((size) => size.cord === slug)
+        .map((size) => size.price ?? product.price),
+    );
+  const cheapestCord = cords.length
+    ? [...cords].sort((a, b) => cordPrice(a.slug) - cordPrice(b.slug))[0]?.slug
+    : undefined;
+
   // A fotografia acompanha a cor escolhida (cada variante tem a sua imagem na Shopify).
   const colorImage = colors.find((color) => color.slug === activeColor)?.images?.[0];
   const cardImage = colorImage ?? product.image;
 
-  // Só variantes reais da cor ativa; sem opção de cor, todas contam.
-  const variants = product.sizes.filter((size) =>
-    activeColor ? size.color === activeColor : true,
+  // Só variantes reais da cor (e Cute Cord) ativa; sem opção, todas contam.
+  const variants = product.sizes.filter(
+    (size) =>
+      (activeColor ? size.color === activeColor : true) &&
+      (cheapestCord ? size.cord === cheapestCord : true),
   );
   const availableSizes = variants.filter((s) => s.stock > 0);
   const defaultSize = availableSizes[0]?.size ?? null;
@@ -58,7 +78,7 @@ export function ProductCard({ product }: { product: Product }) {
     if (isSoldOut || isComingSoon) return;
     if (!activeVariant || activeVariant.stock <= 0) return;
 
-    addToCart(product.id, activeVariant.size, activeVariant.color);
+    addToCart(product.id, activeVariant.size, activeVariant.color, activeVariant.cord);
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   };
@@ -85,6 +105,11 @@ export function ProductCard({ product }: { product: Product }) {
 
             <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5 items-start z-10">
               <VerifiedBadge />
+              {isBlackFriday && !isSoldOut && (
+                <span className="border border-white/25 bg-black px-3 py-1 font-display text-xs uppercase tracking-widest font-black text-white shadow-md sm:text-sm">
+                  {tr(language, "BLACK FRIDAY", "BLACK FRIDAY", "BLACK FRIDAY")}
+                </span>
+              )}
               {isSale && !isSoldOut && (
                 <span className="bg-promo text-promo-foreground border-2 border-promo rounded-[4px] px-3 py-1 font-display text-xs sm:text-sm uppercase tracking-widest font-black shadow-md">
                   {tr(language, "PROMO", "PROMO", "PROMO")}
@@ -153,17 +178,24 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
 
           <div className="text-right">
-            {product.originalPrice ? (
-              <div className="flex flex-col items-end">
-                <span className="text-[11px] text-muted-foreground line-through">
+            {product.originalPrice && product.originalPrice !== product.price ? (
+              <div className="flex flex-col items-end gap-0.5">
+                <span className="text-[11px] font-medium text-muted-foreground line-through">
                   {money(product.originalPrice)}
                 </span>
-                <span className="text-lg font-bold text-foreground">{money(product.price)}</span>
+                <span className="flex items-center gap-1.5">
+                  {discountPercent > 0 && (
+                    <span className="bg-black px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wide text-white">
+                      -{discountPercent}%
+                    </span>
+                  )}
+                  <span className="text-lg font-bold text-foreground">{money(product.price)}</span>
+                </span>
               </div>
-            ) : isSale ? (
-              <span className="text-lg font-bold text-foreground">{money(product.price)}</span>
             ) : (
-              <span className="font-bold text-foreground">{money(product.price)}</span>
+              <span className={`font-bold text-foreground ${isSale ? "text-lg" : ""}`}>
+                {money(product.price)}
+              </span>
             )}
           </div>
         </div>
@@ -219,8 +251,8 @@ export function ProductCard({ product }: { product: Product }) {
                     disabled={sz.stock <= 0}
                     className="rounded-none py-2 text-xs"
                   >
-                    {sz.size}
-                    {sz.stock <= 0 ? ` — ${tr(language, "Esgotado", "Sold out", "Agotado")}` : ""}
+                    {sz.label ?? sz.size}
+                    {sz.stock <= 0 ? ` - ${tr(language, "Esgotado", "Sold out", "Agotado")}` : ""}
                   </SelectItem>
                 ))}
               </SelectContent>

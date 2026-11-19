@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, SlidersHorizontal, Check } from "lucide-react";
 import { z } from "zod";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,9 @@ import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 
 const searchSchema = z.object({
-  category: z.enum(["promocoes", "lifestyle", "running", "limited", "personalizacao"]).optional(),
+  category: z
+    .enum(["promocoes", "lifestyle", "running", "limited", "personalizacao", "blackfriday"])
+    .optional(),
 });
 
 const sizeGroups = [
@@ -58,7 +60,7 @@ export const Route = createFileRoute("/catalogo")({
       {
         name: "description",
         content:
-          "Descobre sneakers verificados de promoções, lifestyle, running e edições limitadas.",
+          "Descobre sneakers verificados de Black Friday, lifestyle, running e edições limitadas.",
       },
       { property: "og:title", content: "Catálogo — Uffa Store" },
       { property: "og:description", content: "Sneakers verificados, selecionados no Porto." },
@@ -76,7 +78,9 @@ function Catalog() {
     navigate = Route.useNavigate(),
     search = Route.useSearch();
 
-  const category: Category | "all" = search.category ?? "all";
+  // Categoria única de campanha: ligações antigas a "promocoes" passam a Black Friday.
+  const category: Category | "all" =
+    search.category === "promocoes" ? "blackfriday" : (search.category ?? "all");
   const setCategory = (c: Category | "all") => {
     navigate({
       search: (old) => ({ ...old, category: c === "all" ? undefined : c }),
@@ -91,7 +95,16 @@ function Catalog() {
   const [size, setSize] = useState<number | "all">("all");
   const [selectedColor, setSelectedColor] = useState<string | "all">("all");
   const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(250);
+  // Teto do filtro de preço: acompanha o produto mais caro (ex.: Jordan 699,99 €)
+  // para que nenhum produto fique escondido por defeito.
+  const priceCeiling = useMemo(
+    () => Math.max(250, Math.ceil(Math.max(0, ...catalog.map((p) => p.price)) / 10) * 10),
+    [catalog],
+  );
+  const [maxPrice, setMaxPrice] = useState(priceCeiling);
+  useEffect(() => {
+    setMaxPrice(priceCeiling);
+  }, [priceCeiling]);
 
   const list = useMemo(
     () =>
@@ -147,18 +160,20 @@ function Catalog() {
               {tr(language, "Categoria", "Category", "Categoría")}
             </legend>
             <div className="flex flex-wrap gap-2 lg:flex-col">
-              {(["all", "promocoes", "lifestyle", "running", "limited"] as const).map((c) => (
-                <Button
-                  key={c}
-                  variant={category === c ? "default" : "outline"}
-                  size="sm"
-                  className="justify-start rounded-none"
-                  aria-pressed={category === c}
-                  onClick={() => setCategory(c)}
-                >
-                  {c === "all" ? t.all : categoryNames[c][language]}
-                </Button>
-              ))}
+              {(["all", "blackfriday", "lifestyle", "running", "limited"] as const).map(
+                (c) => (
+                  <Button
+                    key={c}
+                    variant={category === c ? "default" : "outline"}
+                    size="sm"
+                    className="justify-start rounded-none"
+                    aria-pressed={category === c}
+                    onClick={() => setCategory(c)}
+                  >
+                    {c === "all" ? t.all : categoryNames[c][language]}
+                  </Button>
+                ),
+              )}
             </div>
           </fieldset>
 
@@ -264,7 +279,7 @@ function Catalog() {
                 <input
                   type="range"
                   min="0"
-                  max="250"
+                  max={priceCeiling}
                   step="5"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(Number(e.target.value))}

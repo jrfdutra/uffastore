@@ -22,12 +22,18 @@ import {
  */
 export const LEGACY_CATALOG_STORAGE_KEY = "uffa-custom-catalog-v3";
 
-const categories: Category[] = ["promocoes", "lifestyle", "running", "limited", "personalizacao"];
+const categories: Category[] = [
+  "lifestyle",
+  "running",
+  "limited",
+  "personalizacao",
+  "blackfriday",
+];
 
 function toCategory(value: string): Category {
   const normalized = value.trim().toLowerCase();
   if (normalized.includes("person") || normalized.includes("custom")) return "personalizacao";
-  if (normalized.includes("promo") || normalized.includes("sale")) return "promocoes";
+  if (normalized.includes("promo") || normalized.includes("sale")) return "blackfriday";
   if (normalized.includes("run") || normalized.includes("vomero")) return "running";
   if (normalized.includes("limit")) return "limited";
   return categories.includes(normalized as Category) ? (normalized as Category) : "lifestyle";
@@ -37,7 +43,9 @@ function toCategory(value: string): Category {
 function asCategory(value: string): Category | undefined {
   const normalized = value.trim().toLowerCase();
   if (normalized.includes("person") || normalized.includes("custom")) return "personalizacao";
-  if (normalized === "sales" || normalized.includes("promo")) return "promocoes";
+  if (normalized === "sales" || normalized.includes("promo")) return "blackfriday";
+  if (normalized.includes("black friday") || normalized.includes("blackfriday"))
+    return "blackfriday";
   if (normalized === "casual" || normalized === "streetwear") return "lifestyle";
   if (normalized.includes("run")) return "running";
   if (normalized.includes("limit")) return "limited";
@@ -76,13 +84,20 @@ function toProduct(node: ShopifyProductNode): Product {
     ?.sources?.find((source) => source.mimeType === "video/mp4")?.url;
 
   // Cores reais da Shopify (opção "Cor"/"Color"), sem inventar valores.
-  const colorValues = node.options?.find((option) => /cor|color/i.test(option.name))?.values ?? [];
+  // Regex ancorado para não confundir "Cor" com a opção "Cute Cord".
+  const colorValues =
+    node.options?.find((option) => /^cor(es)?$|^colou?r$/i.test(option.name.trim()))?.values ?? [];
+
+  // Opção Cute Cord (ex.: "Com Cute Cord" / "Sem Cute Cord").
+  const cordValues =
+    node.options?.find((option) => /cute\s*cord|^cord(ão|ao|ões|oes)?$/i.test(option.name.trim()))
+      ?.values ?? [];
 
   // Fotografia própria de cada variante (na Shopify, a imagem é associada à variante).
   // Isto permite que o seletor de cor troque a fotografia para o par certo.
   const variantImagesByColor = new Map<string, string[]>();
   for (const variant of node.variants?.nodes ?? []) {
-    const colorValue = optionValue(variant.selectedOptions, /cor|color/i);
+    const colorValue = optionValue(variant.selectedOptions, /^cor(es)?$|^colou?r$/i);
     const url = variant.image?.url;
     if (!colorValue || !url) continue;
     const slug = colorSlug(colorValue);
@@ -102,43 +117,77 @@ function toProduct(node: ShopifyProductNode): Product {
     };
   });
 
+  // Opções de Cute Cord (sem imagem própria).
+  const cords: ProductColor[] = cordValues.map((value) => ({
+    name: value,
+    slug: colorSlug(value),
+    images,
+  }));
+
   const sizes: ProductSize[] = (node.variants?.nodes ?? []).flatMap((variant) => {
     const sizeValue = optionValue(variant.selectedOptions, /tamanho|size|escal/i);
     const size = Number.parseFloat(sizeValue ?? "");
+    // Sem tamanho numérico na Shopify, a variante não entra no catálogo.
     if (!Number.isFinite(size)) return [];
 
-    const colorValue = optionValue(variant.selectedOptions, /cor|color/i);
+    const colorValue = optionValue(variant.selectedOptions, /^cor(es)?$|^colou?r$/i);
     const slug = colorValue ? colorSlug(colorValue) : undefined;
+
+    const cordValue = optionValue(
+      variant.selectedOptions,
+      /cute\s*cord|^cord(ão|ao|ões|oes)?$/i,
+    );
+    const cordSlug = cordValue ? colorSlug(cordValue) : undefined;
 
     return [
       {
         size,
         stock: variant.quantityAvailable ?? 0,
         ...(slug ? { color: slug } : {}),
+        ...(cordSlug ? { cord: cordSlug } : {}),
         ...(variant.sku ? { sku: variant.sku } : {}),
         variantId: variant.id,
         price: Number.parseFloat(variant.price.amount),
+        ...(variant.compareAtPrice
+          ? { compareAtPrice: Number.parseFloat(variant.compareAtPrice.amount) }
+          : {}),
       },
     ];
   });
 
   const priceValues = sizes.map((size) => size.price ?? 0).filter((price) => price > 0);
 
+  // Preço antigo a riscar: o compareAtPrice da variante mais barata que tenha
+  // um valor diferente do atual. Inclui casos excecionais em que o valor antigo
+  // é inferior (ex.: Nike Jordan 1º Par Da Loja) — nesses não há percentagem.
+  const saleVariant = sizes
+    .filter(
+      (size) =>
+        size.compareAtPrice !== undefined && size.compareAtPrice !== (size.price ?? 0),
+    )
+    .sort((a, b) => (a.price ?? 0) - (b.price ?? 0))[0];
+  const originalPrice = saleVariant?.compareAtPrice ?? fallback?.originalPrice;
+
   // Categoria principal = productType; categorias extra = tags da Shopify
-  // (ex.: um produto "lifestyle" com a tag "promocoes" aparece também nas Promoções).
+  // (ex.: um produto "lifestyle" com a tag "Black Friday" aparece também nas Promoções).
   // O handle ajuda a classificar modelos de running conhecidos (ex.: Vomero).
   const isRunningHandle = /vomero|pegasus|running/i.test(node.handle);
-  const primaryCategory: Category = isRunningHandle
+  const rawPrimaryCategory: Category = isRunningHandle
     ? "running"
     : node.productType
       ? toCategory(node.productType)
       : (fallback?.category ?? "lifestyle");
+  const primaryCategory: Category =
+    rawPrimaryCategory === "promocoes" ? "blackfriday" : rawPrimaryCategory;
   const extraCategories = Array.from(
     new Set<Category>([
       ...(fallback?.categories ?? []),
       ...(node.tags ?? []).map(asCategory).filter((tag): tag is Category => Boolean(tag)),
     ]),
-  ).filter((category) => category !== primaryCategory);
+  )
+    // "Promoções" foi fundida na categoria única "Promoções - Black Friday".
+    .map((category) => (category === "promocoes" ? "blackfriday" : category))
+    .filter((category) => category !== primaryCategory);
 
   return {
     id: node.handle,
@@ -154,6 +203,7 @@ function toProduct(node: ShopifyProductNode): Product {
     price: priceValues.length
       ? Math.min(...priceValues)
       : Number.parseFloat(node.priceRange.minVariantPrice.amount),
+    ...(originalPrice ? { originalPrice } : {}),
     status: fallback?.status ?? "active",
     image: primaryImage,
     ...(images.length ? { images } : {}),
@@ -161,6 +211,7 @@ function toProduct(node: ShopifyProductNode): Product {
     ...(fallback?.videoColor ? { videoColor: fallback.videoColor } : {}),
     description: { pt: description, en: description, es: description },
     colors,
+    ...(cords.length ? { cords } : {}),
     sizes: sizes.length ? sizes : (fallback?.sizes ?? []),
     ...(fallback?.featured ? { featured: true } : {}),
   };

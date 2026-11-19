@@ -95,8 +95,8 @@ function ManualPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             {tr(
               language,
-              "Filtros por linha (Casual, Streetwear, Edições Limitadas, Promoções), tamanhos e preços em tempo real com sincronização instantânea com o cabeçalho.",
-              "Filters by line (Casual, Streetwear, Limited Editions, Promos), sizes, and real-time prices with instant header synchronization.",
+              "Filtros por linha (Casual, Streetwear, Edições Limitadas, Promoções - Black Friday), tamanhos e preços em tempo real com sincronização instantânea com o cabeçalho.",
+              "Filters by line (Casual, Streetwear, Limited Editions, Sales - Black Friday), sizes, and real-time prices with instant header synchronization.",
               "Filtros por línea, tallas y precios en tiempo real con sincronización instantánea con el encabezado.",
             )}
           </p>

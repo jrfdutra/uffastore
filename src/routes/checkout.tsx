@@ -22,6 +22,7 @@ import { tr } from "@/lib/i18n";
 import { savePendingCheckout } from "@/lib/checkout-session";
 import { createShopifyCheckout } from "@/lib/shopify";
 import { generatePairCode, pairCount } from "@/lib/pair-code";
+import { PaymentBadges } from "@/components/payment-badges";
 
 export type DeliveryOption = "pickup" | "continental" | "islands" | "eu" | "switzerland";
 
@@ -178,7 +179,10 @@ function Checkout() {
           );
         }
         const variant = product.sizes.find(
-          (sz) => sz.size === item.size && (item.color ? sz.color === item.color : true),
+          (sz) =>
+            sz.size === item.size &&
+            (item.color ? sz.color === item.color : true) &&
+            (item.cord ? sz.cord === item.cord : true),
         );
         if (!variant || variant.stock < item.quantity) {
           throw new Error(
@@ -192,7 +196,10 @@ function Checkout() {
       const items = s.cart.map((item) => {
         const product = s.catalog.find((p) => p.id === item.productId);
         const variant = product?.sizes.find(
-          (sz) => sz.size === item.size && (item.color ? sz.color === item.color : true),
+          (sz) =>
+            sz.size === item.size &&
+            (item.color ? sz.color === item.color : true) &&
+            (item.cord ? sz.cord === item.cord : true),
         );
         const variantId = variant?.variantId ?? item.variantId;
         if (!variantId) {
@@ -217,6 +224,7 @@ function Checkout() {
             name: product?.name ?? item.productId,
             size: item.size,
             color: item.color,
+            cord: item.cord,
             quantity: 1,
             unitPrice: product?.price ?? item.unitPrice ?? 0,
             authCode: generatePairCode(),
@@ -590,14 +598,7 @@ function Checkout() {
             )}
           </Button>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground border border-border bg-section p-3">
-            <span className="px-2 py-1 bg-background border border-border">Apple Pay</span>
-            <span className="px-2 py-1 bg-background border border-border">Google Pay</span>
-            <span className="px-2 py-1 bg-background border border-border">Visa</span>
-            <span className="px-2 py-1 bg-background border border-border">Mastercard</span>
-            <span className="px-2 py-1 bg-background border border-border">PayPal</span>
-            <span className="px-2 py-1 bg-background border border-border">MB WAY</span>
-          </div>
+          <PaymentBadges />
 
           {error && <p className="mt-3 text-center text-xs font-bold text-destructive">{error}</p>}
 

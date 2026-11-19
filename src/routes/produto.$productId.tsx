@@ -71,6 +71,7 @@ function ProductDetail() {
   const p = s.catalog.find((item) => item.id === loaderProduct.id) ?? loaderProduct;
 
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
+  const [selectedCord, setSelectedCord] = useState<string | undefined>(undefined);
   const [selectedEscalao, setSelectedEscalao] = useState<Escalao | undefined>(undefined);
   const [selected, setSelected] = useState<number>();
   const [angle, setAngle] = useState(0);
@@ -84,10 +85,18 @@ function ProductDetail() {
       ? selectedColor
       : colors[0]?.slug;
 
-  // Variantes reais da cor escolhida (ou todas, se o modelo não tiver opção de cor).
+  const cords = p.cords ?? [];
+  const defaultCord =
+    cords.find((cord) => /^sem\b|^without\b/i.test(cord.name))?.slug ?? cords[0]?.slug;
+  const activeCord =
+    selectedCord && cords.some((cord) => cord.slug === selectedCord)
+      ? selectedCord
+      : defaultCord;
+
+  // Variantes reais da cor (e Cute Cord) escolhidas, ou todas se o modelo não tiver essas opções.
   const sizesForColor = useMemo(
-    () => variantesPorCor(p.sizes, activeColor),
-    [p.sizes, activeColor],
+    () => variantesPorCor(p.sizes, activeColor, activeCord),
+    [p.sizes, activeColor, activeCord],
   );
 
   // Escalões que existem efetivamente nesta cor, pela ordem Criança → GS → Senior.
@@ -106,7 +115,19 @@ function ProductDetail() {
   const selectedVariant: ProductSize | undefined = sizesForEscalao.find(
     (size) => size.size === selected,
   );
-  const displayPrice = selectedVariant?.price ?? precoApresentado(p.sizes, activeColor, p.price);
+  const displayPrice =
+    selectedVariant?.price ?? precoApresentado(p.sizes, activeColor, p.price, activeCord);
+  // Preço antigo riscado: acompanha a variante (cor + Cute Cord) escolhida ou,
+  // sem tamanho escolhido, a variante mais barata dessa combinação.
+  const cheapestVariant = [...sizesForColor].sort(
+    (a, b) => (a.price ?? p.price) - (b.price ?? p.price),
+  )[0];
+  const compareAtPrice =
+    selectedVariant?.compareAtPrice ?? cheapestVariant?.compareAtPrice ?? p.originalPrice;
+  const discountPercent =
+    compareAtPrice && compareAtPrice > displayPrice
+      ? Math.round(((compareAtPrice - displayPrice) / compareAtPrice) * 100)
+      : 0;
 
   const effectiveStatus = getProductEffectiveStatus(p);
   const isSoldOut = effectiveStatus === "soldout";
@@ -128,6 +149,12 @@ function ProductDetail() {
     setSelected(undefined);
     setError(false);
     setActiveImage(0);
+  };
+
+  const handleCordChange = (slug: string) => {
+    setSelectedCord(slug);
+    setSelected(undefined);
+    setError(false);
   };
 
   const handleEscalaoChange = (escalao: string) => {
@@ -254,7 +281,7 @@ function ProductDetail() {
                   .map((category) => categoryNames[category][s.language])
                   .join(" · ")}
               </p>
-              {(isProductInCategory(p, "promocoes") || Boolean(p.originalPrice)) && !isSoldOut && (
+              {(isProductInCategory(p, "promocoes") || discountPercent > 0) && !isSoldOut && (
                 <span className="bg-promo text-promo-foreground border-2 border-promo rounded-[4px] px-3.5 py-1 text-xs font-black uppercase tracking-widest shadow-md">
                   {tr(s.language, "PROMO", "PROMO", "PROMO")}
                 </span>
@@ -270,7 +297,14 @@ function ProductDetail() {
                 </span>
               )}
             </div>
-            <VerifiedBadge />
+            <div className="flex items-center gap-2">
+              {isProductInCategory(p, "blackfriday") && !isSoldOut && (
+                <span className="border border-white/25 bg-black px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white shadow-sm">
+                  {tr(s.language, "BLACK FRIDAY", "BLACK FRIDAY", "BLACK FRIDAY")}
+                </span>
+              )}
+              <VerifiedBadge />
+            </div>
           </div>
           {isInactive && (
             <div className="mt-4 border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive font-semibold">
@@ -285,15 +319,22 @@ function ProductDetail() {
           <h1 className="mt-4 font-display text-6xl uppercase leading-none md:text-7xl">
             {p.name}
           </h1>
-          <div className="flex items-baseline gap-3 mt-5">
-            <span
-              className={`font-display text-foreground font-bold ${Boolean(p.originalPrice) || isProductInCategory(p, "promocoes") ? "text-4xl md:text-5xl" : "text-3xl"}`}
-            >
-              {money(displayPrice)}
-            </span>
-            {p.originalPrice && (
-              <span className="text-sm font-semibold text-muted-foreground line-through">
-                {money(p.originalPrice)}
+          <div className="flex items-end gap-3 mt-5">
+            <div className="flex flex-col gap-0.5">
+              {compareAtPrice && (
+                <span className="text-sm font-semibold text-muted-foreground line-through">
+                  {money(compareAtPrice)}
+                </span>
+              )}
+              <span
+                className={`font-display text-foreground font-bold ${Boolean(compareAtPrice) || isProductInCategory(p, "promocoes") ? "text-4xl md:text-5xl" : "text-3xl"}`}
+              >
+                {money(displayPrice)}
+              </span>
+            </div>
+            {discountPercent > 0 && (
+              <span className="mb-1.5 bg-black px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">
+                -{discountPercent}%
               </span>
             )}
           </div>
@@ -328,6 +369,37 @@ function ProductDetail() {
                         }`}
                       >
                         {color.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {cords.length > 1 && (
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-sm font-bold uppercase">Cute Cord</span>
+                  <span className="text-xs text-muted-foreground">
+                    {cords.find((cord) => cord.slug === activeCord)?.name ?? ""}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {cords.map((cord) => {
+                    const isActive = cord.slug === activeCord;
+                    return (
+                      <button
+                        key={cord.slug}
+                        type="button"
+                        onClick={() => handleCordChange(cord.slug)}
+                        aria-pressed={isActive}
+                        className={`border px-3.5 py-2 text-xs font-bold uppercase tracking-wide transition ${
+                          isActive
+                            ? "border-foreground bg-foreground text-background"
+                            : "border-border text-foreground hover:border-foreground"
+                        }`}
+                      >
+                        {cord.name}
                       </button>
                     );
                   })}
@@ -404,7 +476,7 @@ function ProductDetail() {
                             className="rounded-none py-2.5"
                           >
                             <span className="flex w-full items-center justify-between gap-4">
-                              <span>{size.size}</span>
+                              <span>{size.label ?? size.size}</span>
                               {!disponivel && (
                                 <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
                                   {t.soldOut}
@@ -427,8 +499,11 @@ function ProductDetail() {
                   {activeColor
                     ? `${colors.find((color) => color.slug === activeColor)?.name ?? activeColor} · `
                     : ""}
+                  {activeCord
+                    ? `${cords.find((cord) => cord.slug === activeCord)?.name ?? activeCord} · `
+                    : ""}
                   {activeEscalao ? `${ESCALAO_ETIQUETA[activeEscalao][s.language]} · ` : ""}
-                  {selectedVariant.size}
+                  {selectedVariant.label ?? selectedVariant.size}
                 </span>
                 {" — "}
                 {selectedVariant.stock > 0
@@ -459,7 +534,7 @@ function ProductDetail() {
                 setError(true);
                 return;
               }
-              s.addToCart(p.id, selectedVariant.size, selectedVariant.color);
+              s.addToCart(p.id, selectedVariant.size, selectedVariant.color, selectedVariant.cord);
             }}
           >
             {isSoldOut
