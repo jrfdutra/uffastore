@@ -2,6 +2,9 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { processOrderPaidWebhook, verifyShopifyHmac } from "./lib/webhook-handler";
+
+const WEBHOOK_PATH = "/api/webhooks/shopify/orders-paid";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -46,6 +49,28 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const url = new URL(request.url);
+
+    if (url.pathname === WEBHOOK_PATH && request.method === "POST") {
+      try {
+        const raw = await request.text();
+        if (!verifyShopifyHmac(raw, request.headers.get("x-shopify-hmac-sha256"))) {
+          return new Response("Unauthorized", { status: 401 });
+        }
+        const result = await processOrderPaidWebhook(raw);
+        return new Response(JSON.stringify(result), {
+          status: result.success ? 200 : 500,
+          headers: { "content-type": "application/json" },
+        });
+      } catch (error) {
+        console.error("[Webhook] Erro fatal:", error);
+        return new Response(JSON.stringify({ success: false }), {
+          status: 500,
+          headers: { "content-type": "application/json" },
+        });
+      }
+    }
+
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
