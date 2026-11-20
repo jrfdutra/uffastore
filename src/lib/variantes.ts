@@ -18,9 +18,13 @@ export function variantesPorCor(
   );
 }
 
-/** Verdadeiro para peças vendidas como tamanho único (sem escala numérica). */
+/**
+ * Verdadeiro para peças vendidas como tamanho único (sem escala numérica).
+ * Nota: uma etiqueta de fração (ex.: "36 ⅔") tem tamanho numérico válido e
+ * por isso NÃO é tamanho único — só conta quando não há número.
+ */
 export function isTamanhoUnico(size: ProductSize): boolean {
-  return Boolean(size.label) || size.size <= 0;
+  return size.size <= 0;
 }
 
 /** Escalões que existem efetivamente nas variantes recebidas, por ordem. */
@@ -40,6 +44,25 @@ export function tamanhosDoEscalao(sizes: ProductSize[], escalao?: Escalao): Prod
         : true,
     )
     .sort((a, b) => a.size - b.size);
+}
+
+/**
+ * Etiqueta de tamanho pronta a mostrar. Usa a etiqueta original da variante
+ * (ex.: "36 ⅔" na Adidas) quando existe; caso contrário o próprio número.
+ */
+export function rotuloTamanho(tamanho: number, label?: string): string {
+  if (label) return label;
+  if (tamanho <= 0) return "Único";
+  return String(tamanho);
+}
+
+/** Etiqueta de tamanho de um item de carrinho/encomenda, procurada no produto. */
+export function rotuloTamanhoDoProduto(
+  product: { sizes: ProductSize[] } | undefined,
+  tamanho: number,
+): string {
+  const match = product?.sizes.find((variante) => variante.size === tamanho);
+  return rotuloTamanho(tamanho, match?.label);
 }
 
 /** Variante selecionável: só devolve algo se existir e tiver stock. */

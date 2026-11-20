@@ -90,12 +90,24 @@ for (const p of products) {
 
   let sizes;
   if (isAdidas) {
-    sizes = isChild ? SIZES_ADIDAS_CRIANCA : (isGS ? SIZES_ADIDAS_GS : SIZES_ADIDAS_SENIOR);
+    // Criança 28–35 · GS 35⅓–39⅓ · Sénior 40–49⅓
+    sizes = isChild
+      ? SIZES_ADIDAS_CRIANCA
+      : isGS
+        ? SIZES_ADIDAS_GS
+        : [...SIZES_ADIDAS_GS, ...SIZES_ADIDAS_SENIOR];
   } else if (isNike) {
-    sizes = isChild ? SIZES_NIKE_CRIANCA : (isGS ? SIZES_NIKE_GS : SIZES_NIKE_SENIOR);
+    // Criança 27.5–35 · GS 35.5–39 · Sénior 40–50
+    sizes = isChild
+      ? SIZES_NIKE_CRIANCA
+      : isGS
+        ? SIZES_NIKE_GS
+        : [...SIZES_NIKE_GS, ...SIZES_NIKE_SENIOR];
   } else {
-    // Default fallback
-    sizes = isChild ? ["34", "35"] : ["36", "37", "38", "39", "40", "41", "42", "43", "44", "45"];
+    // Outras marcas: grelha adulto padrão
+    sizes = isChild
+      ? ["34", "35"]
+      : ["36", "36.5", "37.5", "38", "38.5", "39", "40", "40.5", "41", "42", "42.5", "43", "44", "44.5", "45"];
   }
 
   const sizeOption = p.options.find((o) => /tamanho|size|escal/i.test(o.name));
@@ -136,7 +148,7 @@ for (const p of products) {
         ],
         price: combo.price,
         ...(combo.compareAtPrice ? { compareAtPrice: combo.compareAtPrice } : {}),
-        sku: `${baseSku}-${size.replace(".", "-")}`,
+        sku: `${baseSku}-${size.replace(/\./g, "-").replace(/\s+/g, "").replace(/⅓/g, "1-3").replace(/⅔/g, "2-3")}`,
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
         inventoryQuantities: [{ locationId, name: "available", quantity: STOCK }],

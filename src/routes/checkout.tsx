@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { copy, money } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
+import { rotuloTamanhoDoProduto } from "@/lib/variantes";
 import { savePendingCheckout } from "@/lib/checkout-session";
 import { createShopifyCheckout } from "@/lib/shopify";
 import { generatePairCode, pairCount } from "@/lib/pair-code";
@@ -120,7 +121,7 @@ function Checkout() {
     const itemsText = s.cart
       .map((item) => {
         const p = s.catalog.find((c) => c.id === item.productId);
-        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${rotuloTamanhoDoProduto(p, item.size)})`;
       })
       .join(", ");
     const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(grandTotal)}\nVisita: ${window.location.origin}`;
@@ -131,7 +132,7 @@ function Checkout() {
     const itemsText = s.cart
       .map((item) => {
         const p = s.catalog.find((c) => c.id === item.productId);
-        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${rotuloTamanhoDoProduto(p, item.size)})`;
       })
       .join(", ");
     const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(grandTotal)}`;
@@ -147,7 +148,7 @@ function Checkout() {
     const itemsText = s.cart
       .map((item) => {
         const p = s.catalog.find((c) => c.id === item.productId);
-        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${item.size})`;
+        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${rotuloTamanhoDoProduto(p, item.size)})`;
       })
       .join(", ");
     const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(grandTotal)}`;
@@ -187,8 +188,8 @@ function Checkout() {
         if (!variant || variant.stock < item.quantity) {
           throw new Error(
             s.language === "pt"
-              ? `Stock insuficiente para ${product.name} (Tamanho ${item.size}). Disponível: ${variant?.stock ?? 0}.`
-              : `Insufficient stock for ${product.name} (Size ${item.size}). Available: ${variant?.stock ?? 0}.`,
+              ? `Stock insuficiente para ${product.name} (Tamanho ${rotuloTamanhoDoProduto(product, item.size)}). Disponível: ${variant?.stock ?? 0}.`
+              : `Insufficient stock for ${product.name} (Size ${rotuloTamanhoDoProduto(product, item.size)}). Available: ${variant?.stock ?? 0}.`,
           );
         }
       }
@@ -450,7 +451,7 @@ function Checkout() {
                   className="flex min-w-0 justify-between gap-3 text-sm"
                 >
                   <span className="min-w-0 break-words">
-                    {x.quantity}× {p.name} · {x.size}
+                    {x.quantity}× {p.name} · {rotuloTamanhoDoProduto(p, x.size)}
                   </span>
                   <span className="shrink-0 whitespace-nowrap font-bold">
                     {money(p.price * x.quantity)}

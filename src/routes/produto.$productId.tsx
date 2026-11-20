@@ -59,9 +59,9 @@ export const Route = createFileRoute("/produto/$productId")({
 
 /** Ordem de apresentação dos escalões. */
 const ESCALAO_ETIQUETA: Record<Escalao, { pt: string; en: string; es: string; nota: string }> = {
-  crianca: { pt: "Criança", en: "Kids", es: "Niño", nota: "28–35" },
-  gs: { pt: "GS", en: "GS", es: "GS", nota: "36–39" },
-  senior: { pt: "Sénior", en: "Senior", es: "Sénior", nota: "40–45" },
+  crianca: { pt: "Criança", en: "Kids", es: "Niño", nota: "27,5–35" },
+  gs: { pt: "GS", en: "GS", es: "GS", nota: "35⅓–39⅓" },
+  senior: { pt: "Sénior", en: "Senior", es: "Sénior", nota: "40–50" },
 };
 
 function ProductDetail() {

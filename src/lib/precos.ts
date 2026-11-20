@@ -11,14 +11,17 @@ export type ModeloId =
   | "air-force-rope";
 
 /**
- * Determina o escalão a que pertence um tamanho, seguindo a escala da Nike:
- * Criança (28–35), GS (36–39) e Sénior (40–45).
+ * Determina o escalão a que pertence um tamanho.
+ *
+ * As grelhas variam por marca: a Nike começa a Criança em 27,5 e o GS em 35,5;
+ * a Adidas começa o GS em 35⅓ (35,33). Por isso o limite entre Criança e GS
+ * fica em 35,3 — abaixo disso é Criança, acima (até 40) é GS.
  */
 export function escalaoPorTamanho(tamanho: number): Escalao {
-  if (tamanho >= 28 && tamanho <= 35) return "crianca";
-  if (tamanho >= 36 && tamanho < 40) return "gs";
+  if (tamanho >= 27 && tamanho < 35.3) return "crianca";
+  if (tamanho >= 35.3 && tamanho < 40) return "gs";
   if (tamanho >= 40) return "senior";
-  throw new Error(`Tamanho ${tamanho} fora dos escalões válidos (28+).`);
+  throw new Error(`Tamanho ${tamanho} fora dos escalões válidos (27+).`);
 }
 
 /**

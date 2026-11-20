@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { tr } from "@/lib/i18n";
 import { categoryNames, type Language } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
+import { rotuloTamanhoDoProduto } from "@/lib/variantes";
 import {
   demoAuthCode,
   formatDate,
@@ -397,7 +398,7 @@ function ValidResult({ result }: { result: AuthVerification }) {
           />
           <p className="mt-2 text-[10px] font-bold uppercase text-muted-foreground">
             {categoryNames[product.category][language]} · {tr(language, "Tamanho", "Size", "Talla")}{" "}
-            {item.size}
+            {rotuloTamanhoDoProduto(product, item.size)}
           </p>
         </div>
         <div>
@@ -413,7 +414,10 @@ function ValidResult({ result }: { result: AuthVerification }) {
               value={item.serial}
               mono
             />
-            <Detail label={tr(language, "Tamanho", "Size", "Talla")} value={String(item.size)} />
+            <Detail
+              label={tr(language, "Tamanho", "Size", "Talla")}
+              value={rotuloTamanhoDoProduto(product, item.size)}
+            />
             <Detail
               label={tr(language, "Edição", "Edition", "Edición")}
               value={categoryNames[product.category][language]}

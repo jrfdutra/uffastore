@@ -70,6 +70,41 @@ function optionValue(
   return options.find((option) => pattern.test(option.name))?.value;
 }
 
+/**
+ * Converte a etiqueta de tamanho da Shopify num número, preservando as frações
+ * que algumas marcas usam (ex.: Adidas "36 ⅔" = 36,666…; "36 2/3" idem).
+ *
+ * O número é usado para ordenar e agrupar por escalão; a etiqueta original
+ * fica guardada em `label` para ser mostrada ao cliente tal como a marca a escreve.
+ */
+export function parseTamanho(value?: string): { size: number; label?: string } | undefined {
+  if (!value) return undefined;
+  const raw = value.trim();
+  if (!raw) return undefined;
+
+  // Frações Unicode: 36 ⅓, 36 ⅔
+  const unicode = raw.match(/^(\d+)\s*([⅓⅔])$/);
+  if (unicode) {
+    const whole = Number.parseInt(unicode[1] ?? "0", 10);
+    const fraction = unicode[2] === "⅓" ? 1 / 3 : 2 / 3;
+    return { size: whole + fraction, label: raw };
+  }
+
+  // Frações textuais: 36 1/3, 36 2/3
+  const slash = raw.match(/^(\d+)\s+(\d)\/(\d)$/);
+  if (slash) {
+    const whole = Number.parseInt(slash[1] ?? "0", 10);
+    const numerator = Number.parseInt(slash[2] ?? "0", 10);
+    const denominator = Number.parseInt(slash[3] ?? "1", 10);
+    const fraction = numerator / denominator;
+    return { size: whole + fraction, label: raw };
+  }
+
+  const size = Number.parseFloat(raw);
+  if (!Number.isFinite(size)) return undefined;
+  return { size, ...(raw !== String(size) ? { label: raw } : {}) };
+}
+
 function toProduct(node: ShopifyProductNode): Product {
   const fallback = getConsolidatedAsProducts().find((item) => item.id === node.handle);
   const description = node.description.replace(/<[^>]*>/g, "").trim();
@@ -126,9 +161,9 @@ function toProduct(node: ShopifyProductNode): Product {
 
   const sizes: ProductSize[] = (node.variants?.nodes ?? []).flatMap((variant) => {
     const sizeValue = optionValue(variant.selectedOptions, /tamanho|size|escal/i);
-    const size = Number.parseFloat(sizeValue ?? "");
+    const parsed = parseTamanho(sizeValue);
     // Sem tamanho numérico na Shopify, a variante não entra no catálogo.
-    if (!Number.isFinite(size)) return [];
+    if (!parsed) return [];
 
     const colorValue = optionValue(variant.selectedOptions, /^cor(es)?$|^colou?r$/i);
     const slug = colorValue ? colorSlug(colorValue) : undefined;
@@ -141,8 +176,9 @@ function toProduct(node: ShopifyProductNode): Product {
 
     return [
       {
-        size,
+        size: parsed.size,
         stock: variant.quantityAvailable ?? 0,
+        ...(parsed.label ? { label: parsed.label } : {}),
         ...(slug ? { color: slug } : {}),
         ...(cordSlug ? { cord: cordSlug } : {}),
         ...(variant.sku ? { sku: variant.sku } : {}),

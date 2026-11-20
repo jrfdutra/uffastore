@@ -43,6 +43,7 @@ import {
 } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
+import { rotuloTamanhoDoProduto } from "@/lib/variantes";
 import { company } from "@/lib/legal";
 import {
   useCallback,
@@ -61,11 +62,8 @@ const cats: Category[] = [
 ];
 
 /** Etiqueta do tamanho de um item do carrinho ("Único" quando não há escala). */
-function sizeLabel(product: Product | undefined, size: number, color?: string): string | number {
-  const match = product?.sizes.find(
-    (variant) => variant.size === size && (!color || variant.color === color),
-  );
-  return match?.label ?? (size > 0 ? size : "Único");
+function sizeLabel(product: Product | undefined, size: number): string {
+  return rotuloTamanhoDoProduto(product, size);
 }
 
 /** Sobe a página ao topo, respeitando quem prefere menos movimento. */
@@ -84,7 +82,7 @@ function CartDrawer() {
     const itemsText = s.cart
       .map((item) => {
         const p = s.catalog.find((c) => c.id === item.productId);
-        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${sizeLabel(p, item.size, item.color)})`;
+        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${sizeLabel(p, item.size)})`;
       })
       .join(", ");
     const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.finalTotal)}\nVisita: ${window.location.origin}`;
@@ -95,7 +93,7 @@ function CartDrawer() {
     const itemsText = s.cart
       .map((item) => {
         const p = s.catalog.find((c) => c.id === item.productId);
-        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${sizeLabel(p, item.size, item.color)})`;
+        return `${item.quantity}x ${p?.name || item.productId} (Tam: ${sizeLabel(p, item.size)})`;
       })
       .join(", ");
     const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(s.finalTotal)}`;
@@ -169,7 +167,7 @@ function CartDrawer() {
                         <p className="text-xs text-muted-foreground">
                           {colorName ? `${colorName} · ` : ""}
                           {cordName ? `${cordName} · ` : ""}
-                          {t.size} {item.size}
+                          {t.size} {rotuloTamanhoDoProduto(p, item.size)}
                         </p>
                       </div>
                       <p className="font-bold">{money(unitPrice * item.quantity)}</p>

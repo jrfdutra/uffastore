@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { categoryNames, copy, isProductInCategory, type Category } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
+import { escalaoPorTamanho, type Escalao } from "@/lib/precos";
+import { ORDEM_ESCALOES } from "@/lib/variantes";
 
 const searchSchema = z.object({
   category: z
@@ -15,26 +17,52 @@ const searchSchema = z.object({
     .optional(),
 });
 
-const sizeGroups = [
-  {
-    name: { pt: "Criança (28–35)", en: "Kids (28–35)", es: "Niño (28–35)" },
-    key: "crianca" as const,
-    // Escala Criança da Nike (sem 29, 30.5, 32.5 nem 34.5).
-    sizes: [28, 28.5, 29.5, 30, 31, 31.5, 32, 33, 33.5, 34, 35],
-  },
-  {
-    name: { pt: "GS (36–39)", en: "GS (36–39)", es: "GS (36–39)" },
-    key: "gs" as const,
-    // Escala GS/Júnior da Nike (sem 37 nem 39.5).
-    sizes: [36, 36.5, 37.5, 38, 38.5, 39],
-  },
-  {
-    name: { pt: "Sénior (40–45)", en: "Senior (40–45)", es: "Sénior (40–45)" },
-    key: "senior" as const,
-    // Escala adulto da Nike (sem 41.5 nem 43.5).
-    sizes: [40, 40.5, 41, 42, 42.5, 43, 44, 44.5, 45],
-  },
-];
+const groupNames: Record<Escalao, { pt: string; en: string; es: string }> = {
+  crianca: { pt: "Criança", en: "Kids", es: "Niño" },
+  gs: { pt: "GS", en: "GS", es: "GS" },
+  senior: { pt: "Sénior", en: "Senior", es: "Sénior" },
+};
+
+/** Grelha de tamanhos a mostrar no filtro, derivada do catálogo real. */
+type SizeGroup = {
+  key: Escalao;
+  name: { pt: string; en: string; es: string };
+  options: { value: number; label: string }[];
+};
+
+function buildSizeGroups(
+  catalog: { sizes: { size: number; label?: string }[] }[],
+): SizeGroup[] {
+  const byEscalao = new Map<Escalao, Map<number, string>>();
+  for (const product of catalog) {
+    for (const item of product.sizes) {
+      if (item.size <= 0) continue;
+      const escalao = escalaoPorTamanho(item.size);
+      const bucket = byEscalao.get(escalao) ?? new Map<number, string>();
+      if (!bucket.has(item.size)) bucket.set(item.size, item.label ?? String(item.size));
+      byEscalao.set(escalao, bucket);
+    }
+  }
+
+  return ORDEM_ESCALOES.filter((escalao) => byEscalao.has(escalao)).map((escalao) => {
+    const bucket = byEscalao.get(escalao)!;
+    const options = [...bucket.entries()]
+      .sort((a, b) => a[0] - b[0])
+      .map(([value, label]) => ({ value, label }));
+    const first = options[0];
+    const last = options[options.length - 1];
+    const range = first && last ? `${first.label}–${last.label}` : "";
+    return {
+      key: escalao,
+      name: {
+        pt: `${groupNames[escalao].pt} (${range})`,
+        en: `${groupNames[escalao].en} (${range})`,
+        es: `${groupNames[escalao].es} (${range})`,
+      },
+      options,
+    };
+  });
+}
 
 const availableColors = [
   {
@@ -94,6 +122,7 @@ function Catalog() {
   );
   const [size, setSize] = useState<number | "all">("all");
   const [selectedColor, setSelectedColor] = useState<string | "all">("all");
+  const sizeGroups = useMemo(() => buildSizeGroups(catalog), [catalog]);
   const [minPrice, setMinPrice] = useState(0);
   // Teto do filtro de preço: acompanha o produto mais caro (ex.: Jordan 699,99 €)
   // para que nenhum produto fique escondido por defeito.
@@ -119,7 +148,8 @@ function Catalog() {
         // Filtro de Agrupamento de Escalão de Tamanho
         if (selectedSizeGroup !== "all") {
           const group = sizeGroups.find((g) => g.key === selectedSizeGroup);
-          if (group && !p.sizes.some((s) => group.sizes.includes(s.size))) return false;
+          if (group && !p.sizes.some((s) => group.options.some((o) => o.value === s.size)))
+            return false;
         }
 
         // Filtro de Tamanho Específico
@@ -213,18 +243,18 @@ function Catalog() {
             {/* Tamanhos individuais dentro do agrupamento selecionado */}
             <div className="mt-3 flex flex-wrap gap-1.5">
               {(selectedSizeGroup === "all"
-                ? sizeGroups.flatMap((group) => group.sizes)
-                : (sizeGroups.find((g) => g.key === selectedSizeGroup)?.sizes ?? [])
-              ).map((v) => (
+                ? sizeGroups.flatMap((group) => group.options)
+                : (sizeGroups.find((g) => g.key === selectedSizeGroup)?.options ?? [])
+              ).map((option) => (
                 <Button
-                  key={v}
-                  variant={size === v ? "default" : "outline"}
+                  key={option.value}
+                  variant={size === option.value ? "default" : "outline"}
                   size="sm"
                   className="h-8 min-w-8 px-1.5 rounded-none text-xs font-semibold"
-                  aria-pressed={size === v}
-                  onClick={() => setSize(size === v ? "all" : v)}
+                  aria-pressed={size === option.value}
+                  onClick={() => setSize(size === option.value ? "all" : option.value)}
                 >
-                  {v}
+                  {option.label}
                 </Button>
               ))}
             </div>

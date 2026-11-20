@@ -34,6 +34,7 @@ import { Label } from "@/components/ui/label";
 import { tr } from "@/lib/i18n";
 import { categoryNames, money, type Language } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
+import { rotuloTamanhoDoProduto } from "@/lib/variantes";
 import {
   clearOrderSession,
   confirmOrderReceipt,
@@ -1123,7 +1124,8 @@ function ItemsCard({ order }: { order: Order }) {
                     </p>
                     <h3 className="mt-1 font-bold">{item.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {tr(language, "Tamanho", "Size", "Talla")} {item.size}
+                      {tr(language, "Tamanho", "Size", "Talla")}{" "}
+                      {rotuloTamanhoDoProduto(product, item.size)}
                       {item.quantity > 1 ? ` · ${item.quantity}x` : ""}
                     </p>
                   </div>

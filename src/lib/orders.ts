@@ -20,6 +20,8 @@ export type OrderItem = {
   productId: string;
   name: string;
   size: number;
+  /** Etiqueta original do tamanho (ex.: "36 ⅔"), quando difere do número. */
+  sizeLabel?: string;
   quantity: number;
   unitPrice: number;
   authCode: string;
@@ -259,7 +261,7 @@ function sendEmailNotification(order: Order, status: OrderStatus): EmailNotifica
     const authDetails = order.items
       .map(
         (item) =>
-          `- ${item.name} (Tamanho ${item.size}): N/S: ${item.serial} | Código do par: ${item.authCode}`,
+          `- ${item.name} (Tamanho ${item.sizeLabel ?? item.size}): N/S: ${item.serial} | Código do par: ${item.authCode}`,
       )
       .join("\n");
     subject = `Certificado de Autenticidade e Agradecimento · Encomenda UFFA ${order.number}`;
@@ -524,10 +526,12 @@ export function createOrder(input: {
     const product = products.find((candidate) => candidate.id === line.productId);
     if (!product) return [];
     const pairs = pairCount(line.quantity);
+    const sizeLabel = product.sizes.find((variant) => variant.size === line.size)?.label;
     return Array.from({ length: pairs }, () => ({
       productId: product.id,
       name: product.name,
       size: line.size,
+      ...(sizeLabel ? { sizeLabel } : {}),
       quantity: 1,
       unitPrice: product.price,
       authCode: nextAuthCode(),

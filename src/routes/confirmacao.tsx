@@ -19,6 +19,7 @@ import { formatDate, getOrderByNumber, type Order } from "@/lib/orders";
 import { readPendingCheckout, type PendingCheckout } from "@/lib/checkout-session";
 import { money } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
+import { rotuloTamanhoDoProduto } from "@/lib/variantes";
 
 export const Route = createFileRoute("/confirmacao")({
   validateSearch: (search) => z.object({ order: z.string().optional() }).parse(search),
@@ -231,7 +232,8 @@ function Confirmation() {
                             <div>
                               <p className="text-sm font-bold">{item.name}</p>
                               <p className="text-xs text-muted-foreground">
-                                {tr(language, "Tamanho", "Size", "Talla")} {item.size}
+                                {tr(language, "Tamanho", "Size", "Talla")}{" "}
+                                {rotuloTamanhoDoProduto(product, item.size)}
                                 {item.quantity > 1 ? ` · ${item.quantity}x` : ""}
                               </p>
                             </div>
@@ -485,7 +487,8 @@ function ThankYou({ pending }: { pending: PendingCheckout | null }) {
                           <div>
                             <p className="text-sm font-bold">{item.name}</p>
                             <p className="text-xs text-muted-foreground">
-                              {tr(language, "Tamanho", "Size", "Talla")} {item.size}
+                              {tr(language, "Tamanho", "Size", "Talla")}{" "}
+                              {rotuloTamanhoDoProduto(product, item.size)}
                               {item.quantity > 1 ? ` · ${item.quantity}x` : ""}
                             </p>
                           </div>
