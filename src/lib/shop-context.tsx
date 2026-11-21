@@ -13,6 +13,7 @@ import { getConsolidatedAsProducts } from "./catalog-adapter";
 import { loadCatalog, resetCatalogToDefault } from "./catalog";
 import { tr } from "./i18n";
 import { readStorage, removeStorage, writeStorage } from "./storage";
+import { sanitizeCart } from "./cart";
 
 export type CartItem = {
   productId: string;
@@ -149,12 +150,17 @@ export function ShopProvider({
     initialCatalog?.length ? initialCatalog : getConsolidatedAsProducts(),
   );
   const hasServerCatalog = Boolean(initialCatalog?.length);
+  // Só limpamos o carrinho quando o catálogo é de confiança (SSR ou Shopify),
+  // nunca com o catálogo de fallback, que tem handles diferentes.
+  const [catalogReady, setCatalogReady] = useState(hasServerCatalog);
 
   useEffect(() => {
     if (hasServerCatalog) return;
     let active = true;
     loadCatalog().then((loaded) => {
-      if (active && loaded.length) setCatalog(loaded);
+      if (!active) return;
+      if (loaded.length) setCatalog(loaded);
+      setCatalogReady(true);
     });
     return () => {
       active = false;
@@ -170,6 +176,17 @@ export function ShopProvider({
     setWishlist(readWishlist());
     setReady(true);
   }, []);
+
+  // Remove itens guardados no localStorage cujo produto já não existe. Sem
+  // isto, o painel escondia o item mas o badge continuava a mostrar 1 unidade.
+  useEffect(() => {
+    if (!ready || !catalogReady) return;
+    const ids = new Set(catalog.map((product) => product.id));
+    setCart((items) => {
+      const valid = sanitizeCart(items, ids);
+      return valid.length === items.length ? items : valid;
+    });
+  }, [catalog, catalogReady, ready]);
 
   useEffect(() => {
     if (!ready) return;

@@ -221,6 +221,26 @@ test.describe("Carrinho", () => {
     const guardado = await page.evaluate((key) => window.localStorage.getItem(key), CART_KEY);
     expect(guardado).toBeTruthy();
   });
+
+  test("itens de produtos removidos não ficam contados no carrinho", async ({ page }) => {
+    await page.addInitScript((key) => {
+      window.localStorage.setItem(
+        key,
+        JSON.stringify([
+          { productId: "produto-descontinuado", size: 42, quantity: 1, unitPrice: 99 },
+        ]),
+      );
+    }, CART_KEY);
+
+    await page.goto("/");
+    await expect(page.getByRole("button", { name: /^Carrinho \(0\)/ })).toBeVisible();
+    await expect
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), CART_KEY))
+      .toBe("[]");
+
+    await page.getByRole("button", { name: /^Carrinho \(0\)/ }).click();
+    await expect(page.getByText("O teu carrinho está vazio.")).toBeVisible();
+  });
 });
 
 test.describe("Cupões", () => {

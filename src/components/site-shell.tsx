@@ -124,7 +124,37 @@ function CartDrawer() {
           ) : (
             s.cart.map((item) => {
               const p = s.catalog.find((x) => x.id === item.productId);
-              if (!p) return null;
+              if (!p) {
+                return (
+                  <div
+                    key={`${item.productId}-${item.size}-${item.color ?? "unica"}-${item.cord ?? "cord"}`}
+                    className="flex items-center justify-between gap-3 border-b border-border pb-5"
+                  >
+                    <div className="min-w-0">
+                      <p className="font-bold">
+                        {tr(
+                          s.language,
+                          "Modelo indisponível",
+                          "Unavailable model",
+                          "Modelo no disponible",
+                        )}
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground">{item.productId}</p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-8 shrink-0"
+                      onClick={() =>
+                        s.removeFromCart(item.productId, item.size, item.color, item.cord)
+                      }
+                      aria-label={t.remove}
+                    >
+                      <Trash2 />
+                    </Button>
+                  </div>
+                );
+              }
               const variant = p.sizes.find(
                 (sz) =>
                   sz.size === item.size &&
