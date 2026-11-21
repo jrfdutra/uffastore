@@ -7,6 +7,7 @@ import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { categoryNames, copy, isProductInCategory, type Category } from "@/lib/shop-data";
 import { BRANDS, brandNames, isProductInBrand, matchesModel, type Brand } from "@/lib/brands";
+import { isProductInModel, modelsForBrand } from "@/lib/models";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { escalaoPorTamanho, type Escalao } from "@/lib/precos";
@@ -16,6 +17,8 @@ const searchSchema = z.object({
   // Marcas são o filtro principal. "category" mantém-se apenas para links
   // antigos e para a campanha Black Friday.
   brand: z.enum(BRANDS).optional(),
+  /** Modelo dentro da marca (air-force, dunk, vomero-5, campus-00, ...). */
+  model: z.string().optional(),
   q: z.string().optional(),
   category: z
     .enum(["promocoes", "lifestyle", "running", "limited", "personalizacao", "blackfriday"])
@@ -114,7 +117,21 @@ function Catalog() {
   const brand: Brand | "all" = search.brand ?? "all";
   const setBrand = (value: Brand | "all") => {
     navigate({
-      search: (old) => ({ ...old, brand: value === "all" ? undefined : value }),
+      search: (old) => ({
+        ...old,
+        brand: value === "all" ? undefined : value,
+        // O modelo é específico de cada marca: ao trocar de marca, voltamos
+        // a mostrar todos os modelos da nova marca.
+        model: undefined,
+      }),
+      replace: true,
+    });
+  };
+
+  const model: string | "all" = search.model ?? "all";
+  const setModel = (value: string | "all") => {
+    navigate({
+      search: (old) => ({ ...old, model: value === "all" ? undefined : value }),
       replace: true,
     });
   };
@@ -147,6 +164,17 @@ function Catalog() {
   );
   const sizeGroups = useMemo(() => buildSizeGroups(brandCatalog), [brandCatalog]);
 
+  // Subcategorias de modelo dentro da marca (Air Force, Dunk, Vomero 5, ...).
+  const modelOptions = useMemo(() => modelsForBrand(catalog, brand), [catalog, brand]);
+
+  // Se o modelo deixar de existir (troca de marca ou alteração do catálogo),
+  // removemos o filtro para não ficar uma página vazia sem explicação.
+  useEffect(() => {
+    if (model !== "all" && !modelOptions.some((option) => option.id === model)) {
+      navigate({ search: (old) => ({ ...old, model: undefined }), replace: true });
+    }
+  }, [brand, model, modelOptions, navigate]);
+
   // Ao trocar de marca ou campanha, limpa a seleção para não ficar um tamanho
   // que já não existe no novo contexto.
   useEffect(() => {
@@ -170,6 +198,7 @@ function Catalog() {
       catalog.filter((p) => {
         if (p.status === "inactive") return false;
         if (!isProductInBrand(p, brand)) return false;
+        if (!isProductInModel(p, model)) return false;
         if (category !== "all" && !isProductInCategory(p, category)) return false;
         if (!matchesModel(p, query)) return false;
 
@@ -199,6 +228,7 @@ function Catalog() {
     [
       catalog,
       brand,
+      model,
       category,
       query,
       minPrice,
@@ -246,6 +276,39 @@ function Catalog() {
               ))}
             </div>
           </fieldset>
+
+          {/* Modelos dentro da marca selecionada */}
+          {brand !== "all" && (
+            <fieldset>
+              <legend className="mb-3 text-xs font-bold uppercase">
+                {tr(language, "Modelo", "Model", "Modelo")}
+              </legend>
+              <div className="flex flex-wrap gap-2 lg:flex-col">
+                <Button
+                  variant={model === "all" ? "default" : "outline"}
+                  size="sm"
+                  className="justify-start rounded-none"
+                  aria-pressed={model === "all"}
+                  onClick={() => setModel("all")}
+                >
+                  {t.all}
+                </Button>
+                {modelOptions.map((option) => (
+                  <Button
+                    key={option.id}
+                    variant={model === option.id ? "default" : "outline"}
+                    size="sm"
+                    className="justify-start rounded-none"
+                    aria-pressed={model === option.id}
+                    onClick={() => setModel(model === option.id ? "all" : option.id)}
+                  >
+                    {option.label}{" "}
+                    <span className="ml-1 text-[10px] opacity-60">({option.count})</span>
+                  </Button>
+                ))}
+              </div>
+            </fieldset>
+          )}
 
           {/* Campanha: filtro transversal às marcas */}
           <fieldset>

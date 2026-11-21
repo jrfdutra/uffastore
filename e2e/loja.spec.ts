@@ -153,6 +153,32 @@ test.describe("Loja — navegação e catálogo", () => {
     await expect(tamanhosAdidas.getByRole("button", { name: "36.5", exact: true })).toHaveCount(0);
   });
 
+  test("cada marca mostra as suas subcategorias de modelo e filtra os produtos", async ({
+    page,
+  }) => {
+    await page.goto("/catalogo?brand=nike");
+    const modelosNike = page.locator("fieldset").filter({ hasText: "Modelo" });
+    await expect(modelosNike.getByRole("button", { name: /^Air Force/ })).toBeVisible();
+    await expect(modelosNike.getByRole("button", { name: /^Dunk/ })).toBeVisible();
+    await expect(modelosNike.getByRole("button", { name: /^Vomero 5/ })).toBeVisible();
+
+    // O clique só tem efeito depois da hidratação do React (o HTML vem do SSR).
+    await expect(async () => {
+      await modelosNike.getByRole("button", { name: /^Dunk/ }).click();
+      await expect(page).toHaveURL(/model=dunk/, { timeout: 2000 });
+    }).toPass({ timeout: 30_000 });
+
+    const dunks = page.locator("article");
+    await expect(dunks.first()).toBeVisible();
+    expect(await dunks.count()).toBe(5);
+
+    await page.goto("/catalogo?brand=adidas");
+    const modelosAdidas = page.locator("fieldset").filter({ hasText: "Modelo" });
+    await expect(modelosAdidas.getByRole("button", { name: /^Campus 00/ })).toBeVisible();
+    await expect(modelosAdidas.getByRole("button", { name: /^Superstar/ })).toBeVisible();
+    await expect(modelosAdidas.getByRole("button", { name: /^Dunk/ })).toHaveCount(0);
+  });
+
   test("o catálogo lista produtos e a pesquisa filtra resultados", async ({ page }) => {
     await page.goto("/catalogo");
     const cartoes = page.locator("article");
