@@ -201,6 +201,23 @@ test.describe("Loja — navegação e catálogo", () => {
     await expect(modelosAdidas.getByRole("button", { name: /^Dunk/ })).toHaveCount(0);
   });
 
+  test("sapatilhas com rope laces aparecem sempre em primeiro", async ({ page }) => {
+    await page.goto("/catalogo");
+    await expect(page.locator("article").first()).toContainText(/Rope Laces/i);
+
+    await page.goto("/catalogo?brand=nike&model=dunk");
+    await expect(page.locator("article").first()).toContainText(/Rope Laces/i);
+
+    await page.goto("/");
+    const pesquisa = page.getByPlaceholder(/Pesquisar modelos/);
+    await expect(async () => {
+      await pesquisa.fill("air force");
+      await expect(page.locator('#pesquisa a[href^="/produto/"]').first()).toContainText(
+        /Rope Laces/i,
+      );
+    }).toPass({ timeout: 30_000 });
+  });
+
   test("o catálogo lista produtos e a pesquisa filtra resultados", async ({ page }) => {
     await page.goto("/catalogo");
     const cartoes = page.locator("article");

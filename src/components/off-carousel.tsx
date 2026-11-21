@@ -4,6 +4,7 @@ import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { useShop } from "@/lib/shop-context";
 import { isProductInCategory } from "@/lib/shop-data";
+import { compareRopeLacesFirst } from "@/lib/brands";
 import { tr } from "@/lib/i18n";
 import useEmblaCarousel from "embla-carousel-react";
 
@@ -15,9 +16,9 @@ export function OffCarousel() {
     setMounted(true);
   }, []);
 
-  const saleProducts = catalog.filter(
-    (p) => isProductInCategory(p, "promocoes") || Boolean(p.originalPrice),
-  );
+  const saleProducts = catalog
+    .filter((p) => isProductInCategory(p, "promocoes") || Boolean(p.originalPrice))
+    .sort(compareRopeLacesFirst);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,

@@ -13,7 +13,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { categoryNames, copy, isProductInCategory, type Category } from "@/lib/shop-data";
-import { BRANDS, brandNames, isProductInBrand, matchesModel, type Brand } from "@/lib/brands";
+import {
+  BRANDS,
+  brandNames,
+  compareRopeLacesFirst,
+  isProductInBrand,
+  matchesModel,
+  type Brand,
+} from "@/lib/brands";
 import { isProductInModel, modelsForBrand } from "@/lib/models";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
@@ -202,36 +209,39 @@ function Catalog() {
 
   const list = useMemo(
     () =>
-      catalog.filter((p) => {
-        if (p.status === "inactive") return false;
-        if (!isProductInBrand(p, brand)) return false;
-        if (!isProductInModel(p, model)) return false;
-        if (category !== "all" && !isProductInCategory(p, category)) return false;
-        if (!matchesModel(p, query)) return false;
+      catalog
+        .filter((p) => {
+          if (p.status === "inactive") return false;
+          if (!isProductInBrand(p, brand)) return false;
+          if (!isProductInModel(p, model)) return false;
+          if (category !== "all" && !isProductInCategory(p, category)) return false;
+          if (!matchesModel(p, query)) return false;
 
-        // Filtro de Preço
-        if (p.price < minPrice || p.price > maxPrice) return false;
+          // Filtro de Preço
+          if (p.price < minPrice || p.price > maxPrice) return false;
 
-        // Filtro de Agrupamento de Escalão de Tamanho
-        if (selectedSizeGroup !== "all") {
-          const group = sizeGroups.find((g) => g.key === selectedSizeGroup);
-          if (group && !p.sizes.some((s) => group.options.some((o) => o.value === s.size)))
-            return false;
-        }
+          // Filtro de Agrupamento de Escalão de Tamanho
+          if (selectedSizeGroup !== "all") {
+            const group = sizeGroups.find((g) => g.key === selectedSizeGroup);
+            if (group && !p.sizes.some((s) => group.options.some((o) => o.value === s.size)))
+              return false;
+          }
 
-        // Filtro de Tamanho Específico
-        if (size !== "all" && !p.sizes.some((s) => s.size === size)) return false;
+          // Filtro de Tamanho Específico
+          if (size !== "all" && !p.sizes.some((s) => s.size === size)) return false;
 
-        // Filtro de Cor
-        if (selectedColor !== "all") {
-          const hasColorMatch =
-            p.colors?.some((c) => c.slug === selectedColor) ||
-            p.sizes.some((s) => s.color === selectedColor);
-          if (!hasColorMatch) return false;
-        }
+          // Filtro de Cor
+          if (selectedColor !== "all") {
+            const hasColorMatch =
+              p.colors?.some((c) => c.slug === selectedColor) ||
+              p.sizes.some((s) => s.color === selectedColor);
+            if (!hasColorMatch) return false;
+          }
 
-        return true;
-      }),
+          return true;
+        })
+        // Rope laces primeiro, em qualquer filtro ou pesquisa.
+        .sort(compareRopeLacesFirst),
     [
       catalog,
       brand,

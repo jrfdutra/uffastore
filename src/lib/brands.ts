@@ -32,6 +32,21 @@ export function normalizeText(value: string): string {
     .replace(/\s+/g, " ");
 }
 
+/**
+ * Verdadeiro quando o modelo é vendido COM rope laces.
+ * "W/ Rope Laces" e "With Rope Laces" contam; "S/ Rope Laces" (sem) não.
+ */
+export function hasRopeLaces(product: Pick<Product, "name" | "id">): boolean {
+  const text = normalizeText(`${product.name} ${product.id}`);
+  if (/\b(?:s|sem)\s+rope\s*lace?s?\b/.test(text)) return false;
+  return /\brope\s*lace?s?\b/.test(text);
+}
+
+/** Comparador para mostrar primeiro os modelos com rope laces. */
+export function compareRopeLacesFirst<T extends Pick<Product, "name" | "id">>(a: T, b: T): number {
+  return Number(hasRopeLaces(b)) - Number(hasRopeLaces(a));
+}
+
 /** Reconhece uma marca num texto livre (vendor, nome ou handle da Shopify). */
 export function brandFromText(...texts: (string | undefined)[]): Brand | undefined {
   const text = normalizeText(texts.filter(Boolean).join(" "));
@@ -114,6 +129,11 @@ export function searchModels(
             : 2;
       return { product, score };
     })
-    .sort((a, b) => a.score - b.score || a.product.name.localeCompare(b.product.name))
+    .sort(
+      (a, b) =>
+        compareRopeLacesFirst(a.product, b.product) ||
+        a.score - b.score ||
+        a.product.name.localeCompare(b.product.name),
+    )
     .map(({ product }) => product);
 }

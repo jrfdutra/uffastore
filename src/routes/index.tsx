@@ -8,7 +8,13 @@ import { OrderPortalPromo } from "@/components/order-portal-promo";
 import { OffCarousel } from "@/components/off-carousel";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { copy, type Product } from "@/lib/shop-data";
-import { BRANDS, brandNames, getProductBrand, type Brand } from "@/lib/brands";
+import {
+  BRANDS,
+  brandNames,
+  compareRopeLacesFirst,
+  getProductBrand,
+  type Brand,
+} from "@/lib/brands";
 import { ModelSearch } from "@/components/model-search";
 import { FOTO_PADRAO } from "@/lib/consolidated-catalog";
 import { useShop } from "@/lib/shop-context";
@@ -169,6 +175,7 @@ function Home() {
           <div className="grid grid-cols-2 gap-x-3 gap-y-10 lg:grid-cols-4">
             {catalog
               .filter((p) => p.featured)
+              .sort(compareRopeLacesFirst)
               .slice(0, 4)
               .map((p) => (
                 <ProductCard key={p.id} product={p} />

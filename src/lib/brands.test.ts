@@ -4,7 +4,9 @@ import { consolidatedProducts } from "./consolidated-catalog.ts";
 import {
   BRANDS,
   brandFromText,
+  compareRopeLacesFirst,
   getProductBrand,
+  hasRopeLaces,
   isProductInBrand,
   matchesModel,
   normalizeText,
@@ -98,4 +100,28 @@ test("o catálogo de fallback também permite reconhecer marcas", () => {
     (product) => brandFromText(product.name, product.handle) === "nike",
   );
   assert.ok(nike.length > 0, "pelo menos um produto Nike no fallback");
+});
+
+test("hasRopeLaces distingue 'com' de 'sem' rope laces", () => {
+  assert.equal(hasRopeLaces({ name: "Nike Dunk Panda W/ Rope Laces", id: "x" }), true);
+  assert.equal(hasRopeLaces({ name: "Air Force With Rope Laces", id: "x" }), true);
+  assert.equal(
+    hasRopeLaces({ name: "Nike AIR Force Chapa Dourada S/ Rope Laces", id: "x" }),
+    false,
+  );
+  assert.equal(hasRopeLaces({ name: "Adidas Campus 00 W/ Double Laces", id: "x" }), false);
+});
+
+test("compareRopeLacesFirst coloca os modelos com rope laces à frente", () => {
+  const com = { name: "Nike Dunk Panda W/ Rope Laces", id: "com" };
+  const sem = { name: "Nike Dunk Low", id: "sem" };
+  const ordem = [sem, com].sort(compareRopeLacesFirst);
+
+  assert.deepEqual(
+    ordem.map((product) => product.id),
+    ["com", "sem"],
+  );
+  assert.equal(compareRopeLacesFirst(com, sem), -1);
+  assert.equal(compareRopeLacesFirst(sem, com), 1);
+  assert.equal(compareRopeLacesFirst(com, com), 0);
 });

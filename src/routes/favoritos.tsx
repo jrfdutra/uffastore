@@ -5,6 +5,7 @@ import { ProductCard } from "@/components/product-card";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { copy } from "@/lib/shop-data";
+import { compareRopeLacesFirst } from "@/lib/brands";
 
 export const Route = createFileRoute("/favoritos")({
   head: () => ({
@@ -24,7 +25,9 @@ function WishlistPage() {
   const { language, wishlist, catalog } = useShop();
   const t = copy[language];
 
-  const favoriteProducts = catalog.filter((p) => wishlist.includes(p.id));
+  const favoriteProducts = catalog
+    .filter((p) => wishlist.includes(p.id))
+    .sort(compareRopeLacesFirst);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
