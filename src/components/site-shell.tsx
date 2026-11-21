@@ -465,10 +465,9 @@ function MobileNav({
                         to="/catalogo"
                         search={{ brand, model: model.id }}
                         onClick={close}
-                        className="flex items-center justify-between py-2 text-sm font-semibold"
+                        className="block py-2 font-display text-xl uppercase"
                       >
-                        <span>{model.label}</span>
-                        <span className="text-xs opacity-60">({model.count})</span>
+                        {model.label}
                       </Link>
                     ))}
                   </div>
