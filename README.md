@@ -31,18 +31,41 @@ automaticamente os produtos locais de `src/lib/shop-data.ts`.
 cp .env.example .env   # preencher com os dados da loja
 ```
 
-| Variável | Onde encontrar |
-| --- | --- |
-| `VITE_SHOPIFY_STORE_DOMAIN` | `xxxxx.myshopify.com` |
+| Variável                               | Onde encontrar                                    |
+| -------------------------------------- | ------------------------------------------------- |
+| `VITE_SHOPIFY_STORE_DOMAIN`            | `xxxxx.myshopify.com`                             |
 | `VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN` | Admin → Headless → Storefront API → token público |
 
 > O `.env` está no `.gitignore`. Em produção (Vercel) as duas variáveis têm de ser
 > configuradas no painel do projeto, senão o site cai no catálogo local.
 
+### E-mail automático de encomenda paga
+
+Quando a Shopify confirma o pagamento, envia um webhook para
+`POST /api/webhooks/shopify/orders-paid`. O endpoint valida a assinatura HMAC, confirma
+o tópico `orders/paid`, evita eventos duplicados e envia o certificado de autenticidade
+por Resend.
+
+| Variável                 | Obrigatória | Descrição                                                                           |
+| ------------------------ | ----------- | ----------------------------------------------------------------------------------- |
+| `SHOPIFY_WEBHOOK_SECRET` | Sim         | _Signing secret_ do webhook em Shopify Admin → Definições → Notificações → Webhooks |
+| `RESEND_API_KEY`         | Sim         | Chave da API Resend                                                                 |
+| `RESEND_FROM`            | Não         | Remetente verificado (por omissão `onboarding@resend.dev`)                          |
+| `SHOPIFY_SHOP_DOMAIN`    | Não         | Se definido, só aceita webhooks desta loja (ex.: `uffastore.myshopify.com`)         |
+
+Sem `SHOPIFY_WEBHOOK_SECRET` o endpoint rejeita tudo (fail-closed). Para testar:
+
+```bash
+npm run dev
+node scripts/test-webhook.mjs          # casos de segurança, sem enviar e-mail
+node scripts/test-webhook.mjs --real   # inclui um envio real e prova de replay
+```
+
 O ficheiro [`docs/shopify/produtos-uffa.csv`](docs/shopify/produtos-uffa.csv) contém o
 catálogo de demonstração para importar no Shopify (Produtos → Importar).
 
 ## Funcionalidades
+
 - Catálogo, produto, carrinho e checkout com envio ou recolha no Porto.
 - Carrinho com confirmação via toast e ação não intrusiva "Ver carrinho", sem redirecionamentos automáticos.
 - Categorias do cabeçalho sincronizadas com o filtro do catálogo, inclusive quando o cliente já está em `/catalogo`.
@@ -59,17 +82,17 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 
 ## Rotas
 
-| Rota                            | Descrição                                           |
-| -------------------------------- | --------------------------------------------------- |
-| `/`                             | Home com bloco promocional do portal.               |
-| `/catalogo`                     | Catálogo com filtros e categorias sincronizadas.    |
-| `/produto/:id`                  | Detalhe do produto.                                 |
-| `/checkout`                     | Checkout, entrega e pagamento no checkout Shopify.  |
+| Rota                            | Descrição                                                |
+| ------------------------------- | -------------------------------------------------------- |
+| `/`                             | Home com bloco promocional do portal.                    |
+| `/catalogo`                     | Catálogo com filtros e categorias sincronizadas.         |
+| `/produto/:id`                  | Detalhe do produto.                                      |
+| `/checkout`                     | Checkout, entrega e pagamento no checkout Shopify.       |
 | `/confirmacao?order=UFFA-XXXXX` | Confirmação demo com código exclusivo e próximos passos. |
-| `/rastreio`                     | Portal do cliente.                                  |
-| `/verificar`                    | Verificação de autenticidade.                       |
-| `/favoritos`                    | Lista de desejos persistente.                       |
-| `/ajuda`                        | Perguntas frequentes, contactos e formulário de apoio. |
+| `/rastreio`                     | Portal do cliente.                                       |
+| `/verificar`                    | Verificação de autenticidade.                            |
+| `/favoritos`                    | Lista de desejos persistente.                            |
+| `/ajuda`                        | Perguntas frequentes, contactos e formulário de apoio.   |
 
 ## Dados de demonstração
 

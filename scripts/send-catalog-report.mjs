@@ -60,13 +60,11 @@ const data = await admin(`
         productType
         tags
         status
-        options { name values }
+        featuredImage { url }
         variants(first: 100) {
           nodes {
             price
             compareAtPrice
-            inventoryQuantity
-            selectedOptions { name value }
           }
         }
       }
@@ -75,26 +73,12 @@ const data = await admin(`
 `);
 
 const products = data.products.nodes.map((p) => {
-  const sizeOption = p.options.find((o) => /tamanho|size|escal/i.test(o.name));
-  const sizes = [
-    ...new Set(
-      p.variants.nodes
-        .map(
-          (v) =>
-            v.selectedOptions.find((o) => /tamanho|size|escal/i.test(o.name))?.value,
-        )
-        .filter(Boolean),
-    ),
-  ].sort((a, b) => Number.parseFloat(a) - Number.parseFloat(b));
-
   const prices = p.variants.nodes.map((v) => Number.parseFloat(v.price)).filter(Number.isFinite);
   const price = prices.length ? Math.min(...prices) : undefined;
   const saleVariant = p.variants.nodes
     .filter((v) => v.compareAtPrice && Number.parseFloat(v.compareAtPrice) !== Number.parseFloat(v.price))
     .sort((a, b) => Number.parseFloat(a.price) - Number.parseFloat(b.price))[0];
   const compareAt = saleVariant ? Number.parseFloat(saleVariant.compareAtPrice) : undefined;
-
-  const stock = p.variants.nodes.reduce((sum, v) => sum + (v.inventoryQuantity ?? 0), 0);
   const hasBlackFriday = p.tags.some((tag) => /black\s*friday|blackfriday/i.test(tag));
 
   const categories = [
@@ -106,11 +90,7 @@ const products = data.products.nodes.map((p) => {
     title: p.title,
     brand: p.vendor?.trim() || "Sem marca",
     categories,
-    tags: p.tags,
-    sizes,
-    hasSizeOption: Boolean(sizeOption),
-    variants: p.variants.nodes.length,
-    stock,
+    image: p.featuredImage?.url ?? null,
     price,
     compareAt,
     status: p.status,
@@ -128,42 +108,48 @@ for (const list of byBrand.values()) {
 }
 const brands = [...byBrand.entries()].sort((a, b) => a[0].localeCompare(b[0], "pt"));
 
-const totalVariants = products.reduce((sum, p) => sum + p.variants, 0);
-const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
-const totalSizes = new Set(products.flatMap((p) => p.sizes)).size;
-
 // ---------- HTML ----------
 const brandSections = brands
   .map(([brand, list]) => {
-    const brandStock = list.reduce((sum, p) => sum + p.stock, 0);
-    const rows = list
+    const cards = list
       .map((p) => {
-        const sizes = p.sizes.length ? p.sizes.join(" · ") : "— (sem opção de tamanho)";
         const price = p.price !== undefined ? money(p.price) : "—";
         const compare =
           p.compareAt !== undefined && p.compareAt !== p.price ? money(p.compareAt) : "";
+        const thumb = p.image
+          ? `<img src="${escapeHtml(p.image)}" alt="" width="110" height="110" style="width:110px;height:110px;object-fit:cover;border-radius:6px;display:block;">`
+          : `<div style="width:110px;height:110px;border-radius:6px;background:#eee;color:#999;display:flex;align-items:center;justify-content:center;font-size:11px;">sem foto</div>`;
         return `
-          <tr>
-            <td style="padding:10px 12px;border-bottom:1px solid #eee;font-weight:600;color:#111;">${escapeHtml(p.title)}</td>
-            <td style="padding:10px 12px;border-bottom:1px solid #eee;color:#444;">${escapeHtml(p.categories.join(" · "))}</td>
-            <td style="padding:10px 12px;border-bottom:1px solid #eee;color:#111;font-family:Consolas,monospace;font-size:13px;">${escapeHtml(sizes)}</td>
-            <td style="padding:10px 12px;border-bottom:1px solid #eee;text-align:center;color:#444;">${p.variants}</td>
-            <td style="padding:10px 12px;border-bottom:1px solid #eee;text-align:right;white-space:nowrap;">
-              ${compare ? `<span style="text-decoration:line-through;color:#999;font-size:12px;">${compare}</span><br>` : ""}
-              <strong>${price}</strong>
-            </td>
-          </tr>`;
+          <td style="padding:12px;width:240px;vertical-align:top;border-bottom:1px solid #eee;">
+            <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="width:120px;vertical-align:top;">${thumb}</td>
+                <td style="vertical-align:top;padding-left:12px;">
+                  <div style="font-weight:600;color:#111;font-size:14px;line-height:1.3;">${escapeHtml(p.title)}</div>
+                  <div style="color:#666;font-size:12px;margin-top:4px;">${escapeHtml(p.categories.join(" · "))}</div>
+                  <div style="margin-top:6px;white-space:nowrap;">
+                    ${compare ? `<span style="text-decoration:line-through;color:#999;font-size:12px;">${compare}</span> ` : ""}
+                    <strong style="color:#111;">${price}</strong>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>`;
       })
       .join("");
 
     return `
       <tr>
-        <td colspan="5" style="padding:14px 12px;background:#111;color:#fff;font-size:15px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">
+        <td colspan="1" style="padding:14px 12px;background:#111;color:#fff;font-size:15px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">
           ${escapeHtml(brand)}
-          <span style="float:right;font-weight:normal;font-size:13px;color:#bbb;">${list.length} produto${list.length === 1 ? "" : "s"} · ${brandStock} pares em stock</span>
+          <span style="float:right;font-weight:normal;font-size:13px;color:#bbb;">${list.length} produto${list.length === 1 ? "" : "s"}</span>
         </td>
       </tr>
-      ${rows}`;
+      <tr><td style="padding:0;">
+        <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;">
+          <tr>${cards}</tr>
+        </table>
+      </td></tr>`;
   })
   .join("");
 
@@ -179,20 +165,20 @@ const emailHtml = `
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Catálogo UFFA — Revisão de tamanhos</title>
+  <title>Catálogo UFFA — Relatório por marcas</title>
 </head>
 <body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;color:#333;">
   <div style="max-width:980px;margin:auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);">
     <div style="background:#000;color:#fff;padding:30px;text-align:center;">
       <h1 style="margin:0;font-size:26px;">📋 Catálogo UFFA Store</h1>
-      <p style="margin:10px 0 0;font-size:15px;color:#ccc;">Produtos por marca, categorias e tamanhos — para revisão dos números</p>
+      <p style="margin:10px 0 0;font-size:15px;color:#ccc;">Produtos organizados por marca, com miniatura da foto</p>
     </div>
 
     <div style="padding:30px;">
       <p style="font-size:15px;line-height:1.6;">Olá,</p>
       <p style="font-size:15px;line-height:1.6;">
-        Segue o estado atual do catálogo publicado no site. Os produtos estão agrupados por marca,
-        com a categoria, os tamanhos disponíveis e o stock. Serve para fazermos a revisão dos números dos calçados.
+        Segue o relatório do catálogo publicado no site, com os produtos agrupados por marca
+        e a miniatura da foto de cada anúncio.
       </p>
 
       <div style="margin:24px 0;display:flex;gap:12px;flex-wrap:wrap;">
@@ -204,14 +190,6 @@ const emailHtml = `
           <div style="font-size:28px;font-weight:bold;">${brands.length}</div>
           <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#666;">Marcas</div>
         </div>
-        <div style="flex:1;min-width:150px;border:2px solid #000;padding:14px;text-align:center;">
-          <div style="font-size:28px;font-weight:bold;">${totalVariants}</div>
-          <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#666;">Variantes</div>
-        </div>
-        <div style="flex:1;min-width:150px;border:2px solid #000;padding:14px;text-align:center;">
-          <div style="font-size:28px;font-weight:bold;">${totalStock}</div>
-          <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#666;">Pares em stock</div>
-        </div>
       </div>
 
       <h2 style="border-bottom:2px solid #000;padding-bottom:8px;margin-top:30px;font-size:18px;">Produtos por marca</h2>
@@ -219,25 +197,9 @@ const emailHtml = `
         ${brandSummary}
       </ul>
 
-      <h2 style="border-bottom:2px solid #000;padding-bottom:8px;margin-top:34px;font-size:18px;">Detalhe do catálogo</h2>
-      <table style="width:100%;border-collapse:collapse;margin-top:12px;font-size:14px;">
-        <thead>
-          <tr style="background:#f8f8f8;text-align:left;border-bottom:2px solid #ddd;">
-            <th style="padding:10px 12px;">Produto</th>
-            <th style="padding:10px 12px;">Categoria</th>
-            <th style="padding:10px 12px;">Tamanhos (EU)</th>
-            <th style="padding:10px 12px;text-align:center;">Var.</th>
-            <th style="padding:10px 12px;text-align:right;">Preço</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${brandSections}
-        </tbody>
-      </table>
-
-      <div style="margin-top:34px;padding:15px;background:#fff9e6;border-left:4px solid #ffb900;font-size:13px;line-height:1.6;border-radius:4px;">
-        <strong>Revisão dos números:</strong> cada variante tem 20 pares em stock. Confirma na coluna
-        <em>Tamanhos (EU)</em> se os números de cada modelo estão corretos. Total de tamanhos distintos no catálogo: <strong>${totalSizes}</strong>.
+      <h2 style="border-bottom:2px solid #000;padding-bottom:8px;margin-top:34px;font-size:18px;">Catálogo</h2>
+      <div style="margin-top:12px;">
+        ${brandSections}
       </div>
 
       <p style="margin-top:30px;font-size:13px;color:#777;">
@@ -250,26 +212,23 @@ const emailHtml = `
 
 // ---------- Texto simples ----------
 const textLines = [
-  "CATÁLOGO UFFA STORE — PRODUTOS POR MARCA",
+  "CATÁLOGO UFFA STORE — RELATÓRIO POR MARCA",
   "",
-  `Produtos: ${products.length} | Marcas: ${brands.length} | Variantes: ${totalVariants} | Pares em stock: ${totalStock}`,
+  `Produtos: ${products.length} | Marcas: ${brands.length}`,
   "",
 ];
 for (const [brand, list] of brands) {
   textLines.push(`=== ${brand.toUpperCase()} (${list.length}) ===`);
   for (const p of list) {
-    const sizes = p.sizes.length ? p.sizes.join(", ") : "sem tamanho";
     const price = p.price !== undefined ? money(p.price) : "—";
     const compare = p.compareAt !== undefined && p.compareAt !== p.price ? ` (antes ${money(p.compareAt)})` : "";
-    textLines.push(`- ${p.title}`);
-    textLines.push(`  Categoria: ${p.categories.join(" · ")}`);
-    textLines.push(`  Tamanhos: ${sizes}`);
-    textLines.push(`  Variantes: ${p.variants} | Stock: ${p.stock} | Preço: ${price}${compare}`);
+    textLines.push(`- ${p.title} | ${p.categories.join(" · ")} | ${price}${compare}`);
+    if (p.image) textLines.push(`  Foto: ${p.image}`);
   }
   textLines.push("");
 }
 
-console.log(`Produtos: ${products.length} | Marcas: ${brands.length} | Variantes: ${totalVariants}`);
+console.log(`Produtos: ${products.length} | Marcas: ${brands.length}`);
 for (const [brand, list] of brands) console.log(`- ${brand}: ${list.length}`);
 
 if (DRY) {
@@ -278,7 +237,7 @@ if (DRY) {
     console.log(`\n${brand} (${list.length})`);
     for (const p of list) {
       console.log(
-        `  • ${p.title} | ${p.categories.join(" · ")} | ${p.sizes.join(", ") || "sem tamanho"} | ${p.variants} var. | ${p.stock} pares | ${p.price !== undefined ? money(p.price) : "—"}${p.compareAt ? ` (antes ${money(p.compareAt)})` : ""}`,
+        `  • ${p.title} | ${p.categories.join(" · ")} | ${p.price !== undefined ? money(p.price) : "—"}${p.compareAt ? ` (antes ${money(p.compareAt)})` : ""} | ${p.image ? "foto: " + p.image.split("/").pop().split("?")[0] : "sem foto"}`,
       );
     }
   }
@@ -294,7 +253,7 @@ const response = await fetch("https://api.resend.com/emails", {
   body: JSON.stringify({
     from: resendFrom,
     to: recipient,
-    subject: `📋 Catálogo UFFA — ${products.length} produtos por marca, categorias e tamanhos`,
+    subject: `📋 Catálogo UFFA — ${products.length} produtos por marca`,
     html: emailHtml,
     text: textLines.join("\n"),
   }),

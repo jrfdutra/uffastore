@@ -1,78 +1,54 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
 import { sendShopifyOrderEmail } from "@/lib/server-actions";
+import { parseOrderPaidPayload, WebhookDeduplicator, type ParsedOrder } from "@/lib/webhook-core";
 
-const WEBHOOK_SECRET = process.env["SHOPIFY_WEBHOOK_SECRET"] ?? "";
+export {
+  MAX_BODY_BYTES,
+  WEBHOOK_TOPIC,
+  getWebhookSecret,
+  isExpectedShop,
+  isExpectedTopic,
+  parseOrderPaidPayload,
+  verifyShopifyHmac,
+} from "@/lib/webhook-core";
 
-type ShopifyLine = {
-  title?: string;
-  name?: string;
-  quantity?: number;
-  price?: string;
-  variant_title?: string;
+export type OrderEmailSender = (order: ParsedOrder) => Promise<{ success: boolean }>;
+
+export type WebhookResult = {
+  success: boolean;
+  reason?: "invalid_payload" | "no_email" | "delivery_failed" | "duplicate";
+  duplicate?: boolean;
 };
 
-type ShopifyOrder = {
-  email?: string;
-  contact_email?: string;
-  customer?: { email?: string; first_name?: string; last_name?: string };
-  billing_address?: { first_name?: string; last_name?: string };
-  name?: string;
-  order_number?: number;
-  number?: number;
-  line_items?: ShopifyLine[];
-  total_price?: string;
-};
+export const webhookDeduplicator = new WebhookDeduplicator();
 
-/** Valida a assinatura X-Shopify-Hmac-Sha256 (HMAC-SHA256 do body raw, em base64). */
-export function verifyShopifyHmac(rawBody: string, hmacHeader: string | null): boolean {
-  if (!WEBHOOK_SECRET) {
-    console.warn("[Webhook] SHOPIFY_WEBHOOK_SECRET não configurado — webhook rejeitado.");
-    return false;
+/**
+ * Processa um pedido pago já autenticado.
+ * `sender` é injetável para permitir testes sem rede/Resend.
+ */
+export async function processOrderPaidWebhook(
+  bodyText: string,
+  sender: OrderEmailSender = sendShopifyOrderEmail,
+): Promise<WebhookResult> {
+  const parsed = parseOrderPaidPayload(bodyText);
+  if (!parsed.ok) {
+    console.log(`[Webhook] Payload rejeitado: ${parsed.reason}`);
+    return { success: false, reason: parsed.reason };
   }
-  if (!hmacHeader) return false;
 
-  const expected = createHmac("sha256", WEBHOOK_SECRET).update(rawBody, "utf8").digest("base64");
-  const a = Buffer.from(expected, "utf8");
-  const b = Buffer.from(hmacHeader, "utf8");
-  if (a.length !== b.length) return false;
-  return timingSafeEqual(a, b);
-}
+  console.log(
+    `[Webhook] A enviar e-mail para ${parsed.order.email} (Encomenda ${parsed.order.orderNumber})...`,
+  );
 
-export async function processOrderPaidWebhook(bodyText: string) {
   try {
-    const payload = JSON.parse(bodyText) as ShopifyOrder;
-    const email = payload.email || payload.contact_email || payload.customer?.email;
-    if (!email) {
-      console.log("[Webhook] Nenhum e-mail de cliente encontrado no payload.");
-      return { success: false, error: "No email" };
+    const result = await sender(parsed.order);
+    if (!result.success) {
+      console.error("[Webhook] Entrega falhou; a Shopify pode retentar.");
+      return { success: false, reason: "delivery_failed" };
     }
-
-    const orderNumber = payload.name || `#${payload.order_number || payload.number}`;
-    const firstName = payload.customer?.first_name || payload.billing_address?.first_name || "";
-    const lastName = payload.customer?.last_name || payload.billing_address?.last_name || "";
-    const customerName = `${firstName} ${lastName}`.trim() || "Cliente UFFA";
-
-    const items = (payload.line_items || []).map((line) => {
-      const sizeOpt = String(line.variant_title || "")
-        .split("/")
-        .map((s) => s.trim())
-        .filter(Boolean);
-      const sizeVal = sizeOpt[sizeOpt.length - 1] ?? "EU";
-
-      return {
-        name: line.title || line.name || "Sneakers UFFA",
-        size: sizeVal,
-        quantity: line.quantity || 1,
-        unitPrice: parseFloat(line.price || "0"),
-      };
-    });
-
-    const total = parseFloat(payload.total_price || "0");
-    console.log(`[Webhook] A enviar e-mail para ${email} (Encomenda ${orderNumber})...`);
-
-    return await sendShopifyOrderEmail({ orderNumber, customerName, email, items, total });
-  } catch (err) {
-    console.error("[Webhook Error]", err);
-    return { success: false, error: err instanceof Error ? err.message : String(err) };
+    return { success: true };
+  } catch (error) {
+    // Nunca devolver detalhes internos ao chamador.
+    console.error("[Webhook Error]", error instanceof Error ? error.message : "erro desconhecido");
+    return { success: false, reason: "delivery_failed" };
   }
 }
