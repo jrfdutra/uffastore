@@ -143,14 +143,36 @@ test.describe("Loja — navegação e catálogo", () => {
 
   test("a numeração dos tamanhos acompanha a marca selecionada", async ({ page }) => {
     await page.goto("/catalogo?brand=nike");
-    const tamanhosNike = page.locator("fieldset").filter({ hasText: "Escalão de Tamanho" });
-    await expect(tamanhosNike.getByRole("button", { name: "36.5", exact: true })).toBeVisible();
-    await expect(tamanhosNike.getByRole("button", { name: "36 ⅔", exact: true })).toHaveCount(0);
+    const escalaoNike = page.locator("fieldset").filter({ hasText: "Escalão de Tamanho" });
+    await expect(escalaoNike.getByRole("button", { name: "Todos", exact: true })).toHaveCount(0);
+    await expect(escalaoNike.getByRole("button", { name: /Criança/ })).toBeVisible();
+    await expect(escalaoNike.getByRole("button", { name: /GS/ })).toBeVisible();
+    await expect(escalaoNike.getByRole("button", { name: /Sénior/ })).toBeVisible();
+    await expect(escalaoNike.getByRole("button", { name: "36.5", exact: true })).toHaveCount(0);
+
+    // O dropdown só responde depois da hidratação (o HTML vem do SSR).
+    await expect(async () => {
+      await escalaoNike.getByRole("combobox", { name: "Tamanho" }).click();
+      await expect(page.getByRole("option", { name: "36.5", exact: true })).toBeVisible({
+        timeout: 2000,
+      });
+    }).toPass({ timeout: 30_000 });
+    await expect(page.getByRole("option", { name: "36 ⅔", exact: true })).toHaveCount(0);
+
+    await page.getByRole("option", { name: "42", exact: true }).click();
+    const com42 = page.locator("article");
+    await expect(com42.first()).toBeVisible();
+    expect(await com42.count()).toBeLessThan(21);
 
     await page.goto("/catalogo?brand=adidas");
-    const tamanhosAdidas = page.locator("fieldset").filter({ hasText: "Escalão de Tamanho" });
-    await expect(tamanhosAdidas.getByRole("button", { name: "36 ⅔", exact: true })).toBeVisible();
-    await expect(tamanhosAdidas.getByRole("button", { name: "36.5", exact: true })).toHaveCount(0);
+    const escalaoAdidas = page.locator("fieldset").filter({ hasText: "Escalão de Tamanho" });
+    await expect(async () => {
+      await escalaoAdidas.getByRole("combobox", { name: "Tamanho" }).click();
+      await expect(page.getByRole("option", { name: "36 ⅔", exact: true })).toBeVisible({
+        timeout: 2000,
+      });
+    }).toPass({ timeout: 30_000 });
+    await expect(page.getByRole("option", { name: "36.5", exact: true })).toHaveCount(0);
   });
 
   test("cada marca mostra as suas subcategorias de modelo e filtra os produtos", async ({

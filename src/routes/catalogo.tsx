@@ -5,6 +5,13 @@ import { useMemo, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { categoryNames, copy, isProductInCategory, type Category } from "@/lib/shop-data";
 import { BRANDS, brandNames, isProductInBrand, matchesModel, type Brand } from "@/lib/brands";
 import { isProductInModel, modelsForBrand } from "@/lib/models";
@@ -332,25 +339,17 @@ function Catalog() {
               {tr(language, "Escalão de Tamanho", "Size Category", "Categoría de Talla")}
             </legend>
             <div className="flex flex-wrap gap-2 lg:flex-col">
-              <Button
-                variant={selectedSizeGroup === "all" ? "default" : "outline"}
-                size="sm"
-                className="justify-start rounded-none text-xs"
-                onClick={() => {
-                  setSelectedSizeGroup("all");
-                  setSize("all");
-                }}
-              >
-                {t.all}
-              </Button>
               {sizeGroups.map((group) => (
                 <Button
                   key={group.key}
                   variant={selectedSizeGroup === group.key ? "default" : "outline"}
                   size="sm"
                   className="justify-start rounded-none text-xs"
+                  aria-pressed={selectedSizeGroup === group.key}
                   onClick={() => {
-                    setSelectedSizeGroup(group.key);
+                    // Clicar no escalão ativo volta a todos os tamanhos, sem
+                    // precisar de um botão "Todos" (que gerava confusão).
+                    setSelectedSizeGroup(selectedSizeGroup === group.key ? "all" : group.key);
                     setSize("all");
                   }}
                 >
@@ -359,23 +358,36 @@ function Catalog() {
               ))}
             </div>
 
-            {/* Tamanhos individuais dentro do agrupamento selecionado */}
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {(selectedSizeGroup === "all"
-                ? sizeGroups.flatMap((group) => group.options)
-                : (sizeGroups.find((g) => g.key === selectedSizeGroup)?.options ?? [])
-              ).map((option) => (
-                <Button
-                  key={option.value}
-                  variant={size === option.value ? "default" : "outline"}
-                  size="sm"
-                  className="h-8 min-w-8 px-1.5 rounded-none text-xs font-semibold"
-                  aria-pressed={size === option.value}
-                  onClick={() => setSize(size === option.value ? "all" : option.value)}
+            {/* Tamanho específico numa lista dropdown */}
+            <div className="mt-3">
+              <Select
+                value={size === "all" ? "all" : String(size)}
+                onValueChange={(value) => setSize(value === "all" ? "all" : Number(value))}
+              >
+                <SelectTrigger
+                  className="h-9 w-full rounded-none border-border px-3 text-xs font-semibold"
+                  aria-label={tr(language, "Tamanho", "Size", "Talla")}
                 >
-                  {option.label}
-                </Button>
-              ))}
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-none">
+                  <SelectItem value="all" className="rounded-none py-2 text-xs">
+                    {tr(language, "Todos os tamanhos", "All sizes", "Todas las tallas")}
+                  </SelectItem>
+                  {(selectedSizeGroup === "all"
+                    ? sizeGroups.flatMap((group) => group.options)
+                    : (sizeGroups.find((g) => g.key === selectedSizeGroup)?.options ?? [])
+                  ).map((option) => (
+                    <SelectItem
+                      key={option.value}
+                      value={String(option.value)}
+                      className="rounded-none py-2 text-xs"
+                    >
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </fieldset>
 
