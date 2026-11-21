@@ -14,6 +14,7 @@ import {
   Copy,
   Heart,
   HelpCircle,
+  ChevronDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ import {
 } from "@/components/ui/select";
 import { copy, money, type Language, type Product } from "@/lib/shop-data";
 import { BRANDS, brandNames } from "@/lib/brands";
+import { modelsForBrand } from "@/lib/models";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
@@ -358,10 +360,18 @@ function MobileNav({
   onOpenChange: (open: boolean) => void;
   onHome: (event?: ReactMouseEvent) => void;
 }) {
-  const { language } = useShop(),
+  const { language, catalog } = useShop(),
     t = copy[language];
   const location = useRouterState({ select: (state) => state.location });
   const close = () => onOpenChange(false);
+  const currentBrand = (location.search as { brand?: string })?.brand;
+  const [expandedBrand, setExpandedBrand] = useState<string | null>(null);
+
+  // Ao abrir o menu, mostra logo os modelos da marca em que estamos.
+  useEffect(() => {
+    if (open) setExpandedBrand(currentBrand ?? null);
+  }, [open, currentBrand]);
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
@@ -401,21 +411,69 @@ function MobileNav({
             const isMobActive =
               location.pathname === "/catalogo" &&
               (location.search as { brand?: string })?.brand === brand;
+            const isExpanded = expandedBrand === brand;
+            const models = modelsForBrand(catalog, brand);
             return (
-              <Link
-                key={brand}
-                to="/catalogo"
-                search={{ brand }}
-                onClick={close}
-                className={`border-b border-border py-4 font-display text-3xl uppercase flex items-center justify-between ${
-                  isMobActive ? "text-primary font-black" : "text-foreground"
-                }`}
-              >
-                <span>{brandNames[brand][language]}</span>
-                {isMobActive && (
-                  <span className="size-2 rounded-full bg-primary" aria-hidden="true" />
+              <div key={brand} className="border-b border-border">
+                <div
+                  className={`flex items-center justify-between font-display text-3xl uppercase ${
+                    isMobActive ? "text-primary font-black" : "text-foreground"
+                  }`}
+                >
+                  <Link
+                    to="/catalogo"
+                    search={{ brand }}
+                    onClick={close}
+                    className="flex-1 py-4 text-left"
+                  >
+                    {brandNames[brand][language]}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedBrand(isExpanded ? null : brand)}
+                    aria-expanded={isExpanded}
+                    aria-label={tr(
+                      language,
+                      `Modelos ${brandNames[brand][language]}`,
+                      `${brandNames[brand][language]} models`,
+                      `Modelos ${brandNames[brand][language]}`,
+                    )}
+                    className="grid size-11 place-items-center"
+                  >
+                    <ChevronDown
+                      aria-hidden="true"
+                      className={`size-5 transition-transform duration-200 ${
+                        isExpanded ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {isExpanded && (
+                  <div className="pb-4 pl-1">
+                    <Link
+                      to="/catalogo"
+                      search={{ brand }}
+                      onClick={close}
+                      className="block py-2 text-xs font-bold uppercase tracking-wide text-muted-foreground"
+                    >
+                      {tr(language, "Todos os modelos", "All models", "Todos los modelos")}
+                    </Link>
+                    {models.map((model) => (
+                      <Link
+                        key={model.id}
+                        to="/catalogo"
+                        search={{ brand, model: model.id }}
+                        onClick={close}
+                        className="flex items-center justify-between py-2 text-sm font-semibold"
+                      >
+                        <span>{model.label}</span>
+                        <span className="text-xs opacity-60">({model.count})</span>
+                      </Link>
+                    ))}
+                  </div>
                 )}
-              </Link>
+              </div>
             );
           })}
           <Link

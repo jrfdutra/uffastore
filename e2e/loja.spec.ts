@@ -465,6 +465,26 @@ test.describe("Confirmação", () => {
 });
 
 test.describe("Mobile", () => {
+  test("menu mobile mostra os modelos da marca como submenu @mobile", async ({ page }) => {
+    await page.goto("/");
+    await expect(async () => {
+      await page.getByRole("button", { name: "Menu" }).click();
+      await expect(page.getByRole("dialog")).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 30_000 });
+
+    const menu = page.getByRole("dialog");
+    const modelosNike = menu.getByRole("button", { name: "Modelos Nike" });
+    await modelosNike.click();
+    await expect(modelosNike).toHaveAttribute("aria-expanded", "true");
+    await expect(menu.getByRole("link", { name: /^Air Force/ })).toBeVisible();
+    await expect(menu.getByRole("link", { name: /^Dunk/ })).toBeVisible();
+    await expect(menu.getByRole("link", { name: /^Vomero 5/ })).toBeVisible();
+
+    await menu.getByRole("link", { name: /^Dunk/ }).click();
+    await page.waitForURL(/brand=nike.*model=dunk|model=dunk.*brand=nike/);
+    await expect(page.locator("article").first()).toBeVisible();
+  });
+
   test("menu mobile e compra completa até ao checkout @mobile", async ({ page }) => {
     await limparEstado(page);
 
