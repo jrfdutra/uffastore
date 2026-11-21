@@ -19,6 +19,10 @@ configurar credenciais — nada disso pode ser feito por API.
 3. Esperar por **Verified**.
 
 > Sem isto, o Resend só entrega ao e-mail dono da conta. Para clientes é obrigatório.
+>
+> Verificas o **domínio** `uffastore.pt`, não uma caixa de correio. Depois podes
+> enviar de `atendimento@uffastore.pt` — a caixa que já tens. Não é preciso criar
+> `encomendas@` nem qualquer outro endereço.
 
 ## Passo 2 — Shopify: copiar o Signing secret
 
@@ -33,12 +37,12 @@ configurar credenciais — nada disso pode ser feito por API.
 
 **Settings → Environment Variables** (Production):
 
-| Nome                     | Valor                                                                  |
-| ------------------------ | ---------------------------------------------------------------------- |
-| `SHOPIFY_WEBHOOK_SECRET` | segredo do passo 2                                                     |
-| `RESEND_API_KEY`         | chave `re_...` do Resend                                               |
-| `RESEND_FROM`            | `UFFA Store <encomendas@uffastore.pt>` (depois de verificar o domínio) |
-| `SHOPIFY_SHOP_DOMAIN`    | `uffastore.myshopify.com`                                              |
+| Nome                     | Valor                                                                   |
+| ------------------------ | ----------------------------------------------------------------------- |
+| `SHOPIFY_WEBHOOK_SECRET` | segredo do passo 2                                                      |
+| `RESEND_API_KEY`         | chave `re_...` do Resend                                                |
+| `RESEND_FROM`            | `UFFA Store <atendimento@uffastore.pt>` (depois de verificar o domínio) |
+| `SHOPIFY_SHOP_DOMAIN`    | `uffastore.myshopify.com`                                               |
 
 Enquanto o domínio não estiver verificado, usa `onboarding@resend.dev` — mas
 só recebes tu os e-mails.
