@@ -33,6 +33,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { tr } from "@/lib/i18n";
 import { categoryNames, money, type Language } from "@/lib/shop-data";
+import { brandLabelFor } from "@/lib/brands";
 import { useShop } from "@/lib/shop-context";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
 import {
@@ -1120,7 +1121,10 @@ function ItemsCard({ order }: { order: Order }) {
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="text-[10px] font-bold uppercase text-muted-foreground">
-                      {product ? categoryNames[product.category][language] : "UFFA"}
+                      {product
+                        ? (brandLabelFor(product, language) ??
+                          categoryNames[product.category][language])
+                        : "UFFA"}
                     </p>
                     <h3 className="mt-1 font-bold">{item.name}</h3>
                     <p className="text-sm text-muted-foreground">

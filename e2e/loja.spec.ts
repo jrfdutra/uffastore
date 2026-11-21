@@ -12,7 +12,7 @@ const CART_KEY = "uffa-cart";
 const MOCK_CHECKOUT_URL = "https://mock-shopify.test/checkout?token=abc123";
 
 /** Produto real da loja com todas as variantes em stock (verificado via API). */
-const PRODUTO_COM_STOCK = "nike-air-force";
+const PRODUTO_COM_STOCK = "nike-air-force-branco-laranja";
 
 /**
  * O aviso de "versão demo" abre como modal na primeira visita e bloqueia
@@ -110,10 +110,24 @@ test.describe("Loja — navegação e catálogo", () => {
     await expect(page).toHaveTitle(/Uffa/i);
     await expect(page.getByRole("link", { name: "UFFA Store — Início" }).first()).toBeVisible();
 
-    await page.getByRole("link", { name: "Lifestyle" }).first().click();
+    await page.getByRole("link", { name: "Nike" }).first().click();
     await page.waitForURL(/\/catalogo/);
     await expect(page.getByPlaceholder("Pesquisar sneakers")).toBeVisible();
     await expect(page.locator("article").first()).toBeVisible();
+  });
+
+  test("a pesquisa de modelos na homepage encontra resultados", async ({ page }) => {
+    await page.goto("/");
+    const pesquisa = page.getByPlaceholder(/Pesquisar modelos/);
+    await expect(pesquisa).toBeVisible();
+
+    // Repete até o React estar hidratado (o valor só persiste depois disso).
+    await expect(async () => {
+      await pesquisa.fill("dunk");
+      await expect(page.getByText(/modelos encontrados/)).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 30_000 });
+
+    await expect(page.locator('#pesquisa a[href^="/produto/"]').first()).toBeVisible();
   });
 
   test("o catálogo lista produtos e a pesquisa filtra resultados", async ({ page }) => {
@@ -353,7 +367,7 @@ test.describe("Mobile", () => {
 
     const menu = page.getByRole("dialog");
     await expect(menu).toBeVisible();
-    await menu.getByRole("link", { name: "Lifestyle" }).click();
+    await menu.getByRole("link", { name: "Nike" }).click();
     await page.waitForURL(/\/catalogo/);
 
     await abrirProduto(page);

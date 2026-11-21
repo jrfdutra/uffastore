@@ -20,7 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { tr } from "@/lib/i18n";
-import { categoryNames, type Language } from "@/lib/shop-data";
+import { type Language } from "@/lib/shop-data";
+import { brandLabelFor } from "@/lib/brands";
 import { useShop } from "@/lib/shop-context";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
 import {
@@ -397,7 +398,7 @@ function ValidResult({ result }: { result: AuthVerification }) {
             className="aspect-square w-full bg-product object-cover"
           />
           <p className="mt-2 text-[10px] font-bold uppercase text-muted-foreground">
-            {categoryNames[product.category][language]} · {tr(language, "Tamanho", "Size", "Talla")}{" "}
+            {brandLabelFor(product, language)} · {tr(language, "Tamanho", "Size", "Talla")}{" "}
             {rotuloTamanhoDoProduto(product, item.size)}
           </p>
         </div>
@@ -420,7 +421,7 @@ function ValidResult({ result }: { result: AuthVerification }) {
             />
             <Detail
               label={tr(language, "Edição", "Edition", "Edición")}
-              value={categoryNames[product.category][language]}
+              value={brandLabelFor(product, language) ?? "UFFA"}
             />
             <Detail
               label={tr(language, "Registado em", "Registered on", "Registrado el")}

@@ -6,12 +6,17 @@ import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { categoryNames, copy, isProductInCategory, type Category } from "@/lib/shop-data";
+import { BRANDS, brandNames, isProductInBrand, matchesModel, type Brand } from "@/lib/brands";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { escalaoPorTamanho, type Escalao } from "@/lib/precos";
 import { ORDEM_ESCALOES } from "@/lib/variantes";
 
 const searchSchema = z.object({
+  // Marcas são o filtro principal. "category" mantém-se apenas para links
+  // antigos e para a campanha Black Friday.
+  brand: z.enum(BRANDS).optional(),
+  q: z.string().optional(),
   category: z
     .enum(["promocoes", "lifestyle", "running", "limited", "personalizacao", "blackfriday"])
     .optional(),
@@ -86,7 +91,7 @@ export const Route = createFileRoute("/catalogo")({
       {
         name: "description",
         content:
-          "Descobre sneakers verificados de Black Friday, lifestyle, running e edições limitadas.",
+          "Descobre sneakers verificados Adidas, Nike, Puma, New Balance e Vans, com selo de autenticidade.",
       },
       { property: "og:title", content: "Catálogo — Uffa Store" },
       { property: "og:description", content: "Sneakers verificados, selecionados no Porto." },
@@ -104,9 +109,19 @@ function Catalog() {
     navigate = Route.useNavigate(),
     search = Route.useSearch();
 
-  // Categoria única de campanha: ligações antigas a "promocoes" passam a Black Friday.
+  // Filtro principal por marca; a categoria só sobrevive em links antigos e
+  // no interruptor da campanha Black Friday.
+  const brand: Brand | "all" = search.brand ?? "all";
+  const setBrand = (value: Brand | "all") => {
+    navigate({
+      search: (old) => ({ ...old, brand: value === "all" ? undefined : value }),
+      replace: true,
+    });
+  };
+
   const category: Category | "all" =
     search.category === "promocoes" ? "blackfriday" : (search.category ?? "all");
+  const isBlackFriday = category === "blackfriday";
   const setCategory = (c: Category | "all") => {
     navigate({
       search: (old) => ({ ...old, category: c === "all" ? undefined : c }),
@@ -114,7 +129,10 @@ function Catalog() {
     });
   };
 
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(search.q ?? "");
+  useEffect(() => {
+    setQuery(search.q ?? "");
+  }, [search.q]);
   const [selectedSizeGroup, setSelectedSizeGroup] = useState<"all" | "crianca" | "gs" | "senior">(
     "all",
   );
@@ -137,8 +155,9 @@ function Catalog() {
     () =>
       catalog.filter((p) => {
         if (p.status === "inactive") return false;
-        if (!isProductInCategory(p, category)) return false;
-        if (query && !p.name.toLowerCase().includes(query.toLowerCase())) return false;
+        if (!isProductInBrand(p, brand)) return false;
+        if (category !== "all" && !isProductInCategory(p, category)) return false;
+        if (!matchesModel(p, query)) return false;
 
         // Filtro de Preço
         if (p.price < minPrice || p.price > maxPrice) return false;
@@ -163,7 +182,18 @@ function Catalog() {
 
         return true;
       }),
-    [catalog, category, query, minPrice, maxPrice, selectedSizeGroup, size, selectedColor],
+    [
+      catalog,
+      brand,
+      category,
+      query,
+      minPrice,
+      maxPrice,
+      selectedSizeGroup,
+      sizeGroups,
+      size,
+      selectedColor,
+    ],
   );
 
   return (
@@ -182,25 +212,41 @@ function Catalog() {
             {t.filters}
           </div>
 
-          {/* Categorias de Sapatilhas */}
+          {/* Marcas */}
           <fieldset>
             <legend className="mb-3 text-xs font-bold uppercase">
-              {tr(language, "Categoria", "Category", "Categoría")}
+              {tr(language, "Marca", "Brand", "Marca")}
             </legend>
             <div className="flex flex-wrap gap-2 lg:flex-col">
-              {(["all", "blackfriday", "lifestyle", "running", "limited"] as const).map((c) => (
+              {(["all", ...BRANDS] as const).map((value) => (
                 <Button
-                  key={c}
-                  variant={category === c ? "default" : "outline"}
+                  key={value}
+                  variant={brand === value ? "default" : "outline"}
                   size="sm"
                   className="justify-start rounded-none"
-                  aria-pressed={category === c}
-                  onClick={() => setCategory(c)}
+                  aria-pressed={brand === value}
+                  onClick={() => setBrand(value)}
                 >
-                  {c === "all" ? t.all : categoryNames[c][language]}
+                  {value === "all" ? t.all : brandNames[value][language]}
                 </Button>
               ))}
             </div>
+          </fieldset>
+
+          {/* Campanha: filtro transversal às marcas */}
+          <fieldset>
+            <legend className="mb-3 text-xs font-bold uppercase">
+              {tr(language, "Campanha", "Campaign", "Campaña")}
+            </legend>
+            <Button
+              variant={isBlackFriday ? "default" : "outline"}
+              size="sm"
+              className="w-full justify-start rounded-none"
+              aria-pressed={isBlackFriday}
+              onClick={() => setCategory(isBlackFriday ? "all" : "blackfriday")}
+            >
+              {categoryNames.blackfriday[language]}
+            </Button>
           </fieldset>
 
           {/* Agrupamento de Tamanhos */}

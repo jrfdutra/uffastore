@@ -47,6 +47,7 @@ const PRODUCTS_QUERY = `
         title
         description
         productType
+        vendor
         tags
         options { name values }
         featuredImage { url altText }

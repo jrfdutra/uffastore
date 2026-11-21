@@ -8,6 +8,7 @@ import {
   money,
   type Product,
 } from "@/lib/shop-data";
+import { brandLabelFor } from "@/lib/brands";
 import { useShop } from "@/lib/shop-context";
 import { VerifiedBadge } from "./verified-badge";
 import { Button } from "@/components/ui/button";
@@ -166,7 +167,7 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="mt-3 flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
-              {categoryNames[product.category][language]}
+              {brandLabelFor(product, language) ?? categoryNames[product.category][language]}
             </p>
             <Link
               to="/produto/$productId"

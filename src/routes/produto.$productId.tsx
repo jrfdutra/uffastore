@@ -19,6 +19,7 @@ import {
   money,
   type ProductSize,
 } from "@/lib/shop-data";
+import { brandLabelFor } from "@/lib/brands";
 import { loadProduct } from "@/lib/catalog";
 import { useShop } from "@/lib/shop-context";
 import { type Escalao } from "@/lib/precos";
@@ -275,9 +276,10 @@ function ProductDetail() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <p className="text-xs font-bold uppercase text-primary">
-                {getProductCategories(p)
-                  .map((category) => categoryNames[category][s.language])
-                  .join(" · ")}
+                {brandLabelFor(p, s.language) ??
+                  getProductCategories(p)
+                    .map((category) => categoryNames[category][s.language])
+                    .join(" · ")}
               </p>
               {(isProductInCategory(p, "promocoes") || discountPercent > 0) && !isSoldOut && (
                 <span className="bg-promo text-promo-foreground border-2 border-promo rounded-[4px] px-3.5 py-1 text-xs font-black uppercase tracking-widest shadow-md">

@@ -33,14 +33,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  categoryNames,
-  copy,
-  money,
-  type Category,
-  type Language,
-  type Product,
-} from "@/lib/shop-data";
+import { copy, money, type Language, type Product } from "@/lib/shop-data";
+import { BRANDS, brandNames } from "@/lib/brands";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
@@ -52,8 +46,6 @@ import {
   type MouseEvent as ReactMouseEvent,
   type ReactNode,
 } from "react";
-
-const cats: Category[] = ["blackfriday", "lifestyle", "running", "limited", "personalizacao"];
 
 /** Etiqueta do tamanho de um item do carrinho ("Único" quando não há escala). */
 function sizeLabel(product: Product | undefined, size: number): string {
@@ -375,21 +367,21 @@ function MobileNav({
           </SheetDescription>
         </SheetHeader>
         <nav className="mt-10 flex flex-col">
-          {cats.map((c) => {
+          {BRANDS.map((brand) => {
             const isMobActive =
               location.pathname === "/catalogo" &&
-              (location.search as { category?: string })?.category === c;
+              (location.search as { brand?: string })?.brand === brand;
             return (
               <Link
-                key={c}
+                key={brand}
                 to="/catalogo"
-                search={{ category: c }}
+                search={{ brand }}
                 onClick={close}
                 className={`border-b border-border py-4 font-display text-3xl uppercase flex items-center justify-between ${
                   isMobActive ? "text-primary font-black" : "text-foreground"
                 }`}
               >
-                <span>{categoryNames[c][language]}</span>
+                <span>{brandNames[brand][language]}</span>
                 {isMobActive && (
                   <span className="size-2 rounded-full bg-primary" aria-hidden="true" />
                 )}
@@ -437,7 +429,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const location = useRouterState({ select: (state) => state.location });
   const pathname = location.pathname;
-  const currentCategory = (location.search as { category?: string })?.category;
+  const currentBrand = (location.search as { brand?: string })?.brand;
 
   /**
    * Clique na logo: fecha os menus abertos, garante que estamos na página
@@ -496,13 +488,13 @@ export function SiteShell({ children }: { children: ReactNode }) {
             </Link>
           </div>
           <nav className="hidden h-full items-center gap-4 xl:gap-6 lg:flex">
-            {cats.map((c) => {
-              const isActive = pathname === "/catalogo" && currentCategory === c;
+            {BRANDS.map((brand) => {
+              const isActive = pathname === "/catalogo" && currentBrand === brand;
               return (
                 <Link
-                  key={c}
+                  key={brand}
                   to="/catalogo"
-                  search={{ category: c }}
+                  search={{ brand }}
                   className={`group relative flex h-full items-center text-xs font-bold uppercase tracking-wider transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                     isActive
                       ? "text-brand-foreground dark:text-brand"
@@ -510,7 +502,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                   }`}
                 >
                   <span className="relative py-1">
-                    {categoryNames[c][s.language]}
+                    {brandNames[brand][s.language]}
                     <span
                       aria-hidden="true"
                       className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[3px] bg-[#4A2B33] dark:bg-[#E1A0B4] transition-all duration-300 ease-out ${

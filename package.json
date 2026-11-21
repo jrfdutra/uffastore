@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --test src/lib/catalogo.test.ts src/lib/precos.test.ts src/lib/variantes.test.ts src/lib/orders.test.ts src/lib/pares.test.ts src/lib/webhook-core.test.ts",
+    "test": "node --test src/lib/catalogo.test.ts src/lib/precos.test.ts src/lib/variantes.test.ts src/lib/orders.test.ts src/lib/pares.test.ts src/lib/webhook-core.test.ts src/lib/brands.test.ts",
     "test:e2e": "playwright test",
     "format": "prettier --write ."
   },

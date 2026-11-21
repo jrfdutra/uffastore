@@ -7,13 +7,9 @@ import { TrustStrip } from "@/components/trust-strip";
 import { OrderPortalPromo } from "@/components/order-portal-promo";
 import { OffCarousel } from "@/components/off-carousel";
 import { HeroCarousel } from "@/components/hero-carousel";
-import {
-  categoryNames,
-  copy,
-  isProductInCategory,
-  type Category,
-  type Product,
-} from "@/lib/shop-data";
+import { copy, type Product } from "@/lib/shop-data";
+import { BRANDS, brandNames, getProductBrand, type Brand } from "@/lib/brands";
+import { ModelSearch } from "@/components/model-search";
 import { FOTO_PADRAO } from "@/lib/consolidated-catalog";
 import { useShop } from "@/lib/shop-context";
 
@@ -57,23 +53,23 @@ const hero = {
 };
 
 /**
- * Capa de cada categoria: usa a fotografia real do primeiro produto da categoria,
+ * Capa de cada marca: usa a fotografia real do primeiro produto da marca,
  * pela ordem do catálogo (a Shopify é a fonte de verdade). Quando nenhum produto
- * da categoria tem fotografia própria, recorre à imagem padrão da UFFA.
+ * da marca tem fotografia própria, recorre à imagem padrão da UFFA.
  */
-function categoryCovers(catalog: Product[]): Record<Category, string> {
-  return (Object.keys(categoryNames) as Category[]).reduce(
-    (covers, category) => {
+function brandCovers(catalog: Product[]): Record<Brand, string> {
+  return BRANDS.reduce(
+    (covers, brand) => {
       const cover = catalog.find(
         (product) =>
-          isProductInCategory(product, category) &&
+          getProductBrand(product) === brand &&
           Boolean(product.image) &&
           product.image !== FOTO_PADRAO,
       );
-      covers[category] = cover?.image ?? FOTO_PADRAO;
+      covers[brand] = cover?.image ?? FOTO_PADRAO;
       return covers;
     },
-    {} as Record<Category, string>,
+    {} as Record<Brand, string>,
   );
 }
 
@@ -81,10 +77,7 @@ function Home() {
   const { language, catalog } = useShop();
   const t = copy[language],
     h = hero[language];
-  const cats = (Object.keys(categoryNames) as Category[]).filter(
-    (c) => c !== "personalizacao" && c !== "promocoes",
-  );
-  const covers = categoryCovers(catalog);
+  const covers = brandCovers(catalog);
 
   return (
     <>
@@ -109,32 +102,35 @@ function Home() {
 
       <TrustStrip />
 
+      {/* Pesquisa de modelos logo no início, antes das secções promocionais */}
+      <ModelSearch catalog={catalog} language={language} />
+
       {/* OFF Carousel positioned strategically right after banner & trust strip */}
       <OffCarousel />
 
       <section className="mx-auto max-w-7xl px-4 py-16 md:py-20 md:px-6">
         <div className="mb-8 flex items-end justify-between">
           <div>
-            <p className="text-xs font-bold uppercase text-primary">01 / Categories</p>
+            <p className="text-xs font-bold uppercase text-primary">01 / Brands</p>
             <h2 className="mt-2 font-display text-5xl uppercase md:text-7xl">
               {language === "pt"
-                ? "Escolhe a tua linha"
+                ? "Escolhe a tua marca"
                 : language === "es"
-                  ? "Elige tu línea"
-                  : "Choose your lane"}
+                  ? "Elige tu marca"
+                  : "Choose your brand"}
             </h2>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {cats.map((cat) => (
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+          {BRANDS.map((brand) => (
             <Link
-              key={cat}
+              key={brand}
               to="/catalogo"
-              search={{ category: cat }}
+              search={{ brand }}
               className="group relative block aspect-[4/5] overflow-hidden bg-product"
             >
               <img
-                src={covers[cat]}
+                src={covers[brand]}
                 alt=""
                 width={1664}
                 height={2080}
@@ -143,7 +139,7 @@ function Home() {
               />
               <div className="absolute inset-0 bg-category-overlay" />
               <span className="absolute bottom-4 left-4 font-display text-3xl uppercase text-hero-foreground md:text-4xl">
-                {categoryNames[cat][language]}
+                {brandNames[brand][language]}
               </span>
             </Link>
           ))}
