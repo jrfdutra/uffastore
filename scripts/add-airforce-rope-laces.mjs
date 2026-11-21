@@ -58,11 +58,8 @@ async function main() {
   const productOptions = [
     {
       name: "Cor",
-      values: [
-        { name: "Branca" },
-        { name: "Preta" }
-      ]
-    }
+      values: [{ name: "Branca" }, { name: "Preta" }],
+    },
   ];
 
   const variants = [
@@ -73,7 +70,9 @@ async function main() {
       sku: "NIKE-AIR-FORCE-ROPE-LACES-BRANCA",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
     },
     {
       optionValues: [{ optionName: "Cor", name: "Preta" }],
@@ -82,8 +81,10 @@ async function main() {
       sku: "NIKE-AIR-FORCE-ROPE-LACES-PRETA",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-    }
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
+    },
   ];
 
   const input = {
@@ -100,9 +101,9 @@ async function main() {
       {
         originalSource: "https://www.uffastore.pt/produtos/uffa-modelo-padrao.webp",
         alt: "Air Force With Rope Laces",
-        contentType: "IMAGE"
-      }
-    ]
+        contentType: "IMAGE",
+      },
+    ],
   };
 
   const res = await admin(PRODUCT_SET, { input });

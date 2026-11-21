@@ -31,6 +31,11 @@ const res = await fetch(`https://${domain}/api/2026-07/graphql.json`, {
 const json = await res.json();
 if (json.errors) console.log(json.errors);
 for (const n of json.data?.products?.nodes ?? []) {
-  console.log(`- ${n.title} (${n.handle}) | type=${n.productType} | tags=${n.tags.join(",")} | disponível=${n.availableForSale} | min=${n.priceRange.minVariantPrice.amount} max=${n.priceRange.maxVariantPrice.amount}`);
-  for (const v of n.variants.nodes) console.log(`    * ${v.title} | ${v.price.amount} | qty=${v.quantityAvailable} | ${v.selectedOptions.map(o=>o.name+"="+o.value).join("; ")}`);
+  console.log(
+    `- ${n.title} (${n.handle}) | type=${n.productType} | tags=${n.tags.join(",")} | disponível=${n.availableForSale} | min=${n.priceRange.minVariantPrice.amount} max=${n.priceRange.maxVariantPrice.amount}`,
+  );
+  for (const v of n.variants.nodes)
+    console.log(
+      `    * ${v.title} | ${v.price.amount} | qty=${v.quantityAvailable} | ${v.selectedOptions.map((o) => o.name + "=" + o.value).join("; ")}`,
+    );
 }

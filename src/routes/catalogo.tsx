@@ -30,9 +30,7 @@ type SizeGroup = {
   options: { value: number; label: string }[];
 };
 
-function buildSizeGroups(
-  catalog: { sizes: { size: number; label?: string }[] }[],
-): SizeGroup[] {
+function buildSizeGroups(catalog: { sizes: { size: number; label?: string }[] }[]): SizeGroup[] {
   const byEscalao = new Map<Escalao, Map<number, string>>();
   for (const product of catalog) {
     for (const item of product.sizes) {
@@ -190,20 +188,18 @@ function Catalog() {
               {tr(language, "Categoria", "Category", "Categoría")}
             </legend>
             <div className="flex flex-wrap gap-2 lg:flex-col">
-              {(["all", "blackfriday", "lifestyle", "running", "limited"] as const).map(
-                (c) => (
-                  <Button
-                    key={c}
-                    variant={category === c ? "default" : "outline"}
-                    size="sm"
-                    className="justify-start rounded-none"
-                    aria-pressed={category === c}
-                    onClick={() => setCategory(c)}
-                  >
-                    {c === "all" ? t.all : categoryNames[c][language]}
-                  </Button>
-                ),
-              )}
+              {(["all", "blackfriday", "lifestyle", "running", "limited"] as const).map((c) => (
+                <Button
+                  key={c}
+                  variant={category === c ? "default" : "outline"}
+                  size="sm"
+                  className="justify-start rounded-none"
+                  aria-pressed={category === c}
+                  onClick={() => setCategory(c)}
+                >
+                  {c === "all" ? t.all : categoryNames[c][language]}
+                </Button>
+              ))}
             </div>
           </fieldset>
 

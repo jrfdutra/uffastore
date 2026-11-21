@@ -72,13 +72,15 @@ async function main() {
   }
 
   // Atualizar productType para "Promoções - Black Friday" (mantendo a categoria padrão)
-  const variants = p.variants.nodes.map(v => ({
-    optionValues: v.selectedOptions.map(so => ({ optionName: so.name, name: so.value })),
+  const variants = p.variants.nodes.map((v) => ({
+    optionValues: v.selectedOptions.map((so) => ({ optionName: so.name, name: so.value })),
     price: v.price,
     compareAtPrice: v.compareAtPrice,
     inventoryPolicy: "DENY",
     inventoryItem: { tracked: true },
-    inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+    inventoryQuantities: [
+      { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+    ],
   }));
 
   const input = {
@@ -90,16 +92,18 @@ async function main() {
     status: p.status,
     productOptions: [
       { name: "Cor", values: [{ name: "Rosa" }, { name: "Preto e Branco" }] },
-      { name: "Tamanho", values: [{ name: "34" }, { name: "35" }] }
+      { name: "Tamanho", values: [{ name: "34" }, { name: "35" }] },
     ],
-    variants
+    variants,
   };
 
   const res = await admin(PRODUCT_SET, { input });
   if (res.productSet?.userErrors?.length > 0) {
     console.error("Erros:", res.productSet.userErrors);
   } else {
-    console.log("✅ Categoria alterada para 'Promoções - Black Friday' com sucesso! (Título mantém 'Adidas Campus 00 Criança')");
+    console.log(
+      "✅ Categoria alterada para 'Promoções - Black Friday' com sucesso! (Título mantém 'Adidas Campus 00 Criança')",
+    );
   }
 }
 

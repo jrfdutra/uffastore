@@ -69,11 +69,8 @@ async function main() {
   const productOptions = [
     {
       name: "Cor",
-      values: [
-        { name: "Branco e Laranja" },
-        { name: "Bege e Rosa" }
-      ]
-    }
+      values: [{ name: "Branco e Laranja" }, { name: "Bege e Rosa" }],
+    },
   ];
 
   const variants = [
@@ -84,7 +81,9 @@ async function main() {
       sku: "NIKE-AIR-FORCE-BRANCO-LARANJA",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
     },
     {
       optionValues: [{ optionName: "Cor", name: "Bege e Rosa" }],
@@ -93,8 +92,10 @@ async function main() {
       sku: "NIKE-AIR-FORCE-BEGE-ROSA",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-    }
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
+    },
   ];
 
   const input = {
@@ -105,14 +106,16 @@ async function main() {
     tags: product.tags,
     status: product.status,
     productOptions,
-    variants
+    variants,
   };
 
   const res = await admin(PRODUCT_SET, { input });
   if (res.productSet?.userErrors?.length > 0) {
     console.error("Erros ao atualizar produto:", res.productSet.userErrors);
   } else {
-    console.log("✅ Produto Nike Air Force atualizado com sucesso com as 2 cores e preços específicos!");
+    console.log(
+      "✅ Produto Nike Air Force atualizado com sucesso com as 2 cores e preços específicos!",
+    );
     const updatedVariants = res.productSet.product.variants.nodes;
     for (const v of updatedVariants) {
       console.log(`  - ${v.title} | Preço: €${v.price} | Compare At: €${v.compareAtPrice}`);

@@ -49,7 +49,9 @@ if (data.products.nodes.length === 0) {
   for (const p of data.products.nodes) {
     console.log(`- ${p.title} (${p.vendor})`);
     for (const v of p.variants.nodes) {
-      console.log(`    * Variante: ${v.title} | Preço: €${v.price} (Compare: €${v.compareAtPrice})`);
+      console.log(
+        `    * Variante: ${v.title} | Preço: €${v.price} (Compare: €${v.compareAtPrice})`,
+      );
     }
   }
 }

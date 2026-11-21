@@ -51,7 +51,7 @@ const PRODUCT_SET = `
 async function main() {
   const data = await admin(GET_ALL);
   const products = data.products.nodes.filter(
-    (p) => (p.productType || "").trim().toLowerCase() === "honey"
+    (p) => (p.productType || "").trim().toLowerCase() === "honey",
   );
 
   if (products.length === 0) {

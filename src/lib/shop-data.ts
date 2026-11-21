@@ -9,12 +9,7 @@ export const heroSneaker = "/produtos/uffa-modelo-padrao.webp";
 
 export type Language = "pt" | "en" | "es";
 export type Category =
-  | "promocoes"
-  | "lifestyle"
-  | "running"
-  | "limited"
-  | "personalizacao"
-  | "blackfriday";
+  "promocoes" | "lifestyle" | "running" | "limited" | "personalizacao" | "blackfriday";
 export type ProductStatus = "active" | "inactive" | "soldout" | "comingsoon";
 
 export type ProductSize = {

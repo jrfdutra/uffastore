@@ -1,7 +1,6 @@
 import { createHmac } from "node:crypto";
 
-const url =
-  process.env.WEBHOOK_URL || "https://www.uffastore.pt/api/webhooks/shopify/orders-paid";
+const url = process.env.WEBHOOK_URL || "https://www.uffastore.pt/api/webhooks/shopify/orders-paid";
 const body = JSON.stringify({ name: "#PROD-CHECK", line_items: [] });
 
 let falhas = 0;

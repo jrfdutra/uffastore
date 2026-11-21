@@ -53,9 +53,13 @@ const PUBLISH = `
 
 function toTitleCase(str) {
   if (!str) return "";
-  return str.toLowerCase().split(" ").map(word => {
-    return word.charAt(0).toUpperCase() + word.slice(1);
-  }).join(" ");
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
 }
 
 function normalize(str) {
@@ -77,20 +81,21 @@ async function main() {
   const onlineStore = pubs.publications.nodes.find((p) => /online store/i.test(p.name));
 
   const csvRaw = await readFile(CSV_PATH, "utf8");
-  const lines = csvRaw.split(/\r?\n/).filter(l => l.trim());
-  
+  const lines = csvRaw.split(/\r?\n/).filter((l) => l.trim());
+
   // Agrupar por Ref
   const refMap = new Map();
   for (let i = 1; i < lines.length; i++) {
     const cols = lines[i].split(";");
-    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] = cols;
+    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] =
+      cols;
     if (!refMap.has(ref)) {
       refMap.set(ref, {
         ref,
         modelo: modelo?.trim(),
         marca: marca?.trim(),
         obs: obs?.trim() || "",
-        variants: []
+        variants: [],
       });
     }
     refMap.get(ref).variants.push({
@@ -98,7 +103,7 @@ async function main() {
       valorOpcao: valorOpcao?.trim() || "",
       price: price?.trim() || "",
       compareAtPrice: compareAt?.trim() || "",
-      obs: obs?.trim() || ""
+      obs: obs?.trim() || "",
     });
   }
 
@@ -106,11 +111,14 @@ async function main() {
   const totalImportados = [];
 
   for (const [ref, item] of refMap.entries()) {
-    const hasRepeatedTitleObs = item.obs.toLowerCase().includes("título repetido") || 
-      item.variants.some(v => v.obs.toLowerCase().includes("título repetido"));
+    const hasRepeatedTitleObs =
+      item.obs.toLowerCase().includes("título repetido") ||
+      item.variants.some((v) => v.obs.toLowerCase().includes("título repetido"));
 
     if (hasRepeatedTitleObs) {
-      console.log(`[IGNORAR] Ref ${ref}: ${item.modelo} (${item.marca}) - Marcado como ambíguo/título repetido.`);
+      console.log(
+        `[IGNORAR] Ref ${ref}: ${item.modelo} (${item.marca}) - Marcado como ambíguo/título repetido.`,
+      );
       continue;
     }
 
@@ -119,7 +127,7 @@ async function main() {
     const handle = normalize(`${item.marca}-${item.modelo}`).replace(/\s+/g, "-");
 
     // Construir as opções e variantes
-    const hasOptions = item.variants.some(v => v.opcao);
+    const hasOptions = item.variants.some((v) => v.opcao);
     let productOptions = [];
     let variants = [];
 
@@ -138,11 +146,11 @@ async function main() {
       for (const [optName, valuesSet] of optionMap.entries()) {
         productOptions.push({
           name: optName,
-          values: Array.from(valuesSet).map(val => ({ name: val }))
+          values: Array.from(valuesSet).map((val) => ({ name: val })),
         });
       }
 
-      variants = item.variants.map(v => {
+      variants = item.variants.map((v) => {
         return {
           optionValues: [{ optionName: v.opcao, name: v.valorOpcao }],
           price: v.price,
@@ -150,21 +158,23 @@ async function main() {
           sku: `${item.marca}-${item.modelo}-${v.valorOpcao}`.replace(/\s+/g, "-").toUpperCase(),
           inventoryPolicy: "DENY",
           inventoryItem: { tracked: true },
-          inventoryQuantities: [{ locationId: loc.id, name: "available", quantity: 100 }]
+          inventoryQuantities: [{ locationId: loc.id, name: "available", quantity: 100 }],
         };
       });
     } else {
       // Produto simples (sem opções)
       productOptions = [{ name: "Title", values: [{ name: "Default Title" }] }];
-      variants = [{
-        optionValues: [{ optionName: "Title", name: "Default Title" }],
-        price: item.variants[0].price,
-        compareAtPrice: item.variants[0].compareAtPrice,
-        sku: `${item.marca}-${item.modelo}`.replace(/\s+/g, "-").toUpperCase(),
-        inventoryPolicy: "DENY",
-        inventoryItem: { tracked: true },
-        inventoryQuantities: [{ locationId: loc.id, name: "available", quantity: 100 }]
-      }];
+      variants = [
+        {
+          optionValues: [{ optionName: "Title", name: "Default Title" }],
+          price: item.variants[0].price,
+          compareAtPrice: item.variants[0].compareAtPrice,
+          sku: `${item.marca}-${item.modelo}`.replace(/\s+/g, "-").toUpperCase(),
+          inventoryPolicy: "DENY",
+          inventoryItem: { tracked: true },
+          inventoryQuantities: [{ locationId: loc.id, name: "available", quantity: 100 }],
+        },
+      ];
     }
 
     const input = {
@@ -180,9 +190,9 @@ async function main() {
         {
           originalSource: "https://www.uffastore.pt/produtos/uffa-modelo-padrao.webp",
           alt: formattedTitle,
-          contentType: "IMAGE"
-        }
-      ]
+          contentType: "IMAGE",
+        },
+      ],
     };
 
     console.log(`[CRIAR] Ref ${ref}: ${formattedTitle} (${variants.length} variante(s))...`);

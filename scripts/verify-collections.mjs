@@ -33,6 +33,6 @@ for (const c of json.data.collections.nodes) {
   const rule = c.ruleSet?.rules?.[0];
   console.log(
     `- ${c.title} (/collections/${c.handle}) | ${c.productsCount.count} produtos` +
-      (rule ? ` | regra: ${rule.column} ${rule.relation} "${rule.condition}"` : " | manual")
+      (rule ? ` | regra: ${rule.column} ${rule.relation} "${rule.condition}"` : " | manual"),
   );
 }

@@ -53,12 +53,16 @@ const PUBLISH = `
 
 function toTitleCase(str) {
   if (!str) return "";
-  return str.toLowerCase().split(" ").map(word => {
-    const upper = ["W/", "S/", "RNR", "GS", "PRO", "NB", "AIR", "MAX"];
-    if (upper.includes(word.toUpperCase())) return word.toUpperCase();
-    if (word.match(/^\d+[ºª]$/i)) return word.toLowerCase();
-    return word.charAt(0).toUpperCase() + word.slice(1);
-  }).join(" ");
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => {
+      const upper = ["W/", "S/", "RNR", "GS", "PRO", "NB", "AIR", "MAX"];
+      if (upper.includes(word.toUpperCase())) return word.toUpperCase();
+      if (word.match(/^\d+[ºª]$/i)) return word.toLowerCase();
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
 }
 
 function normalize(str) {
@@ -80,20 +84,21 @@ async function main() {
   const onlineStore = pubs.publications.nodes.find((p) => /online store/i.test(p.name));
 
   const csvRaw = await readFile(CSV_PATH, "utf8");
-  const lines = csvRaw.split(/\r?\n/).filter(l => l.trim());
-  
+  const lines = csvRaw.split(/\r?\n/).filter((l) => l.trim());
+
   // Agrupar por Ref
   const refMap = new Map();
   for (let i = 1; i < lines.length; i++) {
     const cols = lines[i].split(";");
-    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] = cols;
+    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] =
+      cols;
     if (!refMap.has(ref)) {
       refMap.set(ref, {
         ref,
         modelo: modelo?.trim(),
         marca: marca?.trim(),
         obs: obs?.trim() || "",
-        variants: []
+        variants: [],
       });
     }
     refMap.get(ref).variants.push({
@@ -101,7 +106,7 @@ async function main() {
       valorOpcao: valorOpcao?.trim() || "",
       price: price?.trim() || "",
       compareAtPrice: compareAt?.trim() || "",
-      obs: obs?.trim() || ""
+      obs: obs?.trim() || "",
     });
   }
 
@@ -131,11 +136,11 @@ async function main() {
     for (const [optName, valuesSet] of optionMap.entries()) {
       productOptions.push({
         name: optName,
-        values: Array.from(valuesSet).map(val => ({ name: val }))
+        values: Array.from(valuesSet).map((val) => ({ name: val })),
       });
     }
 
-    const variants = item.variants.map(v => {
+    const variants = item.variants.map((v) => {
       return {
         optionValues: [{ optionName: v.opcao, name: v.valorOpcao }],
         price: v.price,
@@ -143,7 +148,7 @@ async function main() {
         sku: `${item.marca}-${item.modelo}-${v.valorOpcao}`.replace(/\s+/g, "-").toUpperCase(),
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
-        inventoryQuantities: [{ locationId: loc.id, name: "available", quantity: 100 }]
+        inventoryQuantities: [{ locationId: loc.id, name: "available", quantity: 100 }],
       };
     });
 
@@ -161,9 +166,9 @@ async function main() {
         {
           originalSource: "https://www.uffastore.pt/produtos/uffa-modelo-padrao.webp",
           alt: formattedTitle,
-          contentType: "IMAGE"
-        }
-      ]
+          contentType: "IMAGE",
+        },
+      ],
     };
 
     console.log(`[CRIAR] Ref ${item.ref}: ${formattedTitle} (${variants.length} variante(s))...`);

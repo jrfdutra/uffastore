@@ -21,7 +21,9 @@ const version = env.SHOPIFY_ADMIN_API_VERSION || "2026-07";
 const response = await fetch(`https://${domain}/admin/api/${version}/graphql.json`, {
   method: "POST",
   headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": token },
-  body: JSON.stringify({ query: "{ products(first: 250) { nodes { title productType status } } }" }),
+  body: JSON.stringify({
+    query: "{ products(first: 250) { nodes { title productType status } } }",
+  }),
 });
 const json = await response.json();
 const nodes = json.data.products.nodes;

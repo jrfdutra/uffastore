@@ -8,7 +8,6 @@ export const MAX_BODY_BYTES = 1_000_000;
 
 const BASE64_SHA256 = /^[A-Za-z0-9+/]{43}=$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const CONTROL_CHARS = /[\u0000-\u001f\u007f]/g;
 
 /** Lido em tempo de execução para funcionar com env vars da Vercel e com testes. */
 export function getWebhookSecret(): string {
@@ -63,9 +62,17 @@ export type ParsedOrder = {
 export type ParseResult =
   { ok: true; order: ParsedOrder } | { ok: false; reason: "invalid_payload" | "no_email" };
 
+function stripControlChars(value: string): string {
+  let out = "";
+  for (const char of value) {
+    const code = char.codePointAt(0) ?? 0;
+    out += code < 0x20 || code === 0x7f ? " " : char;
+  }
+  return out;
+}
+
 function clean(value: unknown, maxLength: number): string {
-  return String(value ?? "")
-    .replace(CONTROL_CHARS, " ")
+  return stripControlChars(String(value ?? ""))
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, maxLength);

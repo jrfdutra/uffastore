@@ -3,12 +3,20 @@ import { readFile } from "node:fs/promises";
 const APPLY = process.argv.includes("--apply");
 
 const ITENS = [
-  { slug: "campus-00-preta-e-branca-crianca", handle: "adidas-campus-00-crianca", cor: "Preto e Branco" },
+  {
+    slug: "campus-00-preta-e-branca-crianca",
+    handle: "adidas-campus-00-crianca",
+    cor: "Preto e Branco",
+  },
   { slug: "campus-00-rosa-crianca", handle: "adidas-campus-00-crianca", cor: "Rosa" },
   { slug: "new-balance-530-branca-verde", handle: "new-balance-530", cor: "Branco e Verde" },
   { slug: "new-balance-530-branca-vermelha", handle: "new-balance-530", cor: "Branco e Vermelho" },
   { slug: "air-force-bege-e-rosa", handle: "nike-air-force-branco-laranja", cor: "Bege e Rosa" },
-  { slug: "air-force-branca-laranja", handle: "nike-air-force-branco-laranja", cor: "Branco e Laranja" },
+  {
+    slug: "air-force-branca-laranja",
+    handle: "nike-air-force-branco-laranja",
+    cor: "Branco e Laranja",
+  },
   { slug: "air-force-cinza-e-verde", handle: "nike-air-force-branco-laranja", cor: "Cinza Verde" },
   { slug: "nike-vomero-5-rnr-branco-e-prata", handle: "nike-vomero-5-rnr", cor: "Branca e Prata" },
   { slug: "p6000-bege-com-logo-rosa", handle: "nike-p6000", cor: "Bege com Logo Rosa" },
@@ -56,7 +64,11 @@ for (const item of ITENS) {
   }
   const media = p.media.nodes.find((m) => m.image?.url?.includes(item.slug));
   const variantIds = p.variants.nodes
-    .filter((v) => v.selectedOptions.some((o) => /cor|color/i.test(o.name) && o.value.trim() === item.cor.trim()))
+    .filter((v) =>
+      v.selectedOptions.some(
+        (o) => /cor|color/i.test(o.name) && o.value.trim() === item.cor.trim(),
+      ),
+    )
     .map((v) => v.id);
 
   if (!media || !variantIds.length) {
@@ -78,7 +90,10 @@ for (const item of ITENS) {
         userErrors { field message }
       }
     }`,
-    { productId: p.id, variantMedia: variantIds.map((variantId) => ({ variantId, mediaIds: [media.id] })) },
+    {
+      productId: p.id,
+      variantMedia: variantIds.map((variantId) => ({ variantId, mediaIds: [media.id] })),
+    },
   );
   const errs = result.productVariantAppendMedia.userErrors;
   if (errs.length) {

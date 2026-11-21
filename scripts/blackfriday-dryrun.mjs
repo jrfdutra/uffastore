@@ -106,21 +106,22 @@ function normalize(str) {
 
 async function runDryRun() {
   const csvRaw = await readFile(CSV_PATH, "utf8");
-  const lines = csvRaw.split(/\r?\n/).filter(l => l.trim());
+  const lines = csvRaw.split(/\r?\n/).filter((l) => l.trim());
   const header = lines[0].split(";");
-  
+
   // Agrupar linhas do CSV por Ref
   const refMap = new Map();
   for (let i = 1; i < lines.length; i++) {
     const cols = lines[i].split(";");
-    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] = cols;
+    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] =
+      cols;
     if (!refMap.has(ref)) {
       refMap.set(ref, {
         ref,
         modelo: modelo?.trim(),
         marca: marca?.trim(),
         obs: obs?.trim() || "",
-        variants: []
+        variants: [],
       });
     }
     refMap.get(ref).variants.push({
@@ -130,7 +131,7 @@ async function runDryRun() {
       precoBF: precoBF?.trim() || "",
       price: price?.trim() || "",
       compareAtPrice: compareAt?.trim() || "",
-      obs: obs?.trim() || ""
+      obs: obs?.trim() || "",
     });
   }
 
@@ -167,8 +168,10 @@ async function runDryRun() {
 
     // Regras de classificação:
     // c) AMBÍGUO: a Observação diz "Título repetido", ou há mais de um produto com esse título na planilha ou na loja.
-    const hasRepeatedTitleObs = item.obs.toLowerCase().includes("título repetido") || item.variants.some(v => v.obs.toLowerCase().includes("título repetido"));
-    
+    const hasRepeatedTitleObs =
+      item.obs.toLowerCase().includes("título repetido") ||
+      item.variants.some((v) => v.obs.toLowerCase().includes("título repetido"));
+
     if (hasRepeatedTitleObs || countInCsv > 1 || shopifyMatches.length > 1) {
       categoria = "AMBÍGUO";
       acao = "IGNORAR";
@@ -195,8 +198,12 @@ async function runDryRun() {
         // Procurar variante correspondente na loja
         let matchVar = null;
         if (v.opcao) {
-          matchVar = matchedProduct.variants.nodes.find(sv => 
-            sv.selectedOptions?.some(so => normalize(so.name) === normalize(v.opcao) && normalize(so.value) === normalize(v.valorOpcao))
+          matchVar = matchedProduct.variants.nodes.find((sv) =>
+            sv.selectedOptions?.some(
+              (so) =>
+                normalize(so.name) === normalize(v.opcao) &&
+                normalize(so.value) === normalize(v.valorOpcao),
+            ),
           );
         } else {
           matchVar = matchedProduct.variants.nodes[0];
@@ -210,7 +217,7 @@ async function runDryRun() {
             atual: `${currentPrice} € (comp: ${currentCompare})`,
             novo: `${targetPrice} € (comp: ${targetCompareAt} €)`,
             mudanca: `Price: ${currentPrice} -> ${targetPrice} | Compare: ${currentCompare} -> ${targetCompareAt}`,
-            statusVariante: "EXISTENTE"
+            statusVariante: "EXISTENTE",
           });
         } else {
           diffs.push({
@@ -218,7 +225,7 @@ async function runDryRun() {
             atual: "Não existe na loja",
             novo: `${targetPrice} € (comp: ${targetCompareAt} €)`,
             mudanca: `Nova variante a acrescentar`,
-            statusVariante: "ACRESCENTAR"
+            statusVariante: "ACRESCENTAR",
           });
         }
       } else if (categoria === "NOVO") {
@@ -227,7 +234,7 @@ async function runDryRun() {
           atual: "N/A (produto novo)",
           novo: `${targetPrice} € (comp: ${targetCompareAt} €)`,
           mudanca: `Criar com Price: ${targetPrice} € | Compare: ${targetCompareAt} €`,
-          statusVariante: "NOVA"
+          statusVariante: "NOVA",
         });
       } else {
         diffs.push({
@@ -235,7 +242,7 @@ async function runDryRun() {
           atual: "Ignorado",
           novo: `${targetPrice} € (comp: ${targetCompareAt} €)`,
           mudanca: `Sem alteração (${motivo})`,
-          statusVariante: "IGNORADO"
+          statusVariante: "IGNORADO",
         });
       }
     }
@@ -248,7 +255,7 @@ async function runDryRun() {
       acao,
       motivo,
       shopifyId: matchedProduct ? matchedProduct.id : "-",
-      diffs
+      diffs,
     });
   }
 

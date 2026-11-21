@@ -89,9 +89,7 @@ function ProductDetail() {
   const defaultCord =
     cords.find((cord) => /^sem\b|^without\b/i.test(cord.name))?.slug ?? cords[0]?.slug;
   const activeCord =
-    selectedCord && cords.some((cord) => cord.slug === selectedCord)
-      ? selectedCord
-      : defaultCord;
+    selectedCord && cords.some((cord) => cord.slug === selectedCord) ? selectedCord : defaultCord;
 
   // Variantes reais da cor (e Cute Cord) escolhidas, ou todas se o modelo não tiver essas opções.
   const sizesForColor = useMemo(

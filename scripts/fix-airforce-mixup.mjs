@@ -50,21 +50,27 @@ async function main() {
     tags: ["Black Friday"],
     status: "ACTIVE",
     productOptions: [{ name: "Title", values: [{ name: "Default Title" }] }],
-    variants: [{
-      optionValues: [{ optionName: "Title", name: "Default Title" }],
-      price: "99.98",
-      compareAtPrice: "139.99",
-      sku: "NIKE-AIR-FORCE-PEROLAS-SIMBOLO-S-ROPE-LACES",
-      inventoryPolicy: "DENY",
-      inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-    }]
+    variants: [
+      {
+        optionValues: [{ optionName: "Title", name: "Default Title" }],
+        price: "99.98",
+        compareAtPrice: "139.99",
+        sku: "NIKE-AIR-FORCE-PEROLAS-SIMBOLO-S-ROPE-LACES",
+        inventoryPolicy: "DENY",
+        inventoryItem: { tracked: true },
+        inventoryQuantities: [
+          { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+        ],
+      },
+    ],
   };
-  
+
   await admin(PRODUCT_SET, { input: p11Input });
   console.log("✅ P11 restaurado com sucesso!");
 
-  console.log("A atualizar Nike Air Force correto com as 2 cores (Branco e Laranja / Bege e Rosa)...");
+  console.log(
+    "A atualizar Nike Air Force correto com as 2 cores (Branco e Laranja / Bege e Rosa)...",
+  );
   const airForceInput = {
     id: "gid://shopify/Product/15999799853404",
     title: "Nike Air Force",
@@ -75,11 +81,8 @@ async function main() {
     productOptions: [
       {
         name: "Cor",
-        values: [
-          { name: "Branco e Laranja" },
-          { name: "Bege e Rosa" }
-        ]
-      }
+        values: [{ name: "Branco e Laranja" }, { name: "Bege e Rosa" }],
+      },
     ],
     variants: [
       {
@@ -89,7 +92,9 @@ async function main() {
         sku: "NIKE-AIR-FORCE-BRANCO-LARANJA",
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
-        inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+        inventoryQuantities: [
+          { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+        ],
       },
       {
         optionValues: [{ optionName: "Cor", name: "Bege e Rosa" }],
@@ -98,9 +103,11 @@ async function main() {
         sku: "NIKE-AIR-FORCE-BEGE-ROSA",
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
-        inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-      }
-    ]
+        inventoryQuantities: [
+          { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+        ],
+      },
+    ],
   };
 
   const res = await admin(PRODUCT_SET, { input: airForceInput });

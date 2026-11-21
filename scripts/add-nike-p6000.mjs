@@ -58,11 +58,8 @@ async function main() {
   const productOptions = [
     {
       name: "Cor",
-      values: [
-        { name: "Branca com Logo Dourado" },
-        { name: "Bege com Logo Rosa" }
-      ]
-    }
+      values: [{ name: "Branca com Logo Dourado" }, { name: "Bege com Logo Rosa" }],
+    },
   ];
 
   const variants = [
@@ -73,7 +70,9 @@ async function main() {
       sku: "NIKE-P6000-BRANCA-LOGODOURADO",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
     },
     {
       optionValues: [{ optionName: "Cor", name: "Bege com Logo Rosa" }],
@@ -82,8 +81,10 @@ async function main() {
       sku: "NIKE-P6000-BEGE-LOGOROSA",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-    }
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
+    },
   ];
 
   const input = {
@@ -100,9 +101,9 @@ async function main() {
       {
         originalSource: "https://www.uffastore.pt/produtos/uffa-modelo-padrao.webp",
         alt: "Nike P6000",
-        contentType: "IMAGE"
-      }
-    ]
+        contentType: "IMAGE",
+      },
+    ],
   };
 
   const res = await admin(PRODUCT_SET, { input });

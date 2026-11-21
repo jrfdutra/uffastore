@@ -37,14 +37,17 @@ async function getAllProducts() {
   let hasNext = true;
   let cursor = null;
   while (hasNext) {
-    const data = await admin(`
+    const data = await admin(
+      `
       query($after: String) {
         products(first: 100, after: $after) {
           pageInfo { hasNextPage endCursor }
           nodes { id title vendor status }
         }
       }
-    `, { after: cursor });
+    `,
+      { after: cursor },
+    );
     all.push(...data.products.nodes);
     hasNext = data.products.pageInfo.hasNextPage;
     cursor = data.products.pageInfo.endCursor;
@@ -55,4 +58,4 @@ async function getAllProducts() {
 const products = await getAllProducts();
 console.log(`Total produtos na loja: ${products.length}`);
 console.log("\nLista de produtos:");
-products.forEach(p => console.log(`${p.id} | ${p.vendor} | ${p.title} | ${p.status}`));
+products.forEach((p) => console.log(`${p.id} | ${p.vendor} | ${p.title} | ${p.status}`));

@@ -76,9 +76,7 @@ if (mode === "create") {
             sku: "TESTE-UFFA-42",
             inventoryPolicy: "DENY",
             inventoryItem: { tracked: true },
-            inventoryQuantities: [
-              { locationId: location.id, name: "available", quantity: 20 },
-            ],
+            inventoryQuantities: [{ locationId: location.id, name: "available", quantity: 20 }],
           },
         ],
       },
@@ -102,10 +100,7 @@ if (mode === "create") {
   );
   const pubErrs = published.publishablePublish.userErrors;
   if (pubErrs.length) console.error("Erros ao publicar:", pubErrs);
-  else
-    console.log(
-      `Publicado em: ${pubs.publications.nodes.map((p) => p.name).join(", ")}`,
-    );
+  else console.log(`Publicado em: ${pubs.publications.nodes.map((p) => p.name).join(", ")}`);
 
   // Confirma que a Storefront API (usada pelo site) já devolve o produto.
   let visible = null;

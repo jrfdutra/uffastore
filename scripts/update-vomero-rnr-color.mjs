@@ -69,40 +69,40 @@ const PRODUCT_SET = `
 
 async function main() {
   console.log("A buscar o produto Nike Vomero 5 RNR atual...");
-  
+
   const data = await admin(GET_VOMERO_RNR);
   const products = data.products.nodes;
-  
+
   if (products.length === 0) {
     console.log("Produto não encontrado!");
     return;
   }
-  
+
   const product = products[0];
   console.log(`Encontrado: ${product.title} (${product.id})`);
   console.log("Variantes atuais:");
   for (const v of product.variants.nodes) {
     console.log(`  - ${v.title}: €${v.price} (comp: €${v.compareAtPrice})`);
   }
-  
+
   // Mapear preços atuais por título da variante
   const priceMap = {};
   for (const v of product.variants.nodes) {
     priceMap[v.title] = {
       price: v.price,
-      compareAtPrice: v.compareAtPrice
+      compareAtPrice: v.compareAtPrice,
     };
   }
-  
+
   // Nova estrutura: 2 opções
   // 1. Cor: "Bege/Cromado" (única cor, mantendo os preços atuais)
   // 2. Cute Cord: "Com Cute Cord", "Sem Cute Cord"
-  
+
   const productOptions = [
     { name: "Cor", values: [{ name: "Bege/Cromado" }] },
-    { name: "Cute Cord", values: [{ name: "Com Cute Cord" }, { name: "Sem Cute Cord" }] }
+    { name: "Cute Cord", values: [{ name: "Com Cute Cord" }, { name: "Sem Cute Cord" }] },
   ];
-  
+
   // Criar variantes combinadas (1 cor × 2 cute cord = 2 variantes)
   // Manter os mesmos preços que já existem
   const locationId = "gid://shopify/Location/123726889308"; // Rua Alcino de Araújo
@@ -110,29 +110,29 @@ async function main() {
     {
       optionValues: [
         { optionName: "Cor", name: "Bege/Cromado" },
-        { optionName: "Cute Cord", name: "Com Cute Cord" }
+        { optionName: "Cute Cord", name: "Com Cute Cord" },
       ],
       price: priceMap["Com Cute Cord"]?.price || "94.99",
       compareAtPrice: priceMap["Com Cute Cord"]?.compareAtPrice || "124.99",
       sku: "NIKE-VOMERO-5-RNR-BEGE-CROMADO-COM-CUTE-CORD",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId, name: "available", quantity: 100 }]
+      inventoryQuantities: [{ locationId, name: "available", quantity: 100 }],
     },
     {
       optionValues: [
         { optionName: "Cor", name: "Bege/Cromado" },
-        { optionName: "Cute Cord", name: "Sem Cute Cord" }
+        { optionName: "Cute Cord", name: "Sem Cute Cord" },
       ],
       price: priceMap["Sem Cute Cord"]?.price || "69.99",
       compareAtPrice: priceMap["Sem Cute Cord"]?.compareAtPrice || "89.99",
       sku: "NIKE-VOMERO-5-RNR-BEGE-CROMADO-SEM-CUTE-CORD",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId, name: "available", quantity: 100 }]
-    }
+      inventoryQuantities: [{ locationId, name: "available", quantity: 100 }],
+    },
   ];
-  
+
   const input = {
     id: product.id,
     title: product.title,
@@ -141,14 +141,14 @@ async function main() {
     tags: product.tags,
     status: product.status,
     productOptions,
-    variants
+    variants,
   };
-  
+
   console.log("\nA atualizar produto com nova estrutura de opções:");
   console.log("  Opção 1: Cor (Bege/Cromado)");
   console.log("  Opção 2: Cute Cord (Com Cute Cord, Sem Cute Cord)");
   console.log("  Total de variantes: 2");
-  
+
   try {
     const res = await admin(PRODUCT_SET, { input, synchronous: true });
     if (res.productSet?.userErrors?.length > 0) {

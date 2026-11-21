@@ -51,13 +51,38 @@ const PRODUCT_SET = `
 `;
 
 const CATEGORY_MAP = [
-  "Limitada", "Limitada", "Lifestyle", "Limitada", "Lifestyle",
-  "Lifestyle", "Limitada", "Limitada", "Limitada", "Limitada",
-  "Limitada", "Lifestyle", "Lifestyle", "Limitada", "Lifestyle",
-  "Limitada", "Lifestyle", "Limitada", "Limitada", "Lifestyle",
-  "Lifestyle", "Lifestyle", "Honey", "Honey", "Lifestyle",
-  "Limitada", "Lifestyle", "Lifestyle", "Limitada", "Lifestyle",
-  "Lifestyle", "Lifestyle"
+  "Limitada",
+  "Limitada",
+  "Lifestyle",
+  "Limitada",
+  "Lifestyle",
+  "Lifestyle",
+  "Limitada",
+  "Limitada",
+  "Limitada",
+  "Limitada",
+  "Limitada",
+  "Lifestyle",
+  "Lifestyle",
+  "Limitada",
+  "Lifestyle",
+  "Limitada",
+  "Lifestyle",
+  "Limitada",
+  "Limitada",
+  "Lifestyle",
+  "Lifestyle",
+  "Lifestyle",
+  "Honey",
+  "Honey",
+  "Lifestyle",
+  "Limitada",
+  "Lifestyle",
+  "Lifestyle",
+  "Limitada",
+  "Lifestyle",
+  "Lifestyle",
+  "Lifestyle",
 ];
 
 async function main() {
@@ -66,18 +91,18 @@ async function main() {
   const products = data.products.nodes.sort((a, b) => a.id.localeCompare(b.id));
 
   console.log(`Encontrados ${products.length} produtos.`);
-  
+
   for (let i = 0; i < products.length; i++) {
     const p = products[i];
     const category = CATEGORY_MAP[i] || "Promoções - Black Friday";
     console.log(`Atualizando ${p.title} para categoria: ${category}`);
-    
+
     // Using the same update pattern as before, just changing productType
     const input = {
       id: p.id,
-      productType: category
+      productType: category,
     };
-    
+
     const res = await admin(PRODUCT_SET, { input });
     if (res.productSet?.userErrors?.length > 0) {
       console.error(`Erro ao atualizar ${p.title}:`, res.productSet.userErrors);

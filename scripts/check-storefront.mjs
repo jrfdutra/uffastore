@@ -40,5 +40,7 @@ if (json.errors) console.log("errors:", JSON.stringify(json.errors));
 const nodes = json.data?.products?.nodes ?? [];
 console.log("produtos devolvidos:", nodes.length);
 for (const n of nodes.slice(0, 8)) {
-  console.log(`- ${n.title} | type=${n.productType} | min=${n.priceRange.minVariantPrice.amount} | opts=${n.options.map(o=>o.name).join(",")} | variants=${n.variants.nodes.length}`);
+  console.log(
+    `- ${n.title} | type=${n.productType} | min=${n.priceRange.minVariantPrice.amount} | opts=${n.options.map((o) => o.name).join(",")} | variants=${n.variants.nodes.length}`,
+  );
 }

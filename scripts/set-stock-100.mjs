@@ -36,7 +36,9 @@ const data = await admin(`
 const location = data.locations.nodes.find((l) => l.isActive) ?? data.locations.nodes[0];
 const variants = data.productVariants.nodes;
 const below = variants.filter((v) => v.inventoryQuantity < 100);
-console.log(`Location: ${location.name} | variantes: ${variants.length} | abaixo de 100: ${below.length}`);
+console.log(
+  `Location: ${location.name} | variantes: ${variants.length} | abaixo de 100: ${below.length}`,
+);
 
 if (!below.length) {
   console.log("Todos os produtos já têm stock 100.");
@@ -69,4 +71,6 @@ console.log(`✅ Stock reposto a 100 em ${below.length} variantes.`);
 
 const check = await admin(`{ productVariants(first: 250) { nodes { inventoryQuantity } } }`);
 const qty = check.productVariants.nodes.map((v) => v.inventoryQuantity);
-console.log(`Verificação -> min=${Math.min(...qty)} max=${Math.max(...qty)} | sem stock: ${qty.filter((q) => q <= 0).length}`);
+console.log(
+  `Verificação -> min=${Math.min(...qty)} max=${Math.max(...qty)} | sem stock: ${qty.filter((q) => q <= 0).length}`,
+);

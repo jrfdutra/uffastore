@@ -46,7 +46,8 @@ for (const p of j.data.products.nodes) {
   unicos += p.options.some((o) => o.values.some((v) => /único|unico/i.test(v))) ? 1 : 0;
   if (!sizeOpt) problems.push(`${p.title}: sem opção Tamanho`);
   const vals = sizeOpt?.values ?? [];
-  if (vals.some((v) => !/^\d+(\.\d+)?$/.test(v))) problems.push(`${p.title}: tamanho inválido ${vals}`);
+  if (vals.some((v) => !/^\d+(\.\d+)?$/.test(v)))
+    problems.push(`${p.title}: tamanho inválido ${vals}`);
   console.log(
     `${p.title} | ${qty.length} variantes | stock min/max ${Math.min(...qty)}/${Math.max(...qty)} | tamanhos: ${vals.length}`,
   );

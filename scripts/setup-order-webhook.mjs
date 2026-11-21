@@ -41,5 +41,9 @@ if (existing.length) {
   );
   const result = created.webhookSubscriptionCreate;
   if (result.userErrors.length) throw new Error(JSON.stringify(result.userErrors));
-  console.log("Webhook criado:", result.webhookSubscription.id, result.webhookSubscription.callbackUrl);
+  console.log(
+    "Webhook criado:",
+    result.webhookSubscription.id,
+    result.webhookSubscription.callbackUrl,
+  );
 }

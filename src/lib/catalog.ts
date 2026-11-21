@@ -22,13 +22,7 @@ import {
  */
 export const LEGACY_CATALOG_STORAGE_KEY = "uffa-custom-catalog-v3";
 
-const categories: Category[] = [
-  "lifestyle",
-  "running",
-  "limited",
-  "personalizacao",
-  "blackfriday",
-];
+const categories: Category[] = ["lifestyle", "running", "limited", "personalizacao", "blackfriday"];
 
 function toCategory(value: string): Category {
   const normalized = value.trim().toLowerCase();
@@ -168,10 +162,7 @@ function toProduct(node: ShopifyProductNode): Product {
     const colorValue = optionValue(variant.selectedOptions, /^cor(es)?$|^colou?r$/i);
     const slug = colorValue ? colorSlug(colorValue) : undefined;
 
-    const cordValue = optionValue(
-      variant.selectedOptions,
-      /cute\s*cord|^cord(ão|ao|ões|oes)?$/i,
-    );
+    const cordValue = optionValue(variant.selectedOptions, /cute\s*cord|^cord(ão|ao|ões|oes)?$/i);
     const cordSlug = cordValue ? colorSlug(cordValue) : undefined;
 
     return [
@@ -198,8 +189,7 @@ function toProduct(node: ShopifyProductNode): Product {
   // é inferior (ex.: Nike Jordan 1º Par Da Loja) — nesses não há percentagem.
   const saleVariant = sizes
     .filter(
-      (size) =>
-        size.compareAtPrice !== undefined && size.compareAtPrice !== (size.price ?? 0),
+      (size) => size.compareAtPrice !== undefined && size.compareAtPrice !== (size.price ?? 0),
     )
     .sort((a, b) => (a.price ?? 0) - (b.price ?? 0))[0];
   const originalPrice = saleVariant?.compareAtPrice ?? fallback?.originalPrice;

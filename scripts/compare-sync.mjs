@@ -61,9 +61,13 @@ const LIST_PRODUCTS = `
 
 function toTitleCase(str) {
   if (!str) return "";
-  return str.toLowerCase().split(" ").map(word => {
-    return word.charAt(0).toUpperCase() + word.slice(1);
-  }).join(" ");
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
 }
 
 function normalize(str) {
@@ -78,22 +82,23 @@ function normalize(str) {
 
 async function main() {
   console.log("=== COMPARAÇÃO E SINCRONIA FINAL ===");
-  
+
   const csvRaw = await readFile(CSV_PATH, "utf8");
-  const lines = csvRaw.split(/\r?\n/).filter(l => l.trim());
-  
+  const lines = csvRaw.split(/\r?\n/).filter((l) => l.trim());
+
   // Agrupar por Ref
   const refMap = new Map();
   for (let i = 1; i < lines.length; i++) {
     const cols = lines[i].split(";");
-    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] = cols;
+    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] =
+      cols;
     if (!refMap.has(ref)) {
       refMap.set(ref, {
         ref,
         modelo: modelo?.trim(),
         marca: marca?.trim(),
         obs: obs?.trim() || "",
-        variants: []
+        variants: [],
       });
     }
     refMap.get(ref).variants.push({
@@ -113,9 +118,19 @@ async function main() {
   const outOfSyncList = [];
 
   for (const [ref, item] of refMap.entries()) {
-    const isAmbiguous = item.obs.toLowerCase().includes("título repetido") || 
-      item.variants.some(v => v.opcao && item.variants.some(v2 => v2 !== v && normalize(v2.opcao) === normalize(v.opcao) && normalize(v2.valorOpcao) === normalize(v.valorOpcao)));
-    
+    const isAmbiguous =
+      item.obs.toLowerCase().includes("título repetido") ||
+      item.variants.some(
+        (v) =>
+          v.opcao &&
+          item.variants.some(
+            (v2) =>
+              v2 !== v &&
+              normalize(v2.opcao) === normalize(v.opcao) &&
+              normalize(v2.valorOpcao) === normalize(v.valorOpcao),
+          ),
+      );
+
     if (isAmbiguous) {
       // Ignorado, então não comparamos
       continue;
@@ -123,7 +138,7 @@ async function main() {
 
     // Achar produto correspondente na Shopify
     const expectedTitle = `${toTitleCase(item.marca)} ${toTitleCase(item.modelo)}`;
-    const shopifyProduct = sps.find(p => normalize(p.title) === normalize(expectedTitle));
+    const shopifyProduct = sps.find((p) => normalize(p.title) === normalize(expectedTitle));
 
     if (!shopifyProduct) {
       console.log(`❌ [Erro] Produto não encontrado na loja: "${expectedTitle}" (Ref ${ref})`);
@@ -138,7 +153,9 @@ async function main() {
     const isActive = shopifyProduct.status === "ACTIVE";
 
     if (!hasTag || !hasCategory || !isActive) {
-      console.log(`❌ [Erro] Problema nos metadados de "${expectedTitle}" (Ref ${ref}): Tag: ${hasTag}, Cat: ${hasCategory}, Status: ${isActive}`);
+      console.log(
+        `❌ [Erro] Problema nos metadados de "${expectedTitle}" (Ref ${ref}): Tag: ${hasTag}, Cat: ${hasCategory}, Status: ${isActive}`,
+      );
       allInSync = false;
       outOfSyncList.push(ref);
       continue;
@@ -149,14 +166,20 @@ async function main() {
     for (const v of item.variants) {
       const optionName = v.opcao ? toTitleCase(v.opcao) : "";
       const optionValue = v.valorOpcao ? toTitleCase(v.valorOpcao) : "";
-      
-      const foundVar = shopifyProduct.variants.nodes.find(sv => {
+
+      const foundVar = shopifyProduct.variants.nodes.find((sv) => {
         if (!optionName) return true; // Default title
-        return sv.selectedOptions.some(so => normalize(so.name) === normalize(optionName) && normalize(so.value) === normalize(optionValue));
+        return sv.selectedOptions.some(
+          (so) =>
+            normalize(so.name) === normalize(optionName) &&
+            normalize(so.value) === normalize(optionValue),
+        );
       });
 
       if (!foundVar) {
-        console.log(`❌ [Erro] Variante não encontrada na loja para "${expectedTitle}": ${optionName}: ${optionValue}`);
+        console.log(
+          `❌ [Erro] Variante não encontrada na loja para "${expectedTitle}": ${optionName}: ${optionValue}`,
+        );
         varsInSync = false;
         allInSync = false;
         continue;
@@ -166,7 +189,9 @@ async function main() {
       const compareMatch = parseFloat(foundVar.compareAtPrice) === parseFloat(v.compareAtPrice);
 
       if (!priceMatch || !compareMatch) {
-        console.log(`❌ [Erro] Preços dessincronizados para "${expectedTitle}": Variando: ${foundVar.title}. Loja: ${foundVar.price}/${foundVar.compareAtPrice} vs Esperado: ${v.price}/${v.compareAtPrice}`);
+        console.log(
+          `❌ [Erro] Preços dessincronizados para "${expectedTitle}": Variando: ${foundVar.title}. Loja: ${foundVar.price}/${foundVar.compareAtPrice} vs Esperado: ${v.price}/${v.compareAtPrice}`,
+        );
         varsInSync = false;
         allInSync = false;
       }

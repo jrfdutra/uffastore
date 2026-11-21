@@ -53,65 +53,66 @@ async function main() {
     productOptions: [
       {
         name: "Cor",
-        values: [
-          { name: "Branco e Laranja" },
-          { name: "Bege e Rosa" },
-          { name: "Cinza Verde" }
-        ]
+        values: [{ name: "Branco e Laranja" }, { name: "Bege e Rosa" }, { name: "Cinza Verde" }],
       },
       {
         name: "Tamanho",
-        values: [
-          { name: "Único" },
-          { name: "35.5" }
-        ]
-      }
+        values: [{ name: "Único" }, { name: "35.5" }],
+      },
     ],
     variants: [
       {
         optionValues: [
           { optionName: "Cor", name: "Branco e Laranja" },
-          { optionName: "Tamanho", name: "Único" }
+          { optionName: "Tamanho", name: "Único" },
         ],
         price: "94.99",
         compareAtPrice: "179.99",
         sku: "NIKE-AIR-FORCE-BRANCO-LARANJA",
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
-        inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+        inventoryQuantities: [
+          { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+        ],
       },
       {
         optionValues: [
           { optionName: "Cor", name: "Bege e Rosa" },
-          { optionName: "Tamanho", name: "Único" }
+          { optionName: "Tamanho", name: "Único" },
         ],
         price: "154.99",
         compareAtPrice: "179.90",
         sku: "NIKE-AIR-FORCE-BEGE-ROSA",
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
-        inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+        inventoryQuantities: [
+          { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+        ],
       },
       {
         optionValues: [
           { optionName: "Cor", name: "Cinza Verde" },
-          { optionName: "Tamanho", name: "35.5" }
+          { optionName: "Tamanho", name: "35.5" },
         ],
         price: "104.99",
         compareAtPrice: "149.99",
         sku: "NIKE-AIR-FORCE-CINZA-VERDE-35-5",
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
-        inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-      }
-    ]
+        inventoryQuantities: [
+          { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+        ],
+      },
+    ],
   };
 
   const res = await admin(PRODUCT_SET, { input: productInput });
   if (res.productSet?.userErrors?.length > 0) {
     console.error("Erros:", res.productSet.userErrors);
   } else {
-    console.log("✅ Nike Air Force atualizado com sucesso com a nova variante Cinza Verde (Tam 35.5)!");
+    console.log(
+      "✅ Nike Air Force atualizado com sucesso com a nova variante Cinza Verde (Tam 35.5)!",
+    );
     const vars = res.productSet.product.variants.nodes;
     for (const v of vars) {
       console.log(`  - ${v.title} | Preço: €${v.price} | Compare At: €${v.compareAtPrice}`);

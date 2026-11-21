@@ -58,10 +58,8 @@ async function main() {
   const productOptions = [
     {
       name: "Cor",
-      values: [
-        { name: "All Black" }
-      ]
-    }
+      values: [{ name: "All Black" }],
+    },
   ];
 
   const variants = [
@@ -72,8 +70,10 @@ async function main() {
       sku: "NIKE-P6000-ALL-BLACK",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-    }
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
+    },
   ];
 
   const input = {
@@ -90,9 +90,9 @@ async function main() {
       {
         originalSource: "https://www.uffastore.pt/produtos/uffa-modelo-padrao.webp",
         alt: "Nike P6000 All Black",
-        contentType: "IMAGE"
-      }
-    ]
+        contentType: "IMAGE",
+      },
+    ],
   };
 
   const res = await admin(PRODUCT_SET, { input });

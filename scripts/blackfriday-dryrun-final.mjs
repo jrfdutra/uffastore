@@ -100,21 +100,22 @@ async function run() {
   console.log("\nCarregando dados da Shopify e CSV...");
   const shopifyProducts = await getAllShopifyProducts();
   console.log(`Total produtos na loja: ${shopifyProducts.length}`);
-  
+
   const csvRaw = await readFile(CSV_PATH, "utf8");
-  const lines = csvRaw.split(/\r?\n/).filter(l => l.trim());
-  
+  const lines = csvRaw.split(/\r?\n/).filter((l) => l.trim());
+
   const refMap = new Map();
   for (let i = 1; i < lines.length; i++) {
     const cols = lines[i].split(";");
-    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] = cols;
+    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] =
+      cols;
     if (!refMap.has(ref)) {
       refMap.set(ref, {
         ref,
         modelo: modelo?.trim(),
         marca: marca?.trim(),
         obs: obs?.trim() || "",
-        variants: []
+        variants: [],
       });
     }
     refMap.get(ref).variants.push({
@@ -122,7 +123,7 @@ async function run() {
       valorOpcao: valorOpcao?.trim() || "",
       price: price?.trim() || "",
       compareAtPrice: compareAt?.trim() || "",
-      obs: obs?.trim() || ""
+      obs: obs?.trim() || "",
     });
   }
 
@@ -133,15 +134,16 @@ async function run() {
     const vNorm = normalize(item.marca);
 
     // Match FLEXIBLE (Brand + Model or just Model)
-    const matches = shopifyProducts.filter(sp => {
+    const matches = shopifyProducts.filter((sp) => {
       const spTitle = normalize(sp.title);
       const spVendor = normalize(sp.vendor);
       if (spVendor !== vNorm) return false;
       return spTitle === mNorm || spTitle === vNorm + " " + mNorm;
     });
 
-    const isRepeatedInCsv = item.obs.toLowerCase().includes("título repetido") || 
-                            item.variants.some(v => v.obs.toLowerCase().includes("título repetido"));
+    const isRepeatedInCsv =
+      item.obs.toLowerCase().includes("título repetido") ||
+      item.variants.some((v) => v.obs.toLowerCase().includes("título repetido"));
 
     let categoria = "";
     let acao = "";
@@ -151,7 +153,9 @@ async function run() {
     if (isRepeatedInCsv || matches.length > 1) {
       categoria = "AMBÍGUO";
       acao = "IGNORAR";
-      motivo = isRepeatedInCsv ? "Título repetido (CSV)" : "Múltiplos matches na loja (" + matches.length + ")";
+      motivo = isRepeatedInCsv
+        ? "Título repetido (CSV)"
+        : "Múltiplos matches na loja (" + matches.length + ")";
     } else if (matches.length === 1) {
       categoria = "EXISTE";
       acao = "ATUALIZAR";
@@ -170,8 +174,14 @@ async function run() {
       if (categoria === "EXISTE" && matchedProduct) {
         let foundVar = null;
         if (v.opcao) {
-          foundVar = matchedProduct.variants.nodes.find(sv => 
-            sv.selectedOptions && sv.selectedOptions.some(so => normalize(so.name) === normalize(v.opcao) && normalize(so.value) === normalize(v.valorOpcao))
+          foundVar = matchedProduct.variants.nodes.find(
+            (sv) =>
+              sv.selectedOptions &&
+              sv.selectedOptions.some(
+                (so) =>
+                  normalize(so.name) === normalize(v.opcao) &&
+                  normalize(so.value) === normalize(v.valorOpcao),
+              ),
           );
         } else {
           foundVar = matchedProduct.variants.nodes[0];
@@ -184,14 +194,14 @@ async function run() {
             variante: varLabel,
             atual: curP + " | " + curC,
             novo: newPrice + " | " + newCompare,
-            status: "ATUALIZAR"
+            status: "ATUALIZAR",
           });
         } else {
           variantDiffs.push({
             variante: varLabel,
             atual: "Nao existe",
             novo: newPrice + " | " + newCompare,
-            status: "ADICIONAR"
+            status: "ADICIONAR",
           });
         }
       } else if (categoria === "NOVO") {
@@ -199,19 +209,27 @@ async function run() {
           variante: varLabel,
           atual: "N/A",
           novo: newPrice + " | " + newCompare,
-          status: "CRIAR"
+          status: "CRIAR",
         });
       } else {
         variantDiffs.push({
           variante: varLabel,
           atual: "Ignorado",
           novo: newPrice + " | " + newCompare,
-          status: "IGNORAR"
+          status: "IGNORAR",
         });
       }
     }
 
-    results.push({ ref, modelo: item.modelo, marca: item.marca, categoria, acao, motivo, variantDiffs });
+    results.push({
+      ref,
+      modelo: item.modelo,
+      marca: item.marca,
+      categoria,
+      acao,
+      motivo,
+      variantDiffs,
+    });
   }
 
   // Formatacao da Tabela
@@ -220,37 +238,63 @@ async function run() {
   console.log("=".repeat(120));
 
   const summary = { NOVO: 0, EXISTE: 0, AMBÍGUO: 0 };
-  
+
   // Agrupar por categoria para exibir juntos
-  const noivos = results.filter(r => r.categoria === "NOVO");
-  const existes = results.filter(r => r.categoria === "EXISTE");
-  const ambiguos = results.filter(r => r.categoria === "AMBÍGUO");
+  const noivos = results.filter((r) => r.categoria === "NOVO");
+  const existes = results.filter((r) => r.categoria === "EXISTE");
+  const ambiguos = results.filter((r) => r.categoria === "AMBÍGUO");
 
   summary.NOVO = noivos.length;
   summary.EXISTE = existes.length;
   summary.AMBÍGUO = ambiguos.length;
 
   console.log("\n=== NOVOS (Criar) ===");
-  console.log("Ref   | Modelo (Marca)                           | Price         | Compare At   | Ação");
+  console.log(
+    "Ref   | Modelo (Marca)                           | Price         | Compare At   | Ação",
+  );
   console.log("-".repeat(90));
   for (const r of noivos) {
     const v = r.variantDiffs[0];
     const novoParts = v.novo.split(" | ");
-    console.log(r.ref + " | " + (r.modelo + " (" + r.marca + ")").substring(0, 38) + " | " + (novoParts[0] || "").padEnd(11) + " | " + (novoParts[1] || "-").padEnd(12) + " | " + r.acao);
+    console.log(
+      r.ref +
+        " | " +
+        (r.modelo + " (" + r.marca + ")").substring(0, 38) +
+        " | " +
+        (novoParts[0] || "").padEnd(11) +
+        " | " +
+        (novoParts[1] || "-").padEnd(12) +
+        " | " +
+        r.acao,
+    );
   }
 
   console.log("\n=== EXISTENTES (Atualizar) ===");
-  console.log("Ref   | Modelo (Marca)                           | Preço Atual        | Novo Preço      | Obs");
+  console.log(
+    "Ref   | Modelo (Marca)                           | Preço Atual        | Novo Preço      | Obs",
+  );
   console.log("-".repeat(110));
   for (const r of existes) {
     const v = r.variantDiffs[0];
     const parts = v.atual.split(" | ");
     console.log(r.ref + " | " + (r.modelo + " (" + r.marca + ")").substring(0, 38));
-    console.log("      | Atual: " + parts[0] + " (antigo: " + parts[1] + ")            | Novo: " + v.novo);
+    console.log(
+      "      | Atual: " + parts[0] + " (antigo: " + parts[1] + ")            | Novo: " + v.novo,
+    );
     if (r.variantDiffs.length > 1) {
       for (let i = 1; i < r.variantDiffs.length; i++) {
         const v2 = r.variantDiffs[i];
-        console.log("      | Variante extra: " + v2.variante + " | " + v2.atual + " -> " + v2.novo + " (" + v2.status + ")");
+        console.log(
+          "      | Variante extra: " +
+            v2.variante +
+            " | " +
+            v2.atual +
+            " -> " +
+            v2.novo +
+            " (" +
+            v2.status +
+            ")",
+        );
       }
     }
   }

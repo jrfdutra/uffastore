@@ -68,14 +68,14 @@ async function main() {
 
   // Definir opções: Cor (Bege/Cromado, Branca e Prata) e Cute Cord (Com Cute Cord, Sem Cute Cord)
   const productOptions = [
-    { 
-      name: "Cor", 
-      values: [{ name: "Bege/Cromado" }, { name: "Branca e Prata" }] 
+    {
+      name: "Cor",
+      values: [{ name: "Bege/Cromado" }, { name: "Branca e Prata" }],
     },
-    { 
-      name: "Cute Cord", 
-      values: [{ name: "Com Cute Cord" }, { name: "Sem Cute Cord" }] 
-    }
+    {
+      name: "Cute Cord",
+      values: [{ name: "Com Cute Cord" }, { name: "Sem Cute Cord" }],
+    },
   ];
 
   const variants = [
@@ -83,54 +83,62 @@ async function main() {
     {
       optionValues: [
         { optionName: "Cor", name: "Bege/Cromado" },
-        { optionName: "Cute Cord", name: "Com Cute Cord" }
+        { optionName: "Cute Cord", name: "Com Cute Cord" },
       ],
       price: "94.99",
       compareAtPrice: "124.99",
       sku: "VOMERO-5-RNR-BEGE-CROMADO-COM",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
     },
     // 2. Bege/Cromado + Sem Cute Cord
     {
       optionValues: [
         { optionName: "Cor", name: "Bege/Cromado" },
-        { optionName: "Cute Cord", name: "Sem Cute Cord" }
+        { optionName: "Cute Cord", name: "Sem Cute Cord" },
       ],
       price: "69.99",
       compareAtPrice: "89.99",
       sku: "VOMERO-5-RNR-BEGE-CROMADO-SEM",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
     },
     // 3. Branca e Prata + Com Cute Cord
     {
       optionValues: [
         { optionName: "Cor", name: "Branca e Prata" },
-        { optionName: "Cute Cord", name: "Com Cute Cord" }
+        { optionName: "Cute Cord", name: "Com Cute Cord" },
       ],
       price: "89.99",
       compareAtPrice: "109.99",
       sku: "VOMERO-5-RNR-BRANCA-PRATA-COM",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
     },
     // 4. Branca e Prata + Sem Cute Cord
     {
       optionValues: [
         { optionName: "Cor", name: "Branca e Prata" },
-        { optionName: "Cute Cord", name: "Sem Cute Cord" }
+        { optionName: "Cute Cord", name: "Sem Cute Cord" },
       ],
       price: "69.99",
       compareAtPrice: "89.99",
       sku: "VOMERO-5-RNR-BRANCA-PRATA-SEM",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-    }
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
+    },
   ];
 
   const input = {
@@ -141,7 +149,7 @@ async function main() {
     tags: product.tags,
     status: product.status,
     productOptions,
-    variants
+    variants,
   };
 
   console.log("A atualizar produto Nike Vomero 5 RNR com 2 cores e 4 variantes combinadas...");

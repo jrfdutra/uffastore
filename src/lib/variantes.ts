@@ -39,9 +39,7 @@ export function escaloesDisponiveis(sizes: ProductSize[]): Escalao[] {
 export function tamanhosDoEscalao(sizes: ProductSize[], escalao?: Escalao): ProductSize[] {
   return sizes
     .filter((size) =>
-      escalao
-        ? !isTamanhoUnico(size) && escalaoPorTamanho(size.size) === escalao
-        : true,
+      escalao ? !isTamanhoUnico(size) && escalaoPorTamanho(size.size) === escalao : true,
     )
     .sort((a, b) => a.size - b.size);
 }

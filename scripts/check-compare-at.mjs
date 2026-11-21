@@ -37,6 +37,8 @@ for (const p of j.data.products.nodes) {
   const sem = p.variants.nodes.filter((v) => !v.compareAtPrice);
   const preco = new Set(p.variants.nodes.map((v) => v.price));
   if (sem.length) {
-    console.log(`${p.title} [${p.status}] — ${sem.length}/${p.variants.nodes.length} variantes sem preço antigo | preços: ${[...preco].join(", ")}`);
+    console.log(
+      `${p.title} [${p.status}] — ${sem.length}/${p.variants.nodes.length} variantes sem preço antigo | preços: ${[...preco].join(", ")}`,
+    );
   }
 }

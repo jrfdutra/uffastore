@@ -53,11 +53,8 @@ async function main() {
     productOptions: [
       {
         name: "Cor",
-        values: [
-          { name: "Bege e Rosa" },
-          { name: "Preta" }
-        ]
-      }
+        values: [{ name: "Bege e Rosa" }, { name: "Preta" }],
+      },
     ],
     variants: [
       {
@@ -67,7 +64,9 @@ async function main() {
         sku: "ADIDAS-SUPERSTAR-BEGE-ROSA",
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
-        inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+        inventoryQuantities: [
+          { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+        ],
       },
       {
         optionValues: [{ optionName: "Cor", name: "Preta" }],
@@ -76,9 +75,11 @@ async function main() {
         sku: "ADIDAS-SUPERSTAR-PRETA",
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
-        inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-      }
-    ]
+        inventoryQuantities: [
+          { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+        ],
+      },
+    ],
   };
 
   const res = await admin(PRODUCT_SET, { input: productInput });

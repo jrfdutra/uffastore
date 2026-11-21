@@ -100,20 +100,21 @@ function normalize(str) {
 
 export async function generateDryRun(matchingMode = "both") {
   const csvRaw = await readFile(CSV_PATH, "utf8");
-  const lines = csvRaw.split(/\r?\n/).filter(l => l.trim());
-  
+  const lines = csvRaw.split(/\r?\n/).filter((l) => l.trim());
+
   // Agrupar por Ref
   const refMap = new Map();
   for (let i = 1; i < lines.length; i++) {
     const cols = lines[i].split(";");
-    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] = cols;
+    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] =
+      cols;
     if (!refMap.has(ref)) {
       refMap.set(ref, {
         ref,
         modelo: modelo?.trim(),
         marca: marca?.trim(),
         obs: obs?.trim() || "",
-        variants: []
+        variants: [],
       });
     }
     refMap.get(ref).variants.push({
@@ -123,7 +124,7 @@ export async function generateDryRun(matchingMode = "both") {
       precoBF: precoBF?.trim() || "",
       price: price?.trim() || "",
       compareAtPrice: compareAt?.trim() || "",
-      obs: obs?.trim() || ""
+      obs: obs?.trim() || "",
     });
   }
 
@@ -136,7 +137,7 @@ export async function generateDryRun(matchingMode = "both") {
       const vNorm = normalize(item.marca);
 
       // Procurar produto na loja
-      const matches = shopifyProducts.filter(sp => {
+      const matches = shopifyProducts.filter((sp) => {
         const spTitle = normalize(sp.title);
         const spVendor = normalize(sp.vendor);
         if (spVendor !== vNorm) return false;
@@ -147,8 +148,9 @@ export async function generateDryRun(matchingMode = "both") {
         }
       });
 
-      const isRepeatedInCsv = item.obs.toLowerCase().includes("título repetido") || 
-        item.variants.some(v => v.obs.toLowerCase().includes("título repetido"));
+      const isRepeatedInCsv =
+        item.obs.toLowerCase().includes("título repetido") ||
+        item.variants.some((v) => v.obs.toLowerCase().includes("título repetido"));
 
       let categoria = "";
       let acao = "";
@@ -183,8 +185,12 @@ export async function generateDryRun(matchingMode = "both") {
           // Procurar variante na loja
           let foundVariant = null;
           if (v.opcao) {
-            foundVariant = matchedProduct.variants.nodes.find(sv => 
-              sv.selectedOptions?.some(so => normalize(so.name) === normalize(v.opcao) && normalize(so.value) === normalize(v.valorOpcao))
+            foundVariant = matchedProduct.variants.nodes.find((sv) =>
+              sv.selectedOptions?.some(
+                (so) =>
+                  normalize(so.name) === normalize(v.opcao) &&
+                  normalize(so.value) === normalize(v.valorOpcao),
+              ),
             );
           } else {
             // Se o produto na loja tem variantes únicas ou múltiplas
@@ -199,7 +205,7 @@ export async function generateDryRun(matchingMode = "both") {
               lojaAtual: `${curP} BRL (antigo: ${curC})`,
               novo: `${newPrice} BRL (antigo: ${newCompare})`,
               mudanca: `${curP} -> ${newPrice} (Comp: ${curC} -> ${newCompare})`,
-              acaoVariante: "Atualizar preço"
+              acaoVariante: "Atualizar preço",
             });
           } else {
             variantDiffs.push({
@@ -207,7 +213,7 @@ export async function generateDryRun(matchingMode = "both") {
               lojaAtual: "Não existe na loja",
               novo: `${newPrice} BRL (antigo: ${newCompare})`,
               mudanca: `Nova variante (${newPrice} BRL / ${newCompare} BRL)`,
-              acaoVariante: "Acrescentar variante"
+              acaoVariante: "Acrescentar variante",
             });
           }
         } else if (categoria === "NOVO") {
@@ -216,7 +222,7 @@ export async function generateDryRun(matchingMode = "both") {
             lojaAtual: "Não existe (produto novo)",
             novo: `${newPrice} BRL (antigo: ${newCompare})`,
             mudanca: `Criar com ${newPrice} BRL (Comp: ${newCompare})`,
-            acaoVariante: "Criar produto/variante"
+            acaoVariante: "Criar produto/variante",
           });
         } else {
           variantDiffs.push({
@@ -224,7 +230,7 @@ export async function generateDryRun(matchingMode = "both") {
             lojaAtual: matchedProduct ? "Existe na loja" : "N/A",
             novo: `${newPrice} BRL (antigo: ${newCompare})`,
             mudanca: "Sem alteração (ignorado)",
-            acaoVariante: "Ignorar"
+            acaoVariante: "Ignorar",
           });
         }
       }
@@ -239,7 +245,7 @@ export async function generateDryRun(matchingMode = "both") {
         shopifyProductTitle: matchedProduct ? matchedProduct.title : "-",
         shopifyProductId: matchedProduct ? matchedProduct.id : "-",
         variantsCount: item.variants.length,
-        variantDiffs
+        variantDiffs,
       });
     }
     return rows;
@@ -248,7 +254,7 @@ export async function generateDryRun(matchingMode = "both") {
   return {
     exact: evaluate("exact"),
     prefix: evaluate("prefix"),
-    totalShopify: shopifyProducts.length
+    totalShopify: shopifyProducts.length,
   };
 }
 

@@ -92,7 +92,10 @@ for (const p of products) {
       soldOutVariants.push(`${p.title} · ${v.title}`);
     }
     if (!v.compareAtPrice) noCompareAt.push(`${p.title} · ${v.title}`);
-    const key = v.selectedOptions.map((o) => `${o.name}=${o.value}`).sort().join("|");
+    const key = v.selectedOptions
+      .map((o) => `${o.name}=${o.value}`)
+      .sort()
+      .join("|");
     if (seen.has(key)) duplicateVariants.push(`${p.title} · ${key}`);
     seen.add(key);
   }

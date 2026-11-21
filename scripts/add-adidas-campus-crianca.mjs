@@ -58,18 +58,12 @@ async function main() {
   const productOptions = [
     {
       name: "Cor",
-      values: [
-        { name: "Rosa" },
-        { name: "Preto e Branco" }
-      ]
+      values: [{ name: "Rosa" }, { name: "Preto e Branco" }],
     },
     {
       name: "Tamanho",
-      values: [
-        { name: "34" },
-        { name: "35" }
-      ]
-    }
+      values: [{ name: "34" }, { name: "35" }],
+    },
   ];
 
   const colors = ["Rosa", "Preto e Branco"];
@@ -81,14 +75,16 @@ async function main() {
       variants.push({
         optionValues: [
           { optionName: "Cor", name: color },
-          { optionName: "Tamanho", name: size }
+          { optionName: "Tamanho", name: size },
         ],
         price: "104.99",
         compareAtPrice: "149.99",
         sku: `ADIDAS-CAMPUS-00-CRIANCA-${color.toUpperCase().replace(/[^A-Z]/g, "")}-${size}`,
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
-        inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+        inventoryQuantities: [
+          { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+        ],
       });
     }
   }
@@ -107,9 +103,9 @@ async function main() {
       {
         originalSource: "https://www.uffastore.pt/produtos/uffa-modelo-padrao.webp",
         alt: "Adidas Campus 00 Criança",
-        contentType: "IMAGE"
-      }
-    ]
+        contentType: "IMAGE",
+      },
+    ],
   };
 
   const res = await admin(PRODUCT_SET, { input });

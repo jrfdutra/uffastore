@@ -54,14 +54,18 @@ const PRODUCT_SET = `
 
 function toTitleCase(str) {
   if (!str) return "";
-  return str.toLowerCase().split(" ").map(word => {
-    // Keep certain abbreviations/acronyms uppercase
-    const upper = ["W/", "S/", "RNR", "GS", "PRO", "NB", "AIR", "MAX"];
-    if (upper.includes(word.toUpperCase())) return word.toUpperCase();
-    // Handle ordinals like "1º"
-    if (word.match(/^\d+[ºª]$/i)) return word.toLowerCase();
-    return word.charAt(0).toUpperCase() + word.slice(1);
-  }).join(" ");
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => {
+      // Keep certain abbreviations/acronyms uppercase
+      const upper = ["W/", "S/", "RNR", "GS", "PRO", "NB", "AIR", "MAX"];
+      if (upper.includes(word.toUpperCase())) return word.toUpperCase();
+      // Handle ordinals like "1º"
+      if (word.match(/^\d+[ºª]$/i)) return word.toLowerCase();
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
 }
 
 async function main() {
@@ -80,14 +84,16 @@ async function main() {
       continue;
     }
 
-    console.log(`A atualizar: "${product.vendor}" -> "${newVendor}" | "${product.title}" -> "${newTitle}"`);
+    console.log(
+      `A atualizar: "${product.vendor}" -> "${newVendor}" | "${product.title}" -> "${newTitle}"`,
+    );
     try {
-      const res = await admin(PRODUCT_SET, { 
-        input: { 
-          id: product.id, 
-          vendor: newVendor, 
-          title: newTitle 
-        } 
+      const res = await admin(PRODUCT_SET, {
+        input: {
+          id: product.id,
+          vendor: newVendor,
+          title: newTitle,
+        },
       });
       if (res.productSet?.userErrors?.length > 0) {
         console.error(`Erro:`, res.productSet.userErrors);

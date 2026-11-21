@@ -52,15 +52,19 @@ async function main() {
     tags: ["Black Friday"],
     status: "ACTIVE",
     productOptions: [{ name: "Title", values: [{ name: "Default Title" }] }],
-    variants: [{
-      optionValues: [{ optionName: "Title", name: "Default Title" }],
-      price: "124.99",
-      compareAtPrice: "174.99",
-      sku: "NIKE-AIR-FORCE-CHAPA-DOURADA-W-ROPE-LACES",
-      inventoryPolicy: "DENY",
-      inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-    }]
+    variants: [
+      {
+        optionValues: [{ optionName: "Title", name: "Default Title" }],
+        price: "124.99",
+        compareAtPrice: "174.99",
+        sku: "NIKE-AIR-FORCE-CHAPA-DOURADA-W-ROPE-LACES",
+        inventoryPolicy: "DENY",
+        inventoryItem: { tracked: true },
+        inventoryQuantities: [
+          { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+        ],
+      },
+    ],
   };
 
   const res = await admin(PRODUCT_SET, { input: productInput });
@@ -68,7 +72,9 @@ async function main() {
     console.error("Erro:", res.productSet.userErrors);
   } else {
     const p = res.productSet.product;
-    console.log(`✅ Atualizado com sucesso: ${p.title} | Preço: €${p.variants.nodes[0].price} | Compare At: €${p.variants.nodes[0].compareAtPrice}`);
+    console.log(
+      `✅ Atualizado com sucesso: ${p.title} | Preço: €${p.variants.nodes[0].price} | Compare At: €${p.variants.nodes[0].compareAtPrice}`,
+    );
   }
 }
 

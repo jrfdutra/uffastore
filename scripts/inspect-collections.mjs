@@ -68,7 +68,9 @@ if (data.collections.nodes.length === 0) {
 for (const c of data.collections.nodes) {
   console.log(`- ${c.title} | handle: ${c.handle} | produtos: ${c.productsCount.count}`);
   if (c.ruleSet?.rules?.length) {
-    console.log(`    regras: ${JSON.stringify(c.ruleSet.rules)} (disjuntas: ${c.ruleSet.appliedDisjunctively})`);
+    console.log(
+      `    regras: ${JSON.stringify(c.ruleSet.rules)} (disjuntas: ${c.ruleSet.appliedDisjunctively})`,
+    );
   }
 }
 

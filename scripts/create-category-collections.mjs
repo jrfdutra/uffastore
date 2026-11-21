@@ -54,9 +54,24 @@ const PUBLISH = `
 const PUBLICATIONS = `query { publications(first: 20) { nodes { id name } } }`;
 
 const CATEGORIES = [
-  { title: "Limitada", handle: "limitada", productType: "Limitada", desc: "<p>Modelos em edição limitada da UFFA Store.</p>" },
-  { title: "Lifestyle", handle: "lifestyle", productType: "Lifestyle", desc: "<p>Modelos Lifestyle da UFFA Store.</p>" },
-  { title: "Running", handle: "running", productType: "Running", desc: "<p>Modelos Running da UFFA Store.</p>" },
+  {
+    title: "Limitada",
+    handle: "limitada",
+    productType: "Limitada",
+    desc: "<p>Modelos em edição limitada da UFFA Store.</p>",
+  },
+  {
+    title: "Lifestyle",
+    handle: "lifestyle",
+    productType: "Lifestyle",
+    desc: "<p>Modelos Lifestyle da UFFA Store.</p>",
+  },
+  {
+    title: "Running",
+    handle: "running",
+    productType: "Running",
+    desc: "<p>Modelos Running da UFFA Store.</p>",
+  },
 ];
 
 async function main() {
@@ -79,12 +94,14 @@ async function main() {
     let collection;
     if (found) {
       const res = await admin(UPDATE, { input: { ...input, id: found.id } });
-      if (res.collectionUpdate.userErrors.length) throw new Error(JSON.stringify(res.collectionUpdate.userErrors));
+      if (res.collectionUpdate.userErrors.length)
+        throw new Error(JSON.stringify(res.collectionUpdate.userErrors));
       collection = res.collectionUpdate.collection;
       console.log(`↻ Atualizada: ${collection.title}`);
     } else {
       const res = await admin(CREATE, { input });
-      if (res.collectionCreate.userErrors.length) throw new Error(JSON.stringify(res.collectionCreate.userErrors));
+      if (res.collectionCreate.userErrors.length)
+        throw new Error(JSON.stringify(res.collectionCreate.userErrors));
       collection = res.collectionCreate.collection;
       console.log(`✅ Criada: ${collection.title}`);
     }

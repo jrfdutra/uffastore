@@ -76,7 +76,9 @@ const products = data.products.nodes.map((p) => {
   const prices = p.variants.nodes.map((v) => Number.parseFloat(v.price)).filter(Number.isFinite);
   const price = prices.length ? Math.min(...prices) : undefined;
   const saleVariant = p.variants.nodes
-    .filter((v) => v.compareAtPrice && Number.parseFloat(v.compareAtPrice) !== Number.parseFloat(v.price))
+    .filter(
+      (v) => v.compareAtPrice && Number.parseFloat(v.compareAtPrice) !== Number.parseFloat(v.price),
+    )
     .sort((a, b) => Number.parseFloat(a.price) - Number.parseFloat(b.price))[0];
   const compareAt = saleVariant ? Number.parseFloat(saleVariant.compareAtPrice) : undefined;
   const hasBlackFriday = p.tags.some((tag) => /black\s*friday|blackfriday/i.test(tag));
@@ -221,7 +223,8 @@ for (const [brand, list] of brands) {
   textLines.push(`=== ${brand.toUpperCase()} (${list.length}) ===`);
   for (const p of list) {
     const price = p.price !== undefined ? money(p.price) : "—";
-    const compare = p.compareAt !== undefined && p.compareAt !== p.price ? ` (antes ${money(p.compareAt)})` : "";
+    const compare =
+      p.compareAt !== undefined && p.compareAt !== p.price ? ` (antes ${money(p.compareAt)})` : "";
     textLines.push(`- ${p.title} | ${p.categories.join(" · ")} | ${price}${compare}`);
     if (p.image) textLines.push(`  Foto: ${p.image}`);
   }

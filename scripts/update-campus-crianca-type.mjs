@@ -74,19 +74,25 @@ async function main() {
   console.log(`Encontrado: ${product.title} (${product.id})`);
 
   // Atualizar productType para "Promoções - Black Friday", mantendo o título com destaque e as mesmas variantes
-  const productOptions = product.productOptions.map(opt => ({
+  const productOptions = product.productOptions.map((opt) => ({
     name: opt.name,
-    values: opt.values.map(v => ({ name: v.name }))
+    values: opt.values.map((v) => ({ name: v.name })),
   }));
 
-  const variants = product.variants.nodes.map(v => ({
-    optionValues: v.selectedOptions.map(so => ({ optionName: so.name, name: so.value })),
+  const variants = product.variants.nodes.map((v) => ({
+    optionValues: v.selectedOptions.map((so) => ({ optionName: so.name, name: so.value })),
     price: v.price,
     compareAtPrice: v.compareAtPrice,
-    sku: `ADIDAS-CAMPUS-00-CRIANCA-${v.selectedOptions.map(so => so.value).join("-").toUpperCase().replace(/[^A-Z0-9]/g, "")}`,
+    sku: `ADIDAS-CAMPUS-00-CRIANCA-${v.selectedOptions
+      .map((so) => so.value)
+      .join("-")
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, "")}`,
     inventoryPolicy: "DENY",
     inventoryItem: { tracked: true },
-    inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+    inventoryQuantities: [
+      { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+    ],
   }));
 
   const input = {
@@ -97,14 +103,16 @@ async function main() {
     tags: ["Black Friday"],
     status: "ACTIVE",
     productOptions,
-    variants
+    variants,
   };
 
   const res = await admin(PRODUCT_SET, { input });
   if (res.productSet?.userErrors?.length > 0) {
     console.error("Erro ao atualizar categoria:", res.productSet.userErrors);
   } else {
-    console.log(`✅ Categoria atualizada com sucesso para "Promoções - Black Friday"! O título mantém-se como "${res.productSet.product.title}".`);
+    console.log(
+      `✅ Categoria atualizada com sucesso para "Promoções - Black Friday"! O título mantém-se como "${res.productSet.product.title}".`,
+    );
   }
 }
 

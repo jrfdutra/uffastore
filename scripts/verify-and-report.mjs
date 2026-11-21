@@ -55,7 +55,9 @@ const data = await admin(`
 
 const issues = [];
 for (const p of data.products.nodes) {
-  const hasSize = p.variants.nodes.every(v => v.selectedOptions.some(o => /tamanho|size/i.test(o.name)));
+  const hasSize = p.variants.nodes.every((v) =>
+    v.selectedOptions.some((o) => /tamanho|size/i.test(o.name)),
+  );
   if (!hasSize) issues.push(`Produto sem opção de tamanho completa: ${p.title}`);
 }
 
@@ -85,19 +87,25 @@ const productsData = await admin(`
   }
 `);
 
-const products = productsData.products.nodes.map(p => ({
+const products = productsData.products.nodes.map((p) => ({
   title: p.title,
   brand: p.vendor,
   variantsCount: p.variants.nodes.length,
   stock: p.variants.nodes.reduce((s, v) => s + v.inventoryQuantity, 0),
-  sizes: [...new Set(p.variants.nodes.flatMap(v => v.selectedOptions.filter(o => /tamanho/i.test(o.name)).map(o => o.value)))].sort()
+  sizes: [
+    ...new Set(
+      p.variants.nodes.flatMap((v) =>
+        v.selectedOptions.filter((o) => /tamanho/i.test(o.name)).map((o) => o.value),
+      ),
+    ),
+  ].sort(),
 }));
 
 const emailHtml = `<h1>Relatório Final: Catálogo Atualizado</h1>
 <p>As numerações foram ajustadas por marca e escalão (Nike/Adidas).</p>
 <table border="1">
   <tr><th>Marca</th><th>Produto</th><th>Tamanhos</th><th>Stock</th></tr>
-  ${products.map(p => `<tr><td>${p.brand}</td><td>${p.title}</td><td>${p.sizes.join(', ')}</td><td>${p.stock}</td></tr>`).join('')}
+  ${products.map((p) => `<tr><td>${p.brand}</td><td>${p.title}</td><td>${p.sizes.join(", ")}</td><td>${p.stock}</td></tr>`).join("")}
 </table>`;
 
 const response = await fetch("https://api.resend.com/emails", {

@@ -61,4 +61,8 @@ for (const p of products) {
   console.log("");
 }
 
-console.log(allOk ? "TODOS OS PRODUTOS COM TAGS E CATEGORIAS CORRETAS!" : "Há produtos sem a configuração correta.");
+console.log(
+  allOk
+    ? "TODOS OS PRODUTOS COM TAGS E CATEGORIAS CORRETAS!"
+    : "Há produtos sem a configuração correta.",
+);

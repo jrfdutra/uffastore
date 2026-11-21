@@ -22,7 +22,14 @@ export async function sendShopifyOrderEmail(orderData: {
   orderNumber: string;
   customerName: string;
   email: string;
-  items: { name: string; size: number | string; quantity: number; unitPrice: number; authCode?: string; serial?: string }[];
+  items: {
+    name: string;
+    size: number | string;
+    quantity: number;
+    unitPrice: number;
+    authCode?: string;
+    serial?: string;
+  }[];
   total: number;
 }) {
   const env = await loadEnv();
@@ -73,6 +80,8 @@ atendimento@uffastore.pt`;
     return { success: false, error: resJson };
   }
 
-  console.log(`E-mail de confirmação enviado para ${orderData.email} (Encomenda ${orderData.orderNumber})`);
+  console.log(
+    `E-mail de confirmação enviado para ${orderData.email} (Encomenda ${orderData.orderNumber})`,
+  );
   return { success: true, data: resJson };
 }

@@ -75,7 +75,7 @@ const ruleSet = {
 async function main() {
   const existing = (await admin(FIND)).collections.nodes;
   const found = existing.find(
-    (c) => c.title.trim().toLowerCase() === "black friday" || c.handle === "black-friday"
+    (c) => c.title.trim().toLowerCase() === "black friday" || c.handle === "black-friday",
   );
 
   let collection;

@@ -58,8 +58,8 @@ async function main() {
   const productOptions = [
     {
       name: "Tamanho",
-      values: [{ name: "34" }]
-    }
+      values: [{ name: "34" }],
+    },
   ];
 
   const variants = [
@@ -70,8 +70,10 @@ async function main() {
       sku: "ADIDAS-SUPERSTAR-CRIANCA-34",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 1 }]
-    }
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 1 },
+      ],
+    },
   ];
 
   const input = {
@@ -88,9 +90,9 @@ async function main() {
       {
         originalSource: "https://www.uffastore.pt/produtos/uffa-modelo-padrao.webp",
         alt: "Adidas Superstar Criança",
-        contentType: "IMAGE"
-      }
-    ]
+        contentType: "IMAGE",
+      },
+    ],
   };
 
   const res = await admin(PRODUCT_SET, { input });
@@ -100,7 +102,9 @@ async function main() {
     const prod = res.productSet.product;
     console.log(`✅ Produto criado com sucesso! ID: ${prod.id}`);
     console.log(`Título: ${prod.title}`);
-    console.log(`Preço: ${prod.variants.nodes[0].price} | Compare At: ${prod.variants.nodes[0].compareAtPrice} | Stock: ${prod.variants.nodes[0].inventoryQuantity}`);
+    console.log(
+      `Preço: ${prod.variants.nodes[0].price} | Compare At: ${prod.variants.nodes[0].compareAtPrice} | Stock: ${prod.variants.nodes[0].inventoryQuantity}`,
+    );
     if (onlineStore) {
       await admin(PUBLISH, { id: prod.id, input: [{ publicationId: onlineStore.id }] });
       console.log("Publicado na Online Store.");

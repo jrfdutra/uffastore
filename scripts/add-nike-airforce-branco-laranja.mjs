@@ -58,10 +58,8 @@ async function main() {
   const productOptions = [
     {
       name: "Cor",
-      values: [
-        { name: "Branco e Laranja" }
-      ]
-    }
+      values: [{ name: "Branco e Laranja" }],
+    },
   ];
 
   const variants = [
@@ -72,8 +70,10 @@ async function main() {
       sku: "NIKE-AIR-FORCE-BRANCO-LARANJA",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-    }
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
+    },
   ];
 
   const input = {
@@ -90,9 +90,9 @@ async function main() {
       {
         originalSource: "https://www.uffastore.pt/produtos/uffa-modelo-padrao.webp",
         alt: "Nike Air Force",
-        contentType: "IMAGE"
-      }
-    ]
+        contentType: "IMAGE",
+      },
+    ],
   };
 
   const res = await admin(PRODUCT_SET, { input });

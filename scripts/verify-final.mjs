@@ -68,8 +68,10 @@ for (const p of products) {
   if (v.length === 1) {
     console.log(`    Preço: ${v[0].price} | Compare: ${v[0].compareAtPrice || "-"}`);
   } else {
-    v.forEach(variant => {
-      console.log(`    - ${variant.title}: ${variant.price} (comp: ${variant.compareAtPrice || "-"})`);
+    v.forEach((variant) => {
+      console.log(
+        `    - ${variant.title}: ${variant.price} (comp: ${variant.compareAtPrice || "-"})`,
+      );
     });
   }
   console.log("");

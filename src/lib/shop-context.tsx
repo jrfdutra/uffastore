@@ -212,9 +212,7 @@ export function ShopProvider({
 
       const variant = product.sizes.find(
         (s) =>
-          s.size === size &&
-          (color ? s.color === color : true) &&
-          (cord ? s.cord === cord : true),
+          s.size === size && (color ? s.color === color : true) && (cord ? s.cord === cord : true),
       );
       if (!variant || variant.stock <= 0) {
         toast.error(
@@ -300,9 +298,7 @@ export function ShopProvider({
       const product = catalog.find((p) => p.id === productId);
       const variant = product?.sizes.find(
         (s) =>
-          s.size === size &&
-          (color ? s.color === color : true) &&
-          (cord ? s.cord === cord : true),
+          s.size === size && (color ? s.color === color : true) && (cord ? s.cord === cord : true),
       );
       let targetQty = quantity;
 

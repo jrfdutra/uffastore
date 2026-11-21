@@ -67,19 +67,35 @@ async function getShopifyProducts() {
 }
 
 function normalize(str) {
-  return str.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return str
+    .toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 async function main() {
   const csvRaw = await readFile(CSV_PATH, "utf8");
   const lines = csvRaw.split(/\r?\n/).slice(1);
-  const csvProducts = lines.filter(l => l.trim()).map(line => {
-    const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] = line.split(";");
-    return { ref, modelo, marca, opcao, valorOpcao, price: parseFloat(price), compareAt: parseFloat(compareAt), obs };
-  });
+  const csvProducts = lines
+    .filter((l) => l.trim())
+    .map((line) => {
+      const [ref, modelo, marca, opcao, valorOpcao, precoAtual, precoBF, price, compareAt, obs] =
+        line.split(";");
+      return {
+        ref,
+        modelo,
+        marca,
+        opcao,
+        valorOpcao,
+        price: parseFloat(price),
+        compareAt: parseFloat(compareAt),
+        obs,
+      };
+    });
 
   const shopifyProducts = await getShopifyProducts();
-  
+
   const results = [];
   const titlesInShopify = shopifyProducts.reduce((acc, p) => {
     const key = `${normalize(p.title)}|${normalize(p.vendor || "")}`;
@@ -89,7 +105,7 @@ async function main() {
   }, {});
 
   const processedRefs = new Set();
-  
+
   for (const p of csvProducts) {
     if (processedRefs.has(p.ref)) continue;
     processedRefs.add(p.ref);
@@ -106,7 +122,16 @@ async function main() {
     }
   }
 
-  console.table(results.map(r => ({ Ref: r.ref, Modelo: r.modelo, Categoria: r.category, Ação: r.action, Price: r.price, Compare: r.compareAt })));
+  console.table(
+    results.map((r) => ({
+      Ref: r.ref,
+      Modelo: r.modelo,
+      Categoria: r.category,
+      Ação: r.action,
+      Price: r.price,
+      Compare: r.compareAt,
+    })),
+  );
 }
 
 main().catch(console.error);

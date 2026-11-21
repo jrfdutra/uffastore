@@ -12,17 +12,40 @@ const FOTOS_DIR = "C:/Users/devel/Downloads/Fotos";
 const MAPA = [
   { file: "Adidas Campus 00 Offwhite.webp", handle: "adidas-campus-00-offwhite" },
   { file: "Adidas Campus 00.jpg", handle: "adidas-campus-00" },
-  { file: "Adidas Superstar (limitadas) Offwhite.jpg", handle: "adidas-superstar-limitadas-offwhite" },
+  {
+    file: "Adidas Superstar (limitadas) Offwhite.jpg",
+    handle: "adidas-superstar-limitadas-offwhite",
+  },
   { file: "ADIDAS SUPERSTAR BRANCA E PRETA CRIANÇA.jpg", handle: "adidas-superstar-crianca" },
-  { file: "CAMPUS 00 PRETA E BRANCA CRIANÇA.jpg", handle: "adidas-campus-00-crianca", cor: "Preto e Branco" },
+  {
+    file: "CAMPUS 00 PRETA E BRANCA CRIANÇA.jpg",
+    handle: "adidas-campus-00-crianca",
+    cor: "Preto e Branco",
+  },
   { file: "CAMPUS 00 ROSA CRIANÇA.jpg", handle: "adidas-campus-00-crianca", cor: "Rosa" },
   { file: "New Balance 530 Branca Verde.jpg", handle: "new-balance-530", cor: "Branco e Verde" },
-  { file: "New Balance 530 Branca Vermelha.jpg", handle: "new-balance-530", cor: "Branco e Vermelho" },
+  {
+    file: "New Balance 530 Branca Vermelha.jpg",
+    handle: "new-balance-530",
+    cor: "Branco e Vermelho",
+  },
   { file: "Dunk Low.jpg", handle: "nike-dunk-low" },
   { file: "DUNK LOW  castanhas.jpg", handle: "nike-dunk-low" },
-  { file: "Air Force Bege e Rosa.jpg", handle: "nike-air-force-branco-laranja", cor: "Bege e Rosa" },
-  { file: "Air Force Branca Laranja.jpg", handle: "nike-air-force-branco-laranja", cor: "Branco e Laranja" },
-  { file: "Air Force Cinza e Verde.jpg", handle: "nike-air-force-branco-laranja", cor: "Cinza Verde" },
+  {
+    file: "Air Force Bege e Rosa.jpg",
+    handle: "nike-air-force-branco-laranja",
+    cor: "Bege e Rosa",
+  },
+  {
+    file: "Air Force Branca Laranja.jpg",
+    handle: "nike-air-force-branco-laranja",
+    cor: "Branco e Laranja",
+  },
+  {
+    file: "Air Force Cinza e Verde.jpg",
+    handle: "nike-air-force-branco-laranja",
+    cor: "Cinza Verde",
+  },
   { file: "Air Force Chapa Dourada.jpg", handle: "nike-air-force-chapa-dourada-s-rope-laces" },
   { file: "Air Force Chapa Dourada.jpg", handle: "nike-air-force-chapa-dourada" },
   { file: "Nike Air Force 1 Low Branca com Cinza.jpg", handle: "nike-air-force-branca-com-cinza" },
@@ -30,9 +53,17 @@ const MAPA = [
   { file: "NIKE AIRFORCE CRIANÇA AZUL BEBE.jpg", handle: "nike-air-force-crianca-azul-bebe" },
   { file: "Nike P6000 AllBlack.jpg", handle: "nike-p6000-all-black" },
   { file: "NIKE VALENTINE DAY DUNK.jpg", handle: "nike-valentine-day-dunk" },
-  { file: "NIKE VOMERO 5 RNR BRANCO E PRATA.jpg", handle: "nike-vomero-5-rnr", cor: "Branca e Prata" },
+  {
+    file: "NIKE VOMERO 5 RNR BRANCO E PRATA.jpg",
+    handle: "nike-vomero-5-rnr",
+    cor: "Branca e Prata",
+  },
   { file: "P6000 Bege com logo rosa.jpg", handle: "nike-p6000", cor: "Bege com Logo Rosa" },
-  { file: "P6000 Branca com Logo dourado.jpg", handle: "nike-p6000", cor: "Branca com Logo Dourado" },
+  {
+    file: "P6000 Branca com Logo dourado.jpg",
+    handle: "nike-p6000",
+    cor: "Branca com Logo Dourado",
+  },
   { file: "PUMA CA PRO CLASSIC.jpg", handle: "puma-ca-pro-classic" },
   { file: "CARINA STREET PRO CLASSIC SEM ROPE LACES.jpg", handle: "puma-carina-street" },
   { file: "VOMERO 5 BEGE.jpg", handle: "nike-vomero-5", cor: "BEGE" },
@@ -78,7 +109,9 @@ for (const item of MAPA) {
   let variantes = [];
   if (item.cor) {
     variantes = p.variants.nodes.filter((v) =>
-      v.selectedOptions.some((o) => /cor|color/i.test(o.name) && o.value.trim() === item.cor.trim()),
+      v.selectedOptions.some(
+        (o) => /cor|color/i.test(o.name) && o.value.trim() === item.cor.trim(),
+      ),
     );
     if (!variantes.length) {
       console.log(`ERRO: cor "${item.cor}" não encontrada em ${item.handle}`);
@@ -99,7 +132,9 @@ for (const item of MAPA) {
   );
 }
 
-console.log(`\nMapeamento: ${MAPA.length} entradas, ${erros} erros. Modo: ${APPLY ? "APLICAR" : "dry-run"}`);
+console.log(
+  `\nMapeamento: ${MAPA.length} entradas, ${erros} erros. Modo: ${APPLY ? "APLICAR" : "dry-run"}`,
+);
 if (!APPLY) {
   console.log("Para aplicar: node scripts/upload-product-photos.mjs --apply");
   process.exit(erros ? 1 : 0);
@@ -140,10 +175,19 @@ async function removerFotosPadrao(productId) {
 
 async function uploadFoto(item) {
   const p = produtos.get(item.handle);
-  const slug = item.file.replace(/\.[^.]+$/, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+  const slug = item.file
+    .replace(/\.[^.]+$/, "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/gi, "-")
+    .toLowerCase();
   const filename = `${slug}.webp`;
   const outPath = join(tmp, filename);
-  await sharp(join(FOTOS_DIR, item.file)).rotate().resize({ width: 1600, withoutEnlargement: true }).webp({ quality: 85 }).toFile(outPath);
+  await sharp(join(FOTOS_DIR, item.file))
+    .rotate()
+    .resize({ width: 1600, withoutEnlargement: true })
+    .webp({ quality: 85 })
+    .toFile(outPath);
   const buffer = await readFileFs(outPath);
 
   const staged = await gql(

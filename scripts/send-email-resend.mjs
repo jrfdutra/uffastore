@@ -65,15 +65,18 @@ async function main() {
   const products = await getProducts();
 
   console.log("A preparar e-mail formatado...");
-  
+
   let productsHtml = "";
   for (const p of products) {
     const isMultiVariant = p.variants.nodes.length > 1;
     let priceInfo = "";
     if (isMultiVariant) {
-      priceInfo = p.variants.nodes.map(v => 
-        `<li><strong>${v.title}</strong>: €${v.price} <span style="text-decoration: line-through; color: #888;">€${v.compareAtPrice}</span></li>`
-      ).join("");
+      priceInfo = p.variants.nodes
+        .map(
+          (v) =>
+            `<li><strong>${v.title}</strong>: €${v.price} <span style="text-decoration: line-through; color: #888;">€${v.compareAtPrice}</span></li>`,
+        )
+        .join("");
       priceInfo = `<ul>${priceInfo}</ul>`;
     } else {
       const v = p.variants.nodes[0];
@@ -143,19 +146,19 @@ async function main() {
   `;
 
   console.log("A enviar e-mail via Resend para junior.dutra.pt@gmail.com...");
-  
+
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${resendKey}`,
-      "Content-Type": "application/json"
+      Authorization: `Bearer ${resendKey}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       from: resendFrom,
       to: "junior.dutra.pt@gmail.com",
       subject: "🔥 Relatório Black Friday - Sincronização Concluída (Uffa Store)",
-      html: emailHtml
-    })
+      html: emailHtml,
+    }),
   });
 
   const resText = await response.text();

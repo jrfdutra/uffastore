@@ -65,7 +65,9 @@ const PRODUCT_SET = `
 `;
 
 async function main() {
-  console.log("A verificar todos os produtos na loja para padronizar títulos com 'With' ou 'W/'...");
+  console.log(
+    "A verificar todos os produtos na loja para padronizar títulos com 'With' ou 'W/'...",
+  );
   const data = await admin(GET_PRODUCTS);
   const products = data.products.nodes;
 
@@ -73,7 +75,7 @@ async function main() {
     let newTitle = p.title;
     // Se o título contiver variações de rope laces em português ou informal (ex: "com rope laces", "com cordões", etc.)
     // Vamos garantir que se refere a "W/ Rope Laces" ou "With Rope Laces"
-    
+
     // Substituições comuns no título
     if (/com\s+rope\s+laces/i.test(newTitle)) {
       newTitle = newTitle.replace(/com\s+rope\s+laces/gi, "W/ Rope Laces");
@@ -84,13 +86,15 @@ async function main() {
 
     if (newTitle !== p.title) {
       console.log(`Atualizando título: "${p.title}" -> "${newTitle}"`);
-      const variants = p.variants.nodes.map(v => ({
-        optionValues: v.selectedOptions.map(so => ({ optionName: so.name, name: so.value })),
+      const variants = p.variants.nodes.map((v) => ({
+        optionValues: v.selectedOptions.map((so) => ({ optionName: so.name, name: so.value })),
         price: v.price,
         compareAtPrice: v.compareAtPrice,
         inventoryPolicy: "DENY",
         inventoryItem: { tracked: true },
-        inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
+        inventoryQuantities: [
+          { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+        ],
       }));
 
       const input = {
@@ -100,11 +104,11 @@ async function main() {
         productType: p.productType,
         tags: p.tags,
         status: p.status,
-        productOptions: p.options.map(opt => ({
+        productOptions: p.options.map((opt) => ({
           name: opt.name,
-          values: opt.values.map(val => ({ name: val }))
+          values: opt.values.map((val) => ({ name: val })),
         })),
-        variants
+        variants,
       };
 
       const res = await admin(PRODUCT_SET, { input });

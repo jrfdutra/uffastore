@@ -58,27 +58,29 @@ async function main() {
   const productOptions = [
     {
       name: "Cor",
-      values: [{ name: "Azul Bebê" }]
+      values: [{ name: "Azul Bebê" }],
     },
     {
       name: "Tamanho",
-      values: [{ name: "34" }]
-    }
+      values: [{ name: "34" }],
+    },
   ];
 
   const variants = [
     {
       optionValues: [
         { optionName: "Cor", name: "Azul Bebê" },
-        { optionName: "Tamanho", name: "34" }
+        { optionName: "Tamanho", name: "34" },
       ],
       price: "100.00",
       compareAtPrice: "124.99",
       sku: "NIKE-AIR-FORCE-CRIANCA-AZUL-BEBE-34",
       inventoryPolicy: "DENY",
       inventoryItem: { tracked: true },
-      inventoryQuantities: [{ locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 }]
-    }
+      inventoryQuantities: [
+        { locationId: "gid://shopify/Location/123726889308", name: "available", quantity: 100 },
+      ],
+    },
   ];
 
   const input = {
@@ -95,9 +97,9 @@ async function main() {
       {
         originalSource: "https://www.uffastore.pt/produtos/uffa-modelo-padrao.webp",
         alt: "Nike Air Force Criança",
-        contentType: "IMAGE"
-      }
-    ]
+        contentType: "IMAGE",
+      },
+    ],
   };
 
   const res = await admin(PRODUCT_SET, { input });

@@ -85,10 +85,10 @@ for (const p of products) {
   const newTags = tags ? `${tags}, Black Friday`.trim() : "Black Friday";
 
   // Rebuild variants with proper optionValues
-  const variantsInput = p.variants.nodes.map(v => {
-    const optionValues = (v.selectedOptions || []).map(so => ({
+  const variantsInput = p.variants.nodes.map((v) => {
+    const optionValues = (v.selectedOptions || []).map((so) => ({
       optionName: so.name,
-      name: so.value
+      name: so.value,
     }));
     // If no selectedOptions (simple product with Default Title)
     if (optionValues.length === 0) {
@@ -98,14 +98,14 @@ for (const p of products) {
       id: v.id,
       price: v.price,
       compareAtPrice: v.compareAtPrice,
-      optionValues
+      optionValues,
     };
   });
 
   // Build productOptions from existing options
-  const productOptions = p.options.map(opt => ({
+  const productOptions = p.options.map((opt) => ({
     name: opt.name,
-    values: opt.values.map(v => ({ name: v }))
+    values: opt.values.map((v) => ({ name: v })),
   }));
 
   const input = {
@@ -116,7 +116,7 @@ for (const p of products) {
     tags: newTags,
     status: "ACTIVE",
     productOptions,
-    variants: variantsInput
+    variants: variantsInput,
   };
 
   try {
@@ -124,7 +124,9 @@ for (const p of products) {
     if (res.productSet?.userErrors?.length > 0) {
       console.error(`Erro em ${p.title}:`, res.productSet.userErrors);
     } else {
-      console.log(`✓ Atualizado: ${p.title} -> tags: "${newTags}", productType: "Promoções - Black Friday"`);
+      console.log(
+        `✓ Atualizado: ${p.title} -> tags: "${newTags}", productType: "Promoções - Black Friday"`,
+      );
       updated++;
     }
   } catch (err) {

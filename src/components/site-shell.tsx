@@ -53,13 +53,7 @@ import {
   type ReactNode,
 } from "react";
 
-const cats: Category[] = [
-  "blackfriday",
-  "lifestyle",
-  "running",
-  "limited",
-  "personalizacao",
-];
+const cats: Category[] = ["blackfriday", "lifestyle", "running", "limited", "personalizacao"];
 
 /** Etiqueta do tamanho de um item do carrinho ("Único" quando não há escala). */
 function sizeLabel(product: Product | undefined, size: number): string {
