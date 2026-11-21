@@ -245,9 +245,13 @@ export function ProductCard({ product }: { product: Product }) {
                 />
               </SelectTrigger>
               <SelectContent className="rounded-none">
-                {variants.map((sz) => (
+                {variants.map((sz, index) => (
                   <SelectItem
-                    key={`${sz.color ?? "unica"}-${sz.size}`}
+                    key={
+                      sz.variantId ??
+                      sz.sku ??
+                      `${sz.color ?? "unica"}-${sz.cord ?? "cord"}-${sz.size}-${index}`
+                    }
                     value={String(sz.size)}
                     disabled={sz.stock <= 0}
                     className="rounded-none py-2 text-xs"
