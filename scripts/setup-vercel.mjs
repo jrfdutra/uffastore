@@ -84,12 +84,22 @@ if (project.link?.repo)
   console.log(`Repositório: ${project.link.repo} @ ${project.link.ref ?? "?"}`);
 
 // 2) Variáveis a configurar
+const skipArg = process.argv.find((a) => a.startsWith("--skip="));
+const skip = new Set(
+  (skipArg?.slice("--skip=".length) ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
+);
+
 const vars = [
   { key: "SHOPIFY_WEBHOOK_SECRET", value: get("SHOPIFY_WEBHOOK_SECRET") },
   { key: "RESEND_API_KEY", value: get("RESEND_API_KEY") },
   { key: "RESEND_FROM", value: get("RESEND_FROM") || "onboarding@resend.dev" },
   { key: "SHOPIFY_SHOP_DOMAIN", value: get("SHOPIFY_SHOP_DOMAIN") || "uffastore.myshopify.com" },
-];
+].filter((v) => !skip.has(v.key));
+
+if (skip.size) console.log(`\nIgnoradas por --skip: ${[...skip].join(", ")}`);
 
 const missing = vars.filter((v) => !v.value);
 if (missing.length) {
