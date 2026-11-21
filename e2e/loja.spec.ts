@@ -130,6 +130,29 @@ test.describe("Loja — navegação e catálogo", () => {
     await expect(page.locator('#pesquisa a[href^="/produto/"]').first()).toBeVisible();
   });
 
+  test("a Nike aparece em primeiro lugar nas marcas", async ({ page }) => {
+    await page.goto("/");
+    const navegacao = page.getByRole("navigation").first();
+    const marcas = await navegacao.getByRole("link").allTextContents();
+    expect(marcas.indexOf("Nike")).toBe(0);
+    expect(marcas.indexOf("Adidas")).toBe(1);
+
+    const quadros = page.locator("section").filter({ hasText: "Escolhe a tua marca" });
+    await expect(quadros.getByRole("link").first()).toContainText("Nike");
+  });
+
+  test("a numeração dos tamanhos acompanha a marca selecionada", async ({ page }) => {
+    await page.goto("/catalogo?brand=nike");
+    const tamanhosNike = page.locator("fieldset").filter({ hasText: "Escalão de Tamanho" });
+    await expect(tamanhosNike.getByRole("button", { name: "36.5", exact: true })).toBeVisible();
+    await expect(tamanhosNike.getByRole("button", { name: "36 ⅔", exact: true })).toHaveCount(0);
+
+    await page.goto("/catalogo?brand=adidas");
+    const tamanhosAdidas = page.locator("fieldset").filter({ hasText: "Escalão de Tamanho" });
+    await expect(tamanhosAdidas.getByRole("button", { name: "36 ⅔", exact: true })).toBeVisible();
+    await expect(tamanhosAdidas.getByRole("button", { name: "36.5", exact: true })).toHaveCount(0);
+  });
+
   test("o catálogo lista produtos e a pesquisa filtra resultados", async ({ page }) => {
     await page.goto("/catalogo");
     const cartoes = page.locator("article");

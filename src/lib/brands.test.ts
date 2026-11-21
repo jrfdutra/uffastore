@@ -41,8 +41,8 @@ const sample = [
 
 const item = (index: number) => sample[index]!;
 
-test("as cinco marcas da loja estão definidas", () => {
-  assert.deepEqual(BRANDS, ["adidas", "nike", "puma", "new-balance", "vans"]);
+test("as cinco marcas da loja estão definidas, com a Nike em primeiro", () => {
+  assert.deepEqual(BRANDS, ["nike", "adidas", "puma", "new-balance", "vans"]);
 });
 
 test("normalizeText remove acentos e pontuação", () => {

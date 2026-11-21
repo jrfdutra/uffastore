@@ -138,7 +138,21 @@ function Catalog() {
   );
   const [size, setSize] = useState<number | "all">("all");
   const [selectedColor, setSelectedColor] = useState<string | "all">("all");
-  const sizeGroups = useMemo(() => buildSizeGroups(catalog), [catalog]);
+
+  // A numeração é específica de cada marca (a Adidas usa ⅓/⅔, a Nike termina
+  // em .5), por isso a lista de tamanhos tem de vir dos produtos da marca ativa.
+  const brandCatalog = useMemo(
+    () => catalog.filter((p) => p.status !== "inactive" && isProductInBrand(p, brand)),
+    [catalog, brand],
+  );
+  const sizeGroups = useMemo(() => buildSizeGroups(brandCatalog), [brandCatalog]);
+
+  // Ao trocar de marca ou campanha, limpa a seleção para não ficar um tamanho
+  // que já não existe no novo contexto.
+  useEffect(() => {
+    setSize("all");
+    setSelectedSizeGroup("all");
+  }, [brand, category]);
   const [minPrice, setMinPrice] = useState(0);
   // Teto do filtro de preço: acompanha o produto mais caro (ex.: Jordan 699,99 €)
   // para que nenhum produto fique escondido por defeito.

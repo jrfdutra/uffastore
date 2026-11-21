@@ -1,7 +1,8 @@
 import type { Language, Product } from "./shop-data";
 
-/** Marcas visíveis na loja, na ordem apresentada ao cliente. */
-export const BRANDS = ["adidas", "nike", "puma", "new-balance", "vans"] as const;
+/** Marcas visíveis na loja, na ordem apresentada ao cliente.
+ * A Nike aparece primeiro por ser a marca com mais volume de vendas. */
+export const BRANDS = ["nike", "adidas", "puma", "new-balance", "vans"] as const;
 export type Brand = (typeof BRANDS)[number];
 
 export const brandNames: Record<Brand, Record<Language, string>> = {
