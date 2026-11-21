@@ -71,6 +71,11 @@ O passo 3 envia um e-mail de teste para `junior.dutra.pt@gmail.com`.
 A Vercel tem API, mas esta máquina não tem token. Se criares um token em
 [vercel.com/account/tokens](https://vercel.com/account/tokens) e o colocares no
 `.env` local como `VERCEL_TOKEN=...`, eu consigo configurar as variáveis e
-disparar o redeploy por script, sem passares pelo painel.
+disparar o redeploy por script, sem passares pelo painel:
+
+```bash
+node scripts/setup-vercel.mjs           # ensaio: mostra o que faria
+node scripts/setup-vercel.mjs --apply   # aplica + redeploy
+```
 
 > O `.env` está no `.gitignore`; nada disso é commitado.
