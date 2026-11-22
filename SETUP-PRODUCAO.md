@@ -37,6 +37,8 @@ configurar credenciais — nada disso pode ser feito por API.
 
 **Settings → Environment Variables** (Production):
 
+E-mail de encomenda:
+
 | Nome                     | Valor                                                                   |
 | ------------------------ | ----------------------------------------------------------------------- |
 | `SHOPIFY_WEBHOOK_SECRET` | segredo do passo 2                                                      |
@@ -44,8 +46,33 @@ configurar credenciais — nada disso pode ser feito por API.
 | `RESEND_FROM`            | `UFFA Store <atendimento@uffastore.pt>` (depois de verificar o domínio) |
 | `SHOPIFY_SHOP_DOMAIN`    | `uffastore.myshopify.com`                                               |
 
+Registo de envio e link mágico de rastreio:
+
+| Nome                     | Valor                                                   |
+| ------------------------ | ------------------------------------------------------- |
+| `ORDER_PORTAL_SECRET`    | segredo HMAC (mín. 16 caracteres) dos links de rastreio |
+| `TRACKING_ADMIN_TOKEN`   | segredo (mín. 16 caracteres) exigido em `/expedicao`    |
+| `PUBLIC_SITE_URL`        | `https://www.uffastore.pt`                              |
+| `TRACKING_LINK_TTL_DAYS` | `14`                                                    |
+
+Pesquisa de satisfação 8 dias após a compra:
+
+| Nome                         | Valor                                                          |
+| ---------------------------- | -------------------------------------------------------------- |
+| `SHOPIFY_ADMIN_STORE_DOMAIN` | `uffastore.myshopify.com`                                      |
+| `SHOPIFY_ADMIN_ACCESS_TOKEN` | token da Admin API com `read_orders` e `write_orders`          |
+| `CRON_SECRET`                | valor longo e aleatório enviado pelo Vercel Cron               |
+| `NPS_SECRET`                 | valor longo e aleatório; pode reutilizar `ORDER_PORTAL_SECRET` |
+| `NPS_ENABLED`                | `false` até o domínio Resend estar verificado; depois `true`   |
+| `NPS_LINK_TTL_DAYS`          | `30`                                                           |
+
 Enquanto o domínio não estiver verificado, usa `onboarding@resend.dev` — mas
-só recebes tu os e-mails.
+só recebes tu os e-mails. O cron da pesquisa corre às 09:00 UTC e, sem
+`NPS_ENABLED=true`, responde `nps_disabled` sem enviar nada.
+
+> O `scripts/setup-vercel.mjs` configura apenas as quatro variáveis base do
+> e-mail. As restantes devem ser definidas em **Environment Variables** ou
+> adicionadas ao array `vars` desse script.
 
 ## Passo 4 — Redeploy
 
@@ -62,9 +89,17 @@ WEBHOOK_SECRET="o-signing-secret" node scripts/status-producao.mjs
 
 # 3) Envio real de ponta a ponta
 WEBHOOK_SECRET="o-signing-secret" node scripts/status-producao.mjs --send
+
+# 4) Ensaio do cron da pesquisa: sem e-mails e sem metafields escritos
+curl -s -H "Authorization: Bearer $CRON_SECRET" \
+  "https://www.uffastore.pt/api/cron/nps?dryRun=1"
 ```
 
-O passo 3 envia um e-mail de teste para `junior.dutra.pt@gmail.com`.
+O passo 3 envia um e-mail de teste para `junior.dutra.pt@gmail.com`. O passo 4
+devolve `{ "dryRun": true, ... }` com a janela de 8 a 30 dias e os números das
+encomendas que seriam convidadas. Depois de confirmar o domínio no Resend,
+muda `NPS_ENABLED` para `true`, faz redeploy e chama o mesmo endpoint sem
+`?dryRun=1` para enviar os convites.
 
 ## Se quiseres que eu automatize a Vercel
 
