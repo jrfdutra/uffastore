@@ -177,6 +177,7 @@ export const demoAccess = {
   orderNumber: "UFFA-48217",
   contact: "demo@uffa.pt",
   accessCode: "UFFA-7K3M-9QX2",
+  trackingCode: "PT-48217-9QX2",
 } as const;
 
 const ORDERS_KEY = "uffa-orders-v1";
@@ -339,7 +340,7 @@ function seedOrders(): Order[] {
       shipping: 8.94,
       total: rose.price + court.price + 8.94,
       status: "in_transit",
-      trackingCode: "PT-48217-9QX2",
+      trackingCode: demoAccess.trackingCode,
       carrier: DEFAULT_CARRIER,
       estimatedDelivery: inDays(2),
       pickupLocation: null,
@@ -619,6 +620,15 @@ export type AccessResult =
   | { ok: true; order: Order }
   | { ok: false; reason: "not_found" | "locked"; attemptsLeft: number; retryAfter: number };
 
+export type ShipmentLookupResult =
+  | { ok: true; order: Order; by: "tracking" | "order" }
+  | {
+      ok: false;
+      reason: "missing" | "not_found" | "locked";
+      attemptsLeft: number;
+      retryAfter: number;
+    };
+
 type AttemptRecord = Record<string, { count: number; lockedUntil: number }>;
 
 function loadAttempts(): AttemptRecord {
@@ -674,6 +684,70 @@ export function validateOrderAccess(
   const count = record.count + 1;
   const locked = count >= MAX_ATTEMPTS;
   attempts[orderNumber] = {
+    count: locked ? 0 : count,
+    lockedUntil: locked ? Date.now() + LOCK_MS : 0,
+  };
+  saveAttempts(attempts);
+
+  return {
+    ok: false,
+    reason: locked ? "locked" : "not_found",
+    attemptsLeft: locked ? 0 : MAX_ATTEMPTS - count,
+    retryAfter: locked ? Math.ceil(LOCK_MS / 1000) : 0,
+  };
+}
+
+/**
+ * Rastreio simplificado: código de rastreio (ou número da encomenda, para
+ * recolhas) + e-mail do comprador. Não abre sessão no portal completo.
+ */
+export function lookupShipment(codeInput: string, emailInput: string): ShipmentLookupResult {
+  const code = codeInput.trim();
+  const email = normalizeContact(emailInput);
+  if (!code || !email) {
+    return { ok: false, reason: "missing", attemptsLeft: MAX_ATTEMPTS, retryAfter: 0 };
+  }
+
+  const key = `shipment:${normalizeCode(code)}`;
+  const attempts = loadAttempts();
+  const record = attempts[key] ?? { count: 0, lockedUntil: 0 };
+
+  if (record.lockedUntil > Date.now()) {
+    return {
+      ok: false,
+      reason: "locked",
+      attemptsLeft: 0,
+      retryAfter: Math.ceil((record.lockedUntil - Date.now()) / 1000),
+    };
+  }
+
+  const normalizedTracking = normalizeCode(code);
+  const normalizedNumber = normalizeOrderNumber(code);
+  const order = loadOrders().find((candidate) => {
+    if (normalizeContact(candidate.contact) !== email) return false;
+    const matchesTracking =
+      candidate.trackingCode !== null &&
+      normalizeCode(candidate.trackingCode) === normalizedTracking;
+    const matchesNumber = candidate.number === normalizedNumber;
+    return matchesTracking || matchesNumber;
+  });
+
+  if (order) {
+    delete attempts[key];
+    saveAttempts(attempts);
+    return {
+      ok: true,
+      order,
+      by:
+        order.trackingCode && normalizeCode(order.trackingCode) === normalizedTracking
+          ? "tracking"
+          : "order",
+    };
+  }
+
+  const count = record.count + 1;
+  const locked = count >= MAX_ATTEMPTS;
+  attempts[key] = {
     count: locked ? 0 : count,
     lockedUntil: locked ? Date.now() + LOCK_MS : 0,
   };

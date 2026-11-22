@@ -568,19 +568,40 @@ test.describe("Expedição e link mágico", () => {
 });
 
 test.describe("Rastreio", () => {
-  test("encomenda CTT mostra atalho com o código pré-preenchido", async ({ page }) => {
+  test("dois dados mostram o botão CTT com o código pré-preenchido", async ({ page }) => {
     await limparEstado(page);
     await page.goto("/rastreio");
-    await page.getByLabel("Número da encomenda").fill("UFFA-48217");
-    await page.getByLabel("Email ou telefone").fill("demo@uffa.pt");
-    await page.getByLabel("Código de exclusividade").fill("UFFA-7K3M-9QX2");
-    await page.getByRole("button", { name: "Desbloquear encomenda" }).click();
+    await page.getByRole("button", { name: "Preencher dados demo" }).click();
+    await page.getByRole("button", { name: "Localizar encomenda" }).click();
 
     const link = page.getByRole("link", { name: "Ver no CTT" });
     await expect(link).toBeVisible();
     const href = await link.getAttribute("href");
     expect(href).toContain("objects=PT-48217-9QX2");
     expect(href).toContain("request_locale=pt");
+    await expect(page.getByRole("heading", { name: "UFFA-48217" })).toBeVisible();
+  });
+
+  test("recolha mostra o local escolhido sem botão CTT", async ({ page }) => {
+    await limparEstado(page);
+    await page.goto("/rastreio");
+    await page.getByLabel("Número de rastreio").fill("UFFA-73104");
+    await page.getByLabel("E-mail da compra").fill("demo@uffa.pt");
+    await page.getByRole("button", { name: "Localizar encomenda" }).click();
+
+    await expect(page.getByText("NorteShopping", { exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Ver no CTT" })).toHaveCount(0);
+  });
+
+  test("dados errados apresentam erro sem confirmar a encomenda", async ({ page }) => {
+    await limparEstado(page);
+    await page.goto("/rastreio");
+    await page.getByLabel("Número de rastreio").fill("PT-48217-9QX2");
+    await page.getByLabel("E-mail da compra").fill("errado@exemplo.pt");
+    await page.getByRole("button", { name: "Localizar encomenda" }).click();
+
+    await expect(page.getByRole("alert")).toContainText("Não encontrámos essa encomenda");
+    await expect(page.getByRole("heading", { name: "UFFA-48217" })).toHaveCount(0);
   });
 });
 

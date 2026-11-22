@@ -45,10 +45,10 @@ import {
   getOrderSession,
   getStatusIndex,
   isFinalStatus,
+  lookupShipment,
   normalizeOrderNumber,
   orderStatusInfo,
   statusFlow,
-  validateOrderAccess,
   type Order,
   type OrderStatus,
 } from "@/lib/orders";
@@ -62,12 +62,12 @@ export const Route = createFileRoute("/rastreio")({
       {
         name: "description",
         content:
-          "Acede à tua encomenda UFFA com validação de exclusividade e acompanha o estado de envio ou recolha.",
+          "Localiza a tua encomenda UFFA com o número de rastreio e o e-mail da compra, e abre diretamente o CTT.",
       },
       { property: "og:title", content: "A minha encomenda — Uffa Store" },
       {
         property: "og:description",
-        content: "Portal exclusivo para gerir a tua encomenda UFFA.",
+        content: "Rastreio simples: dois dados e botão direto para o CTT.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -163,7 +163,7 @@ function OrderPortal() {
     );
   }
 
-  return <AccessLanding initialOrder={search.order ?? ""} onUnlock={setOrder} />;
+  return <AccessLanding initialOrder={search.order ?? ""} />;
 }
 
 function PortalSkeleton() {
@@ -338,54 +338,42 @@ function TrackingLinkDashboard({ data }: { data: TrackingLinkData }) {
   );
 }
 
-function AccessLanding({
-  initialOrder,
-  onUnlock,
-}: {
-  initialOrder: string;
-  onUnlock: (order: Order) => void;
-}) {
+function AccessLanding({ initialOrder }: { initialOrder: string }) {
   const { language } = useShop();
-  const [orderNumber, setOrderNumber] = useState(initialOrder);
-  const [contact, setContact] = useState("");
-  const [accessCode, setAccessCode] = useState("");
+  const [code, setCode] = useState(initialOrder);
+  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [found, setFound] = useState<Order | null>(null);
 
   useEffect(() => {
-    if (initialOrder) setOrderNumber(normalizeOrderNumber(initialOrder));
+    if (initialOrder) setCode(normalizeOrderNumber(initialOrder));
   }, [initialOrder]);
 
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-
-    if (!orderNumber.trim() || !contact.trim() || !accessCode.trim()) {
-      setError(
-        tr(
-          language,
-          "Preenche o número da encomenda, o contacto e o código exclusivo.",
-          "Fill in the order number, contact and exclusive code.",
-          "Rellena el número de pedido, el contacto y el código exclusivo.",
-        ),
-      );
-      return;
-    }
-
+    setFound(null);
     setBusy(true);
-    const result = validateOrderAccess(orderNumber, contact, accessCode);
+
+    const result = lookupShipment(code, email);
     setBusy(false);
 
     if (result.ok) {
-      toast.success(
+      setFound(result.order);
+      toast.success(tr(language, "Encomenda encontrada.", "Order found.", "Pedido encontrado."));
+      return;
+    }
+
+    if (result.reason === "missing") {
+      setError(
         tr(
           language,
-          "Acesso exclusivo validado.",
-          "Exclusive access verified.",
-          "Acceso exclusivo validado.",
+          "Indica o número de rastreio e o e-mail da compra.",
+          "Enter the tracking number and the email used at checkout.",
+          "Indica el número de seguimiento y el correo de la compra.",
         ),
       );
-      onUnlock(result.order);
       return;
     }
 
@@ -404,44 +392,46 @@ function AccessLanding({
     setError(
       tr(
         language,
-        `Dados incorretos. Confirma o número, o contacto e o código exclusivo. Restam ${result.attemptsLeft} tentativas.`,
-        `Incorrect details. Check the order number, contact and exclusive code. ${result.attemptsLeft} attempts left.`,
-        `Datos incorrectos. Revisa el número, el contacto y el código exclusivo. Quedan ${result.attemptsLeft} intentos.`,
+        `Não encontrámos essa encomenda. Restam ${result.attemptsLeft} tentativas.`,
+        `We couldn't find that order. ${result.attemptsLeft} attempts left.`,
+        `No encontramos ese pedido. Quedan ${result.attemptsLeft} intentos.`,
       ),
     );
   };
 
   const fillDemo = () => {
-    setOrderNumber(demoAccess.orderNumber);
-    setContact(demoAccess.contact);
-    setAccessCode(demoAccess.accessCode);
+    setCode(demoAccess.trackingCode);
+    setEmail(demoAccess.contact);
     setError(null);
+    setFound(null);
   };
 
   const steps = [
     {
-      icon: Package,
+      icon: PackageSearch,
       number: "01",
-      title: tr(language, "Encomenda confirmada", "Order confirmed", "Pedido confirmado"),
+      title: tr(language, "Encontra a encomenda", "Find your order", "Encuentra tu pedido"),
       text: tr(
         language,
-        "Recebes o número da encomenda e um código exclusivo no checkout.",
-        "You receive the order number and an exclusive code at checkout.",
-        "Recibes el número de pedido y un código exclusivo en el checkout.",
+        "Introduz o número de rastreio e o e-mail usado na compra.",
+        "Enter the tracking number and the email used at checkout.",
+        "Introduce el número de seguimiento y el correo usado en la compra.",
       ),
     },
     {
       icon: Truck,
       number: "02",
-      title: tr(language, "Acompanha o envio", "Track the delivery", "Sigue el envío"),
+      title: tr(language, "Abre o CTT", "Open CTT", "Abre CTT"),
       text: tr(
         language,
-        "Vê o estado, o transportador, o rastreio e a previsão de entrega.",
-        "See the status, carrier, tracking and estimated delivery.",
-        "Consulta el estado, el transportista, el seguimiento y la previsión.",
+        "Carrega no botão: a pesquisa oficial abre com o código já preenchido.",
+        "Click the button: the official search opens with the code already filled in.",
+        "Pulsa el botón: la búsqueda oficial se abre con el código ya relleno.",
       ),
     },
   ];
+
+  const isCtt = Boolean(found?.trackingCode && isCttCarrier(found.carrier));
 
   return (
     <div>
@@ -450,53 +440,54 @@ function AccessLanding({
           <div>
             <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-primary">
               <PackageSearch className="size-4" />
-              UFFA Portal · {tr(language, "Área do cliente", "Customer area", "Área de cliente")}
+              UFFA Store ·{" "}
+              {tr(language, "Rastreio simples", "Simple tracking", "Seguimiento simple")}
             </p>
             <h1 className="mt-4 font-display text-6xl uppercase leading-[.88] md:text-8xl">
-              {tr(language, "A minha", "My", "Mi")}
+              {tr(language, "Onde está", "Where is", "Dónde está")}
               <br />
               <span className="text-primary">
-                {tr(language, "encomenda.", "order.", "pedido.")}
+                {tr(language, "o meu par?", "my pair?", "mi par?")}
               </span>
             </h1>
             <p className="mt-5 max-w-2xl text-background/70">
               {tr(
                 language,
-                "O teu par, do checkout à porta. Entra com os três dados exclusivos da tua compra para acompanhar o envio e gerir a recolha.",
-                "Your pair, from checkout to your door. Sign in with the three exclusive details from your purchase to track shipping and manage pickup.",
-                "Tu par, del checkout a la puerta. Entra con los tres datos exclusivos de tu compra para seguir el envío y gestionar la recogida.",
+                "Dois dados e estás a um clique do CTT. Introduz o número de rastreio e o e-mail da compra — sem portal, sem códigos extra.",
+                "Two details and you're one click from CTT. Enter the tracking number and the email used at checkout — no portal, no extra codes.",
+                "Dos datos y estás a un clic de CTT. Introduce el número de seguimiento y el correo de la compra — sin portal ni códigos extra.",
               )}
             </p>
             <div className="mt-7 flex flex-wrap gap-2 text-[11px] font-bold uppercase">
               <span className="flex items-center gap-2 border border-background/20 px-3 py-2">
-                <LockKeyhole className="size-4 text-primary" />
-                {tr(language, "Acesso exclusivo", "Exclusive access", "Acceso exclusivo")}
+                <Navigation className="size-4 text-primary" />
+                {tr(language, "2 dados", "2 details", "2 datos")}
               </span>
               <span className="flex items-center gap-2 border border-background/20 px-3 py-2">
                 <Truck className="size-4 text-primary" />
-                {tr(language, "Estado de envio", "Shipping status", "Estado del envío")}
+                {tr(language, "Botão CTT direto", "Direct CTT button", "Botón CTT directo")}
               </span>
             </div>
           </div>
           <div className="hidden justify-self-end border border-background/15 p-6 lg:block">
             <p className="text-xs font-bold uppercase text-primary">
-              {tr(language, "Sessão protegida", "Protected session", "Sesión protegida")}
+              {tr(language, "Ainda mais simples", "Even simpler", "Aún más simple")}
             </p>
             <p className="mt-3 max-w-xs text-sm text-background/70">
               {tr(
                 language,
-                "O código exclusivo é gerado no checkout e só é mostrado ao comprador. Sem ele, os dados da encomenda não são revelados.",
-                "The exclusive code is generated at checkout and only shown to the buyer. Without it, order details are not revealed.",
-                "El código exclusivo se genera en el checkout y solo se muestra al comprador. Sin él, no se revelan los datos del pedido.",
+                "Não precisas de abrir o portal para rastrear. O botão do CTT abre a pesquisa oficial com o código pré-preenchido.",
+                "You don't need to open the portal to track. The CTT button opens the official search with the code pre-filled.",
+                "No necesitas abrir el portal para seguir el pedido. El botón de CTT abre la búsqueda oficial con el código relleno.",
               )}
             </p>
             <div className="mt-5 flex items-center gap-2 text-xs font-bold uppercase text-background/60">
               <ShieldCheck className="size-4 text-primary" />
               {tr(
                 language,
-                "3 fatores de validação",
-                "3 validation factors",
-                "3 factores de validación",
+                "O e-mail protege os dados",
+                "Email protects the details",
+                "El correo protege los datos",
               )}
             </div>
           </div>
@@ -505,190 +496,235 @@ function AccessLanding({
 
       <section className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
         <div className="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
-          <form onSubmit={submit} className="border border-border bg-card p-6 md:p-8">
-            <div className="flex items-start gap-3">
-              <span className="grid size-11 shrink-0 place-items-center bg-primary text-primary-foreground">
-                <LockKeyhole className="size-5" />
-              </span>
-              <div>
-                <h2 className="font-display text-3xl uppercase">
-                  {tr(language, "Entrar na encomenda", "Open your order", "Entrar en el pedido")}
-                </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {tr(
-                    language,
-                    "Usa exatamente os dados que introduziste na compra.",
-                    "Use exactly the details you entered at checkout.",
-                    "Usa exactamente los datos que introdujiste en la compra.",
-                  )}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-7 grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="order-number">
-                  {tr(language, "Número da encomenda", "Order number", "Número de pedido")}
-                </Label>
-                <Input
-                  id="order-number"
-                  value={orderNumber}
-                  onChange={(event) => setOrderNumber(event.target.value)}
-                  placeholder="UFFA-48217"
-                  autoComplete="off"
-                  spellCheck={false}
-                  className="h-12 rounded-none font-mono uppercase"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="order-contact">
-                  {tr(language, "Email ou telefone", "Email or phone", "Email o teléfono")}
-                </Label>
-                <Input
-                  id="order-contact"
-                  value={contact}
-                  onChange={(event) => setContact(event.target.value)}
-                  placeholder="demo@uffa.pt"
-                  autoComplete="email"
-                  className="h-12 rounded-none"
-                  required
-                />
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <div className="flex items-center justify-between gap-2">
-                  <Label htmlFor="order-code">
+          <div>
+            <form onSubmit={submit} className="border border-border bg-card p-6 md:p-8">
+              <div className="flex items-start gap-3">
+                <span className="grid size-11 shrink-0 place-items-center bg-primary text-primary-foreground">
+                  <PackageSearch className="size-5" />
+                </span>
+                <div>
+                  <h2 className="font-display text-3xl uppercase">
+                    {tr(language, "Localizar encomenda", "Find your order", "Buscar pedido")}
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {tr(
                       language,
-                      "Código de exclusividade",
-                      "Exclusive code",
-                      "Código de exclusividad",
+                      "Usa o código que veio no e-mail de envio e o e-mail da compra.",
+                      "Use the code from the shipping email and the email used at checkout.",
+                      "Usa el código del correo de envío y el correo de la compra.",
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-7 grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="tracking-code">
+                    {tr(language, "Número de rastreio", "Tracking number", "Número de seguimiento")}
+                  </Label>
+                  <Input
+                    id="tracking-code"
+                    value={code}
+                    onChange={(event) => setCode(event.target.value)}
+                    placeholder="PT-48217-9QX2"
+                    autoComplete="off"
+                    spellCheck={false}
+                    className="h-12 rounded-none font-mono uppercase"
+                    required
+                  />
+                  <p className="text-[11px] text-muted-foreground">
+                    {tr(
+                      language,
+                      "Em recolhas, podes usar o número da encomenda (UFFA-XXXXX).",
+                      "For pickups, you can use the order number (UFFA-XXXXX).",
+                      "En recogidas, puedes usar el número de pedido (UFFA-XXXXX).",
+                    )}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tracking-email">
+                    {tr(
+                      language,
+                      "E-mail da compra",
+                      "Email used at checkout",
+                      "Correo de la compra",
                     )}
                   </Label>
-                  <span className="flex items-center gap-1 text-[10px] font-bold uppercase text-primary">
-                    <ShieldCheck className="size-3.5" />
-                    {tr(
-                      language,
-                      "Só tu tens acesso",
-                      "Only you have access",
-                      "Solo tú tienes acceso",
-                    )}
-                  </span>
+                  <Input
+                    id="tracking-email"
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="demo@uffa.pt"
+                    autoComplete="email"
+                    className="h-12 rounded-none"
+                    required
+                  />
                 </div>
-                <Input
-                  id="order-code"
-                  value={accessCode}
-                  onChange={(event) => setAccessCode(event.target.value)}
-                  placeholder="UFFA-XXXX-XXXX"
-                  autoComplete="off"
-                  spellCheck={false}
-                  className="h-12 rounded-none font-mono uppercase tracking-wider"
-                  required
-                />
-                <p className="text-[11px] text-muted-foreground">
+              </div>
+
+              {error && (
+                <div
+                  role="alert"
+                  className="mt-5 flex items-start gap-3 border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"
+                >
+                  <XCircle className="mt-0.5 size-4 shrink-0" />
+                  <p>{error}</p>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                size="lg"
+                className="mt-6 h-12 w-full rounded-none"
+                disabled={busy}
+              >
+                <Navigation />
+                {busy
+                  ? tr(language, "A procurar…", "Searching…", "Buscando…")
+                  : tr(language, "Localizar encomenda", "Find order", "Buscar pedido")}
+              </Button>
+
+              <p className="mt-4 text-center text-xs text-muted-foreground">
+                {tr(
+                  language,
+                  "Ainda não tens encomenda?",
+                  "Don't have an order yet?",
+                  "¿Aún no tienes pedido?",
+                )}{" "}
+                <Link
+                  to="/catalogo"
+                  search={{}}
+                  className="font-bold text-primary underline-offset-4 hover:underline"
+                >
+                  {tr(language, "Ver catálogo", "Browse the catalog", "Ver catálogo")}
+                </Link>
+              </p>
+            </form>
+
+            {found && (
+              <div className="mt-6 border border-primary bg-primary/5 p-6">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase text-primary">
+                  <CheckCircle2 className="size-4" />
+                  {tr(language, "Encomenda encontrada", "Order found", "Pedido encontrado")}
+                </div>
+                <h3 className="mt-3 font-display text-3xl uppercase">{found.number}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {tr(language, "Estado", "Status", "Estado")}:{" "}
+                  {orderStatusInfo[found.status].label[language]}
+                </p>
+
+                {found.delivery === "pickup" ? (
+                  <div className="mt-5 border border-border bg-card p-4">
+                    <p className="flex items-center gap-2 text-xs font-bold uppercase text-muted-foreground">
+                      <MapPin className="size-4 text-primary" />
+                      {tr(language, "Local de recolha", "Pickup point", "Punto de recogida")}
+                    </p>
+                    <p className="mt-2 font-mono text-sm font-bold">
+                      {found.pickupLocation ?? "—"}
+                    </p>
+                  </div>
+                ) : found.trackingCode ? (
+                  <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border border-border bg-card px-4 py-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Navigation className="size-4 text-primary" />
+                      <span className="text-xs font-bold uppercase text-muted-foreground">
+                        {tr(
+                          language,
+                          "Código de rastreio",
+                          "Tracking code",
+                          "Código de seguimiento",
+                        )}
+                      </span>
+                      <code className="font-mono text-sm font-bold">{found.trackingCode}</code>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {isCtt && (
+                        <Button asChild size="sm" className="rounded-none">
+                          <a
+                            href={cttTrackingUrl(found.trackingCode ?? "")}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Navigation />
+                            {tr(language, "Ver no CTT", "Track on CTT", "Ver en CTT")}
+                          </a>
+                        </Button>
+                      )}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="rounded-none"
+                        onClick={() =>
+                          copyText(
+                            found.trackingCode ?? "",
+                            language,
+                            tr(
+                              language,
+                              "Código de rastreio",
+                              "Tracking code",
+                              "Código de seguimiento",
+                            ),
+                          )
+                        }
+                      >
+                        <Copy />
+                        {tr(language, "Copiar", "Copy", "Copiar")}
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
+
+                <p className="mt-4 text-xs text-muted-foreground">
                   {tr(
                     language,
-                    "Formato UFFA-XXXX-XXXX. Encontras este código na confirmação da compra.",
-                    "Format UFFA-XXXX-XXXX. You'll find this code in your order confirmation.",
-                    "Formato UFFA-XXXX-XXXX. Encuentras este código en la confirmación de la compra.",
+                    "Para ver a vista detalhada do envio, usa o link recebido por e-mail.",
+                    "To see the detailed shipping view, use the link sent by email.",
+                    "Para ver la vista detallada del envío, usa el enlace recibido por correo.",
                   )}
                 </p>
               </div>
-            </div>
-
-            {error && (
-              <div
-                role="alert"
-                className="mt-5 flex items-start gap-3 border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"
-              >
-                <XCircle className="mt-0.5 size-4 shrink-0" />
-                <p>{error}</p>
-              </div>
             )}
-
-            <Button
-              type="submit"
-              size="lg"
-              className="mt-6 h-12 w-full rounded-none"
-              disabled={busy}
-            >
-              <LockKeyhole />
-              {busy
-                ? tr(language, "A validar…", "Validating…", "Validando…")
-                : tr(language, "Desbloquear encomenda", "Unlock order", "Desbloquear pedido")}
-            </Button>
-
-            <p className="mt-4 text-center text-xs text-muted-foreground">
-              {tr(
-                language,
-                "Ainda não tens encomenda?",
-                "Don't have an order yet?",
-                "¿Aún no tienes pedido?",
-              )}{" "}
-              <Link
-                to="/catalogo"
-                search={{}}
-                className="font-bold text-primary underline-offset-4 hover:underline"
-              >
-                {tr(language, "Ver catálogo", "Browse the catalog", "Ver catálogo")}
-              </Link>
-            </p>
-          </form>
+          </div>
 
           <aside className="space-y-4">
             <div className="border border-border bg-section p-6 md:p-8">
               <div className="flex items-center gap-2 text-xs font-bold uppercase text-primary">
                 <ShieldCheck className="size-4" />
-                {tr(
-                  language,
-                  "Validação de exclusividade",
-                  "Exclusivity validation",
-                  "Validación de exclusividad",
-                )}
+                {tr(language, "Como funciona", "How it works", "Cómo funciona")}
               </div>
               <h2 className="mt-3 font-display text-3xl uppercase">
-                {tr(language, "Porque 3 dados?", "Why 3 details?", "¿Por qué 3 datos?")}
+                {tr(language, "Só dois dados", "Just two details", "Solo dos datos")}
               </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {tr(
-                  language,
-                  "O portal cruza três informações antes de revelar qualquer dado. É o equivalente ao token público do OrbitTrack, adaptado à loja.",
-                  "The portal checks three pieces of information before revealing any data. It's the equivalent of OrbitTrack's public token, adapted to the store.",
-                  "El portal cruza tres informaciones antes de revelar cualquier dato. Es el equivalente al token público de OrbitTrack, adaptado a la tienda.",
-                )}
-              </p>
               <ol className="mt-5 space-y-4">
                 {[
                   {
-                    title: tr(language, "Número da encomenda", "Order number", "Número de pedido"),
+                    title: tr(
+                      language,
+                      "Código de rastreio",
+                      "Tracking number",
+                      "Número de seguimiento",
+                    ),
                     text: tr(
                       language,
-                      "Identifica a compra.",
-                      "Identifies the purchase.",
-                      "Identifica la compra.",
+                      "Vem no e-mail de envio. Para recolhas, usa o número da encomenda.",
+                      "It's in the shipping email. For pickups, use the order number.",
+                      "Viene en el correo de envío. Para recogidas, usa el número de pedido.",
                     ),
                   },
                   {
                     title: tr(
                       language,
-                      "Contacto do comprador",
-                      "Buyer contact",
-                      "Contacto del comprador",
+                      "E-mail da compra",
+                      "Email used at checkout",
+                      "Correo de la compra",
                     ),
                     text: tr(
                       language,
-                      "Confirma quem comprou.",
-                      "Confirms who bought it.",
-                      "Confirma quién compró.",
-                    ),
-                  },
-                  {
-                    title: tr(language, "Código exclusivo", "Exclusive code", "Código exclusivo"),
-                    text: tr(
-                      language,
-                      "Gerado no checkout e guardado contigo.",
-                      "Generated at checkout and kept with you.",
-                      "Generado en el checkout y guardado contigo.",
+                      "Confirma que a encomenda é tua sem abrir o portal.",
+                      "Confirms the order is yours without opening the portal.",
+                      "Confirma que el pedido es tuyo sin abrir el portal.",
                     ),
                   },
                 ].map((item, index) => (
@@ -703,6 +739,14 @@ function AccessLanding({
                   </li>
                 ))}
               </ol>
+              <p className="mt-5 border-t border-border pt-4 text-xs text-muted-foreground">
+                {tr(
+                  language,
+                  "A vista detalhada com transportador e previsão continua disponível através do link mágico enviado por e-mail.",
+                  "The detailed view with carrier and delivery estimate remains available through the magic link sent by email.",
+                  "La vista detallada con transportista y previsión sigue disponible mediante el enlace mágico enviado por correo.",
+                )}
+              </p>
             </div>
 
             <div className="border border-dashed border-primary bg-primary/15 p-6">
@@ -722,29 +766,23 @@ function AccessLanding({
               <p className="mt-2 text-sm text-muted-foreground">
                 {tr(
                   language,
-                  "Encomenda em trânsito com dois pares. Clica para preencher o formulário.",
-                  "An in-transit order with two pairs. Click to fill the form.",
-                  "Un pedido en tránsito con dos pares. Haz clic para rellenar el formulario.",
+                  "Encomenda em trânsito com dois pares. Clica para preencher os dois campos.",
+                  "An in-transit order with two pairs. Click to fill both fields.",
+                  "Un pedido en tránsito con dos pares. Haz clic para rellenar ambos campos.",
                 )}
               </p>
               <dl className="mt-4 space-y-1.5 font-mono text-xs">
                 <div className="flex justify-between gap-3">
                   <dt className="text-muted-foreground">
-                    {tr(language, "Encomenda", "Order", "Pedido")}
+                    {tr(language, "Rastreio", "Tracking", "Seguimiento")}
                   </dt>
-                  <dd>{demoAccess.orderNumber}</dd>
+                  <dd>{demoAccess.trackingCode}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
                   <dt className="text-muted-foreground">
-                    {tr(language, "Contacto", "Contact", "Contacto")}
+                    {tr(language, "E-mail", "Email", "Correo")}
                   </dt>
                   <dd>{demoAccess.contact}</dd>
-                </div>
-                <div className="flex justify-between gap-3">
-                  <dt className="text-muted-foreground">
-                    {tr(language, "Código", "Code", "Código")}
-                  </dt>
-                  <dd>{demoAccess.accessCode}</dd>
                 </div>
               </dl>
               <Button
@@ -753,7 +791,7 @@ function AccessLanding({
                 className="mt-4 w-full rounded-none"
                 onClick={fillDemo}
               >
-                {tr(language, "Preencher acesso demo", "Fill demo access", "Rellenar acceso demo")}
+                {tr(language, "Preencher dados demo", "Fill demo details", "Rellenar datos demo")}
                 <ArrowRight />
               </Button>
               <p className="mt-3 text-[10px] text-muted-foreground">
@@ -817,7 +855,6 @@ function AccessLanding({
     </div>
   );
 }
-
 function OrderDashboard({
   order,
   onOrderChange,

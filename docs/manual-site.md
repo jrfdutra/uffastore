@@ -36,7 +36,7 @@ Manual funcional e operacional da loja online UFFA Store, organizado em onze cap
 | [05](#cap-05) | Carrinho | Camada lateral, quantidades, cupões, partilha e persistência |
 | [06](#cap-06) | Checkout | Portes, pagamento, redirecionamento Shopify e erros |
 | [07](#cap-07) | Confirmação | Número, código exclusivo, rastreio e próximos passos |
-| [08](#cap-08) | Portal | Acesso por três fatores, dashboard, estados e confirmação |
+| [08](#cap-08) | Portal | Localizador simples com CTT e vista detalhada do envio |
 | [09](#cap-09) | Expedição | Registo de envio, link mágico e pesquisa aos 8 dias |
 | [10](#cap-10) | Mobile | Breakpoints, menu, grelhas, toque e desempenho |
 | [11](#cap-11) | Tecnologia | Stack, ficheiros, variáveis, build, deploy e segurança |
@@ -74,7 +74,7 @@ Manual funcional e operacional da loja online UFFA Store, organizado em onze cap
 | [6.3](#cap-06-3) | Cupões e erros |
 | [7.1](#cap-07-1) | O que o cliente recebe |
 | [7.2](#cap-07-2) | Âmbito da demonstração |
-| [8.1](#cap-08-1) | Acesso por três fatores |
+| [8.1](#cap-08-1) | Localizador simples |
 | [8.2](#cap-08-2) | Dashboard do cliente |
 | [8.3](#cap-08-3) | Fluxos de estado |
 | [10.1](#cap-10-1) | Breakpoints e menu |
@@ -99,7 +99,7 @@ O site existe para responder a três perguntas antes que o cliente as faça: *o 
 
 - **Descoberta rápida** — catálogo filtrável, stock visível e preço sem ambiguidade.
 - **Compra curta** — carrinho lateral, checkout em três decisões e pagamento no ambiente seguro da Shopify.
-- **Pós-compra acompanhado** — portal privado por número de encomenda, contacto e código exclusivo.
+- **Pós-compra acompanhado** — localizador simples por rastreio + e-mail, com botão direto para o CTT; portal privado pelo link mágico.
 
 > **Nota.** O site não é um folheto. É a operação da marca: catálogo, encomenda e acompanhamento no mesmo domínio.
 
@@ -144,7 +144,7 @@ Home → Catálogo → Produto → Carrinho → Checkout → Confirmação
 | Carrinho | camada lateral | Público |
 | Checkout | `/checkout` | Público |
 | Confirmação | `/confirmacao?order=UFFA-XXXXX` | Cliente |
-| Portal de rastreio | `/rastreio` | Cliente com três fatores |
+| Portal de rastreio | `/rastreio` | Cliente com rastreio + e-mail ou link mágico |
 | Favoritos | `/favoritos` | Público |
 | Ajuda | `/ajuda` | Público |
 
@@ -491,26 +491,26 @@ A confirmação explica o que guardar e o que fazer a seguir.
 
 ### O par não desaparece.
 
-O cliente passa a ter um espaço privado para acompanhar envio ou recolha e confirmar a entrega.
+O cliente localiza a encomenda em dois passos e abre o CTT sem precisar de abrir o portal. Para gerir a encomenda completa, usa o link mágico recebido por e-mail.
 
-![Figura 8.1 — Acesso ao portal por número, contacto e código exclusivo](assets/screenshots/07-rastreio-acesso.png)
+![Figura 8.1 — Acesso ao portal pelo link mágico](assets/screenshots/07-rastreio-acesso.png)
 
 <a id="cap-08-1"></a>
 
-### 8.1 Acesso por três fatores
+### 8.1 Localizador simples
 
-| Fator | Exemplo |
+| Dado | Exemplo |
 | --- | --- |
-| Número da encomenda | `UFFA-48217` ou apenas `48217` |
-| Contacto | `demo@uffa.pt` |
-| Código exclusivo | `UFFA-7K3M-9QX2` |
+| Número de rastreio | `PT-48217-9QX2` |
+| E-mail da compra | `demo@uffa.pt` |
+
+Ao validar, aparece de imediato o botão **Ver no CTT**, com a pesquisa oficial e o código já preenchidos. Em recolhas, basta inserir o número da encomenda (`UFFA-73104`) e o e-mail: é apresentado o local escolhido, sem botão CTT.
 
 Regras de proteção:
 
-- **5 tentativas** falhadas por encomenda;
+- **5 tentativas** falhadas por código;
 - **bloqueio de 60 segundos** ao atingir o limite;
-- **sessão de 30 minutos**;
-- botão **Terminar sessão** sempre visível.
+- a vista detalhada do envio continua disponível pelo link mágico enviado por e-mail.
 
 <a id="cap-08-2"></a>
 
