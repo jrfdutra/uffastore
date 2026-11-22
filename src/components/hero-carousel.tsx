@@ -5,6 +5,8 @@ import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 
 const AUTOPLAY_MS = 6000;
+/** Black Friday 2026: a primeira imagem visível é sempre a capa da campanha. */
+const INITIAL_SLIDE_INDEX = 1;
 
 const CAPA_HOME = "/capas/uffa-capa-home.webp";
 const CAPA_HOME_MOBILE = "/capas/uffa-capa-home-mobile.webp";
@@ -47,13 +49,18 @@ const slides: Slide[] = [
 
 /**
  * Hero com carrossel: capa "a UFFA agora é online" + capa de Black Friday.
- * Ambas já têm o texto na imagem; o título `srTitle` mantém o H1 acessível.
+ * Arranca sempre na capa de Black Friday. Ambas já têm o texto na imagem; o
+ * título `srTitle` mantém o H1 acessível.
  */
 export function HeroCarousel({ children, srTitle }: { children: ReactNode; srTitle: string }) {
   const { language } = useShop();
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
-  const [selected, setSelected] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "start",
+    startIndex: INITIAL_SLIDE_INDEX,
+  });
+  const [selected, setSelected] = useState(INITIAL_SLIDE_INDEX);
 
   const syncSelected = useCallback(() => {
     if (!emblaApi) return;
@@ -105,9 +112,9 @@ export function HeroCarousel({ children, srTitle }: { children: ReactNode; srTit
                   alt={slide.name}
                   width={2400}
                   height={1031}
-                  loading={index === 0 ? "eager" : "lazy"}
-                  fetchPriority={index === 0 ? "high" : "low"}
-                  decoding={index === 0 ? "sync" : "async"}
+                  loading={index === INITIAL_SLIDE_INDEX ? "eager" : "lazy"}
+                  fetchPriority={index === INITIAL_SLIDE_INDEX ? "high" : "low"}
+                  decoding={index === INITIAL_SLIDE_INDEX ? "sync" : "async"}
                   draggable={false}
                   className={`h-full w-full select-none object-cover transition-transform duration-700 ease-out ${
                     slide.imageClassName ?? "object-center"

@@ -10,7 +10,33 @@ configurar credenciais — nada disso pode ser feito por API.
 - Webhook `orders/paid` registado na Shopify:
   `gid://shopify/WebhookSubscription/2578023252316` →
   `https://www.uffastore.pt/api/webhooks/shopify/orders-paid`
+- Endpoint `POST /api/webhooks/shopify/orders-fulfilled` para envio automático
+  quando a encomenda é marcada como enviada com código de rastreio.
+- Webhook `orders/fulfilled` registado na Shopify:
+  `gid://shopify/WebhookSubscription/2579990839644` →
+  `https://www.uffastore.pt/api/webhooks/shopify/orders-fulfilled`
+- Webhook `orders/updated` registado no mesmo endpoint:
+  `gid://shopify/WebhookSubscription/2579994804572` →
+  `https://www.uffastore.pt/api/webhooks/shopify/orders-fulfilled`
+  (cobre o código adicionado depois de marcar como cumprida)
 - Código commitado em `main`, CI verde, deploy ativo.
+
+## Onde preencher o código de rastreio
+
+**Shopify Admin → Encomendas → abrir a encomenda → Marcar como cumprida →
+Número de rastreio → Cumprir.**
+
+Na Shopify, o número de rastreio é introduzido no formulário de **cumprimento**
+(fulfillment) da encomenda, juntamente com o transportador. Assim que confirmas,
+a Shopify dispara `orders/fulfilled` e a loja envia o e-mail ao cliente com o
+código, o atalho para o CTT e o link de rastreio — sem passar por `/expedicao`.
+
+Se a encomenda já tinha sido marcada como cumprida sem código, abre a encomenda,
+**Adicionar rastreio** (ou edita o cumprimento) e guarda o número. O tópico
+`orders/updated` dispara o mesmo envio automático; não é preciso voltar a `/expedicao`.
+
+O formulário manual continua em `https://www.uffastore.pt/expedicao`, para
+reenvios ou correções; exige o `TRACKING_ADMIN_TOKEN`.
 
 ## Passo 1 — Resend: verificar o domínio (amanhã)
 
@@ -27,11 +53,13 @@ configurar credenciais — nada disso pode ser feito por API.
 ## Passo 2 — Shopify: copiar o Signing secret
 
 1. Shopify Admin → **Definições → Notificações → Webhooks**.
-2. Abrir `orders/paid`.
+2. Abrir `orders/paid` (ou `orders/fulfilled`).
 3. Copiar o **Signing secret**.
 
 > A API da Shopify não expõe nem permite definir este segredo (confirmado por
-> introspeção do schema). Só aparece no painel.
+> introspeção do schema). Só aparece no painel. Os webhooks criados pela mesma
+> app partilham o segredo; se o painel mostrar valores diferentes, confirma o
+> valor usado em `SHOPIFY_WEBHOOK_SECRET` antes de testar o fulfillment.
 
 ## Passo 3 — Vercel: variáveis de ambiente
 
@@ -84,10 +112,10 @@ só recebes tu os e-mails. O cron da pesquisa corre às 09:00 UTC e, sem
 # 1) Estado geral (Shopify, Resend, produção)
 node scripts/status-producao.mjs
 
-# 2) Prova de que o segredo de produção está correto (não envia e-mail)
+# 2) Prova de que o segredo está correto nos dois endpoints (não envia e-mail)
 WEBHOOK_SECRET="o-signing-secret" node scripts/status-producao.mjs
 
-# 3) Envio real de ponta a ponta
+# 3) Envio real de ponta a ponta (orders/paid)
 WEBHOOK_SECRET="o-signing-secret" node scripts/status-producao.mjs --send
 
 # 4) Ensaio do cron da pesquisa: sem e-mails e sem metafields escritos
@@ -100,6 +128,12 @@ devolve `{ "dryRun": true, ... }` com a janela de 8 a 30 dias e os números das
 encomendas que seriam convidadas. Depois de confirmar o domínio no Resend,
 muda `NPS_ENABLED` para `true`, faz redeploy e chama o mesmo endpoint sem
 `?dryRun=1` para enviar os convites.
+
+Para validar a automação de expedição, faz uma encomenda real de teste, abre-a
+em Shopify Admin → **Encomendas** e marca como cumprida com um código de rastreio
+de teste. Confirma que chega o e-mail "Encomenda UFFA … foi enviada" e que o link
+abre a vista detalhada em `/rastreio`. Se o domínio Resend ainda não estiver
+verificado, usa o link apresentado em `/expedicao` como fallback.
 
 ## Se quiseres que eu automatize a Vercel
 

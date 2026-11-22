@@ -3,11 +3,15 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import {
+  FULFILLMENT_WEBHOOK_TOPIC,
   MAX_BODY_BYTES,
+  ORDER_UPDATED_TOPIC,
+  WebhookDeduplicator,
   isExpectedShop,
   isExpectedTopic,
   verifyShopifyHmac,
 } from "./lib/webhook-core";
+import { parseFulfillmentPayload, type FulfillmentNotification } from "./lib/fulfillment-webhook";
 import { sendContactEmail, sendNpsEmail, sendTrackingEmail } from "./lib/server-actions";
 import { parseContactRequest } from "./lib/contact";
 import { CONTACT_BODY_LIMIT, CONTACT_PATH } from "./lib/contact-constants";
@@ -33,11 +37,17 @@ import {
 import { runNps } from "./lib/nps-run";
 
 const WEBHOOK_PATH = "/api/webhooks/shopify/orders-paid";
+const FULFILLMENT_WEBHOOK_PATH = "/api/webhooks/shopify/orders-fulfilled";
 const TRACKING_PATH = "/api/orders/tracking";
 const NPS_CRON_PATH = "/api/cron/nps";
 const NPS_PATH = "/api/nps";
 const TRACKING_BODY_LIMIT = 8_192;
 const NPS_BODY_LIMIT = 4_096;
+
+// Dois níveis: evita reenvios do mesmo evento e de atualizações posteriores
+// com o mesmo código de rastreio (a Shopify pode gerar vários eventos).
+const fulfillmentEventDeduplicator = new WebhookDeduplicator();
+const fulfillmentTrackingDeduplicator = new WebhookDeduplicator(60 * 60_000, 10_000);
 
 async function handleContact(request: Request): Promise<Response> {
   const declaredLength = Number.parseInt(request.headers.get("content-length") ?? "", 10);
@@ -178,27 +188,66 @@ function cleanString(value: unknown, max: number): string {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
 
+function normalizeShipmentRegistration(
+  input: Record<string, unknown>,
+): TrackingRegistration | null {
+  const orderNumber = cleanString(input["orderNumber"], 40).toUpperCase();
+  const trackingCode = cleanString(input["trackingCode"], 40).toUpperCase().replace(/\s+/g, "");
+  const carrier = cleanString(input["carrier"], 60) || "CTT Expresso";
+  const email = cleanString(input["email"], 160).toLowerCase();
+  const deliveryRaw = cleanString(input["estimatedDelivery"], 40);
+
+  if (!orderNumber || !/^[A-Z0-9-]{6,40}$/.test(trackingCode)) return null;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
+
+  const estimatedDelivery =
+    deliveryRaw && !Number.isNaN(Date.parse(deliveryRaw)) ? deliveryRaw : null;
+  return { orderNumber, trackingCode, carrier, email, estimatedDelivery };
+}
+
 function parseTrackingRegistration(raw: string): TrackingRegistration | null {
   try {
     const parsed: unknown = JSON.parse(raw);
-    if (!parsed || typeof parsed !== "object") return null;
-    const body = parsed as Record<string, unknown>;
-
-    const orderNumber = cleanString(body["orderNumber"], 40).toUpperCase();
-    const trackingCode = cleanString(body["trackingCode"], 40).toUpperCase().replace(/\s+/g, "");
-    const carrier = cleanString(body["carrier"], 60) || "CTT Expresso";
-    const email = cleanString(body["email"], 160).toLowerCase();
-    const deliveryRaw = cleanString(body["estimatedDelivery"], 40);
-
-    if (!orderNumber || !/^[A-Z0-9-]{6,40}$/.test(trackingCode)) return null;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
-
-    const estimatedDelivery =
-      deliveryRaw && !Number.isNaN(Date.parse(deliveryRaw)) ? deliveryRaw : null;
-    return { orderNumber, trackingCode, carrier, email, estimatedDelivery };
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+    return normalizeShipmentRegistration(parsed as Record<string, unknown>);
   } catch {
     return null;
   }
+}
+
+/** Cria o link mágico e envia o e-mail; usado pelo formulário interno e pelo webhook. */
+async function issueTrackingLink(registration: TrackingRegistration, request: Request) {
+  const secret = getTrackingLinkSecret();
+  if (!secret) {
+    return { success: false, reason: "tracking_not_configured", emailSent: false, trackingUrl: "" };
+  }
+
+  const token = createTrackingLink(
+    {
+      orderNumber: registration.orderNumber,
+      trackingCode: registration.trackingCode,
+      carrier: registration.carrier,
+      estimatedDelivery: registration.estimatedDelivery,
+    },
+    secret,
+  );
+  const trackingUrl = `${publicOrigin(request)}/rastreio?token=${encodeURIComponent(token)}`;
+
+  const emailResult = await sendTrackingEmail({
+    email: registration.email,
+    orderNumber: registration.orderNumber,
+    trackingCode: registration.trackingCode,
+    carrier: registration.carrier,
+    trackingUrl,
+    estimatedDelivery: registration.estimatedDelivery,
+  });
+
+  return {
+    success: emailResult.success,
+    reason: emailResult.success ? undefined : "email_failed",
+    emailSent: emailResult.success,
+    trackingUrl,
+  };
 }
 
 function handleTrackingVerify(request: Request): Response {
@@ -218,8 +267,7 @@ function handleTrackingVerify(request: Request): Response {
 
 async function handleTrackingRegister(request: Request): Promise<Response> {
   const adminToken = getTrackingAdminToken();
-  const secret = getTrackingLinkSecret();
-  if (!adminToken || !secret) {
+  if (!adminToken || !getTrackingLinkSecret()) {
     return jsonResponse(503, { success: false, reason: "tracking_not_configured" });
   }
 
@@ -243,31 +291,92 @@ async function handleTrackingRegister(request: Request): Promise<Response> {
     return jsonResponse(400, { success: false, reason: "invalid_payload" });
   }
 
-  const token = createTrackingLink(
-    {
-      orderNumber: registration.orderNumber,
-      trackingCode: registration.trackingCode,
-      carrier: registration.carrier,
-      estimatedDelivery: registration.estimatedDelivery,
-    },
-    secret,
-  );
-  const trackingUrl = `${publicOrigin(request)}/rastreio?token=${encodeURIComponent(token)}`;
-
-  const emailResult = await sendTrackingEmail({
-    email: registration.email,
-    orderNumber: registration.orderNumber,
-    trackingCode: registration.trackingCode,
-    carrier: registration.carrier,
-    trackingUrl,
-    estimatedDelivery: registration.estimatedDelivery,
+  const issued = await issueTrackingLink(registration, request);
+  return jsonResponse(issued.success ? 200 : 502, {
+    success: issued.success,
+    reason: issued.reason,
+    emailSent: issued.emailSent,
+    trackingUrl: issued.trackingUrl,
   });
+}
 
-  return jsonResponse(emailResult.success ? 200 : 502, {
-    success: emailResult.success,
-    reason: emailResult.success ? undefined : "email_failed",
-    emailSent: emailResult.success,
-    trackingUrl,
+/**
+ * Webhooks `orders/fulfilled` e `orders/updated`: quando a equipa adiciona o
+ * código de rastreio na Shopify, o cliente recebe o e-mail e o link mágico sem
+ * passar por `/expedicao`. O segundo cobre códigos adicionados depois do cumprimento.
+ */
+async function handleFulfillmentWebhook(request: Request): Promise<Response> {
+  const declaredLength = Number.parseInt(request.headers.get("content-length") ?? "", 10);
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+
+  const raw = await request.text();
+  if (raw.length > MAX_BODY_BYTES) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+
+  if (!verifyShopifyHmac(raw, request.headers.get("x-shopify-hmac-sha256"))) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+  const topic = request.headers.get("x-shopify-topic") ?? "";
+  const isOrderUpdate = isExpectedTopic(topic, ORDER_UPDATED_TOPIC);
+  if (!isOrderUpdate && !isExpectedTopic(topic, FULFILLMENT_WEBHOOK_TOPIC)) {
+    return jsonResponse(400, { success: false, reason: "unexpected_topic" });
+  }
+  if (!isExpectedShop(request.headers.get("x-shopify-shop-domain"))) {
+    return jsonResponse(400, { success: false, reason: "unexpected_shop" });
+  }
+
+  const eventId = webhookEventId(request);
+  if (!fulfillmentEventDeduplicator.claim(eventId)) {
+    return jsonResponse(200, { success: true, duplicate: true });
+  }
+
+  // Ambos os tópicos trazem a encomenda completa, com `fulfillments`.
+  const parsed = parseFulfillmentPayload(raw);
+  if (!parsed.ok) {
+    fulfillmentEventDeduplicator.release(eventId);
+    // Sem e-mail ou sem código não há nada a enviar; não pedir retry à Shopify.
+    if (parsed.reason === "no_email" || parsed.reason === "no_tracking_code") {
+      return jsonResponse(200, { success: true, ignored: true, reason: parsed.reason });
+    }
+    return jsonResponse(400, { success: false, reason: parsed.reason });
+  }
+  const notification: FulfillmentNotification = parsed.notification;
+
+  const registration = normalizeShipmentRegistration({
+    orderNumber: notification.orderNumber,
+    email: notification.email,
+    carrier: notification.carrier,
+    trackingCode: notification.trackingCode,
+    estimatedDelivery: notification.estimatedDelivery,
+  });
+  if (!registration || !getTrackingLinkSecret()) {
+    fulfillmentEventDeduplicator.release(eventId);
+    return jsonResponse(registration ? 503 : 400, {
+      success: false,
+      reason: registration ? "tracking_not_configured" : "invalid_payload",
+    });
+  }
+
+  const trackingKey = `${registration.orderNumber}:${registration.trackingCode}`;
+  if (!fulfillmentTrackingDeduplicator.claim(trackingKey)) {
+    fulfillmentEventDeduplicator.release(eventId);
+    return jsonResponse(200, { success: true, duplicate: true });
+  }
+
+  const issued = await issueTrackingLink(registration, request);
+  if (!issued.success) {
+    fulfillmentEventDeduplicator.release(eventId);
+    fulfillmentTrackingDeduplicator.release(trackingKey);
+    return jsonResponse(502, { success: false, reason: issued.reason ?? "delivery_failed" });
+  }
+
+  return jsonResponse(200, {
+    success: true,
+    emailSent: true,
+    orderNumber: registration.orderNumber,
   });
 }
 
@@ -424,6 +533,21 @@ export default {
         return await handleShopifyWebhook(request);
       } catch (error) {
         console.error("[Webhook] Erro fatal:", error instanceof Error ? error.message : error);
+        return jsonResponse(500, { success: false, reason: "internal_error" });
+      }
+    }
+
+    if (url.pathname === FULFILLMENT_WEBHOOK_PATH) {
+      if (request.method !== "POST") {
+        return new Response("Method Not Allowed", {
+          status: 405,
+          headers: { allow: "POST" },
+        });
+      }
+      try {
+        return await handleFulfillmentWebhook(request);
+      } catch (error) {
+        console.error("[Expedição] Erro fatal:", error instanceof Error ? error.message : error);
         return jsonResponse(500, { success: false, reason: "internal_error" });
       }
     }

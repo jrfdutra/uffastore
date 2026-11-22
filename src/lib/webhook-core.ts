@@ -3,6 +3,12 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 /** Tópico Shopify que este endpoint aceita. */
 export const WEBHOOK_TOPIC = "orders/paid";
 
+/** Tópico disparado quando a Shopify regista uma entrega com código de rastreio. */
+export const FULFILLMENT_WEBHOOK_TOPIC = "orders/fulfilled";
+
+/** Tópico disparado quando o código é adicionado/alterado depois do cumprimento. */
+export const ORDER_UPDATED_TOPIC = "orders/updated";
+
 /** Limite defensivo do corpo (a Shopify envia pedidos bem abaixo disto). */
 export const MAX_BODY_BYTES = 1_000_000;
 
@@ -32,9 +38,12 @@ export function verifyShopifyHmac(rawBody: string, hmacHeader: string | null): b
   return timingSafeEqual(received, expected);
 }
 
-/** Só aceita o tópico orders/paid (evita reutilização do segredo por outros webhooks). */
-export function isExpectedTopic(topic: string | null): boolean {
-  return (topic ?? "").trim().toLowerCase() === WEBHOOK_TOPIC;
+/**
+ * Só aceita o tópico esperado (por omissão `orders/paid`), evitando que o mesmo
+ * segredo seja reutilizado por webhooks de outros fluxos.
+ */
+export function isExpectedTopic(topic: string | null, expected: string = WEBHOOK_TOPIC): boolean {
+  return (topic ?? "").trim().toLowerCase() === expected;
 }
 
 /** Se SHOPIFY_SHOP_DOMAIN estiver definido, exige que o webhook venha dessa loja. */

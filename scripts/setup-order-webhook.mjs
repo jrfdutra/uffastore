@@ -4,8 +4,21 @@ const envRaw = await readFile(new URL("../.env", import.meta.url), "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
 const domain = get("SHOPIFY_ADMIN_STORE_DOMAIN") || "uffastore.myshopify.com";
 const token = get("SHOPIFY_ADMIN_TOKEN") || get("SHOPIFY_ADMIN_ACCESS_TOKEN");
-const secret = get("SHOPIFY_WEBHOOK_SECRET");
-const callbackUrl = "https://www.uffastore.pt/api/webhooks/shopify/orders-paid";
+
+const webhooks = [
+  {
+    topic: "ORDERS_PAID",
+    callbackUrl: "https://www.uffastore.pt/api/webhooks/shopify/orders-paid",
+  },
+  {
+    topic: "ORDERS_FULFILLED",
+    callbackUrl: "https://www.uffastore.pt/api/webhooks/shopify/orders-fulfilled",
+  },
+  {
+    topic: "ORDERS_UPDATED",
+    callbackUrl: "https://www.uffastore.pt/api/webhooks/shopify/orders-fulfilled",
+  },
+];
 
 async function gql(query, variables) {
   const res = await fetch(`https://${domain}/admin/api/2025-01/graphql.json`, {
@@ -23,27 +36,33 @@ const list = await gql(`{
     edges { node { id topic callbackUrl } }
   }
 }`);
-const existing = list.webhookSubscriptions.edges
-  .map((e) => e.node)
-  .filter((n) => n.topic === "ORDERS_PAID" && n.callbackUrl === callbackUrl);
+const existing = list.webhookSubscriptions.edges.map((edge) => edge.node);
 
-if (existing.length) {
-  console.log("Webhook já existe:", existing[0].id, existing[0].callbackUrl);
-} else {
+for (const webhook of webhooks) {
+  const found = existing.find(
+    (node) => node.topic === webhook.topic && node.callbackUrl === webhook.callbackUrl,
+  );
+
+  if (found) {
+    console.log("Webhook já existe:", found.id, found.topic, found.callbackUrl);
+    continue;
+  }
+
   const created = await gql(
-    `mutation($sub: WebhookSubscriptionInput!) {
-      webhookSubscriptionCreate(topic: ORDERS_PAID, webhookSubscription: $sub) {
+    `mutation($topic: WebhookSubscriptionTopic!, $sub: WebhookSubscriptionInput!) {
+      webhookSubscriptionCreate(topic: $topic, webhookSubscription: $sub) {
         webhookSubscription { id topic callbackUrl }
         userErrors { field message }
       }
     }`,
-    { sub: { callbackUrl, format: "JSON" } },
+    { topic: webhook.topic, sub: { callbackUrl: webhook.callbackUrl, format: "JSON" } },
   );
   const result = created.webhookSubscriptionCreate;
   if (result.userErrors.length) throw new Error(JSON.stringify(result.userErrors));
   console.log(
     "Webhook criado:",
     result.webhookSubscription.id,
+    result.webhookSubscription.topic,
     result.webhookSubscription.callbackUrl,
   );
 }

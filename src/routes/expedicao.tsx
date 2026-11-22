@@ -102,6 +102,19 @@ function ExpedicaoPage() {
         e-mail ao cliente e mostra o atalho para o transportador no portal de rastreio.
       </p>
 
+      <div className="mt-6 border border-primary/30 bg-primary/5 p-4 text-sm">
+        <p className="font-bold">Já não precisas de preencher isto sempre.</p>
+        <p className="mt-1 text-muted-foreground">
+          O código deve ser introduzido na Shopify:{" "}
+          <strong>
+            Admin → Encomendas → abrir a encomenda → Marcar como cumprida → Número de rastreio →
+            Cumprir
+          </strong>
+          . A loja envia o e-mail automaticamente. Usa este formulário apenas para reenviar ou
+          corrigir um envio.
+        </p>
+      </div>
+
       <form onSubmit={submit} className="mt-10 border border-border bg-card p-6 md:p-8">
         <div className="flex items-start gap-3">
           <span className="grid size-11 shrink-0 place-items-center bg-primary text-primary-foreground">

@@ -15,7 +15,7 @@ Manual funcional e operacional da loja online UFFA Store, organizado em onze cap
 | Produção | `https://uffastore.pt` |
 | Desenvolvimento | `http://localhost:8080` |
 | Idiomas | Português, Inglês e Espanhol |
-| Temas | Claro e escuro |
+| Temas | Claro e escuro (Black Friday: arranque escuro) |
 | Stack | React 19 · TanStack Start · Tailwind CSS · Shopify Storefront API |
 | Documento irmão | `docs/apresentacao-site-uffa.pptx` (14 slides) |
 
@@ -565,14 +565,26 @@ Cada mudança cria um evento com data e hora no histórico visível ao cliente.
 ### Registos de envio sem painel de operações.
 
 O antigo painel interno de operações (`/operacoes`) foi removido em 18/11/2026.
-Em substituição existe apenas a página `/expedicao`, não indexada e sem ligação
-pública, para registar o código de rastreio de encomendas já pagas.
+
+**Caminho automático:** a equipa abre a encomenda em Shopify Admin → **Encomendas**,
+escolhe **Marcar como cumprida**, preenche o **número de rastreio** e o transportador
+e confirma. A Shopify envia o tópico `orders/fulfilled` para
+`/api/webhooks/shopify/orders-fulfilled`; o servidor cria o link assinado e envia o
+e-mail ao cliente. Se o código for adicionado mais tarde, o tópico `orders/updated`
+usa o mesmo endpoint e completa o envio. Não é preciso introduzir dados na loja.
+
+**Fallback manual:** a página `/expedicao`, não indexada e sem ligação pública,
+continua a servir para reenviar ou corrigir um envio.
 
 1. A equipa introduz o número da encomenda, o e-mail do cliente, o transportador,
    o código de rastreio e, opcionalmente, a previsão de entrega.
 2. É necessário introduzir o token interno (`TRACKING_ADMIN_TOKEN`); não é guardado no browser.
 3. O servidor cria um link assinado com validade configurável e envia-o por Resend.
 4. O cliente abre o link e vê o estado do envio com o botão **Ver no CTT**.
+
+O e-mail contém sempre o código de rastreio, o transportador, a previsão (quando
+existe), o atalho para o CTT e o link mágico. Em recolhas não há código de CTT: o
+cliente vê o local escolhido no checkout.
 
 ### Pesquisa de satisfação aos 8 dias
 

@@ -116,6 +116,23 @@ test.describe("Loja — navegação e catálogo", () => {
     await expect(page.locator("article").first()).toBeVisible();
   });
 
+  test("a loja abre sempre escura, mesmo com preferência antiga clara", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("uffa-theme", "light"));
+    await page.goto("/");
+
+    await expect(page.locator("html")).toHaveClass(/dark/);
+    await expect(page.locator("html")).toHaveCSS("color-scheme", "dark");
+
+    // O HTML vem do SSR: repetir até a hidratação ligar o handler do botão.
+    await expect(async () => {
+      await page.getByRole("button", { name: "Alternar tema" }).click();
+      await expect(page.locator("html")).not.toHaveClass(/dark/, { timeout: 2000 });
+    }).toPass({ timeout: 30_000 });
+
+    await page.reload();
+    await expect(page.locator("html")).toHaveClass(/dark/);
+  });
+
   test("o carousel da home mostra apenas as capas online e Black Friday", async ({ page }) => {
     await page.goto("/");
 
@@ -123,7 +140,10 @@ test.describe("Loja — navegação e catálogo", () => {
     await expect(slides).toHaveCount(2);
     await expect(slides.first().locator("img")).toHaveAttribute("src", /uffa-capa-home/);
     await expect(slides.nth(1).locator("img")).toHaveAttribute("src", /uffa-black-friday/);
-    await expect(page.getByRole("button", { name: /Ver foto 2/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Ver foto 2/ })).toHaveAttribute(
+      "aria-current",
+      "true",
+    );
 
     await page.getByRole("button", { name: /Ver foto 2/ }).click();
     await expect(slides.nth(1).locator("img")).toHaveJSProperty("complete", true);
@@ -546,6 +566,18 @@ test.describe("Confirmação", () => {
 });
 
 test.describe("Expedição e link mágico", () => {
+  test("a página indica que o código entra primeiro na Shopify", async ({ page }) => {
+    await page.goto("/expedicao");
+    await expect(page.getByText(/Marcar como cumprida/)).toBeVisible();
+    await expect(page.getByText(/Usa este formulário apenas para reenviar/)).toBeVisible();
+  });
+
+  test("o webhook de fulfillment é fail-closed", async ({ request }) => {
+    const endpoint = "/api/webhooks/shopify/orders-fulfilled";
+    expect((await request.get(endpoint)).status()).toBe(405);
+    expect((await request.post(endpoint, { data: {} })).status()).toBe(401);
+  });
+
   test("a página interna regista o tracking e mostra o link enviado", async ({ page }) => {
     let sentToken = "";
     await page.route("**/api/orders/tracking", async (route) => {

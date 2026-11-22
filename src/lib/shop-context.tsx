@@ -69,7 +69,6 @@ type ShopContextValue = {
 };
 
 const LANGUAGE_KEY = "uffa-language";
-const THEME_KEY = "uffa-theme";
 const CART_KEY = "uffa-cart";
 const WISHLIST_KEY = "uffa-wishlist";
 const LANGUAGES: Language[] = ["pt", "en", "es"];
@@ -84,10 +83,6 @@ const ShopContext = createContext<ShopContextValue | null>(null);
 
 function isLanguage(value: string | null): value is Language {
   return value !== null && LANGUAGES.includes(value as Language);
-}
-
-function isTheme(value: string | null): value is "light" | "dark" {
-  return value === "light" || value === "dark";
 }
 
 function isCartItem(value: unknown): value is CartItem {
@@ -140,7 +135,10 @@ export function ShopProvider({
   initialCatalog?: Product[];
 }) {
   const [language, setLanguageState] = useState<Language>("pt");
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  // Black Friday 2026: a loja abre sempre escura, independentemente de uma
+  // preferência antiga guardada no browser. O botão do cabeçalho continua a
+  // permitir alternar durante a sessão.
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [coupon, setCoupon] = useState<Coupon | null>(null);
@@ -169,9 +167,7 @@ export function ShopProvider({
 
   useEffect(() => {
     const savedLanguage = readStorage("local", LANGUAGE_KEY);
-    const savedTheme = readStorage("local", THEME_KEY);
     if (isLanguage(savedLanguage)) setLanguageState(savedLanguage);
-    if (isTheme(savedTheme)) setTheme(savedTheme);
     setCart(readCart());
     setWishlist(readWishlist());
     setReady(true);
@@ -191,7 +187,7 @@ export function ShopProvider({
   useEffect(() => {
     if (!ready) return;
     document.documentElement.classList.toggle("dark", theme === "dark");
-    writeStorage("local", THEME_KEY, theme);
+    document.documentElement.style.colorScheme = theme;
   }, [theme, ready]);
 
   useEffect(() => {

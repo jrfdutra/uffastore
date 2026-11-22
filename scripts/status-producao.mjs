@@ -2,7 +2,13 @@ import { readFile } from "node:fs/promises";
 import { createHmac } from "node:crypto";
 
 const SITE = process.env.SITE_URL || "https://www.uffastore.pt";
-const WEBHOOK_URL = `${SITE}/api/webhooks/shopify/orders-paid`;
+const WEBHOOKS = [
+  { topic: "ORDERS_PAID", path: "/api/webhooks/shopify/orders-paid" },
+  { topic: "ORDERS_FULFILLED", path: "/api/webhooks/shopify/orders-fulfilled" },
+  { topic: "ORDERS_UPDATED", path: "/api/webhooks/shopify/orders-fulfilled" },
+].map((webhook) => ({ ...webhook, url: `${SITE}${webhook.path}` }));
+const ENDPOINTS = [...new Set(WEBHOOKS.map((webhook) => webhook.url))];
+const WEBHOOK_URL = WEBHOOKS[0].url;
 const SEND_REAL = process.argv.includes("--send");
 
 let envRaw = "";
@@ -31,10 +37,12 @@ try {
   });
   const json = await res.json();
   if (json.errors) throw new Error(JSON.stringify(json.errors));
-  const hooks = json.data.webhookSubscriptions.nodes.filter((h) => h.topic === "ORDERS_PAID");
-  const match = hooks.find((h) => h.uri === WEBHOOK_URL);
-  if (match) ok("Shopify: webhook orders/paid registado", match.uri);
-  else fail("Shopify: webhook orders/paid em falta", JSON.stringify(hooks));
+  const hooks = json.data.webhookSubscriptions.nodes;
+  for (const webhook of WEBHOOKS) {
+    const match = hooks.find((h) => h.topic === webhook.topic && h.uri === webhook.url);
+    if (match) ok(`Shopify: webhook ${webhook.topic.toLowerCase()} registado`, match.uri);
+    else fail(`Shopify: webhook ${webhook.topic.toLowerCase()} em falta`, webhook.url);
+  }
 } catch (err) {
   fail("Shopify: não foi possível verificar", err.message);
 }
@@ -60,17 +68,20 @@ if (!resendKey) {
   }
 }
 
-// 3) Produção: endpoint protegido
-try {
-  const getRes = await fetch(WEBHOOK_URL, { method: "GET" });
-  if (getRes.status === 405) ok("Produção: endpoint ativo (GET 405)");
-  else fail("Produção: GET inesperado", String(getRes.status));
+// 3) Produção: endpoints protegidos
+for (const url of ENDPOINTS) {
+  const path = new URL(url).pathname;
+  try {
+    const getRes = await fetch(url, { method: "GET" });
+    if (getRes.status === 405) ok(`Produção: ${path} ativo (GET 405)`);
+    else fail(`Produção: ${path} GET inesperado`, String(getRes.status));
 
-  const postRes = await fetch(WEBHOOK_URL, { method: "POST", body: "{}" });
-  if (postRes.status === 401) ok("Produção: rejeita pedidos sem assinatura (401)");
-  else fail("Produção: devia devolver 401 sem assinatura", String(postRes.status));
-} catch (err) {
-  fail("Produção: endpoint inacessível", err.message);
+    const postRes = await fetch(url, { method: "POST", body: "{}" });
+    if (postRes.status === 401) ok(`Produção: ${path} rejeita sem assinatura (401)`);
+    else fail(`Produção: ${path} devia devolver 401`, String(postRes.status));
+  } catch (err) {
+    fail(`Produção: ${path} inacessível`, err.message);
+  }
 }
 
 // 4) Segredo real configurado em produção?
@@ -110,6 +121,31 @@ if (!prodSecret) {
   } else {
     fail("Produção: resposta inesperada", `${res.status} ${text.slice(0, 160)}`);
   }
+
+  // O fulfillment não envia nada sem código; serve só para provar a assinatura.
+  const fulfillmentPayload = JSON.stringify({ name: "#STATUS", fulfillments: [] });
+  const fulfillmentHmac = createHmac("sha256", prodSecret)
+    .update(fulfillmentPayload, "utf8")
+    .digest("base64");
+  const fulfillmentRes = await fetch(WEBHOOKS[1].url, {
+    method: "POST",
+    body: fulfillmentPayload,
+    headers: {
+      "Content-Type": "application/json",
+      "X-Shopify-Hmac-Sha256": fulfillmentHmac,
+      "X-Shopify-Topic": "orders/fulfilled",
+      "X-Shopify-Shop-Domain": "uffastore.myshopify.com",
+      "X-Shopify-Webhook-Id": `status-fulfillment-${Date.now()}`,
+    },
+  });
+  const fulfillmentText = await fulfillmentRes.text();
+  if (fulfillmentRes.status === 200) ok("Produção: assinatura do fulfillment aceite");
+  else if (fulfillmentRes.status === 401) fail("Produção: fulfillment com segredo errado (401)");
+  else
+    fail(
+      "Produção: fulfillment inesperado",
+      `${fulfillmentRes.status} ${fulfillmentText.slice(0, 160)}`,
+    );
 }
 
 // 5) Vercel: não verificável sem token

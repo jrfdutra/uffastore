@@ -3,6 +3,8 @@ import { createHmac } from "node:crypto";
 import test from "node:test";
 
 import {
+  FULFILLMENT_WEBHOOK_TOPIC,
+  ORDER_UPDATED_TOPIC,
   MAX_BODY_BYTES,
   WebhookDeduplicator,
   isExpectedShop,
@@ -115,8 +117,17 @@ test("Tópico: só orders/paid é aceite", () => {
   assert.equal(isExpectedTopic(" orders/paid "), true);
   assert.equal(isExpectedTopic("orders/create"), false);
   assert.equal(isExpectedTopic("orders/cancelled"), false);
+  assert.equal(isExpectedTopic("orders/fulfilled"), false);
   assert.equal(isExpectedTopic(null), false);
   assert.equal(isExpectedTopic(""), false);
+});
+
+test("Tópico: o endpoint de expedição aceita orders/fulfilled e orders/updated", () => {
+  assert.equal(isExpectedTopic("orders/fulfilled", FULFILLMENT_WEBHOOK_TOPIC), true);
+  assert.equal(isExpectedTopic("ORDERS/FULFILLED", FULFILLMENT_WEBHOOK_TOPIC), true);
+  assert.equal(isExpectedTopic("orders/paid", FULFILLMENT_WEBHOOK_TOPIC), false);
+  assert.equal(isExpectedTopic("orders/updated", ORDER_UPDATED_TOPIC), true);
+  assert.equal(isExpectedTopic("orders/fulfilled", ORDER_UPDATED_TOPIC), false);
 });
 
 test("Loja: só a loja configurada é aceite", () => {

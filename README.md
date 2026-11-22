@@ -46,6 +46,12 @@ Quando a Shopify confirma o pagamento, envia um webhook para
 o tópico `orders/paid`, evita eventos duplicados e envia o e-mail de confirmação de
 encomenda por Resend.
 
+Quando a encomenda é marcada como enviada **com código de rastreio**, a Shopify envia
+`POST /api/webhooks/shopify/orders-fulfilled`. O mesmo endpoint aceita `orders/updated`,
+que cobre o código adicionado ou alterado depois do cumprimento. Em ambos os casos
+gera o link mágico e envia o e-mail de expedição automaticamente — não é preciso
+preencher `/expedicao`.
+
 | Variável                 | Obrigatória | Descrição                                                                           |
 | ------------------------ | ----------- | ----------------------------------------------------------------------------------- |
 | `SHOPIFY_WEBHOOK_SECRET` | Sim         | _Signing secret_ do webhook em Shopify Admin → Definições → Notificações → Webhooks |
@@ -63,9 +69,13 @@ node scripts/test-webhook.mjs --real   # inclui um envio real e prova de replay
 
 ### Registo de envio e link mágico
 
-A equipa regista o código de rastreio em `/expedicao` (página interna, não indexada).
-O servidor cria um link assinado, envia-o por Resend e o cliente abre
-`/rastreio?token=...` com o estado do envio e o atalho para o CTT.
+**Caminho normal (automático):** Shopify Admin → **Encomendas** → abrir a encomenda →
+**Marcar como cumprida** → preencher **Número de rastreio** e transportador → **Cumprir**.
+O webhook `orders/fulfilled` trata do resto.
+
+**Fallback manual:** `/expedicao` (página interna, não indexada) continua disponível
+para reenviar ou corrigir um envio. O servidor cria um link assinado, envia-o por
+Resend e o cliente abre `/rastreio?token=...` com o estado do envio e o atalho para o CTT.
 
 | Variável                 | Obrigatória | Descrição                                                   |
 | ------------------------ | ----------- | ----------------------------------------------------------- |
@@ -74,8 +84,9 @@ O servidor cria um link assinado, envia-o por Resend e o cliente abre
 | `PUBLIC_SITE_URL`        | Não         | URL pública para os links; por omissão é inferido do pedido |
 | `TRACKING_LINK_TTL_DAYS` | Não         | Validade dos links, de 1 a 30 dias (por omissão 14)         |
 
-Sem `ORDER_PORTAL_SECRET` ou `TRACKING_ADMIN_TOKEN`, o endpoint de tracking rejeita
-todos os pedidos (fail-closed).
+Sem `ORDER_PORTAL_SECRET`, os links não são criados (fail-closed). Sem
+`TRACKING_ADMIN_TOKEN`, apenas o formulário manual `/expedicao` é bloqueado; o
+webhook automático continua a funcionar.
 
 ### Pesquisa de satisfação 8 dias após a compra
 
@@ -141,7 +152,7 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 - Rastreio simples em `/rastreio`: número de rastreio + e-mail e botão direto para o CTT; em recolhas, mostra o local escolhido. A vista detalhada do envio (transportador, previsão e CTT) continua disponível pelo link mágico enviado por e-mail.
 - Formulário de apoio em `/ajuda` com fotografia obrigatória em casos de troca ou defeito, enviada por e-mail ao apoio.
 - Aviso de versão demo no primeiro acesso de cada sessão, em PT/EN/ES.
-- Textos em PT/EN/ES, tema claro/escuro e layout mobile-first.
+- Textos em PT/EN/ES, tema claro/escuro com arranque escuro na Black Friday e layout mobile-first.
 
 ## Rotas
 
@@ -153,7 +164,7 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 | `/checkout`                     | Checkout, entrega e pagamento no checkout Shopify.                    |
 | `/confirmacao?order=UFFA-XXXXX` | Confirmação demo com código exclusivo e próximos passos.              |
 | `/rastreio`                     | Localizador simples (2 dados + CTT); vista detalhada via link mágico. |
-| `/expedicao`                    | Registo interno de envio (não indexado).                              |
+| `/expedicao`                    | Registo interno de envio (fallback manual, não indexado).             |
 | `/avaliar?token=…`              | Pesquisa de satisfação da encomenda (não indexada).                   |
 | `/favoritos`                    | Lista de desejos persistente.                                         |
 | `/ajuda`                        | Perguntas frequentes, contactos e formulário com foto.                |
