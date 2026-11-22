@@ -40,12 +40,12 @@ function TermsPage() {
           ),
         },
         {
-          heading: "2. Produtos e autenticidade",
+          heading: "2. Produtos",
           body: (
             <p>
-              Vendemos sapatilhas verificadas e autenticadas pela Uffa Store. As fotografias e
-              descrições são meramente ilustrativas; pequenas variações de cor ou acabamento podem
-              ocorrer. O stock é atualizado regularmente, mas pode haver indisponibilidade pontual.
+              Vendemos sapatilhas selecionadas pela Uffa Store. As fotografias e descrições são
+              meramente ilustrativas; pequenas variações de cor ou acabamento podem ocorrer. O stock
+              é atualizado regularmente, mas pode haver indisponibilidade pontual.
             </p>
           ),
         },

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, LockKeyhole, PackageSearch, ShieldCheck } from "lucide-react";
+import { ArrowRight, LockKeyhole, Mail, PackageSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { tr } from "@/lib/i18n";
 import { useShop } from "@/lib/shop-context";
@@ -37,20 +37,6 @@ export function OrderPortalPromo() {
                 <ArrowRight />
               </Link>
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="rounded-none border-background/30 bg-transparent text-background hover:bg-background/10 hover:text-background"
-            >
-              <Link to="/verificar">
-                {tr(
-                  language,
-                  "Verificar autenticidade",
-                  "Verify authenticity",
-                  "Verificar autenticidad",
-                )}
-              </Link>
-            </Button>
           </div>
         </div>
 
@@ -70,21 +56,16 @@ export function OrderPortalPromo() {
             </p>
           </div>
           <div className="p-8 md:p-10">
-            <ShieldCheck className="size-7 text-primary" />
+            <Mail className="size-7 text-primary" />
             <h3 className="mt-4 font-display text-2xl uppercase">
-              {tr(
-                language,
-                "Prova de autenticidade",
-                "Proof of authenticity",
-                "Prueba de autenticidad",
-              )}
+              {tr(language, "Precisas de ajuda?", "Need help?", "¿Necesitas ayuda?")}
             </h3>
             <p className="mt-2 text-sm text-background/60">
               {tr(
                 language,
-                "Cada par tem um código único, verificável e privado.",
-                "Every pair has a unique, verifiable and private code.",
-                "Cada par tiene un código único, verificable y privado.",
+                "Fala com a equipa UFFA sobre prazos, recolhas ou qualquer detalhe da tua encomenda.",
+                "Talk to the UFFA team about timings, pickups or any detail of your order.",
+                "Habla con el equipo UFFA sobre plazos, recogidas o cualquier detalle de tu pedido.",
               )}
             </p>
           </div>

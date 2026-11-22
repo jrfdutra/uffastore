@@ -111,7 +111,7 @@
 | API GitHub proteção/segurança | 401 sem autenticação → verificar manualmente |
 | Headers de produção | HSTS, `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`; **sem CSP** |
 | Redirect `http(s)://uffastore.pt/` | 308 → `https://www.uffastore.pt/` |
-| Rotas diretas | `/produto/...`, `/catalogo`, `/checkout`, `/favoritos`, `/rastreio`, `/verificar`, `/ajuda` → 200 |
+| Rotas diretas | `/produto/...`, `/catalogo`, `/checkout`, `/favoritos`, `/rastreio`, `/ajuda` → 200 |
 | `robots.txt` / `sitemap.xml` | `robots.txt` 200 (sem `Sitemap:`); `sitemap.xml` 404 |
 | `/operacoes` / `/manual` | 200 (públicos) |
 | Lighthouse `/` e `/catalogo` | A11y 0.92, Best Practices 1.00, SEO 1.00; falhas `color-contrast` e `target-size` |

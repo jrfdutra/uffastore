@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import {
@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   Clock3,
   Copy,
-  ExternalLink,
   Hand,
   LockKeyhole,
   LogOut,
@@ -145,11 +144,9 @@ function AccessLanding({
   onUnlock: (order: Order) => void;
 }) {
   const { language } = useShop();
-  const navigate = useNavigate();
   const [orderNumber, setOrderNumber] = useState(initialOrder);
   const [contact, setContact] = useState("");
   const [accessCode, setAccessCode] = useState("");
-  const [pairCode, setPairCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -219,13 +216,6 @@ function AccessLanding({
     setError(null);
   };
 
-  const openPairStatus = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const value = pairCode.trim();
-    if (!value) return;
-    void navigate({ to: "/verificar", search: { codigo: value } });
-  };
-
   const steps = [
     {
       icon: Package,
@@ -249,22 +239,6 @@ function AccessLanding({
         "Consulta el estado, el transportista, el seguimiento y la previsión.",
       ),
     },
-    {
-      icon: ShieldCheck,
-      number: "03",
-      title: tr(
-        language,
-        "Valida a autenticidade",
-        "Verify authenticity",
-        "Verifica la autenticidad",
-      ),
-      text: tr(
-        language,
-        "Cada par tem um código único que confirma a autenticidade UFFA.",
-        "Each pair has a unique code that confirms UFFA authenticity.",
-        "Cada par tiene un código único que confirma la autenticidad UFFA.",
-      ),
-    },
   ];
 
   return (
@@ -286,9 +260,9 @@ function AccessLanding({
             <p className="mt-5 max-w-2xl text-background/70">
               {tr(
                 language,
-                "O teu par, do checkout à porta. Entra com os três dados exclusivos da tua compra para acompanhar o envio, gerir a recolha e validar a autenticidade.",
-                "Your pair, from checkout to your door. Sign in with the three exclusive details from your purchase to track shipping, manage pickup and verify authenticity.",
-                "Tu par, del checkout a la puerta. Entra con los tres datos exclusivos de tu compra para seguir el envío, gestionar la recogida y verificar la autenticidad.",
+                "O teu par, do checkout à porta. Entra com os três dados exclusivos da tua compra para acompanhar o envio e gerir a recolha.",
+                "Your pair, from checkout to your door. Sign in with the three exclusive details from your purchase to track shipping and manage pickup.",
+                "Tu par, del checkout a la puerta. Entra con los tres datos exclusivos de tu compra para seguir el envío y gestionar la recogida.",
               )}
             </p>
             <div className="mt-7 flex flex-wrap gap-2 text-[11px] font-bold uppercase">
@@ -299,10 +273,6 @@ function AccessLanding({
               <span className="flex items-center gap-2 border border-background/20 px-3 py-2">
                 <Truck className="size-4 text-primary" />
                 {tr(language, "Estado de envio", "Shipping status", "Estado del envío")}
-              </span>
-              <span className="flex items-center gap-2 border border-background/20 px-3 py-2">
-                <ShieldCheck className="size-4 text-primary" />
-                {tr(language, "Autenticidade", "Authenticity", "Autenticidad")}
               </span>
             </div>
           </div>
@@ -533,47 +503,6 @@ function AccessLanding({
               </ol>
             </div>
 
-            <div className="border border-border bg-card p-6">
-              <p className="flex items-center gap-2 text-xs font-bold uppercase text-primary">
-                <ShieldCheck className="size-4" />
-                {tr(language, "Consulta rápida", "Quick lookup", "Consulta rápida")}
-              </p>
-              <h2 className="mt-3 font-display text-3xl uppercase">
-                {tr(
-                  language,
-                  "Só tens o código do par?",
-                  "Only have the pair code?",
-                  "¿Solo tienes el código del par?",
-                )}
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {tr(
-                  language,
-                  "Não precisas do número da encomenda nem do contacto. Introduz o código do par para ver a autenticidade e a situação da entrega.",
-                  "You don't need the order number or contact. Enter the pair code to see authenticity and the delivery status.",
-                  "No necesitas el número del pedido ni el contacto. Introduce el código del par para ver la autenticidad y el estado de la entrega.",
-                )}
-              </p>
-              <form onSubmit={openPairStatus} className="mt-4 space-y-2">
-                <Label htmlFor="pair-code">
-                  {tr(language, "Código do par", "Pair code", "Código del par")}
-                </Label>
-                <Input
-                  id="pair-code"
-                  value={pairCode}
-                  onChange={(event) => setPairCode(event.target.value)}
-                  placeholder="UFFA-XXXXXX"
-                  autoComplete="off"
-                  spellCheck={false}
-                  className="h-12 rounded-none font-mono uppercase tracking-wider"
-                />
-                <Button type="submit" variant="outline" className="w-full rounded-none">
-                  {tr(language, "Consultar par", "Check pair", "Consultar par")}
-                  <ArrowRight />
-                </Button>
-              </form>
-            </div>
-
             <div className="border border-dashed border-primary bg-primary/15 p-6">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-xs font-bold uppercase text-primary">
@@ -659,28 +588,7 @@ function AccessLanding({
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-14 md:px-6">
-        <div className="grid gap-3 md:grid-cols-2">
-          <Link
-            to="/verificar"
-            className="group border border-border bg-card p-6 transition hover:border-primary md:p-8"
-          >
-            <ShieldCheck className="size-7 text-primary" />
-            <h2 className="mt-4 font-display text-3xl uppercase">
-              {tr(language, "Verifica o teu par", "Verify your pair", "Verifica tu par")}
-            </h2>
-            <p className="mt-2 max-w-md text-sm text-muted-foreground">
-              {tr(
-                language,
-                "Cada par vendido tem um código único. Confirma a autenticidade e acompanha a situação da entrega.",
-                "Every pair sold has a unique code. Confirm authenticity and follow the delivery status.",
-                "Cada par vendido tiene un código único. Confirma la autenticidad y sigue el estado de la entrega.",
-              )}
-            </p>
-            <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold uppercase text-primary">
-              {tr(language, "Consultar par", "Check pair", "Consultar par")}
-              <ArrowRight className="size-4 transition group-hover:translate-x-1" />
-            </span>
-          </Link>
+        <div className="grid gap-3">
           <a
             href="mailto:atendimento@uffastore.pt?subject=Ajuda%20com%20a%20minha%20encomenda"
             className="group border border-border bg-section p-6 transition hover:border-primary md:p-8"
@@ -770,9 +678,9 @@ function OrderDashboard({
                 <LockKeyhole className="size-4 text-primary" />
                 {tr(
                   language,
-                  "Acesso exclusivo verificado",
+                  "Acesso exclusivo confirmado",
                   "Exclusive access verified",
-                  "Acceso exclusivo verificado",
+                  "Acceso exclusivo confirmado",
                 )}
               </p>
               <Button variant="outline" size="sm" className="rounded-none" onClick={onLogout}>
@@ -1101,11 +1009,11 @@ function ItemsCard({ order }: { order: Order }) {
       </div>
 
       <div className="mt-4">
-        {order.items.map((item) => {
+        {order.items.map((item, index) => {
           const product = catalog.find((candidate) => candidate.id === item.productId);
           return (
             <div
-              key={item.authCode || `${item.productId}-${item.size}`}
+              key={`${item.productId}-${item.size}-${index}`}
               className="grid gap-4 border-b border-border py-5 last:border-b-0 sm:grid-cols-[96px_1fr]"
             >
               {product && (
@@ -1135,46 +1043,6 @@ function ItemsCard({ order }: { order: Order }) {
                   </div>
                   <p className="font-bold">{money(item.unitPrice * item.quantity)}</p>
                 </div>
-
-                <div className="mt-4 flex flex-wrap items-center gap-2 border border-primary/20 bg-primary/15 px-3 py-2">
-                  <ShieldCheck className="size-4 text-primary" />
-                  <span className="text-[10px] font-bold uppercase text-primary">
-                    {tr(language, "Código do par", "Pair code", "Código del par")}
-                  </span>
-                  <code className="font-mono text-xs font-bold">{item.authCode}</code>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-7"
-                    aria-label={tr(language, "Copiar código", "Copy code", "Copiar código")}
-                    onClick={() =>
-                      copyText(
-                        item.authCode,
-                        language,
-                        tr(language, "Código do par", "Pair code", "Código del par"),
-                      )
-                    }
-                  >
-                    <Copy />
-                  </Button>
-                  <Button asChild variant="link" size="sm" className="ml-auto h-auto p-0 text-xs">
-                    <Link to="/verificar" search={{ codigo: item.authCode }}>
-                      {tr(
-                        language,
-                        "Entrega & autenticidade",
-                        "Delivery & authenticity",
-                        "Entrega y autenticidad",
-                      )}
-                      <ExternalLink />
-                    </Link>
-                  </Button>
-                </div>
-
-                <p className="mt-2 text-[11px] text-muted-foreground">
-                  {tr(language, "Nº de série", "Serial no.", "Nº de serie")}:{" "}
-                  <span className="font-mono">{item.serial}</span>
-                </p>
               </div>
             </div>
           );
@@ -1329,9 +1197,9 @@ function ActionCard({ order, onConfirm }: { order: Order; onConfirm: () => void 
         <p className="mt-2 text-sm text-muted-foreground">
           {tr(
             language,
-            "Obrigado pela tua compra. Podes voltar aqui sempre que quiseres para consultar os códigos de autenticidade.",
-            "Thanks for your purchase. You can come back anytime to check the authenticity codes.",
-            "Gracias por tu compra. Puedes volver aquí cuando quieras para consultar los códigos de autenticidad.",
+            "Obrigado pela tua compra. Podes voltar aqui sempre que quiseres para consultar o estado da tua encomenda.",
+            "Thanks for your purchase. You can come back anytime to check your order status.",
+            "Gracias por tu compra. Puedes volver aquí cuando quieras para consultar el estado de tu pedido.",
           )}
         </p>
         <Button asChild variant="outline" className="mt-4 w-full rounded-none">
@@ -1407,9 +1275,9 @@ function HelpCard() {
       <p className="mt-2 text-sm text-muted-foreground">
         {tr(
           language,
-          "Dúvidas sobre prazos, recolhas ou autenticidade? Fala com a equipa UFFA.",
-          "Questions about timings, pickups or authenticity? Talk to the UFFA team.",
-          "¿Dudas sobre plazos, recogidas o autenticidad? Habla con el equipo UFFA.",
+          "Dúvidas sobre prazos ou recolhas? Fala com a equipa UFFA.",
+          "Questions about timings or pickups? Talk to the UFFA team.",
+          "¿Dudas sobre plazos o recogidas? Habla con el equipo UFFA.",
         )}
       </p>
       <a

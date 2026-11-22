@@ -52,9 +52,9 @@ function ManualPage() {
         <p className="mt-4 text-muted-foreground text-base md:text-lg">
           {tr(
             language,
-            "Da descoberta à autenticidade — tudo o que o site faz, ecrã a ecrã, integrado com a Shopify e o Portal de Encomendas.",
-            "From discovery to authenticity — everything the site does, screen by screen, integrated with Shopify and the Order Portal.",
-            "De la descoberta a la autenticidad — todo lo que hace el sitio, pantalla a pantalla, integrado con Shopify.",
+            "Da descoberta à entrega — tudo o que o site faz, ecrã a ecrã, integrado com a Shopify e o Portal de Encomendas.",
+            "From discovery to delivery — everything the site does, screen by screen, integrated with Shopify and the Order Portal.",
+            "De la descoberta a la entrega — todo lo que hace el sitio, pantalla a pantalla, integrado con Shopify.",
           )}
         </p>
       </div>
@@ -67,9 +67,9 @@ function ManualPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             {tr(
               language,
-              "Curadoria rigorosa de 8 pares de sneakers exclusivos no Porto, verificados um a um, com recolha em mão e pós-compra contínuo.",
-              "Rigorous curation of 8 exclusive sneaker pairs in Porto, verified one by one, with hand pickup and continuous post-purchase.",
-              "Curaduría rigurosa de 8 pares de zapatillas exclusivas en Oporto, verificadas una a una.",
+              "Curadoria rigorosa de pares de sneakers exclusivos no Porto, escolhidos um a um, com recolha em mão e pós-compra contínuo.",
+              "Rigorous curation of exclusive sneaker pairs in Porto, chosen one by one, with hand pickup and continuous post-purchase.",
+              "Curaduría rigurosa de pares de zapatillas exclusivas en Oporto, elegidas una a una.",
             )}
           </p>
         </div>
@@ -109,9 +109,9 @@ function ManualPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             {tr(
               language,
-              "Galeria fotográfica, verificação de stock por tamanho (5 pares padrão), códigos de autenticidade integrados e sugestões relacionadas.",
-              "Photo gallery, size stock check (5 default pairs), integrated authenticity codes, and related suggestions.",
-              "Galería de fotos, comprobación de stock por talla, códigos de autenticidad integrados y sugerencias.",
+              "Galeria fotográfica, consulta de stock por tamanho (5 pares padrão), seleção de cor e sugestões relacionadas.",
+              "Photo gallery, size stock check (5 default pairs), colour selection and related suggestions.",
+              "Galería de fotos, consulta de stock por talla, selección de color y sugerencias relacionadas.",
             )}
           </p>
         </div>

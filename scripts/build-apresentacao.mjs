@@ -31,7 +31,7 @@ const W = 13.333;
 const H = 7.5;
 const MX = 0.7;
 const CW = 11.93;
-const TOTAL = 14;
+const TOTAL = 13;
 
 const img = (name) => {
   const crop = path.join(CROPS, name);
@@ -283,7 +283,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     color: C.primary,
     lineSpacingMultiple: 0.88,
   });
-  text(slide, "Do checkout à recolha, com exclusividade verificável.", 0.9, 3.3, 5.9, 0.65, {
+  text(slide, "Do checkout à recolha, com curadoria e presença no Porto.", 0.9, 3.3, 5.9, 0.65, {
     fontSize: 17,
     color: C.cream,
     lineSpacingMultiple: 1.0,
@@ -298,7 +298,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
   });
   text(
     slide,
-    "Uma área de cliente para acompanhar envio ou recolha, confirmar a receção e validar a autenticidade de cada par.",
+    "Uma área de cliente para acompanhar envio ou recolha e confirmar a receção de cada encomenda.",
     0.9,
     4.4,
     5.7,
@@ -347,8 +347,8 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     ],
     [
       "03",
-      "Autenticidade percebida",
-      "O par é exclusivo, mas não existe uma prova verificável para partilhar.",
+      "Curadoria pouco visível",
+      "O par é escolhido ao detalhe, mas a história por trás dessa escolha não aparece.",
     ],
     [
       "04",
@@ -404,7 +404,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     { fontSize: 10, color: C.muted, lineSpacingMultiple: 1.05 },
   );
   slide.addNotes(
-    "Enquadrar a dor: o pós-compra é o momento de maior ansiedade. Hoje há contacto disperso e pouca visibilidade. A autenticidade é percebida, mas não verificável. A operação atualiza estados sem histórico central.",
+    "Enquadrar a dor: o pós-compra é o momento de maior ansiedade. Hoje há contacto disperso e pouca visibilidade. A operação atualiza estados sem histórico central.",
   );
 }
 
@@ -413,7 +413,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 /* ------------------------------------------------------------------ */
 {
   const slide = pptx.addSlide();
-  addHeader(slide, "02 / SOLUÇÃO", "Um portal. Três garantias.", 3);
+  addHeader(slide, "02 / SOLUÇÃO", "Um portal. Duas garantias.", 3);
 
   const rows = [
     [
@@ -423,11 +423,6 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     ],
     [
       "2",
-      "Prova de autenticidade",
-      "Um código único por par, verificável publicamente sem expor o comprador.",
-    ],
-    [
-      "3",
       "Painel de operações",
       "A equipa atualiza estados, rastreio e notas; cada alteração fica registada.",
     ],
@@ -457,7 +452,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
   card(slide, 0.7, 5.65, 11.93, 0.92, C.ink, C.ink);
   text(
     slide,
-    "As três camadas partilham o mesmo modelo de dados — e a mesma linguagem UFFA.",
+    "As duas camadas partilham o mesmo modelo de dados — e a mesma linguagem UFFA.",
     0.95,
     5.88,
     11.4,
@@ -465,7 +460,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     { fontSize: 13, bold: true, color: C.white, align: "center" },
   );
   slide.addNotes(
-    "Apresentar as três camadas: portal do cliente, prova de autenticidade e painel de operações. A ideia-chave é que partilham o mesmo modelo de dados, por isso o cliente e a equipa veem a mesma verdade.",
+    "Apresentar as duas camadas: portal do cliente e painel de operações. A ideia-chave é que partilham o mesmo modelo de dados, por isso o cliente e a equipa veem a mesma verdade.",
   );
 }
 
@@ -478,7 +473,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 
   const steps = [
     ["1", "Compra", "Envio para casa ou recolha gratuita no Porto."],
-    ["2", "Geração", "Número, código exclusivo, autenticidade e rastreio."],
+    ["2", "Geração", "Número, código exclusivo e rastreio."],
     ["3", "Confirmação", "Próximos passos claros e código para guardar."],
     ["4", "Acesso", "Três dados. Sem conta, sem password."],
     ["5", "Acompanhamento", "Estado, histórico e confirmação final."],
@@ -602,7 +597,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     "Previsão e transportador",
     "Código de rastreio copiável",
     "Resumo, data e pagamento",
-    "Itens com autenticidade",
+    "Artigos da encomenda",
   ];
   bullets(slide, items, 8.45, 1.95, 4.2, { gap: 0.62, fontSize: 10.5 });
 
@@ -743,7 +738,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 
   const steps = [
     ["1", "Confirmada", "Pagamento e encomenda registados."],
-    ["2", "Em preparação", "O par é separado e verificado."],
+    ["2", "Em preparação", "O par é separado e conferido."],
     ["3", "Pronta para recolha", "Reservado na loja do Porto."],
     ["4", "Recolhida", "Cliente confirma a recolha."],
   ];
@@ -790,51 +785,11 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 09 — Autenticidade                                                  */
+/* 09 — Operações                                                      */
 /* ------------------------------------------------------------------ */
 {
   const slide = pptx.addSlide();
-  addHeader(slide, "08 / AUTENTICIDADE", "A prova de autenticidade.", 9);
-
-  imageFrame(
-    slide,
-    img("verificar-resultado.png"),
-    0.7,
-    1.85,
-    7.15,
-    3.12,
-    "Certificado válido · /verificar",
-  );
-  text(
-    slide,
-    "A verificação nunca revela nome, contacto ou morada do comprador.",
-    0.7,
-    5.25,
-    7.15,
-    0.3,
-    { fontSize: 9, color: C.muted },
-  );
-
-  const items = [
-    "Código gerado no checkout, único por linha",
-    "Formato UFFA-AUTH-XXXX-XXXX",
-    "Validação pública em /verificar",
-    "Produto, tamanho, série, edição e data",
-  ];
-  bullets(slide, items, 8.15, 1.95, 4.5, { gap: 0.66, fontSize: 10 });
-
-  imageFrame(slide, img("verificar-invalido.png"), 8.15, 5.25, 4.5, 0.96);
-  slide.addNotes(
-    "Explicar que cada par tem um código e um número de série. A verificação é pública e não revela dados pessoais. Mostrar o resultado válido e o inválido. É a mesma lógica de certificação do OrbitTrack, adaptada a sneakers.",
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 10 — Operações                                                      */
-/* ------------------------------------------------------------------ */
-{
-  const slide = pptx.addSlide();
-  addHeader(slide, "09 / OPERAÇÕES", "Gerir sem folhas de cálculo.", 10);
+  addHeader(slide, "08 / OPERAÇÕES", "Gerir sem folhas de cálculo.", 9);
 
   imageFrame(
     slide,
@@ -873,11 +828,11 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 11 — Mobile                                                         */
+/* 10 — Mobile                                                         */
 /* ------------------------------------------------------------------ */
 {
   const slide = pptx.addSlide();
-  addHeader(slide, "10 / MOBILE", "A mesma experiência, no bolso.", 11);
+  addHeader(slide, "09 / MOBILE", "A mesma experiência, no bolso.", 10);
 
   imageFrame(slide, img("rastreio-mobile-topo.png"), 0.8, 1.8, 2.55, 5.1);
   imageFrame(slide, img("rastreio-mobile-itens.png"), 3.55, 1.8, 2.25, 5.1);
@@ -907,11 +862,11 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 12 — Arquitetura                                                    */
+/* 11 — Arquitetura                                                    */
 /* ------------------------------------------------------------------ */
 {
   const slide = pptx.addSlide();
-  addHeader(slide, "11 / ARQUITETURA", "Simples na demo, pronto para produção.", 12);
+  addHeader(slide, "10 / ARQUITETURA", "Simples na demo, pronto para produção.", 11);
 
   card(slide, 0.7, 1.85, 5.35, 3.95);
   text(slide, "DEMONSTRAÇÃO", 0.95, 2.05, 3.5, 0.22, {
@@ -986,11 +941,11 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 13 — Segurança                                                      */
+/* 12 — Segurança                                                      */
 /* ------------------------------------------------------------------ */
 {
   const slide = pptx.addSlide();
-  addHeader(slide, "12 / SEGURANÇA", "Do protótipo ao serviço.", 13);
+  addHeader(slide, "11 / SEGURANÇA", "Do protótipo ao serviço.", 12);
 
   const items = [
     "Backend e base de dados",
@@ -1026,8 +981,8 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     text(slide, item, 1.15, y, 5.4, 0.3, { fontSize: 10.5 });
   });
 
-  imageFrame(slide, img("verificar-invalido.png"), 6.95, 1.85, 5.6, 1.2);
-  imageFrame(slide, img("verificar-resultado.png"), 6.95, 3.55, 5.6, 2.45);
+  imageFrame(slide, img("07-rastreio-acesso.png"), 6.95, 1.85, 5.6, 2.5, "Acesso ao portal");
+  imageFrame(slide, img("13-operacoes-painel.png"), 6.95, 4.55, 5.6, 1.45, "Painel interno");
 
   card(slide, 0.7, 6.05, 5.9, 0.58, C.ink, C.ink);
   text(slide, "Segurança não muda a experiência. Muda a confiança.", 0.95, 6.18, 5.4, 0.3, {
@@ -1037,12 +992,12 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     align: "center",
   });
   slide.addNotes(
-    "Percorrer o checklist de produção. A demo prova a experiência; o trabalho crítico é segurança: validação no servidor, códigos em hash, limites de tentativas, autenticação da equipa, auditoria e RGPD.",
+    "Percorrer o checklist de produção. A demo prova a experiência; o trabalho crítico é segurança: validação no servidor, códigos em hash, limites de tentativas, acesso da equipa, auditoria e RGPD.",
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 14 — Fecho                                                          */
+/* 13 — Fecho                                                          */
 /* ------------------------------------------------------------------ */
 {
   const slide = pptx.addSlide();
@@ -1072,15 +1027,11 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     color: C.primary,
     lineSpacingMultiple: 0.88,
   });
-  text(
-    slide,
-    "Um portal próprio. Uma prova de autenticidade. Uma operação mais próxima.",
-    0.9,
-    3.45,
-    5.3,
-    0.9,
-    { fontSize: 14, color: "D8CECA", lineSpacingMultiple: 1.05 },
-  );
+  text(slide, "Um portal próprio. Uma operação mais próxima.", 0.9, 3.45, 5.3, 0.9, {
+    fontSize: 14,
+    color: "D8CECA",
+    lineSpacingMultiple: 1.05,
+  });
 
   card(slide, 7.4, 1.1, 5.2, 4.55, C.white, C.white);
   text(slide, "ACESSO DEMO", 7.7, 1.35, 3.0, 0.22, {

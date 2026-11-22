@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
-import { BadgeCheck, Hand, Play, Rotate3D } from "lucide-react";
+import { Hand, PackageCheck, Play, Rotate3D } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { VerifiedBadge } from "@/components/verified-badge";
 import {
   categoryNames,
   copy,
@@ -42,12 +41,12 @@ export const Route = createFileRoute("/produto/$productId")({
       { title: `${loaderData?.name ?? "Produto"} — Uffa Store` },
       {
         name: "description",
-        content: loaderData?.description.pt ?? "Sneaker verificado pela Uffa Store.",
+        content: loaderData?.description.pt ?? "Sneaker selecionado pela Uffa Store.",
       },
       { property: "og:title", content: `${loaderData?.name ?? "Produto"} — Uffa Store` },
       {
         property: "og:description",
-        content: loaderData?.description.pt ?? "Sneaker verificado pela Uffa Store.",
+        content: loaderData?.description.pt ?? "Sneaker selecionado pela Uffa Store.",
       },
       { property: "og:type", content: "product" },
       { property: "og:image", content: loaderData?.image ?? "" },
@@ -303,7 +302,6 @@ function ProductDetail() {
                   {tr(s.language, "BLACK FRIDAY", "BLACK FRIDAY", "BLACK FRIDAY")}
                 </span>
               )}
-              <VerifiedBadge />
             </div>
           </div>
           {isInactive && (
@@ -547,13 +545,13 @@ function ProductDetail() {
           </Button>
           <div className="mt-7 grid grid-cols-2 gap-3 text-xs">
             <div className="flex gap-3 border border-border p-4">
-              <BadgeCheck className="size-5 text-primary" />
+              <PackageCheck className="size-5 text-primary" />
               <span>
                 {s.language === "pt"
-                  ? "Autenticidade verificada"
+                  ? "Escolha Uffa"
                   : s.language === "es"
-                    ? "Autenticidad verificada"
-                    : "Authenticity verified"}
+                    ? "Selección Uffa"
+                    : "Uffa selection"}
               </span>
             </div>
             <div className="flex gap-3 border border-border p-4">

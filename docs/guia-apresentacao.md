@@ -18,20 +18,20 @@ Documento de apoio à apresentação `docs/apresentacao-uffa.pptx` e à demonstr
 
 ## 2. Mensagem central
 
-> **O par não desaparece depois do checkout.** O cliente passa a ter um portal exclusivo para acompanhar o envio ou a recolha, confirmar a receção e validar a autenticidade de cada par. A equipa passa a ter um painel simples para gerir estados e comunicar proativamente.
+> **O par não desaparece depois do checkout.** O cliente passa a ter um portal exclusivo para acompanhar o envio ou a recolha e confirmar a receção. A equipa passa a ter um painel simples para gerir estados e comunicar proativamente.
 
 Três ideias a repetir:
 
 1. **Exclusividade** — o acesso exige três dados que só o comprador conhece.
 2. **Transparência** — estado, transportador, rastreio, previsão e histórico num só lugar.
-3. **Confiança** — cada par tem um código de autenticidade verificável, sem expor dados pessoais.
+3. **Confiança** — informação clara sobre a entrega, sem expor dados pessoais.
 
 ## 3. Guião slide a slide
 
 ### Slide 1 — Capa
 
 **Título:** Portal de Encomendas UFFA  
-**Subtítulo:** Do checkout à recolha, com exclusividade verificável.  
+**Subtítulo:** Do checkout à recolha, com acompanhamento exclusivo.  
 **Visual:** hero da home em fundo escuro, marca UFFA e data.
 
 **Notas do orador:**
@@ -49,33 +49,32 @@ Três ideias a repetir:
 
 - Falta de visibilidade sobre o estado real do envio ou da recolha.
 - Contacto disperso por email, DM e telefone.
-- Incerteza sobre autenticidade e exclusividade do par.
+- Dúvidas sobre a disponibilidade do par e o momento da recolha.
 - A equipa atualiza estados manualmente, sem histórico central.
 
 **Visual:** bloco “O teu par não desaparece” da home.
 
 **Notas do orador:**
 
-> “Hoje o momento de maior ansiedade é entre o pagamento e a entrega. O cliente não sabe se o par saiu, onde está ou quando chega. Na recolha, a dúvida é se já está disponível. E a autenticidade é muitas vezes percebida, mas não verificável. Isto gera contactos repetidos e afasta o cliente da marca.”
+> “Hoje o momento de maior ansiedade é entre o pagamento e a entrega. O cliente não sabe se o par saiu, onde está ou quando chega. Na recolha, a dúvida é se já está disponível. Isto gera contactos repetidos e afasta o cliente da marca.”
 
-**Transição:** “A resposta são três camadas simples.”
+**Transição:** “A resposta são duas camadas simples.”
 
 ---
 
-### Slide 3 — A solução em três camadas
+### Slide 3 — A solução em duas camadas
 
-**Título:** Um portal. Três garantias.  
+**Título:** Um portal. Duas garantias.  
 **Colunas:**
 
 1. **Portal do cliente** — estado, rastreio, previsão e confirmação.
-2. **Prova de autenticidade** — um código único por par, verificável.
-3. **Operações** — painel interno para atualizar e auditar.
+2. **Operações** — painel interno para atualizar e auditar.
 
-**Visual:** dashboard de envio + certificado + painel de operações em três cartões.
+**Visual:** dashboard de envio + painel de operações em dois cartões.
 
 **Notas do orador:**
 
-> “Primeiro, o cliente entra num portal e vê tudo. Segundo, cada par tem um código que pode ser validado por qualquer pessoa, sem revelar quem comprou. Terceiro, a equipa tem um painel para atualizar o estado e deixar rasto. As três camadas partilham o mesmo modelo de dados.”
+> “Primeiro, o cliente entra num portal e vê tudo. Segundo, a equipa tem um painel para atualizar o estado e deixar rasto. As duas camadas partilham o mesmo modelo de dados.”
 
 **Transição:** “Vejamos a jornada completa.”
 
@@ -87,7 +86,7 @@ Três ideias a repetir:
 **Passos:**
 
 1. Compra e escolha de envio ou recolha.
-2. Geração de número, código exclusivo, códigos de autenticidade e rastreio.
+2. Geração de número, código exclusivo e rastreio.
 3. Confirmação com próximos passos.
 4. Entrada no portal.
 5. Acompanhamento e confirmação final.
@@ -96,7 +95,7 @@ Três ideias a repetir:
 
 **Notas do orador:**
 
-> “Na demonstração, a encomenda gera o número, o código exclusivo, um código de autenticidade por par e o rastreio inicial. A página de confirmação explica ao cliente o que guardar e o que fazer a seguir. Não há criação de conta: o código exclusivo é a chave. Numa encomenda Shopify, a referência e a confirmação vêm da Shopify.”
+> “Na demonstração, a encomenda gera o número, o código exclusivo e o rastreio inicial. A página de confirmação explica ao cliente o que guardar e o que fazer a seguir. Não há criação de conta: o código exclusivo é a chave. Numa encomenda Shopify, a referência e a confirmação vêm da Shopify.”
 
 **Transição:** “Esse código é o centro do modelo de acesso.”
 
@@ -131,14 +130,14 @@ Três ideias a repetir:
 - Estado atual e linha temporal.
 - Detalhes de entrega: previsão, transportador e rastreio.
 - Resumo de valores e dados da encomenda.
-- Itens com código de autenticidade.
+- Itens da encomenda.
 - Ação de confirmação de receção.
 
 **Visual:** dashboard de envio completo (topo + detalhes).
 
 **Notas do orador:**
 
-> “Este é o ecrã principal. O cliente vê imediatamente em que fase está, o histórico, a previsão, o transportador e o código de rastreio. Ao lado tem o resumo e os dados de entrega. Em baixo, cada par tem o seu código de autenticidade. Quando a encomenda chega, pode confirmar a receção e fechar o processo.”
+> “Este é o ecrã principal. O cliente vê imediatamente em que fase está, o histórico, a previsão, o transportador e o código de rastreio. Ao lado tem o resumo e os dados de entrega. Em baixo, os pares incluídos na encomenda. Quando a encomenda chega, pode confirmar a receção e fechar o processo.”
 
 **Transição:** “O fluxo de envio tem cinco estados.”
 
@@ -186,32 +185,11 @@ Três ideias a repetir:
 
 > “Na recolha, o cliente não precisa de rastreio. Precisa de saber se o par está disponível, até quando e onde. O dashboard mostra a morada, a data limite e a nota da loja. Quando chega, confirma a recolha e o estado passa a Recolhida. É o mesmo modelo, adaptado ao contexto da loja física.”
 
-**Transição:** “E a autenticidade?”
-
----
-
-### Slide 9 — Um par, um código
-
-**Título:** A prova de autenticidade.  
-**Pontos:**
-
-- Código gerado com a encomenda, único por linha.
-- Formato `UFFA-AUTH-XXXX-XXXX`.
-- Verificação pública em `/verificar`.
-- Resultado mostra produto, tamanho, série, edição e data.
-- Nunca mostra nome, contacto ou morada.
-
-**Visual:** certificado válido + exemplo inválido.
-
-**Notas do orador:**
-
-> “Cada par recebe um código de autenticidade e um número de série. O cliente pode validá-lo em qualquer momento, até partilhar o link. A página confirma o produto, o tamanho, a edição e a data, mas não revela quem comprou. Se o código não existir, mostramos uma mensagem clara e um contacto. É a mesma lógica de certificação que o OrbitTrack usa, adaptada a sneakers.”
-
 **Transição:** “Do lado da equipa, o processo é simples.”
 
 ---
 
-### Slide 10 — Painel de operações
+### Slide 9 — Painel de operações
 
 **Título:** Gerir sem folhas de cálculo.  
 **Pontos:**
@@ -233,7 +211,7 @@ Três ideias a repetir:
 
 ---
 
-### Slide 11 — Mobile
+### Slide 10 — Mobile
 
 **Título:** A mesma experiência, no bolso.  
 **Pontos:**
@@ -254,7 +232,7 @@ Três ideias a repetir:
 
 ---
 
-### Slide 12 — Arquitetura
+### Slide 11 — Arquitetura
 
 **Título:** Simples na demo, pronto para produção.  
 **Diagrama em duas colunas:**
@@ -264,36 +242,36 @@ Três ideias a repetir:
 
 **Notas do orador:**
 
-> “A demonstração corre no browser, com dados locais. Isso permitiu validar toda a experiência sem infraestrutura. Para produção, o modelo passa para uma API com PostgreSQL e RLS. Os códigos ficam em hash, as sessões são assinadas e as alterações são auditadas. A camada visual mantém-se.”
+> “A demonstração corre no browser, com dados locais. Isso permitiu validar toda a experiência sem infraestrutura. Para produção, o modelo passa para uma API com PostgreSQL e RLS. As credenciais de acesso ficam em hash, as sessões são assinadas e as alterações são auditadas. A camada visual mantém-se.”
 
 **Transição:** “O que falta antes de ir para produção?”
 
 ---
 
-### Slide 13 — Segurança e próximos passos
+### Slide 12 — Segurança e próximos passos
 
 **Título:** Do protótipo ao serviço.  
 **Checklist:**
 
 - Backend e base de dados.
-- Códigos em hash e rate limiting.
+- Credenciais em hash e rate limiting.
 - Autenticação da equipa com roles e MFA.
 - Auditoria imutável.
 - Emails transacionais.
 - Integração com transportador.
 - RGPD e retenção.
 
-**Visual:** captura de código inválido + selo UFFA Verified.
+**Visual:** captura da página de acesso ao portal.
 
 **Notas do orador:**
 
-> “A demo prova a experiência. Para produção, o trabalho crítico é segurança: validação no servidor, códigos em hash, limites de tentativas, autenticação da equipa e auditoria. Depois vêm os emails e a integração com o transportador. Nada disto muda a experiência do cliente; muda a robustez por trás.”
+> “A demo prova a experiência. Para produção, o trabalho crítico é segurança: validação no servidor, credenciais em hash, limites de tentativas, autenticação da equipa e auditoria. Depois vêm os emails e a integração com o transportador. Nada disto muda a experiência do cliente; muda a robustez por trás.”
 
 **Transição:** “Vamos ver isto a funcionar.”
 
 ---
 
-### Slide 14 — Demo e fecho
+### Slide 13 — Demo e fecho
 
 **Título:** O par não desaparece.  
 **Credenciais:**
@@ -304,11 +282,11 @@ Três ideias a repetir:
 
 **Fecho:**
 
-> “Um portal próprio, uma prova de autenticidade e uma operação mais próxima. O cliente sabe onde está o par. A UFFA sabe o que o cliente vê.”
+> “Um portal próprio, acompanhamento claro e uma operação mais próxima. O cliente sabe onde está o par. A UFFA sabe o que o cliente vê.”
 
 **Notas do orador:**
 
-> “Termino com uma frase: o par não desaparece depois do checkout. Fica acompanhado, identificado e verificável. Obrigado. Podemos passar à demonstração.”
+> “Termino com uma frase: o par não desaparece depois do checkout. Fica acompanhado a cada passo. Obrigado. Podemos passar à demonstração.”
 
 ## 4. Guião de demonstração (5–7 minutos)
 
@@ -327,19 +305,18 @@ Três ideias a repetir:
 | 1     | Home → bloco “O teu par não desaparece”  | “O portal é apresentado no momento certo: depois da compra.” |
 | 2     | `/rastreio` → preencher dados demo       | “Três dados. Sem conta, sem password.”                       |
 | 3     | Dashboard                                | “Estado, histórico, previsão, transportador e rastreio.”     |
-| 4     | Rolar até aos itens                      | “Cada par tem o seu código de autenticidade.”                |
-| 5     | Copiar código e abrir `/verificar`       | “Qualquer pessoa pode validar, sem ver dados pessoais.”      |
-| 6     | Voltar ao portal → **Confirmar receção** | “O cliente fecha o processo.”                                |
-| 7     | `/operacoes` → chave demo                | “A equipa vê a fila e os indicadores.”                       |
-| 8     | Selecionar encomenda → avançar estado    | “Uma alteração, um evento no histórico.”                     |
-| 9     | Voltar ao portal e atualizar             | “O cliente vê a mudança em tempo real.”                      |
-| 10    | Abrir em mobile                          | “A mesma experiência no bolso.”                              |
+| 4     | Rolar até aos itens                      | “Os pares incluídos na encomenda e o resumo da entrega.”     |
+| 5     | **Confirmar receção** no portal          | “O cliente fecha o processo.”                                |
+| 6     | `/operacoes` → chave demo                | “A equipa vê a fila e os indicadores.”                       |
+| 7     | Selecionar encomenda → avançar estado    | “Uma alteração, um evento no histórico.”                     |
+| 8     | Voltar ao portal e atualizar             | “O cliente vê a mudança em tempo real.”                      |
+| 9     | Abrir em mobile                          | “A mesma experiência no bolso.”                              |
 
 ### Frases de segurança
 
 - “Isto é uma demonstração local; em produção, a validação passa para o servidor.”
 - “Os dados demo podem ser repostos no painel de operações.”
-- “A autenticidade é pública; os dados do comprador não.”
+- “O portal mostra apenas os dados da encomenda, nunca os de terceiros.”
 
 ## 5. Perguntas frequentes
 
@@ -351,9 +328,6 @@ Não. O acesso usa número, contacto e código exclusivo. Em produção, pode se
 
 **O código exclusivo pode ser partilhado?**  
 Sim, mas dá acesso à encomenda. Por isso é tratado como credencial: pode ser regenerado e o acesso pode ser revogado.
-
-**A verificação de autenticidade expõe o comprador?**  
-Não. Mostra apenas produto, tamanho, série, edição, data e loja emissora.
 
 **Como é feita a atualização do rastreio?**  
 Na demo, manualmente no painel. Em produção, via webhook/API do transportador.

@@ -22,9 +22,9 @@ Documento de apoio à apresentação `docs/apresentacao-site-uffa.pptx` e à dem
 
 Três ideias a repetir:
 
-1. **Curadoria** — oito pares, quatro linhas, todos verificados antes de entrarem.
+1. **Curadoria** — oito pares, quatro linhas, escolhidos um a um antes de entrarem.
 2. **Porto** — recolha gratuita em mãos; a loja física faz parte da experiência digital.
-3. **Continuidade** — portal, autenticidade e operação no mesmo sistema, sem emails soltos.
+3. **Continuidade** — portal e operação no mesmo sistema, sem emails soltos.
 
 ## 2.1 Identidade visual e navegação
 
@@ -46,9 +46,8 @@ Pontos a demonstrar em qualquer ecrã:
 | `/catalogo`               | Filtros por linha, tamanho e preço; pesquisa instantânea.        |
 | `/produto/porto-rose-low` | Galeria 360°, tamanhos com stock e garantias.                    |
 | `/checkout`               | Recolha grátis ou envio: 8,94 € PT Continental/Ilhas, 24 € UE, 34 € Suíça; dados e pagamento no checkout Shopify. |
-| `/confirmacao`            | Número, código exclusivo, rastreio e códigos de autenticidade.   |
+| `/confirmacao`            | Número, código exclusivo e rastreio.                             |
 | `/rastreio`               | Acesso por três fatores, estado, timeline e confirmação.         |
-| `/verificar`              | Certificado válido e exemplo de código inválido.                 |
 | `/operacoes`              | Fila, indicadores, edição de estado e nota pública.              |
 
 ### Credenciais demo
@@ -59,12 +58,6 @@ Pontos a demonstrar em qualquer ecrã:
 | `UFFA-73104` | `demo@uffa.pt` | `UFFA-2P8N-5RV6` | Pronta para recolha |
 
 Painel de operações: chave `UFFA-OPS-2026`.
-
-Códigos de autenticidade:
-
-- `UFFA-AUTH-4K7P-2M9Q` — Porto Rose Low, 39
-- `UFFA-AUTH-8R3T-6N1W` — Cedofeita Court, 40
-- `UFFA-AUTH-9C2L-7B4X` — Invicta 01, 42
 
 ## 4. Guião slide a slide
 
@@ -88,7 +81,7 @@ Códigos de autenticidade:
 
 **Notas do orador:**
 
-> “Não competimos por quantidade. Temos oito pares escolhidos um a um, com verificação, recolha no Porto e uma camada de pós-compra que prolonga a relação. Estes três pilares aparecem em todos os ecrãs.”
+> “Não competimos por quantidade. Temos oito pares escolhidos um a um, com recolha no Porto e uma camada de pós-compra que prolonga a relação. Estes três pilares aparecem em todos os ecrãs.”
 
 **Transição:** “A home é o primeiro contacto com essa promessa.”
 
@@ -114,7 +107,7 @@ Códigos de autenticidade:
 
 **Notas do orador:**
 
-> “O catálogo permite filtrar por linha, tamanho e preço máximo, pesquisar sem recarregar a página e comparar cartões com preço, categoria e selo de verificação. As categorias do cabeçalho abrem o catálogo já filtrado e sincronizam com o URL (`?category=sales`), mesmo quando o cliente já está na página. No mobile, os filtros empilham e continuam utilizáveis.”
+> “O catálogo permite filtrar por linha, tamanho e preço máximo, pesquisar sem recarregar a página e comparar cartões com preço, categoria e linha. As categorias do cabeçalho abrem o catálogo já filtrado e sincronizam com o URL (`?category=sales`), mesmo quando o cliente já está na página. No mobile, os filtros empilham e continuam utilizáveis.”
 
 **Transição:** “Escolhido o par, a decisão acontece no produto.”
 
@@ -127,7 +120,7 @@ Códigos de autenticidade:
 
 **Notas do orador:**
 
-> “A página de produto responde às dúvidas todas antes do carrinho: galeria com rotação 360°, stock por tamanho, descrição, preço, autenticidade, recolha gratuita e política de trocas. O stock está a 5 pares por tamanho, os tamanhos esgotados ficam desativados e o preço de oferta mantém o peso do preço normal, um nível acima. O cliente não precisa de abrir menus para decidir.”
+> “A página de produto responde às dúvidas todas antes do carrinho: galeria com rotação 360°, stock por tamanho, descrição, preço, recolha gratuita e política de trocas. O stock está a 5 pares por tamanho, os tamanhos esgotados ficam desativados e o preço de oferta mantém o peso do preço normal, um nível acima. O cliente não precisa de abrir menus para decidir.”
 
 **Transição:** “Com a decisão tomada, falta o último empurrão.”
 
@@ -153,7 +146,7 @@ Códigos de autenticidade:
 
 **Notas do orador:**
 
-> “Entrega — recolha grátis no Porto ou envio por 8,94 € em Portugal Continental e Ilhas, 24 € na União Europeia e 34 € na Suíça. Dados e pagamento — o cliente é redirecionado para o checkout oficial da Shopify, onde completa nome, contacto, morada e escolhe cartão, MB WAY ou Google Pay. Não é criada conta UFFA. O fluxo é curto; na demonstração, a confirmação local mostra os códigos de exemplo.”
+> “Entrega — recolha grátis no Porto ou envio por 8,94 € em Portugal Continental e Ilhas, 24 € na União Europeia e 34 € na Suíça. Dados e pagamento — o cliente é redirecionado para o checkout oficial da Shopify, onde completa nome, contacto, morada e escolhe cartão, MB WAY ou Google Pay. Não é criada conta UFFA. O fluxo é curto; na demonstração, a confirmação local mostra o número e o código exclusivo de exemplo.”
 
 **Transição:** “A confirmação é o início do pós-compra.”
 
@@ -166,7 +159,7 @@ Códigos de autenticidade:
 
 **Notas do orador:**
 
-> “Na confirmação de demonstração, o cliente leva o número da encomenda, o código exclusivo para o portal, o rastreio e um código de autenticidade por par. Não há conta: o código é a chave. É por isso que insistimos em guardá-lo. Numa encomenda Shopify, a confirmação equivalente é enviada pela própria Shopify.”
+> “Na confirmação de demonstração, o cliente leva o número da encomenda, o código exclusivo para o portal e o rastreio. Não há conta: o código é a chave. É por isso que insistimos em guardá-lo. Numa encomenda Shopify, a confirmação equivalente é enviada pela própria Shopify.”
 
 **Transição:** “Com o código, o par não desaparece.”
 
@@ -181,24 +174,11 @@ Códigos de autenticidade:
 
 > “O acesso exige três dados que o comprador já tem: encomenda, contacto e código exclusivo. Dentro, vê estado, timeline, previsão, transportador e rastreio. No fim, confirma a receção ou a recolha. Sessão de 30 minutos e bloqueio após cinco tentativas.”
 
-**Transição:** “E se quiser provar que o par é autêntico?”
-
----
-
-### Slide 10 — Autenticidade
-
-**Título:** A prova de autenticidade.  
-**Visual:** certificado válido e código inválido.
-
-**Notas do orador:**
-
-> “Cada par tem um código único e um número de série. A validação é pública em `/verificar` e mostra produto, tamanho, edição e data, sem revelar nome, contacto ou morada. O par pode ser partilhado; a prova também.”
-
 **Transição:** “Do lado da equipa, o ciclo fecha-se nas operações.”
 
 ---
 
-### Slide 11 — Operações
+### Slide 10 — Operações
 
 **Título:** Gerir sem folhas de cálculo.  
 **Visual:** painel `/operacoes` com fila e editor.
@@ -211,7 +191,7 @@ Códigos de autenticidade:
 
 ---
 
-### Slide 12 — Mobile
+### Slide 11 — Mobile
 
 **Título:** A mesma experiência, no bolso.  
 **Visual:** home, catálogo e produto a 390 px.
@@ -224,7 +204,7 @@ Códigos de autenticidade:
 
 ---
 
-### Slide 13 — Tecnologia
+### Slide 12 — Tecnologia
 
 **Título:** Simples na demo, pronto para produção.  
 **Visual:** comparação demo/produção.
@@ -237,14 +217,14 @@ Códigos de autenticidade:
 
 ---
 
-### Slide 14 — Fecho
+### Slide 13 — Fecho
 
 **Título:** Obrigado.  
 **Visual:** percurso sugerido e contactos.
 
 **Notas do orador:**
 
-> “O site cobre a jornada completa, da marca à operação. O percurso sugerido está no slide: home, catálogo, produto, checkout, portal, autenticidade e operações. O painel usa `UFFA-OPS-2026`. Obrigado.”
+> “O site cobre a jornada completa, da marca à operação. O percurso sugerido está no slide: home, catálogo, produto, checkout, portal e operações. O painel usa `UFFA-OPS-2026`. Obrigado.”
 
 ## 5. Preparação da demo
 
@@ -264,7 +244,5 @@ Códigos de autenticidade:
 **Os dados persistem?** Na demo, ficam no browser (`localStorage`/`sessionStorage`). Em produção, passam para backend com autenticação e auditoria.
 
 **O aviso de demo volta a aparecer?** Só numa nova sessão ou aba; na mesma sessão fica dispensado com a chave `uffa-demo-notice-v1`.
-
-**A autenticidade expõe dados do comprador?** Não. Mostra apenas produto, tamanho, edição, série e data.
 
 **O painel é público?** Não. Exige a chave de demonstração `UFFA-OPS-2026`; em produção, autenticação e permissões.

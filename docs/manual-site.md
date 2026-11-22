@@ -4,14 +4,14 @@
 
 ## Manual do Site
 
-**Da descoberta à autenticidade — tudo o que o site faz, ecrã a ecrã.**
+**Da descoberta ao pós-compra — tudo o que o site faz, ecrã a ecrã.**
 
-Manual funcional e operacional da loja online UFFA Store. Segue a mesma estrutura, identidade e numeração da apresentação `docs/apresentacao-site-uffa.pptx`: doze capítulos e quatro anexos.
+Manual funcional e operacional da loja online UFFA Store, organizado em onze capítulos e quatro anexos. A apresentação `docs/apresentacao-site-uffa.pptx` complementa este documento com os pontos essenciais.
 
 | Item | Detalhe |
 | --- | --- |
 | Versão | 2.0 · novembro de 2026 |
-| Âmbito | Site público, checkout, portal de encomendas, verificação de autenticidade e painel de operações |
+| Âmbito | Site público, checkout, portal de encomendas e painel de operações |
 | Produção | `https://uffastore.pt` |
 | Desenvolvimento | `http://localhost:8080` |
 | Idiomas | Português, Inglês e Espanhol |
@@ -19,7 +19,7 @@ Manual funcional e operacional da loja online UFFA Store. Segue a mesma estrutur
 | Stack | React 19 · TanStack Start · Tailwind CSS · Shopify Storefront API |
 | Documento irmão | `docs/apresentacao-site-uffa.pptx` (14 slides) |
 
-> **Como usar este manual.** Cada capítulo abre com o número e o título que aparecem no PowerPoint. As figuras usam capturas reais do site. Os blocos **Nota**, **Dica**, **Demo** e **Atenção** marcam contexto técnico, boas práticas, dados de demonstração e riscos. No fim de cada capítulo há uma **checklist de demonstração** para ensaiar a apresentação.
+> **Como usar este manual.** Cada capítulo abre com um número e um título. As figuras usam capturas reais do site. Os blocos **Nota**, **Dica**, **Demo** e **Atenção** marcam contexto técnico, boas práticas, dados de demonstração e riscos. No fim de cada capítulo há uma **checklist de demonstração** para ensaiar a apresentação.
 
 ---
 
@@ -32,15 +32,14 @@ Manual funcional e operacional da loja online UFFA Store. Segue a mesma estrutur
 | [01](#cap-01) | Posicionamento | Promessa da marca, jornada, públicos e mapa de rotas |
 | [02](#cap-02) | Home | Cabeçalho, hero, confiança, categorias, destaques, portal e newsletter |
 | [03](#cap-03) | Catálogo | Filtros, URL, cartões, preços, PROMO e stock |
-| [04](#cap-04) | Produto | Galeria, tamanhos, preço, garantias e relacionados |
+| [04](#cap-04) | Produto | Galeria, tamanhos, preço, serviços e relacionados |
 | [05](#cap-05) | Carrinho | Camada lateral, quantidades, cupões, partilha e persistência |
 | [06](#cap-06) | Checkout | Portes, pagamento, redirecionamento Shopify e erros |
-| [07](#cap-07) | Confirmação | Número, código exclusivo, rastreio e autenticidade |
+| [07](#cap-07) | Confirmação | Número, código exclusivo, rastreio e próximos passos |
 | [08](#cap-08) | Portal | Acesso por três fatores, dashboard, estados e confirmação |
-| [09](#cap-09) | Autenticidade | Verificação pública, resultado válido, inválido e privacidade |
-| [10](#cap-10) | Operações | Chave, indicadores, fila, editor, avanço e reposição |
-| [11](#cap-11) | Mobile | Breakpoints, menu, grelhas, toque e desempenho |
-| [12](#cap-12) | Tecnologia | Stack, ficheiros, variáveis, build, deploy e segurança |
+| [09](#cap-09) | Operações | Chave, indicadores, fila, editor, avanço e reposição |
+| [10](#cap-10) | Mobile | Breakpoints, menu, grelhas, toque e desempenho |
+| [11](#cap-11) | Tecnologia | Stack, ficheiros, variáveis, build, deploy e segurança |
 | [A](#ap-a) | Anexo A | Dados de demonstração |
 | [B](#ap-b) | Anexo B | Resolução de problemas |
 | [C](#ap-c) | Anexo C | Comandos, build e deploy |
@@ -78,18 +77,11 @@ Manual funcional e operacional da loja online UFFA Store. Segue a mesma estrutur
 | [8.1](#cap-08-1) | Acesso por três fatores |
 | [8.2](#cap-08-2) | Dashboard do cliente |
 | [8.3](#cap-08-3) | Fluxos de estado |
-| [9.1](#cap-09-1) | Como verificar |
-| [9.2](#cap-09-2) | Resultado válido |
-| [9.3](#cap-09-3) | Resultado inválido e privacidade |
-| [10.1](#cap-10-1) | Entrada e indicadores |
-| [10.2](#cap-10-2) | Fila e pesquisa |
-| [10.3](#cap-10-3) | Editor e avanço de estado |
-| [10.4](#cap-10-4) | Credenciais, histórico e reposição |
-| [11.1](#cap-11-1) | Breakpoints e menu |
-| [11.2](#cap-11-2) | Ecrãs pequenos |
-| [12.1](#cap-12-1) | Stack e ficheiros |
-| [12.2](#cap-12-2) | Variáveis de ambiente |
-| [12.3](#cap-12-3) | Build, deploy e segurança |
+| [10.1](#cap-10-1) | Breakpoints e menu |
+| [10.2](#cap-10-2) | Ecrãs pequenos |
+| [11.1](#cap-11-1) | Stack e ficheiros |
+| [11.2](#cap-11-2) | Variáveis de ambiente |
+| [11.3](#cap-11-3) | Build, deploy e segurança |
 
 ---
 
@@ -99,7 +91,7 @@ Manual funcional e operacional da loja online UFFA Store. Segue a mesma estrutur
 
 ### Uma loja, não um catálogo.
 
-O site existe para responder a três perguntas antes que o cliente as faça: *é original? serve-me? e depois da compra?* Cada ecrã responde a uma delas.
+O site existe para responder a três perguntas antes que o cliente as faça: *o que têm? serve-me? e como acompanho a encomenda?* Cada ecrã responde a uma delas.
 
 <a id="cap-01-1"></a>
 
@@ -107,9 +99,9 @@ O site existe para responder a três perguntas antes que o cliente as faça: *é
 
 - **Descoberta rápida** — catálogo filtrável, stock visível e preço sem ambiguidade.
 - **Compra curta** — carrinho lateral, checkout em três decisões e pagamento no ambiente seguro da Shopify.
-- **Pós-compra verificável** — portal privado por encomenda e código de autenticidade por par.
+- **Pós-compra acompanhado** — portal privado por número de encomenda, contacto e código exclusivo.
 
-> **Nota.** O site não é um folheto. É a operação da marca: catálogo, encomenda, acompanhamento e prova de autenticidade no mesmo domínio.
+> **Nota.** O site não é um folheto. É a operação da marca: catálogo, encomenda e acompanhamento no mesmo domínio.
 
 <a id="cap-01-2"></a>
 
@@ -118,7 +110,7 @@ O site existe para responder a três perguntas antes que o cliente as faça: *é
 ```text
 Home → Catálogo → Produto → Carrinho → Checkout → Confirmação
                                                 ↓
-                              Portal de rastreio → Autenticidade
+                              Portal de rastreio
                                                 ↓
                                         Painel de operações
 ```
@@ -126,10 +118,9 @@ Home → Catálogo → Produto → Carrinho → Checkout → Confirmação
 | Momento | Pergunta do cliente | Resposta do site |
 | --- | --- | --- |
 | Descoberta | “O que têm?” | Home, categorias e catálogo filtrável |
-| Decisão | “Serve-me? É original?” | Página de produto, stock por tamanho, selo Verificado |
+| Decisão | “Serve-me?” | Página de produto, fotos, preço e stock por tamanho |
 | Compra | “Como pago?” | Checkout com entrega e pagamento Shopify |
 | Pós-compra | “Onde está o meu par?” | Portal com estado, timeline e confirmação |
-| Confiança | “É mesmo UFFA?” | Verificação pública `UFFA-AUTH` |
 
 <a id="cap-01-3"></a>
 
@@ -138,7 +129,7 @@ Home → Catálogo → Produto → Carrinho → Checkout → Confirmação
 | Público | O que precisa | Onde encontra |
 | --- | --- | --- |
 | Cliente final | Escolher, comprar e acompanhar | Site público, checkout, portal |
-| Marketing | Mostrar produto, preço e prova | Home, catálogo, autenticidade |
+| Marketing | Mostrar produto, preço e novidades | Home, catálogo e destaques |
 | Parceiros | Perceber o modelo | Apresentação e este manual |
 
 <a id="cap-01-4"></a>
@@ -154,7 +145,6 @@ Home → Catálogo → Produto → Carrinho → Checkout → Confirmação
 | Checkout | `/checkout` | Público |
 | Confirmação | `/confirmacao?order=UFFA-XXXXX` | Cliente |
 | Portal de rastreio | `/rastreio` | Cliente com três fatores |
-| Verificação | `/verificar` | Público |
 | Favoritos | `/favoritos` | Público |
 | Ajuda | `/ajuda` | Público |
 
@@ -184,14 +174,14 @@ O cabeçalho é fixo (`sticky`) e acompanha todas as páginas.
 - **Categorias sincronizadas** — o clique abre `/catalogo` já filtrado; se o cliente já estiver no catálogo, o filtro muda de imediato.
 - **Ações** — idioma PT/EN/ES, tema claro/escuro, favoritos com contador, rastreio e carrinho.
 
-Abaixo de `lg`, o menu passa para um painel lateral com logótipo, assinatura, as quatro categorias e atalhos para favoritos, ajuda, rastreio e verificação. Fecha ao escolher uma opção.
+Abaixo de `lg`, o menu passa para um painel lateral com logótipo, assinatura, as quatro categorias e atalhos para favoritos, ajuda e rastreio. Fecha ao escolher uma opção.
 
 <a id="cap-02-2"></a>
 
 ### 2.2 Hero e faixa de confiança
 
 1. **Hero** — imagem de destaque, promessa e botão para o catálogo.
-2. **Faixa de confiança** — autenticidade, recolha no Porto e envio.
+2. **Faixa de confiança** — recolha no Porto, envio e atendimento ao cliente.
 3. **Barra de anúncio** — “Recolha em mãos grátis no Porto”, no topo de todas as páginas.
 
 ![Figura 2.2 — Categorias da home: quatro portas de entrada para o catálogo](assets/screenshots/crops/home-categorias.png)
@@ -201,7 +191,7 @@ Abaixo de `lg`, o menu passa para um painel lateral com logótipo, assinatura, a
 ### 2.3 Categorias e destaques
 
 - **Categorias** — Casual, Streetwear, Edições Limitadas e Promoções. Cada cartão abre o catálogo com o filtro certo.
-- **Mais procurados** — produtos em destaque com preço, tamanhos, selo Verificado, placa PROMO e botão de compra.
+- **Mais procurados** — produtos em destaque com preço, tamanhos, placa PROMO e botão de compra.
 - **Estado vazio** — se não houver destaques, a secção desaparece sem deixar espaço morto.
 
 <a id="cap-02-4"></a>
@@ -274,7 +264,6 @@ Categorias suportadas: `casual`, `streetwear`, `limited`, `sales`.
 Cada cartão mostra:
 
 - imagem do par;
-- selo **Verificado**;
 - placa **PROMO** quando aplicável;
 - nome e categoria;
 - preço normal ou de oferta;
@@ -342,9 +331,8 @@ A página de produto responde às dúvidas todas antes do carrinho.
 
 <a id="cap-04-3"></a>
 
-### 4.3 Garantias e relacionados
+### 4.3 Serviços e relacionados
 
-- **Autenticidade** — cada par tem código `UFFA-AUTH`.
 - **Recolha grátis no Porto** — visível sem abrir menus.
 - **Política de trocas** — resumida junto ao preço.
 - **Relacionados** — sugestões da mesma categoria, com o mesmo cartão do catálogo.
@@ -472,7 +460,6 @@ A confirmação explica o que guardar e o que fazer a seguir.
 - **Número da encomenda** — `UFFA-XXXXX`.
 - **Código exclusivo** — `UFFA-XXXX-XXXX`, a chave do portal.
 - **Código de rastreio** — nas encomendas com envio.
-- **Código de autenticidade por par** — `UFFA-AUTH-XXXX-XXXX`.
 - **Resumo** — artigos, entrega, subtotal, portes e total.
 - **Próximos passos** — guardar o código e acompanhar em `/rastreio`.
 
@@ -530,10 +517,10 @@ Regras de proteção:
 - Transportador e código de rastreio, no envio.
 - Morada da loja e nota pública, na recolha.
 - Resumo de valores.
-- Itens com código de autenticidade.
+- Itens da encomenda com tamanho e quantidade.
 - Botão **Confirmar receção** ou **Confirmar recolha**.
 
-![Figura 8.3 — Itens da encomenda com código de autenticidade por par](assets/screenshots/crops/rastreio-itens.png)
+![Figura 8.3 — Itens da encomenda no portal de rastreio](assets/screenshots/crops/rastreio-itens.png)
 
 <a id="cap-08-3"></a>
 
@@ -563,55 +550,7 @@ Cada mudança cria um evento com data e hora no histórico visível ao cliente.
 
 <a id="cap-09"></a>
 
-## 09 / AUTENTICIDADE
-
-### A prova de autenticidade.
-
-Cada par tem um código único. Qualquer pessoa pode validá-lo, sem ver dados do comprador.
-
-![Figura 9.1 — Página de verificação de autenticidade](assets/screenshots/10-verificar.png)
-
-<a id="cap-09-1"></a>
-
-### 9.1 Como verificar
-
-1. Abrir `/verificar`.
-2. Introduzir o código `UFFA-AUTH-XXXX-XXXX`.
-3. Confirmar o resultado.
-
-Também aceita link direto: `/verificar?codigo=UFFA-AUTH-XXXX-XXXX`. O código não distingue maiúsculas de minúsculas.
-
-<a id="cap-09-2"></a>
-
-### 9.2 Resultado válido
-
-![Figura 9.2 — Resultado válido: selo UFFA Verified, produto, tamanho e série](assets/screenshots/crops/verificar-resultado-v2.png)
-
-O certificado mostra:
-
-- selo **UFFA Verified**;
-- produto e tamanho;
-- edição e número de série;
-- data de emissão;
-- loja emissora.
-
-<a id="cap-09-3"></a>
-
-### 9.3 Resultado inválido e privacidade
-
-- Código inexistente devolve mensagem clara e contacto da equipa.
-- O resultado **nunca** mostra nome, email, telefone ou morada do comprador.
-- O código é a única chave: quem o tiver consegue validar, mas não acede à encomenda.
-
-> **Nota.** Autenticidade e portal são sistemas separados de propósito. Validar um par não dá acesso a dados pessoais.
-
-> **Checklist de demonstração.** Validar `UFFA-AUTH-4K7P-2M9Q`, mostrar o certificado e depois um código inválido.
-
----
-
-<a id="cap-10"></a>
-
-## 10 / OPERAÇÕES
+## 09 / OPERAÇÕES
 
 ### Painel removido.
 
@@ -625,31 +564,31 @@ A gestão do estado das encomendas passa a ser feita fora do site.
 
 ---
 
-<a id="cap-11"></a>
+<a id="cap-10"></a>
 
-## 11 / MOBILE
+## 10 / MOBILE
 
 ### A mesma experiência, no bolso.
 
 Layout mobile-first, validado a 390 px, sem funcionalidades escondidas.
 
-![Figura 11.1 — Home em mobile](assets/screenshots/19-home-mobile.png)
+![Figura 10.1 — Home em mobile](assets/screenshots/19-home-mobile.png)
 
-<a id="cap-11-1"></a>
+<a id="cap-10-1"></a>
 
-### 11.1 Breakpoints e menu
+### 10.1 Breakpoints e menu
 
 - Abaixo de `lg`, o menu passa para painel lateral com categorias e atalhos.
 - O cabeçalho reduz para `h-20`, mantendo o logótipo proporcional.
 - A barra de anúncio continua visível.
 
-<a id="cap-11-2"></a>
+<a id="cap-10-2"></a>
 
-### 11.2 Ecrãs pequenos
+### 10.2 Ecrãs pequenos
 
-![Figura 11.2 — Catálogo em mobile com filtros empilhados](assets/screenshots/20-catalogo-mobile.png)
+![Figura 10.2 — Catálogo em mobile com filtros empilhados](assets/screenshots/20-catalogo-mobile.png)
 
-![Figura 11.3 — Produto em mobile com galeria e seleção de tamanho](assets/screenshots/21-produto-mobile.png)
+![Figura 10.3 — Produto em mobile com galeria e seleção de tamanho](assets/screenshots/21-produto-mobile.png)
 
 - Grelha do catálogo empilhada; filtros utilizáveis.
 - Produto com galeria, tamanhos e CTA ao alcance do polegar.
@@ -664,17 +603,17 @@ Layout mobile-first, validado a 390 px, sem funcionalidades escondidas.
 
 ---
 
-<a id="cap-12"></a>
+<a id="cap-11"></a>
 
-## 12 / TECNOLOGIA
+## 11 / TECNOLOGIA
 
 ### Simples na demo, pronto para produção.
 
 Stack moderna, dados isolados por camada e fallback automático.
 
-<a id="cap-12-1"></a>
+<a id="cap-11-1"></a>
 
-### 12.1 Stack e ficheiros
+### 11.1 Stack e ficheiros
 
 | Camada | Tecnologia |
 | --- | --- |
@@ -695,9 +634,9 @@ Stack moderna, dados isolados por camada e fallback automático.
 | `src/routes/*` | Uma rota por ecrã |
 | `docs/shopify/produtos-uffa.csv` | Catálogo de importação com 5 unidades por variante |
 
-<a id="cap-12-2"></a>
+<a id="cap-11-2"></a>
 
-### 12.2 Variáveis de ambiente
+### 11.2 Variáveis de ambiente
 
 | Variável | Onde encontrar |
 | --- | --- |
@@ -706,9 +645,9 @@ Stack moderna, dados isolados por camada e fallback automático.
 
 Sem estas variáveis, o site usa o catálogo local e o checkout Shopify não conclui.
 
-<a id="cap-12-3"></a>
+<a id="cap-11-3"></a>
 
-### 12.3 Build, deploy e segurança
+### 11.3 Build, deploy e segurança
 
 ```bash
 npm install
@@ -719,7 +658,7 @@ npm run build
 
 - O deploy de produção é automático na Vercel a cada push para `main`.
 - A demonstração guarda encomendas, tentativas e sessões no browser.
-- Em produção, validação e persistência têm de passar para um backend com autenticação, base de dados e auditoria.
+- Em produção, validação e persistência têm de passar para um backend com controlo de acesso, base de dados e auditoria.
 
 > **Atenção.** Nunca colocar o token de admin da Shopify no cliente. A Storefront API usa apenas o token público.
 
@@ -738,14 +677,6 @@ npm run build
 | `UFFA-48217` | `demo@uffa.pt` | `UFFA-7K3M-9QX2` | Em trânsito |
 | `UFFA-73104` | `demo@uffa.pt` | `UFFA-2P8N-5RV6` | Pronta para recolha |
 
-### Códigos de autenticidade
-
-| Código | Produto | Tamanho |
-| --- | --- | --- |
-| `UFFA-AUTH-4K7P-2M9Q` | Porto Rose Low | 39 |
-| `UFFA-AUTH-8R3T-6N1W` | Cedofeita Court | 40 |
-| `UFFA-AUTH-9C2L-7B4X` | Invicta 01 | 42 |
-
 ### Cupões
 
 | Código | Desconto |
@@ -760,7 +691,6 @@ npm run build
 | --- | --- |
 | Painel de operações | `UFFA-OPS-2026` |
 | Portal do cliente | Número + contacto + código exclusivo |
-| Verificação | Código `UFFA-AUTH-XXXX-XXXX` |
 
 > **Nota.** `Repor demo` em `/operacoes` recria as encomendas de exemplo e apaga alterações locais.
 
@@ -773,7 +703,7 @@ npm run build
 | Sintoma | Causa provável | Solução |
 | --- | --- | --- |
 | O site mostra o catálogo local | Variáveis Shopify em falta | Preencher `.env` e reiniciar o servidor |
-| Produto não aparece | Estado `inactive` ou sem stock | Verificar `status` e `stock` em `shop-data.ts` |
+| Produto não aparece | Estado `inactive` ou sem stock | Confirmar `status` e `stock` em `shop-data.ts` |
 | Categoria não filtra | URL sem `?category=` | Clicar na categoria do menu ou abrir `/catalogo?category=casual` |
 | Filtro não muda no catálogo | Estado antigo em cache | Recarregar; confirmar `search.category` no URL |
 | Checkout não abre na Shopify | Domínio ou token inválidos | Validar variáveis e a consola do browser |
@@ -849,9 +779,7 @@ git push origin main
 | Termo | Significado |
 | --- | --- |
 | **Código exclusivo** | Chave `UFFA-XXXX-XXXX` que dá acesso ao portal |
-| **Código de autenticidade** | `UFFA-AUTH-XXXX-XXXX`, prova pública por par |
 | **PROMO** | Placa burgundy que marca preço de oferta |
-| **Verificado** | Selo de autenticidade no cartão e no produto |
 | **Storefront API** | API pública da Shopify usada pelo catálogo |
 | **Fallback local** | Catálogo de `shop-data.ts` usado se a API falhar |
 | **Repor demo** | Restaura as encomendas de exemplo |

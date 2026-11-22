@@ -206,18 +206,22 @@ async function main() {
     await screenshot(cdp, "03-catalogo", { fullPage: true });
 
     // 04 — Product
-    await navigate(cdp, `${BASE}/produto/porto-rose-low`, "Porto Rose Low");
+    await navigate(
+      cdp,
+      `${BASE}/produto/nike-dunk-low-panda-ultimate`,
+      "Nike Dunk Low Panda Ultimate",
+    );
     await screenshot(cdp, "04-produto", { fullPage: true });
 
     // 05 — Checkout
     await evaluate(
       cdp,
       `localStorage.setItem("uffa-cart", JSON.stringify([
-        { productId: "porto-rose-low", size: 39, quantity: 1 },
-        { productId: "cedofeita-court", size: 40, quantity: 1 }
+        { productId: "nike-dunk-low-panda-ultimate", size: 39, quantity: 1 },
+        { productId: "nike-air-force-branca-com-cinza", size: 40, quantity: 1 }
       ]))`,
     );
-    await navigate(cdp, `${BASE}/checkout`, "Secure checkout");
+    await navigate(cdp, `${BASE}/checkout`, "Checkout seguro");
     await screenshot(cdp, "05-checkout", { fullPage: true });
 
     // 06 — Confirmation
@@ -242,34 +246,6 @@ async function main() {
     await sleep(400);
     await screenshot(cdp, "09-rastreio-topo", { fullPage: false });
 
-    // 10 — Authenticity gate
-    await navigate(cdp, `${BASE}/verificar`, "Código de autenticidade");
-    await screenshot(cdp, "10-verificar", { fullPage: true });
-
-    // 11 — Authenticity result
-    await navigate(cdp, `${BASE}/verificar?codigo=UFFA-AUTH-4K7P-2M9Q`, "Certificado autêntico");
-    await screenshot(cdp, "11-verificar-valido", { fullPage: true });
-
-    // 12 — Operations gate
-    await navigate(cdp, `${BASE}/operacoes`, "Chave de acesso");
-    await screenshot(cdp, "12-operacoes-acesso", { fullPage: true });
-
-    // 13 — Operations panel with selected order
-    await evaluate(cdp, `sessionStorage.setItem("uffa-ops-session-v1", "1")`);
-    await navigate(cdp, `${BASE}/operacoes`, "Fila de encomendas");
-    await evaluate(
-      cdp,
-      `(() => {
-        const button = [...document.querySelectorAll("button")].find((el) =>
-          el.textContent?.includes("UFFA-48217"),
-        );
-        button?.click();
-      })()`,
-    );
-    await waitForText(cdp, "Acesso do cliente");
-    await sleep(500);
-    await screenshot(cdp, "13-operacoes-painel", { fullPage: true });
-
     // 15 — Pickup order dashboard
     await evaluate(
       cdp,
@@ -280,26 +256,6 @@ async function main() {
     );
     await navigate(cdp, `${BASE}/rastreio`, "Pronta para recolha");
     await screenshot(cdp, "15-rastreio-recolha", { fullPage: true });
-
-    // 16 — Invalid authenticity code
-    await navigate(cdp, `${BASE}/verificar?codigo=UFFA-AUTH-0000-0000`, "Código inválido");
-    await screenshot(cdp, "16-verificar-invalido", { fullPage: true });
-
-    // 17 — Operations panel with pickup order selected
-    await evaluate(cdp, `sessionStorage.setItem("uffa-ops-session-v1", "1")`);
-    await navigate(cdp, `${BASE}/operacoes`, "Fila de encomendas");
-    await evaluate(
-      cdp,
-      `(() => {
-        const button = [...document.querySelectorAll("button")].find((el) =>
-          el.textContent?.includes("UFFA-73104"),
-        );
-        button?.click();
-      })()`,
-    );
-    await waitForText(cdp, "Acesso do cliente");
-    await sleep(500);
-    await screenshot(cdp, "17-operacoes-recolha", { fullPage: true });
 
     // 18 — Mobile tracking dashboard
     await cdp.send("Emulation.setDeviceMetricsOverride", {
@@ -325,7 +281,11 @@ async function main() {
     await navigate(cdp, `${BASE}/catalogo`, "Catálogo");
     await screenshot(cdp, "20-catalogo-mobile", { fullPage: false });
 
-    await navigate(cdp, `${BASE}/produto/porto-rose-low`, "Porto Rose Low");
+    await navigate(
+      cdp,
+      `${BASE}/produto/nike-dunk-low-panda-ultimate`,
+      "Nike Dunk Low Panda Ultimate",
+    );
     await screenshot(cdp, "21-produto-mobile", { fullPage: false });
 
     // 22 — Cart drawer
@@ -338,8 +298,8 @@ async function main() {
     await evaluate(
       cdp,
       `localStorage.setItem("uffa-cart", JSON.stringify([
-        { productId: "porto-rose-low", size: 39, quantity: 1 },
-        { productId: "cedofeita-court", size: 40, quantity: 1 },
+        { productId: "nike-dunk-low-panda-ultimate", size: 39, quantity: 1 },
+        { productId: "nike-air-force-branca-com-cinza", size: 40, quantity: 1 },
         { productId: "bolhao-runner", size: 41, quantity: 1 },
         { productId: "invicta-01", size: 42, quantity: 1 }
       ]))`,
@@ -366,7 +326,7 @@ async function main() {
         const hero = document.querySelector("h1")?.closest("section");
         if (hero) hero.id = "home-hero";
         const categories = [...document.querySelectorAll("h2")].find((el) =>
-          el.textContent?.includes("Escolhe a tua linha"),
+          el.textContent?.includes("Escolhe a tua marca"),
         )?.closest("section");
         if (categories) categories.id = "home-categorias";
         const picks = [...document.querySelectorAll("h2")].find((el) =>

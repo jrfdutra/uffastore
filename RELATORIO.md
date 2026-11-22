@@ -116,7 +116,7 @@ Verificação visual feita com screenshots da homepage e da página de produto a
 
 ### 4.3 CSS e bundle
 - CSS: **104 KB → 69 KB raw** (−34%) — consequência direta da remoção dos 38 componentes shadcn (o Tailwind v4 só gera as classes usadas).
-- JS principal: 472 KB raw / 143 KB gzip — **sem alteração**. As rotas já eram code-split (`checkout`, `rastreio`, `verificar`, etc. em chunks separados).
+- JS principal: 472 KB raw / 143 KB gzip — **sem alteração**. As rotas já eram code-split (`checkout`, `rastreio`, `catalogo`, etc. em chunks separados).
 
 ### 4.4 Peso do site estático
 Depois de comprimir imagens **e** de arquivar os 29 ficheiros órfãos de `public/`, o diretório `.vercel/output/static` passou de **9,55 MB para 1,77 MB** (−81%). `public/` ficou com 12 ficheiros / 0,68 MB.

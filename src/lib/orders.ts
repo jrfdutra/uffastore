@@ -1,5 +1,5 @@
 import { localeByLanguage } from "./i18n";
-import { generatePairCode, pairCount } from "./pair-code";
+import { pairCount } from "./pair-code";
 import { products, type Language, type Product } from "./shop-data";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 
@@ -24,8 +24,6 @@ export type OrderItem = {
   sizeLabel?: string;
   quantity: number;
   unitPrice: number;
-  authCode: string;
-  serial: string;
 };
 
 export type OrderEvent = {
@@ -180,8 +178,6 @@ export const demoAccess = {
   accessCode: "UFFA-7K3M-9QX2",
 } as const;
 
-export const demoAuthCode = "UFFA-4K7P2M";
-
 const ORDERS_KEY = "uffa-orders-v1";
 const ATTEMPTS_KEY = "uffa-order-attempts-v1";
 const SESSION_KEY = "uffa-order-session-v1";
@@ -258,14 +254,11 @@ function sendEmailNotification(order: Order, status: OrderStatus): EmailNotifica
   let body = `Olá, ${order.customerName || "Cliente"}! 💗\n\nTemos novidades sobre a tua encomenda!\n\nA tua encomenda #${order.number} foi atualizada e encontra-se agora no seguinte estado:\n\n[${statusLabel}] - ${statusDesc}\n\nContinuamos a acompanhar tudo para que recebas as tuas peças UFFA com toda a tranquilidade.\n\nObrigada por escolheres a UFFA. É um prazer fazer parte do teu estilo!\n\nCom carinho,\nEquipa UFFA\natendimento@uffastore.pt`;
 
   if (status === "confirmed") {
-    const authDetails = order.items
-      .map(
-        (item) =>
-          `- ${item.name} (Tamanho ${item.sizeLabel ?? item.size}): N/S: ${item.serial} | Código do par: ${item.authCode}`,
-      )
+    const artigos = order.items
+      .map((item) => `- ${item.name} (Tamanho ${item.sizeLabel ?? item.size})`)
       .join("\n");
-    subject = `Certificado de Autenticidade e Agradecimento · Encomenda UFFA ${order.number}`;
-    body = `Olá, ${order.customerName || "Cliente"}! 💗\n\nMuito obrigado pela tua compra na Uffa Store! É um enorme prazer fazer parte do teu estilo.\n\nEm anexo digital, enviamos o teu Certificado de Autenticidade Oficial UFFA para os artigos adquiridos:\n\n${authDetails}\n\nCom o código do par podes consultar a situação de entrega e validar a autenticidade a qualquer momento em: https://www.uffastore.pt/verificar\n\nA tua encomenda foi confirmada com sucesso e já está a ser preparada com todo o cuidado.\n\nCom carinho e estilo,\nEquipa UFFA\natendimento@uffastore.pt`;
+    subject = `Encomenda UFFA ${order.number} confirmada`;
+    body = `Olá, ${order.customerName || "Cliente"}! 💗\n\nMuito obrigado pela tua compra na Uffa Store! É um enorme prazer fazer parte do teu estilo.\n\nArtigos adquiridos:\n${artigos}\n\nA tua encomenda foi confirmada com sucesso e já está a ser preparada com todo o cuidado. Podes acompanhar o estado em: https://www.uffastore.pt/rastreio\n\nCom carinho e estilo,\nEquipa UFFA\natendimento@uffastore.pt`;
   }
 
   return {
@@ -332,8 +325,6 @@ function seedOrders(): Order[] {
           size: 39,
           quantity: 1,
           unitPrice: rose.price,
-          authCode: demoAuthCode,
-          serial: "UFFA-2026-104287",
         },
         {
           productId: court.id,
@@ -341,8 +332,6 @@ function seedOrders(): Order[] {
           size: 40,
           quantity: 1,
           unitPrice: court.price,
-          authCode: "UFFA-8R3T6N",
-          serial: "UFFA-2026-104288",
         },
       ],
       subtotal: rose.price + court.price,
@@ -405,8 +394,6 @@ function seedOrders(): Order[] {
           size: 42,
           quantity: 1,
           unitPrice: invicta.price,
-          authCode: "UFFA-9C2L7B",
-          serial: "UFFA-2026-104512",
         },
       ],
       subtotal: invicta.price,
@@ -503,25 +490,8 @@ export function createOrder(input: {
   const number = generateOrderNumber(existing);
   const now = new Date();
 
-  // Um par físico = um código. Se a linha do carrinho tiver quantidade 2,
-  // geramos dois itens (cada um com o seu código e número de série), para que
-  // cada par tenha o seu certificado e possa ser localizado individualmente.
-  const usedCodes = new Set(
-    existing.flatMap((order) => order.items.map((item) => normalizeCode(item.authCode))),
-  );
-  const nextAuthCode = () => {
-    for (let attempt = 0; attempt < 50; attempt += 1) {
-      const candidate = generateAuthCode();
-      if (!usedCodes.has(normalizeCode(candidate))) {
-        usedCodes.add(normalizeCode(candidate));
-        return candidate;
-      }
-    }
-    const fallback = generateAuthCode();
-    usedCodes.add(normalizeCode(fallback));
-    return fallback;
-  };
-
+  // Um par físico = uma linha. Se a linha do carrinho tiver quantidade 2,
+  // geramos dois itens para manter os subtotais e as quantidades corretos.
   const items: OrderItem[] = input.cart.flatMap((line) => {
     const product = products.find((candidate) => candidate.id === line.productId);
     if (!product) return [];
@@ -534,8 +504,6 @@ export function createOrder(input: {
       ...(sizeLabel ? { sizeLabel } : {}),
       quantity: 1,
       unitPrice: product.price,
-      authCode: nextAuthCode(),
-      serial: generateSerial(),
     }));
   });
 
@@ -763,30 +731,6 @@ export function clearOrderSession() {
   removeStorage("session", SESSION_KEY);
 }
 
-export type AuthVerification = {
-  order: Order;
-  item: OrderItem;
-  product: Product;
-};
-
-export function verifyAuthCode(input: string): AuthVerification | null {
-  const code = normalizeCode(input);
-  if (!code) return null;
-  for (const order of loadOrders()) {
-    for (const item of order.items) {
-      if (
-        normalizeCode(item.authCode) === code ||
-        normalizeCode(item.serial) === code ||
-        normalizeCode(`${order.number}${item.serial}`) === code
-      ) {
-        const product = products.find((candidate) => candidate.id === item.productId);
-        if (product) return { order, item, product };
-      }
-    }
-  }
-  return null;
-}
-
 /** Progresso público da entrega de uma encomenda (sem dados pessoais). */
 export function getDeliveryProgress(order: Order) {
   const flow = statusFlow[order.delivery];
@@ -884,16 +828,7 @@ function generateAccessCode() {
   return `UFFA-${randomToken(4)}-${randomToken(4)}`;
 }
 
-function generateAuthCode() {
-  // Código curto e fácil de ditar: UFFA-XXXXXX (sem letras/números ambíguos).
-  return generatePairCode();
-}
-
 function generateTrackingCode(number: string) {
   const clean = number.replace("UFFA-", "");
   return `PT-${clean}-${randomToken(4)}`;
-}
-
-function generateSerial() {
-  return `UFFA-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 }

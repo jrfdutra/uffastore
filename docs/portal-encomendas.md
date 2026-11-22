@@ -1,6 +1,6 @@
 # Portal de Encomendas UFFA
 
-Documentação funcional e técnica da área de cliente criada para a UFFA Store, inspirada no modelo de portal público e certificação do OrbitTrack.
+Documentação funcional e técnica da área de cliente criada para a UFFA Store, inspirada no modelo de portal de encomendas do OrbitTrack.
 
 ## 1. Objetivo
 
@@ -9,23 +9,20 @@ Dar ao cliente que comprou um par UFFA um espaço próprio para:
 - acompanhar o estado de um envio ou de uma recolha na loja do Porto;
 - consultar transportador, código de rastreio, previsão e nota pública da loja;
 - confirmar a receção ou a recolha;
-- consultar o código de autenticidade de cada par e validá-lo publicamente;
 - manter o acesso protegido por três fatores, sem criar uma conta tradicional.
 
 A área interna de operações permite à equipa atualizar o estado, o rastreio, a previsão e a nota pública. Todas as alterações ficam registadas no histórico visível ao cliente.
 
 ## 2. Rotas
 
-| Rota                                    | Público       | Função                                                                                  |
-| --------------------------------------- | ------------- | --------------------------------------------------------------------------------------- |
-| `/checkout`                             | Cliente       | Cria a encomenda, o código exclusivo, os códigos de autenticidade e o rastreio inicial. |
-| `/confirmacao?order=UFFA-XXXXX`         | Cliente       | Mostra o código exclusivo, o rastreio, os itens e os próximos passos.                   |
-| `/rastreio`                             | Cliente       | Entrada no portal com número da encomenda, contacto e código exclusivo.                 |
-| `/rastreio?order=UFFA-XXXXX`            | Cliente       | Pré-preenche o número da encomenda no formulário de acesso.                             |
-| `/verificar`                            | Público       | Valida um código de autenticidade sem expor dados pessoais.                             |
-| `/verificar?codigo=UFFA-AUTH-XXXX-XXXX` | Público       | Abre o resultado da verificação diretamente a partir de um link.                        |
+| Rota                                    | Público | Função                                                                   |
+| --------------------------------------- | ------- | ------------------------------------------------------------------------ |
+| `/checkout`                             | Cliente | Cria a encomenda, o código exclusivo e o rastreio inicial.               |
+| `/confirmacao?order=UFFA-XXXXX`         | Cliente | Mostra o código exclusivo, o rastreio, os itens e os próximos passos.     |
+| `/rastreio`                             | Cliente | Entrada no portal com número da encomenda, contacto e código exclusivo.   |
+| `/rastreio?order=UFFA-XXXXX`            | Cliente | Pré-preenche o número da encomenda no formulário de acesso.               |
 
-A home, o header, o menu mobile e o footer têm ligações para `/rastreio` e `/verificar`.
+A home, o header, o menu mobile e o footer têm ligações para `/rastreio`.
 
 > **Nota (18/11/2026).** O painel interno `/operacoes` foi removido por não ser
 > utilizado. As referências a esse painel mais abaixo neste documento são
@@ -38,7 +35,6 @@ A home, o header, o menu mobile e o footer têm ligações para `/rastreio` e `/
 3. **Acesso** — entra em `/rastreio` com três dados: número da encomenda, contacto usado na compra e código exclusivo.
 4. **Acompanhamento** — vê o estado atual, a linha temporal, os detalhes de entrega ou recolha, os itens e o resumo.
 5. **Conclusão** — confirma a receção (envio) ou a recolha (loja). O estado passa a `Entregue` ou `Recolhida`.
-6. **Autenticidade** — em qualquer momento, valida o código de cada par em `/verificar`.
 
 ## 4. Modelo de acesso
 
@@ -58,7 +54,6 @@ Regras implementadas em `src/lib/orders.ts`:
 - O botão **Terminar sessão** limpa a sessão imediatamente.
 - Nas encomendas demo, o código exclusivo é gerado localmente com o formato `UFFA-XXXX-XXXX`.
 - Os códigos usam um alfabeto sem caracteres ambíguos (`I`, `O`, `0`, `1`).
-- A verificação de autenticidade não revela nome, contacto ou morada do comprador.
 
 > **Nota:** esta implementação é uma demonstração local. Em produção, a validação tem de acontecer no servidor, com códigos guardados em hash, rate limiting por IP/conta, sessões assinadas e registo de auditoria.
 
@@ -122,8 +117,6 @@ type OrderItem = {
   size: number;
   quantity: number;
   unitPrice: number;
-  authCode: string; // UFFA-AUTH-XXXX-XXXX
-  serial: string; // UFFA-2026-104287
 };
 
 type OrderEvent = {
@@ -139,7 +132,6 @@ type OrderEvent = {
 
 - Portes de envio: **8,94 €** em Portugal Continental e Ilhas, **24,00 €** na União Europeia e **34,00 €** na Suíça. Recolha em mãos no Porto: **grátis**.
 - Previsão inicial: **3 dias** para envio, **1 dia** para recolha.
-- Cada linha do carrinho recebe um código de autenticidade e um número de série próprios.
 - O número da encomenda é gerado com 5 dígitos e verificado contra duplicados.
 - O código de rastreio inicial tem o formato `PT-<5 dígitos>-<4 caracteres>`.
 - A confirmação de receção só é apresentada enquanto a encomenda não estiver num estado final.
@@ -165,37 +157,13 @@ Na primeira visita, `loadOrders()` cria duas encomendas de demonstração.
 | `UFFA-48217` | `demo@uffa.pt` | `UFFA-7K3M-9QX2` | Em trânsito         | Envio, 2 pares     |
 | `UFFA-73104` | `demo@uffa.pt` | `UFFA-2P8N-5RV6` | Pronta para recolha | Recolha, 1 par     |
 
-### Códigos de autenticidade
-
-| Código                | Produto         | Tamanho |
-| --------------------- | --------------- | ------- |
-| `UFFA-AUTH-4K7P-2M9Q` | Porto Rose Low  | 39      |
-| `UFFA-AUTH-8R3T-6N1W` | Cedofeita Court | 40      |
-| `UFFA-AUTH-9C2L-7B4X` | Invicta 01      | 42      |
-
 ### Painel de operações
 
 > **Âmbito da demo:** a confirmação e o portal leem as encomendas guardadas em `uffa-orders-v1`. Encomendas concluídas na Shopify não são sincronizadas automaticamente para este armazenamento local.
 
 > **Nota (18/11/2026).** O painel de operações foi removido por não ser utilizado.
 
-## 9. Verificação de autenticidade
-
-`/verificar` procura o código em todas as encomendas guardadas. Se encontrar, apresenta:
-
-- selo **UFFA Verified**;
-- nome do produto e imagem;
-- código exclusivo;
-- número de série;
-- tamanho;
-- edição;
-- data de registo;
-- loja emissora;
-- ligações para o produto e para o portal.
-
-Se não encontrar, apresenta **Código inválido**, o código introduzido e um contacto direto para a equipa. A verificação nunca mostra nome, email, telefone ou morada.
-
-## 10. Responsividade e idiomas
+## 9. Responsividade e idiomas
 
 - Layout mobile-first com navegação própria para telemóvel.
 - Linha temporal vertical em ecrãs pequenos e horizontal em ecrãs grandes.
@@ -203,32 +171,30 @@ Se não encontrar, apresenta **Código inválido**, o código introduzido e um c
 - Textos em PT, EN e ES através de `tr(language, pt, en, es)` em `src/lib/i18n.ts`.
 - Tema claro e escuro suportados pelo sistema de temas existente.
 
-## 11. Produção: o que falta
+## 10. Produção: o que falta
 
 A demonstração usa `localStorage` para ser fácil de apresentar sem infraestrutura. Para produção, o modelo recomendado é:
 
-1. **Base de dados** PostgreSQL com tabelas `orders`, `order_items`, `order_events`, `order_access_attempts` e `auth_certificates`.
-2. **API no servidor** para criar encomendas, validar acessos, atualizar estados e verificar códigos.
-3. **Códigos em hash** — o código exclusivo e o código de autenticidade nunca devem ser guardados em texto simples.
+1. **Base de dados** PostgreSQL com tabelas `orders`, `order_items`, `order_events` e `order_access_attempts`.
+2. **API no servidor** para criar encomendas, validar acessos, validar a assinatura/integridade e deduplicar os webhooks `orders/paid`, e atualizar estados.
+3. **Códigos em hash** — o código exclusivo nunca deve ser guardado em texto simples.
 4. **Sessões assinadas** com cookies `HttpOnly`, `Secure` e `SameSite`.
 5. **Rate limiting** por IP, por encomenda e por conta, com bloqueio progressivo.
-6. **Autenticação da equipa** com roles (`admin`, `operations`, `support`) e MFA.
+6. **Acesso da equipa ao backend** com roles (`admin`, `operations`, `support`) e MFA.
 7. **Auditoria imutável** de todas as alterações de estado, com utilizador, timestamp e motivo.
 8. **Emails transacionais** no checkout, na mudança de estado e na confirmação de receção.
 9. **Integração com transportador** para atualizar o rastreio automaticamente.
 10. **RGPD** — retenção, minimização, direito ao apagamento e registo de acessos.
 
-## 12. Testes manuais
+## 11. Testes manuais
 
 Checklist usada na validação:
 
 - [x] Abrir `/rastreio`, preencher os dados demo e entrar.
 - [x] Confirmar que a linha temporal mostra o estado atual e os eventos anteriores.
-- [x] Confirmar receção e verificar que o estado passa a `Entregue`.
+- [x] Confirmar receção e confirmar que o estado passa a `Entregue`.
 - [x] Recarregar a página e confirmar que a sessão e o estado se mantêm.
 - [x] Terminar sessão e confirmar que o dashboard deixa de estar acessível.
-- [x] Introduzir um código de autenticidade válido em `/verificar`.
-- [x] Introduzir um código inválido e confirmar a mensagem de erro.
 - [x] Testar o portal em viewport mobile (390 px).
 
 Comandos de validação:
@@ -236,12 +202,12 @@ Comandos de validação:
 ```bash
 npm run build
 npx tsc --noEmit
-npx eslint src/lib/orders.ts src/routes/rastreio.tsx src/routes/verificar.tsx src/routes/checkout.tsx src/routes/confirmacao.tsx src/components/order-portal-promo.tsx
+npx eslint src/lib/orders.ts src/routes/rastreio.tsx src/routes/checkout.tsx src/routes/confirmacao.tsx src/components/order-portal-promo.tsx
 ```
 
 > O lint global ainda reporta problemas pré-existentes de formatação/CRLF em ficheiros não alterados. Os ficheiros novos e modificados estão formatados.
 
-## 13. Capturas
+## 12. Capturas
 
 As capturas usadas na apresentação estão em `docs/assets/screenshots/` e os recortes em `docs/assets/screenshots/crops/`.
 
@@ -252,22 +218,19 @@ As capturas usadas na apresentação estão em `docs/assets/screenshots/` e os r
 | `06-confirmacao.png`        | Confirmação com código exclusivo e rastreio.   |
 | `07-rastreio-acesso.png`    | Formulário de acesso ao portal.                |
 | `08-rastreio-dashboard.png` | Dashboard de envio completo.                   |
-| `11-verificar-valido.png`   | Certificado de autenticidade válido.           |
 | `15-rastreio-recolha.png`   | Dashboard de recolha pronta.                   |
-| `16-verificar-invalido.png` | Resultado de código inválido.                  |
 | `14-rastreio-mobile.png`    | Portal em viewport mobile.                     |
 
-## 14. Ficheiros principais
+## 13. Ficheiros principais
 
-| Ficheiro                                | Responsabilidade                                                |
-| --------------------------------------- | --------------------------------------------------------------- |
-| `src/lib/orders.ts`                     | Modelo, dados demo, persistência, validação, estados e códigos. |
-| `src/lib/i18n.ts`                       | Helper de tradução inline PT/EN/ES.                             |
-| `src/routes/rastreio.tsx`               | Portal do cliente e dashboard.                                  |
-| `src/routes/verificar.tsx`              | Verificação pública de autenticidade.                           |
-| `src/routes/checkout.tsx`               | Criação da encomenda no checkout.                               |
-| `src/routes/confirmacao.tsx`            | Confirmação e próximos passos.                                  |
-| `src/components/order-portal-promo.tsx` | Bloco promocional na home.                                      |
-| `src/components/site-shell.tsx`         | Header, footer e menu mobile.                                   |
-| `scripts/capture-screenshots.mjs`       | Captura automatizada das imagens da documentação.               |
-| `scripts/build-apresentacao.mjs`        | Geração da apresentação PowerPoint.                             |
+| Ficheiro                                | Responsabilidade                                                        |
+| --------------------------------------- | ----------------------------------------------------------------------- |
+| `src/lib/orders.ts`                     | Modelo, dados demo, persistência, validação de acesso, estados e códigos exclusivos. |
+| `src/lib/i18n.ts`                       | Helper de tradução inline PT/EN/ES.                                     |
+| `src/routes/rastreio.tsx`               | Portal do cliente e dashboard.                                          |
+| `src/routes/checkout.tsx`               | Criação da encomenda no checkout.                                       |
+| `src/routes/confirmacao.tsx`            | Confirmação e próximos passos.                                          |
+| `src/components/order-portal-promo.tsx` | Bloco promocional na home.                                              |
+| `src/components/site-shell.tsx`         | Header, footer e menu mobile.                                           |
+| `scripts/capture-screenshots.mjs`       | Captura automatizada das imagens da documentação.                       |
+| `scripts/build-apresentacao.mjs`        | Geração da apresentação PowerPoint.                                     |

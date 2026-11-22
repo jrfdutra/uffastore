@@ -11,7 +11,7 @@ const PENDING_KEY = "uffa-pending-checkout-v1";
 const CART_KEY = "uffa-cart";
 const MOCK_CHECKOUT_URL = "https://mock-shopify.test/checkout?token=abc123";
 
-/** Produto real da loja com todas as variantes em stock (verificado via API). */
+/** Produto real da loja com todas as variantes em stock (confirmado via API). */
 const PRODUTO_COM_STOCK = "nike-air-force-branco-laranja";
 
 /**
@@ -419,12 +419,12 @@ test.describe("Checkout", () => {
     expect(dados.customerName).toBe("João Silva");
     expect(dados.email).toBe("joao@exemplo.com");
     expect(dados.items.length).toBeGreaterThan(0);
-    expect(dados.items[0].authCode).toMatch(/^UFFA-/);
+    expect(dados.items[0].quantity).toBe(1);
   });
 });
 
 test.describe("Confirmação", () => {
-  test("mostra os detalhes da compra pendente e os códigos de par", async ({ page }) => {
+  test("mostra os detalhes da compra pendente", async ({ page }) => {
     await limparEstado(page);
     const pendente = {
       at: new Date().toISOString(),
@@ -439,7 +439,6 @@ test.describe("Confirmação", () => {
           size: 42,
           quantity: 1,
           unitPrice: 120,
-          authCode: "UFFA-ABC123",
         },
       ],
       subtotal: 120,
@@ -453,7 +452,7 @@ test.describe("Confirmação", () => {
 
     await page.goto("/confirmacao");
     await expect(page.getByText("Maria Teste")).toBeVisible();
-    await expect(page.getByText("UFFA-ABC123")).toBeVisible();
+    await expect(page.getByText("Nike Air Force 1")).toBeVisible();
     await expect(page.getByText(/120,00/).first()).toBeVisible();
   });
 

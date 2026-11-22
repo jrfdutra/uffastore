@@ -1,30 +1,30 @@
-import { BadgeCheck, Hand, RefreshCcw } from "lucide-react";
+import { PackageCheck, Hand, RefreshCcw } from "lucide-react";
 import { useShop } from "@/lib/shop-context";
 const items = {
   pt: [
-    ["Verificação antes do envio", "Cada par é inspecionado"],
+    ["Preparação antes do envio", "Cada par é conferido"],
     ["Entrega em mãos no Porto", "Recolha grátis combinada"],
     ["Compra final", "Sem trocas nem devoluções"],
   ],
   en: [
-    ["Verified before dispatch", "Every pair is inspected"],
+    ["Packed with care", "Every pair is checked"],
     ["Hand delivery in Porto", "Free arranged pickup"],
     ["Final purchase", "No exchanges or returns"],
   ],
   es: [
-    ["Verificación antes del envío", "Cada par es inspeccionado"],
+    ["Preparación antes del envío", "Cada par es revisado"],
     ["Entrega en mano en Oporto", "Recogida gratis acordada"],
     ["Compra final", "Sin cambios ni devoluciones"],
   ],
 };
 export function TrustStrip() {
   const { language } = useShop();
-  const icons = [BadgeCheck, Hand, RefreshCcw];
+  const icons = [PackageCheck, Hand, RefreshCcw];
   return (
     <section className="border-y border-border">
       <div className="mx-auto grid max-w-7xl md:grid-cols-3">
         {items[language].map(([a, b], i) => {
-          const Icon = icons[i] ?? BadgeCheck;
+          const Icon = icons[i] ?? PackageCheck;
           return (
             <div
               key={a}

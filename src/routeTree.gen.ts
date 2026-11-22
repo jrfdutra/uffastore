@@ -19,7 +19,6 @@ import { Route as ManualRouteImport } from './routes/manual'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as RastreioRouteImport } from './routes/rastreio'
 import { Route as TermosRouteImport } from './routes/termos'
-import { Route as VerificarRouteImport } from './routes/verificar'
 import { Route as ProdutoProductIdRouteImport } from './routes/produto.$productId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -72,11 +71,6 @@ const TermosRoute = TermosRouteImport.update({
   path: '/termos',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VerificarRoute = VerificarRouteImport.update({
-  id: '/verificar',
-  path: '/verificar',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProdutoProductIdRoute = ProdutoProductIdRouteImport.update({
   id: '/produto/$productId',
   path: '/produto/$productId',
@@ -94,7 +88,6 @@ export interface FileRoutesByFullPath {
   '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
   '/termos': typeof TermosRoute
-  '/verificar': typeof VerificarRoute
   '/produto/$productId': typeof ProdutoProductIdRoute
 }
 export interface FileRoutesByTo {
@@ -108,7 +101,6 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
   '/termos': typeof TermosRoute
-  '/verificar': typeof VerificarRoute
   '/produto/$productId': typeof ProdutoProductIdRoute
 }
 export interface FileRoutesById {
@@ -123,7 +115,6 @@ export interface FileRoutesById {
   '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
   '/termos': typeof TermosRoute
-  '/verificar': typeof VerificarRoute
   '/produto/$productId': typeof ProdutoProductIdRoute
 }
 export interface FileRouteTypes {
@@ -139,7 +130,6 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/rastreio'
     | '/termos'
-    | '/verificar'
     | '/produto/$productId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -153,7 +143,6 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/rastreio'
     | '/termos'
-    | '/verificar'
     | '/produto/$productId'
   id:
     | '__root__'
@@ -167,7 +156,6 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/rastreio'
     | '/termos'
-    | '/verificar'
     | '/produto/$productId'
   fileRoutesById: FileRoutesById
 }
@@ -182,7 +170,6 @@ export interface RootRouteChildren {
   PrivacidadeRoute: typeof PrivacidadeRoute
   RastreioRoute: typeof RastreioRoute
   TermosRoute: typeof TermosRoute
-  VerificarRoute: typeof VerificarRoute
   ProdutoProductIdRoute: typeof ProdutoProductIdRoute
 }
 
@@ -258,13 +245,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/verificar': {
-      id: '/verificar'
-      path: '/verificar'
-      fullPath: '/verificar'
-      preLoaderRoute: typeof VerificarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/produto/$productId': {
       id: '/produto/$productId'
       path: '/produto/$productId'
@@ -286,7 +266,6 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadeRoute: PrivacidadeRoute,
   RastreioRoute: RastreioRoute,
   TermosRoute: TermosRoute,
-  VerificarRoute: VerificarRoute,
   ProdutoProductIdRoute: ProdutoProductIdRoute,
 }
 export const routeTree = rootRouteImport

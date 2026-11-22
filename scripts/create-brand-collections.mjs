@@ -63,31 +63,31 @@ const BRANDS = [
     title: "Nike",
     handle: "nike",
     vendor: "Nike",
-    desc: "<p>Todas as sapatilhas Nike verificadas da UFFA Store.</p>",
+    desc: "<p>Todas as sapatilhas Nike selecionadas pela UFFA Store.</p>",
   },
   {
     title: "Adidas",
     handle: "adidas",
     vendor: "Adidas",
-    desc: "<p>Todas as sapatilhas Adidas verificadas da UFFA Store.</p>",
+    desc: "<p>Todas as sapatilhas Adidas selecionadas pela UFFA Store.</p>",
   },
   {
     title: "Puma",
     handle: "puma",
     vendor: "Puma",
-    desc: "<p>Todas as sapatilhas Puma verificadas da UFFA Store.</p>",
+    desc: "<p>Todas as sapatilhas Puma selecionadas pela UFFA Store.</p>",
   },
   {
     title: "New Balance",
     handle: "new-balance",
     vendor: "New Balance",
-    desc: "<p>Todas as sapatilhas New Balance verificadas da UFFA Store.</p>",
+    desc: "<p>Todas as sapatilhas New Balance selecionadas pela UFFA Store.</p>",
   },
   {
     title: "Vans",
     handle: "vans",
     vendor: "Vans",
-    desc: "<p>Todas as sapatilhas Vans verificadas da UFFA Store.</p>",
+    desc: "<p>Todas as sapatilhas Vans selecionadas pela UFFA Store.</p>",
   },
 ];
 

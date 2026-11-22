@@ -92,7 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         property: "og:image",
         content: "https://www.uffastore.pt/images/floral-air-force.webp",
       },
-      { property: "og:image:alt", content: "Uffa Store — sapatilhas autenticadas no Porto" },
+      { property: "og:image:alt", content: "Uffa Store — sapatilhas selecionadas no Porto" },
       { property: "og:image:width", content: "1600" },
       { property: "og:image:height", content: "2000" },
       { name: "twitter:card", content: "summary_large_image" },

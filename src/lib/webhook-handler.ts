@@ -22,7 +22,7 @@ export type WebhookResult = {
 export const webhookDeduplicator = new WebhookDeduplicator();
 
 /**
- * Processa um pedido pago já autenticado.
+ * Processa um pedido pago já validado.
  * `sender` é injetável para permitir testes sem rede/Resend.
  */
 export async function processOrderPaidWebhook(

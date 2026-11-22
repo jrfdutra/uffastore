@@ -22,7 +22,7 @@ import { tr } from "@/lib/i18n";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
 import { savePendingCheckout } from "@/lib/checkout-session";
 import { createShopifyCheckout } from "@/lib/shopify";
-import { generatePairCode, pairCount } from "@/lib/pair-code";
+import { pairCount } from "@/lib/pair-code";
 import { PaymentBadges } from "@/components/payment-badges";
 
 export type DeliveryOption = "pickup" | "continental" | "islands" | "eu" | "switzerland";
@@ -91,7 +91,7 @@ export const Route = createFileRoute("/checkout")({
         content: "Escolhe recolha no Porto ou envio e confirma a tua encomenda Uffa Store.",
       },
       { property: "og:title", content: "Checkout — Uffa Store" },
-      { property: "og:description", content: "Confirma a tua encomenda de sneakers verificados." },
+      { property: "og:description", content: "Confirma a tua encomenda de sneakers selecionados." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -228,7 +228,6 @@ function Checkout() {
             cord: item.cord,
             quantity: 1,
             unitPrice: product?.price ?? item.unitPrice ?? 0,
-            authCode: generatePairCode(),
           }));
         }),
         subtotal: s.subtotal,

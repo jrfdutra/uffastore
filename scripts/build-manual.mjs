@@ -346,7 +346,7 @@ const document = `<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>UFFA Store — Manual do Site</title>
-<meta name="description" content="Manual funcional e operacional do site UFFA Store: catálogo, checkout, portal de encomendas, autenticidade e operações.">
+<meta name="description" content="Manual funcional e operacional do site UFFA Store: catálogo, checkout, portal de encomendas e operações.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -821,11 +821,11 @@ const document = `<!DOCTYPE html>
 
 <header class="cover" id="topo">
   <div class="cover__text">
-    <p class="eyebrow">UFFA Store · Porto · Sneakers verificados</p>
+    <p class="eyebrow">UFFA Store · Porto · Sneakers selecionados</p>
     <h1><span>UFFA</span><span class="pink">STORE.</span></h1>
     <p class="cover__sub">Manual do Site</p>
-    <p class="cover__tagline">Da descoberta à autenticidade — tudo o que o site faz, ecrã a ecrã.</p>
-    <p class="cover__desc">Manual funcional e operacional da loja online UFFA Store. Segue a mesma estrutura, identidade e numeração da apresentação <strong>apresentacao-site-uffa.pptx</strong>: doze capítulos e quatro anexos.</p>
+    <p class="cover__tagline">Da descoberta à entrega — tudo o que o site faz, ecrã a ecrã.</p>
+    <p class="cover__desc">Manual funcional e operacional da loja online UFFA Store. Segue a mesma estrutura, identidade e numeração da apresentação <strong>apresentacao-site-uffa.pptx</strong>: onze capítulos e quatro anexos.</p>
     <span class="cover__rule"></span>
     <dl class="cover__meta">${metaHtml}</dl>
     <p class="cover__foot">Documentação e demonstração · 2026 · versão 2.0</p>

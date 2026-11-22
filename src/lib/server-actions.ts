@@ -27,8 +27,6 @@ export async function sendShopifyOrderEmail(orderData: {
     size: number | string;
     quantity: number;
     unitPrice: number;
-    authCode?: string;
-    serial?: string;
   }[];
   total: number;
 }) {
@@ -41,25 +39,17 @@ export async function sendShopifyOrderEmail(orderData: {
     return { success: false, error: "Missing RESEND_API_KEY" };
   }
 
-  const authDetails = orderData.items
-    .map(
-      (item, index) =>
-        `- ${item.name} (Tamanho ${item.size}): N/S: ${item.serial || `UFFA-SN${100000 + index}`} | Código do par: ${item.authCode || `UFFA-${100000 + index}`}`,
-    )
-    .join("\n");
+  const artigos = orderData.items.map((item) => `- ${item.name} (Tamanho ${item.size})`).join("\n");
 
-  const subject = `Certificado de Autenticidade e Agradecimento · Encomenda UFFA ${orderData.orderNumber}`;
+  const subject = `Encomenda UFFA ${orderData.orderNumber} confirmada`;
   const body = `Olá, ${orderData.customerName || "Cliente"}! 💗
 
 Muito obrigado pela tua compra na Uffa Store! É um enorme prazer fazer parte do teu estilo.
 
-Em anexo digital, enviamos o teu Certificado de Autenticidade Oficial UFFA para os artigos adquiridos:
+Artigos adquiridos:
+${artigos}
 
-${authDetails}
-
-Com o código do par podes consultar a situação de entrega e validar a autenticidade a qualquer momento em: https://www.uffastore.pt/verificar
-
-A tua encomenda foi confirmada com sucesso e já está a ser preparada com todo o cuidado.
+A tua encomenda foi confirmada com sucesso e já está a ser preparada com todo o cuidado. Podes acompanhar o estado em: https://www.uffastore.pt/rastreio
 
 Com carinho e estilo,
 Equipa UFFA

@@ -81,7 +81,7 @@ async function handleShopifyWebhook(request: Request): Promise<Response> {
     return jsonResponse(413, { success: false, reason: "payload_too_large" });
   }
 
-  // 1) Autenticidade: HMAC-SHA256 do corpo raw.
+  // 1) Integridade: HMAC-SHA256 do corpo raw.
   if (!verifyShopifyHmac(raw, request.headers.get("x-shopify-hmac-sha256"))) {
     return new Response("Unauthorized", { status: 401 });
   }

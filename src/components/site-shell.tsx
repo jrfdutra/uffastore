@@ -494,14 +494,6 @@ function MobileNav({
           <Link to="/rastreio" onClick={close} className="mt-4 font-semibold text-primary">
             {t.track}
           </Link>
-          <Link to="/verificar" onClick={close} className="mt-3 font-semibold text-primary">
-            {tr(
-              language,
-              "Código do par e entrega",
-              "Pair code & delivery",
-              "Código del par y entrega",
-            )}
-          </Link>
         </nav>
       </SheetContent>
     </Sheet>
@@ -706,9 +698,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <p className="mt-2 text-xs text-footer-muted">
               {tr(
                 s.language,
-                "Sapatilhas com selo de autenticidade · Entrega em mãos na zona do Porto",
-                "Sneakers with authenticity seal · Hand delivery in Porto area",
-                "Zapatillas con sello de autenticidad · Entrega en mano en la zona de Oporto",
+                "Sapatilhas selecionadas · Entrega em mãos na zona do Porto",
+                "Selected sneakers · Hand delivery in Porto area",
+                "Zapatillas seleccionadas · Entrega en mano en la zona de Oporto",
               )}
             </p>
             <p className="mt-3 flex items-center gap-2 text-sm text-footer-muted">
@@ -740,14 +732,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
             </Link>
             <Link to="/rastreio" className="font-bold text-brand">
               {t.track}
-            </Link>
-            <Link to="/verificar" className="hover:text-brand">
-              {tr(
-                s.language,
-                "Código do par e entrega",
-                "Pair code & delivery",
-                "Código del par y entrega",
-              )}
             </Link>
             <span aria-hidden className="my-2 h-px w-12 bg-footer-border" />
             <Link to="/privacidade" className="hover:text-brand">

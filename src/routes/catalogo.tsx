@@ -107,11 +107,10 @@ export const Route = createFileRoute("/catalogo")({
       { title: "Catálogo — Uffa Store" },
       {
         name: "description",
-        content:
-          "Descobre sneakers verificados Adidas, Nike, Puma, New Balance e Vans, com selo de autenticidade.",
+        content: "Descobre sneakers Adidas, Nike, Puma, New Balance e Vans, selecionados no Porto.",
       },
       { property: "og:title", content: "Catálogo — Uffa Store" },
-      { property: "og:description", content: "Sneakers verificados, selecionados no Porto." },
+      { property: "og:description", content: "Sneakers selecionados no Porto." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

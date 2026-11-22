@@ -10,7 +10,6 @@ import {
 } from "@/lib/shop-data";
 import { brandLabelFor } from "@/lib/brands";
 import { useShop } from "@/lib/shop-context";
-import { VerifiedBadge } from "./verified-badge";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -105,7 +104,6 @@ export function ProductCard({ product }: { product: Product }) {
             />
 
             <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5 items-start z-10">
-              <VerifiedBadge />
               {isBlackFriday && !isSoldOut && (
                 <span className="border border-white/25 bg-black px-3 py-1 font-display text-xs uppercase tracking-widest font-black text-white shadow-md sm:text-sm">
                   {tr(language, "BLACK FRIDAY", "BLACK FRIDAY", "BLACK FRIDAY")}

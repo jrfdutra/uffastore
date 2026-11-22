@@ -30,7 +30,7 @@ const W = 13.333;
 const H = 7.5;
 const MX = 0.7;
 const CW = 11.93;
-const TOTAL = 14;
+const TOTAL = 13;
 
 const img = (name) => {
   const crop = path.join(CROPS, name);
@@ -277,7 +277,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     line: { color: C.primary, width: 0 },
   });
 
-  text(slide, "UFFA STORE  ·  PORTO  ·  SNEAKERS VERIFICADOS", 0.9, 0.95, 6.2, 0.3, {
+  text(slide, "UFFA STORE  ·  PORTO  ·  SNEAKERS SELECIONADOS", 0.9, 0.95, 6.2, 0.3, {
     fontSize: 9,
     bold: true,
     color: C.primary,
@@ -300,7 +300,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
   });
   text(
     slide,
-    "Da home ao checkout. Do par à prova de autenticidade. Uma experiência completa para quem compra e para quem opera.",
+    "Da home ao checkout. Do par à entrega. Uma experiência completa para quem compra e para quem opera.",
     0.9,
     3.75,
     5.7,
@@ -354,14 +354,10 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     [
       "1",
       "Curadoria",
-      "Oito pares, quatro linhas. Cada par é escolhido e verificado antes de entrar.",
+      "Pares selecionados de quatro linhas. Cada par é escolhido antes de entrar.",
     ],
     ["2", "Porto", "Recolha gratuita em mãos. A loja física faz parte da experiência digital."],
-    [
-      "3",
-      "Pós-compra",
-      "Portal, autenticidade e operação no mesmo sistema, sem depender de emails soltos.",
-    ],
+    ["3", "Pós-compra", "Portal e operação no mesmo sistema, sem depender de emails soltos."],
   ];
   pillars.forEach(([number, title, description], index) => {
     stepRow(slide, number, title, description, 0.7, 1.8 + index * 1.35, 5.6, {
@@ -382,7 +378,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
   });
 
   slide.addNotes(
-    "Enquadrar a loja: não é um catálogo infinito. É uma seleção curta, com verificação, recolha no Porto e uma camada de pós-compra que prolonga a relação. Os três pilares são curadoria, Porto e pós-compra.",
+    "Enquadrar a loja: não é um catálogo infinito. É uma seleção curta, com curadoria, recolha no Porto e uma camada de pós-compra que prolonga a relação. Os três pilares são curadoria, Porto e pós-compra.",
   );
 }
 
@@ -442,7 +438,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
       "Linha, tamanho e preço máximo no mesmo painel.",
       "Pesquisa instantânea por nome, sem recarregar a página.",
       "Categorias do menu abrem já filtradas e sincronizadas com o URL.",
-      "Cartões com preço, categoria, selo de verificação e placa PROMO.",
+      "Cartões com preço, categoria, disponibilidade por tamanho e placa PROMO.",
       "No mobile, os filtros empilham e continuam ao alcance.",
     ],
     5.45,
@@ -463,7 +459,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
   });
 
   slide.addNotes(
-    "Mostrar o catálogo: filtros por linha, tamanho e preço, pesquisa e cartões com informação essencial. Clicar numa categoria do cabeçalho e mostrar que o catálogo abre já filtrado, mesmo estando na página. Destacar o selo VERIFICADO, a placa PROMO e o layout mobile com filtros utilizáveis.",
+    "Mostrar o catálogo: filtros por linha, tamanho e preço, pesquisa e cartões com informação essencial. Clicar numa categoria do cabeçalho e mostrar que o catálogo abre já filtrado, mesmo estando na página. Destacar a disponibilidade por tamanho, a placa PROMO e o layout mobile com filtros utilizáveis.",
   );
 }
 
@@ -486,7 +482,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
       "Galeria com rotação 360° e várias perspetivas.",
       "Tamanhos com stock — 5 pares por tamanho.",
       "Preço normal ou de oferta, com placa PROMO.",
-      "Descrição, autenticidade e política de trocas.",
+      "Descrição, cor e política de trocas.",
       "Recolha grátis no Porto.",
     ],
     6.95,
@@ -616,7 +612,6 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
       "Número de encomenda para identificar o pedido.",
       "Código exclusivo para entrar no portal.",
       "Código de rastreio e transportador.",
-      "Código de autenticidade por cada par.",
     ],
     7.05,
     2.3,
@@ -636,7 +631,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
   });
 
   slide.addNotes(
-    "A confirmação é o início do pós-compra. Mostra o número, o código exclusivo, o rastreio e os códigos de autenticidade. O cliente não precisa de criar conta: guarda o código e entra no portal com três dados.",
+    "A confirmação é o início do pós-compra. Mostra o número, o código exclusivo e o rastreio. O cliente não precisa de criar conta: guarda o código e entra no portal com três dados.",
   );
 }
 
@@ -699,63 +694,11 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 10 — Autenticidade                                                  */
+/* 10 — Operações                                                      */
 /* ------------------------------------------------------------------ */
 {
   const slide = pptx.addSlide();
-  addHeader(slide, "09 / AUTENTICIDADE", "A prova de autenticidade.", 10);
-
-  imageFrame(
-    slide,
-    img("verificar-resultado-v2.png"),
-    0.7,
-    1.65,
-    6.3,
-    3.05,
-    "Certificado válido · /verificar",
-  );
-  imageFrame(slide, img("verificar-invalido-v2.png"), 0.7, 4.95, 6.3, 1.5, "Código inválido");
-
-  text(slide, "Cada par tem uma identidade.", 7.3, 1.75, 5.2, 0.35, {
-    fontSize: 15,
-    bold: true,
-  });
-  bullets(
-    slide,
-    [
-      "Código único por par, gerado no checkout.",
-      "Formato UFFA-AUTH-XXXX-XXXX.",
-      "Validação pública em /verificar.",
-      "Sem revelar nome, contacto ou morada.",
-    ],
-    7.3,
-    2.3,
-    5.2,
-    { gap: 0.78, fontSize: 11 },
-  );
-
-  card(slide, 7.3, 5.55, 5.15, 1.05, C.ink, C.ink);
-  text(slide, "O par pode ser partilhado.", 7.55, 5.75, 4.6, 0.3, {
-    fontSize: 14,
-    bold: true,
-    color: C.white,
-  });
-  text(slide, "A prova também.", 7.55, 6.08, 4.6, 0.25, {
-    fontSize: 9.5,
-    color: "D8CBC6",
-  });
-
-  slide.addNotes(
-    "A autenticidade é a camada que transforma exclusividade em confiança. Cada par tem um código e um número de série. A verificação é pública, mas não expõe dados do comprador. O resultado inválido também é claro e útil.",
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 11 — Operações                                                      */
-/* ------------------------------------------------------------------ */
-{
-  const slide = pptx.addSlide();
-  addHeader(slide, "10 / OPERAÇÕES", "Gerir sem folhas de cálculo.", 11);
+  addHeader(slide, "09 / OPERAÇÕES", "Gerir sem folhas de cálculo.", 10);
 
   imageFrame(slide, img("operacoes-painel-foco-v2.png"), 0.7, 1.65, 6.2, 4.73, "Painel /operacoes");
 
@@ -794,11 +737,11 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 12 — Mobile                                                         */
+/* 11 — Mobile                                                         */
 /* ------------------------------------------------------------------ */
 {
   const slide = pptx.addSlide();
-  addHeader(slide, "11 / MOBILE", "A mesma experiência, no bolso.", 12);
+  addHeader(slide, "10 / MOBILE", "A mesma experiência, no bolso.", 11);
 
   imageFrame(slide, img("mobile-home-top.png"), 0.7, 1.65, 2.05, 4.44, "Home");
   imageFrame(slide, img("mobile-catalogo-top.png"), 3.05, 1.65, 2.05, 4.44, "Catálogo");
@@ -843,11 +786,11 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 13 — Tecnologia                                                     */
+/* 12 — Tecnologia                                                     */
 /* ------------------------------------------------------------------ */
 {
   const slide = pptx.addSlide();
-  addHeader(slide, "12 / TECNOLOGIA", "Simples na demo, pronto para produção.", 13);
+  addHeader(slide, "11 / TECNOLOGIA", "Simples na demo, pronto para produção.", 12);
 
   card(slide, 0.7, 1.65, 5.9, 4.4);
   text(slide, "DEMONSTRAÇÃO", 0.98, 1.9, 3.0, 0.22, {
@@ -912,7 +855,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 14 — Fecho                                                          */
+/* 13 — Fecho                                                          */
 /* ------------------------------------------------------------------ */
 {
   const slide = pptx.addSlide();
@@ -936,7 +879,7 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     fontSize: 52,
     color: C.white,
   });
-  text(slide, "Sneakers verificados. Recolha em mãos no Porto.", 0.9, 2.4, 5.7, 0.5, {
+  text(slide, "Sneakers selecionados. Recolha em mãos no Porto.", 0.9, 2.4, 5.7, 0.5, {
     fontSize: 15,
     color: "E8DCD7",
   });
@@ -980,7 +923,6 @@ function stepRow(slide, number, title, description, x, y, w, opts = {}) {
     ["/produto/porto-rose-low", "Detalhe e tamanhos"],
     ["/checkout", "Recolha ou envio"],
     ["/rastreio", "Portal do cliente"],
-    ["/verificar", "Autenticidade"],
     ["/operacoes", "Painel interno"],
   ];
   routes.forEach(([route, label], index) => {
