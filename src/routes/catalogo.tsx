@@ -12,7 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categoryNames, copy, isProductInCategory, type Category } from "@/lib/shop-data";
+import {
+  categoryNames,
+  copy,
+  isProductInCategory,
+  type Category,
+  type Language,
+} from "@/lib/shop-data";
+import { matchesColorFilter, type ColorFilter } from "@/lib/colors";
 import {
   BRANDS,
   brandNames,
@@ -84,7 +91,11 @@ function buildSizeGroups(catalog: { sizes: { size: number; label?: string }[] }[
   });
 }
 
-const availableColors = [
+const availableColors: {
+  slug: ColorFilter;
+  name: Record<Language, string>;
+  colorClass: string;
+}[] = [
   {
     slug: "white",
     name: { pt: "Branco", en: "White", es: "Blanco" },
@@ -167,7 +178,7 @@ function Catalog() {
     "all",
   );
   const [size, setSize] = useState<number | "all">("all");
-  const [selectedColor, setSelectedColor] = useState<string | "all">("all");
+  const [selectedColor, setSelectedColor] = useState<ColorFilter | "all">("all");
 
   // A numeração é específica de cada marca (a Adidas usa ⅓/⅔, a Nike termina
   // em .5), por isso a lista de tamanhos tem de vir dos produtos da marca ativa.
@@ -229,13 +240,9 @@ function Catalog() {
           // Filtro de Tamanho Específico
           if (size !== "all" && !p.sizes.some((s) => s.size === size)) return false;
 
-          // Filtro de Cor
-          if (selectedColor !== "all") {
-            const hasColorMatch =
-              p.colors?.some((c) => c.slug === selectedColor) ||
-              p.sizes.some((s) => s.color === selectedColor);
-            if (!hasColorMatch) return false;
-          }
+          // Filtro de Cor: a Shopify guarda nomes como "Preta" ou "Branco e
+          // Laranja", por isso comparamos termos e não slugs exatos.
+          if (selectedColor !== "all" && !matchesColorFilter(p, selectedColor)) return false;
 
           return true;
         })

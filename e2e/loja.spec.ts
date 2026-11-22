@@ -116,6 +116,20 @@ test.describe("Loja — navegação e catálogo", () => {
     await expect(page.locator("article").first()).toBeVisible();
   });
 
+  test("o filtro de cores encontra sapatilhas com as cores da Shopify", async ({ page }) => {
+    await page.goto("/catalogo");
+
+    // A Shopify guarda cores como "Preta", "Branco e Laranja" ou "All Black".
+    // O filtro tem de as reconhecer através dos botões Preto e Branco.
+    for (const cor of ["Preto", "Branco"]) {
+      await expect(async () => {
+        await page.getByTitle(cor, { exact: true }).click();
+        await expect(page.getByText("Sem produtos encontrados.")).toBeHidden();
+        expect(await page.locator("article").count()).toBeGreaterThan(0);
+      }).toPass({ timeout: 30_000 });
+    }
+  });
+
   test("a pesquisa de modelos na homepage encontra resultados", async ({ page }) => {
     await page.goto("/");
     const pesquisa = page.getByPlaceholder(/Pesquisar modelos/);
@@ -460,6 +474,70 @@ test.describe("Confirmação", () => {
     await limparEstado(page);
     await page.goto("/confirmacao");
     await expect(page.getByRole("heading", { name: /Obrigado/i })).toBeVisible();
+  });
+});
+
+test.describe("Expedição e link mágico", () => {
+  test("a página interna regista o tracking e mostra o link enviado", async ({ page }) => {
+    let sentToken = "";
+    await page.route("**/api/orders/tracking", async (route) => {
+      sentToken = route.request().headers()["x-admin-token"] ?? "";
+      const body = JSON.parse(route.request().postData() ?? "") as Record<string, string>;
+      expect(body["trackingCode"]).toBe("RR123456789PT");
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          emailSent: true,
+          trackingUrl: "https://www.uffastore.pt/rastreio?token=token-de-teste",
+        }),
+      });
+    });
+
+    await page.goto("/expedicao");
+    await expect(async () => {
+      await page.getByLabel("Token interno").fill("segredo-local");
+      await page.getByLabel("Número da encomenda").fill("UFFA-48217");
+      await page.getByLabel("E-mail do cliente").fill("cliente@exemplo.pt");
+      await page.getByLabel("Código de rastreio").fill("RR123456789PT");
+      await page.getByRole("button", { name: "Registar e enviar e-mail" }).click();
+      await expect(page.getByText("Envio registado e e-mail enviado.")).toBeVisible({
+        timeout: 2_000,
+      });
+    }).toPass({ timeout: 30_000 });
+
+    expect(sentToken).toBe("segredo-local");
+    await expect(
+      page.getByText("https://www.uffastore.pt/rastreio?token=token-de-teste"),
+    ).toBeVisible();
+  });
+
+  test("o link mágico mostra o envio e o atalho para o CTT", async ({ page }) => {
+    await page.route("**/api/orders/tracking?token=*", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          order: {
+            orderNumber: "UFFA-48217",
+            trackingCode: "RR123456789PT",
+            carrier: "CTT Expresso",
+            estimatedDelivery: "2026-11-25",
+            issuedAt: Date.parse("2026-11-22T12:00:00.000Z"),
+            expiresAt: Date.parse("2026-12-06T12:00:00.000Z"),
+          },
+        }),
+      });
+    });
+
+    await page.goto("/rastreio?token=token-de-teste");
+    await expect(page.getByRole("heading", { name: "UFFA-48217" })).toBeVisible();
+
+    const link = page.getByRole("link", { name: "Ver no CTT" });
+    await expect(link).toBeVisible();
+    expect(await link.getAttribute("href")).toContain("objects=RR123456789PT");
   });
 });
 

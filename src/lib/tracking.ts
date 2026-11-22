@@ -13,3 +13,13 @@ export function cttTrackingUrl(code: string): string {
 export function isCttCarrier(carrier: string | null | undefined): boolean {
   return (carrier ?? "").toLowerCase().includes("ctt");
 }
+
+/** Dados mínimos e sem PII que viajam no link mágico de rastreio. */
+export type TrackingLinkData = {
+  orderNumber: string;
+  trackingCode: string;
+  carrier: string;
+  estimatedDelivery: string | null;
+  issuedAt: number;
+  expiresAt: number;
+};

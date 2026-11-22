@@ -516,6 +516,7 @@ Regras de proteção:
 - Previsão de entrega ou data limite de recolha.
 - Transportador e código de rastreio, no envio.
 - Botão **Ver no CTT**, quando aplicável: abre a pesquisa oficial com o código já preenchido; basta carregar em **Procurar**.
+- Link mágico por e-mail: abre uma vista de envio sem exigir o código exclusivo; útil para encomendas reais da Shopify.
 - Morada da loja e nota pública, na recolha.
 - Resumo de valores.
 - Itens da encomenda com tamanho e quantidade.
@@ -551,14 +552,19 @@ Cada mudança cria um evento com data e hora no histórico visível ao cliente.
 
 <a id="cap-09"></a>
 
-## 09 / OPERAÇÕES
+## 09 / EXPEDIÇÃO
 
-### Painel removido.
+### Registos de envio sem painel de operações.
 
-O painel interno de operações (`/operacoes`) foi **removido** em 18/11/2026 por
-não ser utilizado. Deixou de existir rota, ligação e palavra-passe no site.
+O antigo painel interno de operações (`/operacoes`) foi removido em 18/11/2026.
+Em substituição existe apenas a página `/expedicao`, não indexada e sem ligação
+pública, para registar o código de rastreio de encomendas já pagas.
 
-A gestão do estado das encomendas passa a ser feita fora do site.
+1. A equipa introduz o número da encomenda, o e-mail do cliente, o transportador,
+   o código de rastreio e, opcionalmente, a previsão de entrega.
+2. É necessário introduzir o token interno (`TRACKING_ADMIN_TOKEN`); não é guardado no browser.
+3. O servidor cria um link assinado com validade configurável e envia-o por Resend.
+4. O cliente abre o link e vê o estado do envio com o botão **Ver no CTT**.
 
 > **Nota histórica.** As instruções e imagens desta secção em versões anteriores
 > do manual deixaram de se aplicar.

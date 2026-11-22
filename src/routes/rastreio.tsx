@@ -35,7 +35,7 @@ import { categoryNames, money, type Language } from "@/lib/shop-data";
 import { brandLabelFor } from "@/lib/brands";
 import { useShop } from "@/lib/shop-context";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
-import { cttTrackingUrl, isCttCarrier } from "@/lib/tracking";
+import { cttTrackingUrl, isCttCarrier, type TrackingLinkData } from "@/lib/tracking";
 import {
   clearOrderSession,
   confirmOrderReceipt,
@@ -54,7 +54,8 @@ import {
 } from "@/lib/orders";
 
 export const Route = createFileRoute("/rastreio")({
-  validateSearch: (search) => z.object({ order: z.string().optional() }).parse(search),
+  validateSearch: (search) =>
+    z.object({ order: z.string().optional(), token: z.string().optional() }).parse(search),
   head: () => ({
     meta: [
       { title: "A minha encomenda — Uffa Store" },
@@ -96,17 +97,58 @@ async function copyText(value: string, language: Language, label: string) {
   }
 }
 
+type TrackingLinkState =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "error" }
+  | { status: "ready"; data: TrackingLinkData };
+
 function OrderPortal() {
   const search = Route.useSearch();
   const [order, setOrder] = useState<Order | null>(null);
   const [hydrated, setHydrated] = useState(false);
+  const [trackingLink, setTrackingLink] = useState<TrackingLinkState>({ status: "idle" });
 
   useEffect(() => {
     setOrder(getOrderSession());
     setHydrated(true);
   }, []);
 
+  useEffect(() => {
+    const token = search.token;
+    if (!token) {
+      setTrackingLink({ status: "idle" });
+      return;
+    }
+
+    let cancelled = false;
+    setTrackingLink({ status: "loading" });
+    fetch(`/api/orders/tracking?token=${encodeURIComponent(token)}`, { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("invalid token");
+        return (await response.json()) as { success: boolean; order: TrackingLinkData };
+      })
+      .then((data) => {
+        if (!cancelled) setTrackingLink({ status: "ready", data: data.order });
+      })
+      .catch(() => {
+        if (!cancelled) setTrackingLink({ status: "error" });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [search.token]);
+
   if (!hydrated) return <PortalSkeleton />;
+
+  if (search.token) {
+    if (trackingLink.status === "loading") return <PortalSkeleton />;
+    if (trackingLink.status === "error") return <TrackingLinkInvalid />;
+    if (trackingLink.status === "ready") {
+      return <TrackingLinkDashboard data={trackingLink.data} />;
+    }
+  }
 
   if (order) {
     return (
@@ -133,6 +175,165 @@ function PortalSkeleton() {
         <div className="h-96 animate-pulse bg-muted" />
         <div className="h-96 animate-pulse bg-muted" />
       </div>
+    </div>
+  );
+}
+
+function TrackingLinkInvalid() {
+  const { language } = useShop();
+  return (
+    <div className="mx-auto max-w-3xl px-4 py-16 md:px-6">
+      <div className="border border-destructive/30 bg-destructive/5 p-8">
+        <p className="flex items-center gap-2 text-xs font-bold uppercase text-destructive">
+          <XCircle className="size-4" />
+          {tr(language, "Ligação inválida", "Invalid link", "Enlace no válido")}
+        </p>
+        <h1 className="mt-4 font-display text-4xl uppercase">
+          {tr(
+            language,
+            "Este link de rastreio expirou ou não é válido.",
+            "This tracking link has expired or is invalid.",
+            "Este enlace de seguimiento ha caducado o no es válido.",
+          )}
+        </h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {tr(
+            language,
+            "Podes pedir um novo link por e-mail ou aceder com os dados da tua encomenda.",
+            "You can request a new link by email or sign in with your order details.",
+            "Puedes pedir un nuevo enlace por correo o acceder con los datos de tu pedido.",
+          )}
+        </p>
+        <Button asChild className="mt-6 rounded-none">
+          <Link to="/rastreio">{tr(language, "Abrir portal", "Open portal", "Abrir portal")}</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function TrackingLinkDashboard({ data }: { data: TrackingLinkData }) {
+  const { language } = useShop();
+  const ctt = isCttCarrier(data.carrier);
+
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-16 md:px-6">
+      <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-primary">
+        <Truck className="size-4" />
+        {tr(language, "Encomenda enviada", "Order shipped", "Pedido enviado")}
+      </p>
+      <h1 className="mt-3 font-display text-5xl uppercase md:text-6xl">{data.orderNumber}</h1>
+      <p className="mt-4 max-w-2xl text-sm text-muted-foreground">
+        {tr(
+          language,
+          "A tua encomenda já foi entregue ao transportador. Podes acompanhar o percurso e consultar o CTT quando o código estiver ativo.",
+          "Your order is now with the carrier. You can follow its progress and check CTT once the code is active.",
+          "Tu pedido ya está con el transportista. Puedes seguir su recorrido y consultar CTT cuando el código esté activo.",
+        )}
+      </p>
+
+      <div className="mt-10 grid gap-3 sm:grid-cols-2">
+        <InfoBlock
+          icon={Truck}
+          label={tr(language, "Transportador", "Carrier", "Transportista")}
+          value={data.carrier}
+        />
+        <InfoBlock
+          icon={CalendarDays}
+          label={tr(language, "Previsão de entrega", "Estimated delivery", "Entrega prevista")}
+          value={data.estimatedDelivery ? formatDate(data.estimatedDelivery, language) : "—"}
+        />
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border border-border bg-section px-4 py-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <Navigation className="size-4 text-primary" />
+          <span className="text-xs font-bold uppercase text-muted-foreground">
+            {tr(language, "Código de rastreio", "Tracking code", "Código de seguimiento")}
+          </span>
+          <code className="font-mono text-sm font-bold">{data.trackingCode}</code>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {ctt && (
+            <Button asChild size="sm" className="rounded-none">
+              <a href={cttTrackingUrl(data.trackingCode)} target="_blank" rel="noopener noreferrer">
+                <Navigation />
+                {tr(language, "Ver no CTT", "Track on CTT", "Ver en CTT")}
+              </a>
+            </Button>
+          )}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="rounded-none"
+            onClick={() =>
+              copyText(
+                data.trackingCode,
+                language,
+                tr(language, "Código de rastreio", "Tracking code", "Código de seguimiento"),
+              )
+            }
+          >
+            <Copy />
+            {tr(language, "Copiar", "Copy", "Copiar")}
+          </Button>
+        </div>
+      </div>
+
+      <div className="mt-8 border border-border bg-card p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">
+          {tr(language, "Próximos passos", "Next steps", "Próximos pasos")}
+        </p>
+        <div className="mt-5 space-y-4">
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" />
+            <div>
+              <p className="text-sm font-bold">
+                {tr(language, "Pagamento confirmado", "Payment confirmed", "Pago confirmado")}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {tr(
+                  language,
+                  "A tua compra foi recebida pela UFFA Store.",
+                  "Your purchase was received by UFFA Store.",
+                  "Tu compra fue recibida por UFFA Store.",
+                )}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" />
+            <div>
+              <p className="text-sm font-bold">
+                {tr(
+                  language,
+                  "Entregue ao transportador",
+                  "Handed to carrier",
+                  "Entregado al transportista",
+                )}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {tr(
+                  language,
+                  "O código de rastreio já está disponível.",
+                  "The tracking code is now available.",
+                  "El código de seguimiento ya está disponible.",
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p className="mt-8 text-xs text-muted-foreground">
+        {tr(
+          language,
+          "Dúvidas? Responde ao e-mail de envio ou escreve para atendimento@uffastore.pt.",
+          "Questions? Reply to the shipping email or write to atendimento@uffastore.pt.",
+          "¿Dudas? Responde al correo de envío o escribe a atendimento@uffastore.pt.",
+        )}
+      </p>
     </div>
   );
 }

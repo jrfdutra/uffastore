@@ -8,9 +8,19 @@ import {
   isExpectedTopic,
   verifyShopifyHmac,
 } from "./lib/webhook-core";
+import { sendTrackingEmail } from "./lib/server-actions";
+import {
+  createTrackingLink,
+  getTrackingAdminToken,
+  getTrackingLinkSecret,
+  safeEqualStrings,
+  verifyTrackingLink,
+} from "./lib/tracking-link";
 import { processOrderPaidWebhook, webhookDeduplicator } from "./lib/webhook-handler";
 
 const WEBHOOK_PATH = "/api/webhooks/shopify/orders-paid";
+const TRACKING_PATH = "/api/orders/tracking";
+const TRACKING_BODY_LIMIT = 8_192;
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -118,6 +128,123 @@ async function handleShopifyWebhook(request: Request): Promise<Response> {
   return jsonResponse(status, result);
 }
 
+type TrackingRegistration = {
+  orderNumber: string;
+  trackingCode: string;
+  carrier: string;
+  email: string;
+  estimatedDelivery: string | null;
+};
+
+function cleanString(value: unknown, max: number): string {
+  return typeof value === "string" ? value.trim().slice(0, max) : "";
+}
+
+function parseTrackingRegistration(raw: string): TrackingRegistration | null {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+    const body = parsed as Record<string, unknown>;
+
+    const orderNumber = cleanString(body["orderNumber"], 40).toUpperCase();
+    const trackingCode = cleanString(body["trackingCode"], 40).toUpperCase().replace(/\s+/g, "");
+    const carrier = cleanString(body["carrier"], 60) || "CTT Expresso";
+    const email = cleanString(body["email"], 160).toLowerCase();
+    const deliveryRaw = cleanString(body["estimatedDelivery"], 40);
+
+    if (!orderNumber || !/^[A-Z0-9-]{6,40}$/.test(trackingCode)) return null;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
+
+    const estimatedDelivery =
+      deliveryRaw && !Number.isNaN(Date.parse(deliveryRaw)) ? deliveryRaw : null;
+    return { orderNumber, trackingCode, carrier, email, estimatedDelivery };
+  } catch {
+    return null;
+  }
+}
+
+function publicOrigin(request: Request): string {
+  const configured = process.env["PUBLIC_SITE_URL"]?.trim();
+  if (configured) return configured.replace(/\/+$/, "");
+
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  if (!host) return "https://www.uffastore.pt";
+  const proto =
+    request.headers.get("x-forwarded-proto") ??
+    (host.startsWith("localhost") || host.startsWith("127.0.0.1") ? "http" : "https");
+  return `${proto}://${host}`;
+}
+
+function handleTrackingVerify(request: Request): Response {
+  const secret = getTrackingLinkSecret();
+  if (!secret) {
+    return jsonResponse(503, { success: false, reason: "tracking_not_configured" });
+  }
+
+  const token = new URL(request.url).searchParams.get("token") ?? "";
+  const data = verifyTrackingLink(token, secret);
+  if (!data) {
+    return jsonResponse(401, { success: false, reason: "invalid_token" });
+  }
+
+  return jsonResponse(200, { success: true, order: data });
+}
+
+async function handleTrackingRegister(request: Request): Promise<Response> {
+  const adminToken = getTrackingAdminToken();
+  const secret = getTrackingLinkSecret();
+  if (!adminToken || !secret) {
+    return jsonResponse(503, { success: false, reason: "tracking_not_configured" });
+  }
+
+  const provided = request.headers.get("x-admin-token") ?? "";
+  if (!safeEqualStrings(provided, adminToken)) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  const declaredLength = Number.parseInt(request.headers.get("content-length") ?? "", 10);
+  if (Number.isFinite(declaredLength) && declaredLength > TRACKING_BODY_LIMIT) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+
+  const raw = await request.text();
+  if (raw.length > TRACKING_BODY_LIMIT) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+
+  const registration = parseTrackingRegistration(raw);
+  if (!registration) {
+    return jsonResponse(400, { success: false, reason: "invalid_payload" });
+  }
+
+  const token = createTrackingLink(
+    {
+      orderNumber: registration.orderNumber,
+      trackingCode: registration.trackingCode,
+      carrier: registration.carrier,
+      estimatedDelivery: registration.estimatedDelivery,
+    },
+    secret,
+  );
+  const trackingUrl = `${publicOrigin(request)}/rastreio?token=${encodeURIComponent(token)}`;
+
+  const emailResult = await sendTrackingEmail({
+    email: registration.email,
+    orderNumber: registration.orderNumber,
+    trackingCode: registration.trackingCode,
+    carrier: registration.carrier,
+    trackingUrl,
+    estimatedDelivery: registration.estimatedDelivery,
+  });
+
+  return jsonResponse(emailResult.success ? 200 : 502, {
+    success: emailResult.success,
+    reason: emailResult.success ? undefined : "email_failed",
+    emailSent: emailResult.success,
+    trackingUrl,
+  });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const url = new URL(request.url);
@@ -135,6 +262,22 @@ export default {
         console.error("[Webhook] Erro fatal:", error instanceof Error ? error.message : error);
         return jsonResponse(500, { success: false, reason: "internal_error" });
       }
+    }
+
+    if (url.pathname === TRACKING_PATH) {
+      if (request.method === "GET") return handleTrackingVerify(request);
+      if (request.method === "POST") {
+        try {
+          return await handleTrackingRegister(request);
+        } catch (error) {
+          console.error("[Tracking] Erro fatal:", error instanceof Error ? error.message : error);
+          return jsonResponse(500, { success: false, reason: "internal_error" });
+        }
+      }
+      return new Response("Method Not Allowed", {
+        status: 405,
+        headers: { allow: "GET, POST" },
+      });
     }
 
     try {

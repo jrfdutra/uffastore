@@ -61,6 +61,22 @@ node scripts/test-webhook.mjs          # casos de segurança, sem enviar e-mail
 node scripts/test-webhook.mjs --real   # inclui um envio real e prova de replay
 ```
 
+### Registo de envio e link mágico
+
+A equipa regista o código de rastreio em `/expedicao` (página interna, não indexada).
+O servidor cria um link assinado, envia-o por Resend e o cliente abre
+`/rastreio?token=...` com o estado do envio e o atalho para o CTT.
+
+| Variável                  | Obrigatória | Descrição                                                          |
+| ------------------------- | ----------- | ------------------------------------------------------------------- |
+| `ORDER_PORTAL_SECRET`     | Sim         | Segredo HMAC (mín. 16 caracteres) dos links de rastreio             |
+| `TRACKING_ADMIN_TOKEN`    | Sim         | Segredo (mín. 16 caracteres) exigido em `/expedicao`                |
+| `PUBLIC_SITE_URL`         | Não         | URL pública para os links; por omissão é inferido do pedido         |
+| `TRACKING_LINK_TTL_DAYS` | Não         | Validade dos links, de 1 a 30 dias (por omissão 14)                 |
+
+Sem `ORDER_PORTAL_SECRET` ou `TRACKING_ADMIN_TOKEN`, o endpoint de tracking rejeita
+todos os pedidos (fail-closed).
+
 O ficheiro [`docs/shopify/produtos-uffa.csv`](docs/shopify/produtos-uffa.csv) contém o
 catálogo de demonstração para importar no Shopify (Produtos → Importar).
 

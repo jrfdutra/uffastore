@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { cttTrackingUrl, isCttCarrier } from "./tracking";
 
 /** Em dev lê o .env local; em produção (Vercel) usa as env vars do painel. */
 async function loadEnv(): Promise<Record<string, string>> {
@@ -73,5 +74,65 @@ atendimento@uffastore.pt`;
   console.log(
     `E-mail de confirmação enviado para ${orderData.email} (Encomenda ${orderData.orderNumber})`,
   );
+  return { success: true, data: resJson };
+}
+
+export async function sendTrackingEmail(data: {
+  email: string;
+  orderNumber: string;
+  trackingCode: string;
+  carrier: string;
+  trackingUrl: string;
+  estimatedDelivery: string | null;
+}) {
+  const env = await loadEnv();
+  const apiKey = env["RESEND_API_KEY"];
+  const from = env["RESEND_FROM"] || "onboarding@resend.dev";
+
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY não configurada; e-mail de envio não enviado.");
+    return { success: false, error: "Missing RESEND_API_KEY" };
+  }
+
+  const cttLink = isCttCarrier(data.carrier)
+    ? `\nPodes consultar diretamente no CTT: ${cttTrackingUrl(data.trackingCode)}`
+    : "";
+  const previsao = data.estimatedDelivery
+    ? `\nPrevisão de entrega: ${data.estimatedDelivery}.`
+    : "";
+
+  const subject = `Encomenda UFFA ${data.orderNumber} foi enviada`;
+  const body = `Olá! 💗
+
+A tua encomenda UFFA ${data.orderNumber} já foi entregue ao transportador.
+
+Transportador: ${data.carrier}
+Código de rastreio: ${data.trackingCode}${previsao}${cttLink}
+
+Acompanha tudo no nosso site, com o estado e o atalho para o transportador:
+${data.trackingUrl}
+
+Se tiveres alguma dúvida, responde a este e-mail ou escreve para atendimento@uffastore.pt.
+
+Com carinho e estilo,
+Equipa UFFA
+atendimento@uffastore.pt`;
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({ from, to: [data.email], subject, text: body }),
+  });
+
+  const resJson = (await response.json()) as Record<string, unknown>;
+  if (!response.ok) {
+    console.error("Erro ao enviar e-mail de envio via Resend:", resJson);
+    return { success: false, error: resJson };
+  }
+
+  console.log(`E-mail de envio enviado para ${data.email} (Encomenda ${data.orderNumber})`);
   return { success: true, data: resJson };
 }
