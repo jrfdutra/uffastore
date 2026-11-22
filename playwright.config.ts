@@ -40,5 +40,11 @@ export default defineConfig({
     url: "http://localhost:8080",
     reuseExistingServer: true,
     timeout: 180_000,
+    // Segredos de teste: os endpoints fail-closed devem poder ser exercitados sem .env.
+    env: {
+      ...process.env,
+      CRON_SECRET: process.env.CRON_SECRET ?? "cron-de-teste-com-mais-de-16-caracteres",
+      NPS_SECRET: process.env.NPS_SECRET ?? "nps-de-teste-com-mais-de-16-caracteres",
+    },
   },
 });

@@ -37,7 +37,7 @@ Manual funcional e operacional da loja online UFFA Store, organizado em onze cap
 | [06](#cap-06) | Checkout | Portes, pagamento, redirecionamento Shopify e erros |
 | [07](#cap-07) | Confirmação | Número, código exclusivo, rastreio e próximos passos |
 | [08](#cap-08) | Portal | Acesso por três fatores, dashboard, estados e confirmação |
-| [09](#cap-09) | Operações | Chave, indicadores, fila, editor, avanço e reposição |
+| [09](#cap-09) | Expedição | Registo de envio, link mágico e pesquisa aos 8 dias |
 | [10](#cap-10) | Mobile | Breakpoints, menu, grelhas, toque e desempenho |
 | [11](#cap-11) | Tecnologia | Stack, ficheiros, variáveis, build, deploy e segurança |
 | [A](#ap-a) | Anexo A | Dados de demonstração |
@@ -565,6 +565,21 @@ pública, para registar o código de rastreio de encomendas já pagas.
 2. É necessário introduzir o token interno (`TRACKING_ADMIN_TOKEN`); não é guardado no browser.
 3. O servidor cria um link assinado com validade configurável e envia-o por Resend.
 4. O cliente abre o link e vê o estado do envio com o botão **Ver no CTT**.
+
+### Pesquisa de satisfação aos 8 dias
+
+O Vercel Cron chama `/api/cron/nps` todos os dias às 09:00 UTC. As encomendas pagas
+há 8 a 30 dias, ainda não convidadas, recebem um e-mail com um link assinado para
+`/avaliar`. O cliente dá uma nota de **0 a 5** e pode deixar um comentário opcional.
+A nota, o comentário e as datas ficam guardados como metafields da encomenda na
+Shopify (`uffa_nps.*`), sem base de dados nem painel novo.
+
+- `NPS_ENABLED=true` autoriza os envios; sem isso o cron responde `nps_disabled`.
+- `?dryRun=1` mostra quais as encomendas seriam convidadas, sem escrever nem enviar.
+- `uffa_nps.invited_at` impede convites duplicados; a resposta atualiza os metafields.
+- O link expira após 30 dias por omissão e não contém e-mail nem código de acesso.
+
+Consulta operacional completa: [`docs/pesquisa-nps.md`](pesquisa-nps.md).
 
 > **Nota histórica.** As instruções e imagens desta secção em versões anteriores
 > do manual deixaram de se aplicar.

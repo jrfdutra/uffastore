@@ -136,3 +136,53 @@ atendimento@uffastore.pt`;
   console.log(`E-mail de envio enviado para ${data.email} (Encomenda ${data.orderNumber})`);
   return { success: true, data: resJson };
 }
+
+export async function sendNpsEmail(data: {
+  email: string;
+  orderNumber: string;
+  customerName: string;
+  surveyUrl: string;
+}) {
+  const env = await loadEnv();
+  const apiKey = env["RESEND_API_KEY"];
+  const from = env["RESEND_FROM"] || "onboarding@resend.dev";
+
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY não configurada; convite NPS não enviado.");
+    return { success: false, error: "Missing RESEND_API_KEY" };
+  }
+
+  const subject = `Como foi a tua experiência com a UFFA?`;
+  const body = `Olá, ${data.customerName}! 💗
+
+Já passaram alguns dias desde a tua encomenda ${data.orderNumber} e adoraríamos saber como correu.
+
+Dá-nos uma nota de 0 a 5 e, se quiseres, deixa um comentário:
+${data.surveyUrl}
+
+Demora menos de um minuto e ajuda-nos a melhorar a Uffa Store.
+
+Se preferires não responder, basta ignorar este e-mail.
+
+Com carinho e estilo,
+Equipa UFFA
+atendimento@uffastore.pt`;
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({ from, to: [data.email], subject, text: body }),
+  });
+
+  const resJson = (await response.json()) as Record<string, unknown>;
+  if (!response.ok) {
+    console.error("Erro ao enviar convite NPS via Resend:", resJson);
+    return { success: false, error: resJson };
+  }
+
+  console.log(`Convite NPS enviado para ${data.email} (Encomenda ${data.orderNumber})`);
+  return { success: true, data: resJson };
+}

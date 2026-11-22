@@ -558,6 +558,65 @@ test.describe("Rastreio", () => {
   });
 });
 
+test.describe("Pesquisa de satisfação", () => {
+  test("sem token a página de avaliação indica que o link não é válido", async ({ page }) => {
+    await page.goto("/avaliar");
+    await expect(page.getByRole("heading", { name: "Link indisponível" })).toBeVisible();
+  });
+
+  test("o servidor rejeita tokens inválidos e pedidos ao cron sem segredo", async ({ request }) => {
+    const nps = await request.get("/api/nps?token=token-invalido");
+    expect(nps.status()).toBe(401);
+
+    const cron = await request.get("/api/cron/nps");
+    expect(cron.status()).toBe(401);
+  });
+
+  test("o cliente dá uma nota de 0 a 5 e deixa um comentário", async ({ page }) => {
+    let guardado: { token: string; score: number; comment: string } | null = null;
+    await page.route(
+      (url) => url.pathname === "/api/nps",
+      async (route) => {
+        if (route.request().method() === "GET") {
+          await route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify({
+              success: true,
+              order: { orderNumber: "#1002", customerName: "Ana", score: null, comment: null },
+            }),
+          });
+          return;
+        }
+        guardado = (await route.request().postDataJSON()) as {
+          token: string;
+          score: number;
+          comment: string;
+        };
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ success: true }),
+        });
+      },
+    );
+
+    await page.goto("/avaliar?token=token-de-teste");
+    await expect(page.getByRole("heading", { name: "Como correu?" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Nota 4 de 5" }).click();
+    await page.getByLabel("Comentário (opcional)").fill("Gostei da rapidez de entrega.");
+    await page.getByRole("button", { name: "Enviar resposta" }).click();
+
+    await expect(page.getByRole("heading", { name: "Obrigada! 💗" })).toBeVisible();
+    expect(guardado).toEqual({
+      token: "token-de-teste",
+      score: 4,
+      comment: "Gostei da rapidez de entrega.",
+    });
+  });
+});
+
 test.describe("Mobile", () => {
   test("menu mobile mostra os modelos da marca como submenu @mobile", async ({ page }) => {
     await page.goto("/");

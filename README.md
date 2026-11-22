@@ -67,15 +67,52 @@ A equipa regista o código de rastreio em `/expedicao` (página interna, não in
 O servidor cria um link assinado, envia-o por Resend e o cliente abre
 `/rastreio?token=...` com o estado do envio e o atalho para o CTT.
 
-| Variável                  | Obrigatória | Descrição                                                          |
-| ------------------------- | ----------- | ------------------------------------------------------------------- |
-| `ORDER_PORTAL_SECRET`     | Sim         | Segredo HMAC (mín. 16 caracteres) dos links de rastreio             |
-| `TRACKING_ADMIN_TOKEN`    | Sim         | Segredo (mín. 16 caracteres) exigido em `/expedicao`                |
-| `PUBLIC_SITE_URL`         | Não         | URL pública para os links; por omissão é inferido do pedido         |
-| `TRACKING_LINK_TTL_DAYS` | Não         | Validade dos links, de 1 a 30 dias (por omissão 14)                 |
+| Variável                 | Obrigatória | Descrição                                                   |
+| ------------------------ | ----------- | ----------------------------------------------------------- |
+| `ORDER_PORTAL_SECRET`    | Sim         | Segredo HMAC (mín. 16 caracteres) dos links de rastreio     |
+| `TRACKING_ADMIN_TOKEN`   | Sim         | Segredo (mín. 16 caracteres) exigido em `/expedicao`        |
+| `PUBLIC_SITE_URL`        | Não         | URL pública para os links; por omissão é inferido do pedido |
+| `TRACKING_LINK_TTL_DAYS` | Não         | Validade dos links, de 1 a 30 dias (por omissão 14)         |
 
 Sem `ORDER_PORTAL_SECRET` ou `TRACKING_ADMIN_TOKEN`, o endpoint de tracking rejeita
 todos os pedidos (fail-closed).
+
+### Pesquisa de satisfação 8 dias após a compra
+
+Um cron diário às **09:00 UTC** (`/api/cron/nps`, configurado em `vercel.json`) consulta a
+Admin API da Shopify e convida as encomendas pagas há **8 a 30 dias** a avaliar a
+experiência. O cliente recebe um link assinado para `/avaliar`, escolhe uma nota de **0 a 5**
+e pode deixar um comentário. A resposta fica em metafields da própria encomenda
+(`uffa_nps.score`, `uffa_nps.comment`, `uffa_nps.answered_at`), sem base de dados.
+
+| Variável                         | Obrigatória | Descrição                                                                     |
+| -------------------------------- | ----------- | ----------------------------------------------------------------------------- |
+| `SHOPIFY_ADMIN_STORE_DOMAIN`     | Sim         | Domínio `*.myshopify.com` da Admin API (scopes `read_orders`, `write_orders`) |
+| `SHOPIFY_ADMIN_ACCESS_TOKEN`     | Sim         | Token da Admin API — **nunca** no cliente                                     |
+| `CRON_SECRET`                    | Sim         | Segredo do header `Authorization: Bearer …` do Vercel Cron                    |
+| `NPS_SECRET`                     | Não         | Segredo dos links; por omissão usa `ORDER_PORTAL_SECRET`                      |
+| `NPS_ENABLED`                    | Sim         | Tem de ser `true` para enviar e-mails; por omissão o cron fica desativado     |
+| `NPS_LINK_TTL_DAYS`              | Não         | Validade do link, de 1 a 60 dias (por omissão 30)                             |
+| `RESEND_API_KEY` / `RESEND_FROM` | Sim         | Mesmos do e-mail de encomenda                                                 |
+
+Regras de segurança: sem `CRON_SECRET`, `NPS_SECRET` ou credenciais da Shopify os endpoints
+rejeitam tudo (fail-closed). Antes de cada envio, `uffa_nps.invited_at` é gravado na
+encomenda, pelo que uma segunda execução ou um retry não duplica o convite. O link assinado
+só identifica a encomenda e expira; não expõe e-mail nem código de acesso.
+
+Para testar sem enviar nada:
+
+```bash
+curl -X GET "http://localhost:8080/api/cron/nps?dryRun=1" \
+  -H "Authorization: Bearer $CRON_SECRET"
+# devolve { "dryRun": true, "orderNumbers": ["#1002"], ... }
+
+curl -X GET "http://localhost:8080/api/cron/nps" \
+  -H "Authorization: Bearer $CRON_SECRET"
+# exige NPS_ENABLED=true; envia e marca os convites
+```
+
+Detalhes em [`docs/pesquisa-nps.md`](docs/pesquisa-nps.md).
 
 O ficheiro [`docs/shopify/produtos-uffa.csv`](docs/shopify/produtos-uffa.csv) contém o
 catálogo de demonstração para importar no Shopify (Produtos → Importar).
@@ -105,6 +142,8 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 | `/checkout`                     | Checkout, entrega e pagamento no checkout Shopify.       |
 | `/confirmacao?order=UFFA-XXXXX` | Confirmação demo com código exclusivo e próximos passos. |
 | `/rastreio`                     | Portal do cliente.                                       |
+| `/expedicao`                    | Registo interno de envio (não indexado).                 |
+| `/avaliar?token=…`              | Pesquisa de satisfação da encomenda (não indexada).      |
 | `/favoritos`                    | Lista de desejos persistente.                            |
 | `/ajuda`                        | Perguntas frequentes, contactos e formulário de apoio.   |
 
@@ -127,6 +166,7 @@ O aviso de versão demo fecha uma vez por sessão e guarda a dispensa em `sessio
 
 - [`docs/manual-site.md`](docs/manual-site.md) — manual funcional completo: rotas, ecrãs, checkout, portal, operações, stock, temas e resolução de problemas.
 - [`docs/portal-encomendas.md`](docs/portal-encomendas.md) — arquitetura, modelo de dados, fluxos, segurança e testes.
+- [`docs/pesquisa-nps.md`](docs/pesquisa-nps.md) — pesquisa de satisfação aos 8 dias, metafields e operação do cron.
 - [`docs/guia-apresentacao.md`](docs/guia-apresentacao.md) — guião slide a slide da apresentação do portal.
 - [`docs/guia-apresentacao-site.md`](docs/guia-apresentacao-site.md) — guião slide a slide da apresentação do site.
 - [`docs/apresentacao-uffa.pptx`](docs/apresentacao-uffa.pptx) — apresentação do portal de encomendas.

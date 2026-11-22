@@ -8,7 +8,7 @@ import {
   isExpectedTopic,
   verifyShopifyHmac,
 } from "./lib/webhook-core";
-import { sendTrackingEmail } from "./lib/server-actions";
+import { sendNpsEmail, sendTrackingEmail } from "./lib/server-actions";
 import {
   createTrackingLink,
   getTrackingAdminToken,
@@ -17,10 +17,25 @@ import {
   verifyTrackingLink,
 } from "./lib/tracking-link";
 import { processOrderPaidWebhook, webhookDeduplicator } from "./lib/webhook-handler";
+import { publicOrigin } from "./lib/site-url";
+import { shopifyAdminGraphql } from "./lib/shopify-admin";
+import { getNpsSecret, verifyNpsLink } from "./lib/nps-link";
+import {
+  cleanNpsComment,
+  customerFirstName,
+  getNpsOrder,
+  metafieldValue,
+  parseNpsScore,
+  saveNpsResponse,
+} from "./lib/nps-core";
+import { runNps } from "./lib/nps-run";
 
 const WEBHOOK_PATH = "/api/webhooks/shopify/orders-paid";
 const TRACKING_PATH = "/api/orders/tracking";
+const NPS_CRON_PATH = "/api/cron/nps";
+const NPS_PATH = "/api/nps";
 const TRACKING_BODY_LIMIT = 8_192;
+const NPS_BODY_LIMIT = 4_096;
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -163,18 +178,6 @@ function parseTrackingRegistration(raw: string): TrackingRegistration | null {
   }
 }
 
-function publicOrigin(request: Request): string {
-  const configured = process.env["PUBLIC_SITE_URL"]?.trim();
-  if (configured) return configured.replace(/\/+$/, "");
-
-  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
-  if (!host) return "https://www.uffastore.pt";
-  const proto =
-    request.headers.get("x-forwarded-proto") ??
-    (host.startsWith("localhost") || host.startsWith("127.0.0.1") ? "http" : "https");
-  return `${proto}://${host}`;
-}
-
 function handleTrackingVerify(request: Request): Response {
   const secret = getTrackingLinkSecret();
   if (!secret) {
@@ -245,6 +248,129 @@ async function handleTrackingRegister(request: Request): Promise<Response> {
   });
 }
 
+function authorizedCron(request: Request, secret: string): boolean {
+  const header = request.headers.get("authorization") ?? "";
+  const provided = header.toLowerCase().startsWith("bearer ")
+    ? header.slice(7).trim()
+    : (request.headers.get("x-cron-secret") ?? "");
+  return safeEqualStrings(provided, secret);
+}
+
+async function handleNpsCron(request: Request): Promise<Response> {
+  const cronSecret = process.env["CRON_SECRET"]?.trim();
+  if (!cronSecret) {
+    return jsonResponse(503, { success: false, reason: "cron_not_configured" });
+  }
+  if (!authorizedCron(request, cronSecret)) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  const secret = getNpsSecret();
+  if (!secret) {
+    return jsonResponse(503, { success: false, reason: "nps_not_configured" });
+  }
+
+  const dryRun = new URL(request.url).searchParams.get("dryRun") === "1";
+  if (!dryRun && (process.env["NPS_ENABLED"] ?? "").trim().toLowerCase() !== "true") {
+    return jsonResponse(503, { success: false, reason: "nps_disabled" });
+  }
+
+  try {
+    const result = await runNps({
+      graphql: shopifyAdminGraphql,
+      send: async (order, surveyUrl) =>
+        sendNpsEmail({
+          email: order.email,
+          orderNumber: order.name,
+          customerName: customerFirstName(order),
+          surveyUrl,
+        }),
+      origin: publicOrigin(request),
+      secret,
+      now: Date.now(),
+      dryRun,
+    });
+    return jsonResponse(result.success ? 200 : 502, result);
+  } catch (error) {
+    console.error("[NPS] Erro fatal no cron:", error instanceof Error ? error.message : error);
+    return jsonResponse(502, { success: false, reason: "shopify_error" });
+  }
+}
+
+function npsTokenFrom(request: Request): string {
+  return new URL(request.url).searchParams.get("token") ?? "";
+}
+
+async function handleNpsGet(request: Request): Promise<Response> {
+  const secret = getNpsSecret();
+  if (!secret) return jsonResponse(503, { success: false, reason: "nps_not_configured" });
+
+  const data = verifyNpsLink(npsTokenFrom(request), secret);
+  if (!data) return jsonResponse(401, { success: false, reason: "invalid_token" });
+
+  try {
+    const order = await getNpsOrder(shopifyAdminGraphql, data.orderId);
+    if (!order) return jsonResponse(404, { success: false, reason: "order_not_found" });
+    return jsonResponse(200, {
+      success: true,
+      order: {
+        orderNumber: data.orderNumber,
+        customerName: customerFirstName(order),
+        score: metafieldValue(order, "score"),
+        comment: metafieldValue(order, "comment"),
+      },
+    });
+  } catch (error) {
+    console.error("[NPS] Erro ao ler encomenda:", error instanceof Error ? error.message : error);
+    return jsonResponse(502, { success: false, reason: "shopify_error" });
+  }
+}
+
+async function handleNpsPost(request: Request): Promise<Response> {
+  const secret = getNpsSecret();
+  if (!secret) return jsonResponse(503, { success: false, reason: "nps_not_configured" });
+
+  const declaredLength = Number.parseInt(request.headers.get("content-length") ?? "", 10);
+  if (Number.isFinite(declaredLength) && declaredLength > NPS_BODY_LIMIT) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+  const raw = await request.text();
+  if (raw.length > NPS_BODY_LIMIT) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+
+  let body: Record<string, unknown>;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("payload");
+    body = parsed as Record<string, unknown>;
+  } catch {
+    return jsonResponse(400, { success: false, reason: "invalid_payload" });
+  }
+
+  const data = verifyNpsLink(cleanString(body["token"], 2_048), secret);
+  if (!data) return jsonResponse(401, { success: false, reason: "invalid_token" });
+
+  const score = parseNpsScore(body["score"]);
+  if (score === null) return jsonResponse(400, { success: false, reason: "invalid_score" });
+
+  try {
+    await saveNpsResponse(shopifyAdminGraphql, {
+      orderId: data.orderId,
+      score,
+      comment: cleanNpsComment(body["comment"]),
+      now: Date.now(),
+    });
+    return jsonResponse(200, { success: true, orderNumber: data.orderNumber, score });
+  } catch (error) {
+    console.error(
+      "[NPS] Erro ao guardar resposta:",
+      error instanceof Error ? error.message : error,
+    );
+    return jsonResponse(502, { success: false, reason: "shopify_error" });
+  }
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const url = new URL(request.url);
@@ -271,6 +397,50 @@ export default {
           return await handleTrackingRegister(request);
         } catch (error) {
           console.error("[Tracking] Erro fatal:", error instanceof Error ? error.message : error);
+          return jsonResponse(500, { success: false, reason: "internal_error" });
+        }
+      }
+      return new Response("Method Not Allowed", {
+        status: 405,
+        headers: { allow: "GET, POST" },
+      });
+    }
+
+    if (url.pathname === NPS_CRON_PATH) {
+      if (request.method !== "GET" && request.method !== "POST") {
+        return new Response("Method Not Allowed", {
+          status: 405,
+          headers: { allow: "GET, POST" },
+        });
+      }
+      try {
+        return await handleNpsCron(request);
+      } catch (error) {
+        console.error("[NPS] Erro fatal no cron:", error instanceof Error ? error.message : error);
+        return jsonResponse(500, { success: false, reason: "internal_error" });
+      }
+    }
+
+    if (url.pathname === NPS_PATH) {
+      if (request.method === "GET") {
+        try {
+          return await handleNpsGet(request);
+        } catch (error) {
+          console.error(
+            "[NPS] Erro fatal na leitura:",
+            error instanceof Error ? error.message : error,
+          );
+          return jsonResponse(500, { success: false, reason: "internal_error" });
+        }
+      }
+      if (request.method === "POST") {
+        try {
+          return await handleNpsPost(request);
+        } catch (error) {
+          console.error(
+            "[NPS] Erro fatal na resposta:",
+            error instanceof Error ? error.message : error,
+          );
           return jsonResponse(500, { success: false, reason: "internal_error" });
         }
       }
