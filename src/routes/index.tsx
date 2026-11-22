@@ -87,7 +87,7 @@ function Home() {
 
   return (
     <>
-      <HeroCarousel>
+      <HeroCarousel srTitle={h.title}>
         <div className="pointer-events-none max-w-3xl animate-reveal">
           <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]">
             <BadgeCheck className="size-4 text-primary" />

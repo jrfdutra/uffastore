@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import useEmblaCarousel from "embla-carousel-react";
-import { heroSneaker } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 
@@ -9,6 +8,8 @@ const AUTOPLAY_MS = 6000;
 
 const CAPA_HOME = "/capas/uffa-capa-home.webp";
 const CAPA_HOME_MOBILE = "/capas/uffa-capa-home-mobile.webp";
+const CAPA_BLACK_FRIDAY = "/capas/uffa-black-friday.webp";
+const CAPA_BLACK_FRIDAY_MOBILE = "/capas/uffa-black-friday-mobile.webp";
 
 type Slide = {
   id: string;
@@ -19,6 +20,8 @@ type Slide = {
   href?: "/catalogo";
   /** A capa já traz o texto na própria imagem, por isso esconde o slogan por cima. */
   hideSlogan?: boolean;
+  /** Posição do recorte nas várias larguras (as capas têm texto em zonas diferentes). */
+  imageClassName?: string;
 };
 
 const slides: Slide[] = [
@@ -29,16 +32,24 @@ const slides: Slide[] = [
     imageMobile: CAPA_HOME_MOBILE,
     href: "/catalogo",
     hideSlogan: true,
+    imageClassName: "object-center md:object-right",
   },
-  { id: "hero", name: "Uffa Store", image: heroSneaker },
+  {
+    id: "capa-black-friday",
+    name: "Black Friday na Uffa Store",
+    image: CAPA_BLACK_FRIDAY,
+    imageMobile: CAPA_BLACK_FRIDAY_MOBILE,
+    href: "/catalogo",
+    hideSlogan: true,
+    imageClassName: "object-center",
+  },
 ];
 
 /**
- * Hero com carrossel: capa da campanha + fotografia padrão da loja.
- * O slogan (children) fica sobreposto e estável enquanto as fotos rodam,
- * exceto na capa, que já tem o texto incluído na imagem.
+ * Hero com carrossel: capa "a UFFA agora é online" + capa de Black Friday.
+ * Ambas já têm o texto na imagem; o título `srTitle` mantém o H1 acessível.
  */
-export function HeroCarousel({ children }: { children: ReactNode }) {
+export function HeroCarousel({ children, srTitle }: { children: ReactNode; srTitle: string }) {
   const { language } = useShop();
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
@@ -73,7 +84,7 @@ export function HeroCarousel({ children }: { children: ReactNode }) {
 
   return (
     <section
-      className="relative pt-16 min-h-[min(720px,78vh)] overflow-hidden bg-hero text-hero-foreground"
+      className="relative pt-16 min-h-[min(720px,78svh)] overflow-hidden bg-hero text-hero-foreground"
       aria-roledescription={hasCarousel ? "carousel" : undefined}
       aria-label={
         hasCarousel
@@ -99,7 +110,7 @@ export function HeroCarousel({ children }: { children: ReactNode }) {
                   decoding={index === 0 ? "sync" : "async"}
                   draggable={false}
                   className={`h-full w-full select-none object-cover transition-transform duration-700 ease-out ${
-                    slide.hideSlogan ? "object-center md:object-right" : "object-center"
+                    slide.imageClassName ?? "object-center"
                   }`}
                 />
               </picture>
@@ -144,15 +155,17 @@ export function HeroCarousel({ children }: { children: ReactNode }) {
 
       {/* O conteúdo do hero não bloqueia o clique na foto; apenas os elementos interativos o fazem. */}
       <div
-        className={`pointer-events-none relative mx-auto flex min-h-[min(720px,78vh)] max-w-7xl items-end px-4 pb-12 transition-[opacity,visibility] duration-500 md:px-6 md:pb-16 [text-shadow:_0_2px_10px_rgb(0_0_0_/_40%)] sm:[text-shadow:none] ${
+        className={`pointer-events-none relative mx-auto flex min-h-[min(720px,78svh)] max-w-7xl items-end px-4 pb-12 transition-[opacity,visibility] duration-500 md:px-6 md:pb-16 [text-shadow:_0_2px_10px_rgb(0_0_0_/_40%)] sm:[text-shadow:none] ${
           isCover ? "invisible opacity-0" : "visible opacity-100"
         }`}
       >
         {children}
       </div>
 
+      {isCover && <h1 className="sr-only">{srTitle}</h1>}
+
       {hasCarousel && (
-        <div className="pointer-events-auto absolute bottom-6 right-4 z-20 flex items-center gap-1.5 bg-hero/45 px-2 py-1.5 backdrop-blur-sm md:bottom-8 md:right-6">
+        <div className="pointer-events-auto absolute bottom-4 right-3 z-20 flex items-center gap-0.5 border border-hero-foreground/10 bg-hero/55 px-1.5 backdrop-blur-sm md:bottom-8 md:right-6 md:gap-1 md:px-2">
           {slides.map((slide, index) => (
             <button
               key={slide.id}
@@ -165,12 +178,16 @@ export function HeroCarousel({ children }: { children: ReactNode }) {
                 `Ver foto ${index + 1}: ${slide.name}`,
               )}
               aria-current={selected === index}
-              className={`h-1.5 transition-all ${
-                selected === index
-                  ? "w-6 bg-hero-foreground"
-                  : "w-1.5 bg-hero-foreground/45 hover:bg-hero-foreground/80"
-              }`}
-            />
+              className="flex h-11 items-center justify-center px-1"
+            >
+              <span
+                className={`block h-1.5 rounded-full transition-all ${
+                  selected === index
+                    ? "w-6 bg-hero-foreground"
+                    : "w-1.5 bg-hero-foreground/50 hover:bg-hero-foreground/80"
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}

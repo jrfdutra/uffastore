@@ -116,6 +116,48 @@ test.describe("Loja — navegação e catálogo", () => {
     await expect(page.locator("article").first()).toBeVisible();
   });
 
+  test("o carousel da home mostra apenas as capas online e Black Friday", async ({ page }) => {
+    await page.goto("/");
+
+    const slides = page.getByRole("group", { name: /^\d \/ 2$/ });
+    await expect(slides).toHaveCount(2);
+    await expect(slides.first().locator("img")).toHaveAttribute("src", /uffa-capa-home/);
+    await expect(slides.nth(1).locator("img")).toHaveAttribute("src", /uffa-black-friday/);
+    await expect(page.getByRole("button", { name: /Ver foto 2/ })).toBeVisible();
+
+    await page.getByRole("button", { name: /Ver foto 2/ }).click();
+    await expect(slides.nth(1).locator("img")).toHaveJSProperty("complete", true);
+    expect(
+      await slides
+        .nth(1)
+        .locator("img")
+        .evaluate((img) => img.naturalWidth > 0),
+    ).toBe(true);
+  });
+
+  test("o hero adapta-se a todas as larguras sem overflow", async ({ page }) => {
+    for (const width of [320, 375, 768, 1024, 1440]) {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto("/");
+
+      const hero = page.locator('section[aria-roledescription="carousel"]');
+      const heroOverflow = await hero.evaluate(
+        (element) => element.scrollWidth - element.clientWidth,
+      );
+      expect(heroOverflow, `overflow a ${width}px`).toBeLessThanOrEqual(1);
+
+      const imagem = hero.locator('img[src*="uffa-capa-home"]');
+      const larguraImagem = await imagem.evaluate((img) => img.getBoundingClientRect().width);
+      expect(larguraImagem, `imagem a ${width}px`).toBeGreaterThanOrEqual(width - 1);
+
+      const ponto = await page.getByRole("button", { name: /Ver foto 2/ }).boundingBox();
+      expect(ponto, `pontos a ${width}px`).toBeTruthy();
+      expect(ponto!.x + ponto!.width, `pontos dentro do ecrã a ${width}px`).toBeLessThanOrEqual(
+        width + 1,
+      );
+    }
+  });
+
   test("o filtro de cores encontra sapatilhas com as cores da Shopify", async ({ page }) => {
     await page.goto("/catalogo");
 
@@ -746,6 +788,23 @@ test.describe("Formulário de contacto", () => {
 });
 
 test.describe("Mobile", () => {
+  test("o carousel usa a capa vertical e não cria overflow @mobile", async ({ page }) => {
+    await page.goto("/");
+
+    const slides = page.getByRole("group", { name: /^\d \/ 2$/ });
+    await expect(slides).toHaveCount(2);
+    await expect(slides.nth(1).locator("source")).toHaveAttribute(
+      "srcset",
+      /uffa-black-friday-mobile/,
+    );
+    await expect(page.getByRole("button", { name: /Ver foto 2/ })).toBeVisible();
+
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(1);
+  });
+
   test("menu mobile mostra os modelos da marca como submenu @mobile", async ({ page }) => {
     await page.goto("/");
     await expect(async () => {

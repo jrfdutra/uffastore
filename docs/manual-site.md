@@ -160,7 +160,9 @@ Home → Catálogo → Produto → Carrinho → Checkout → Confirmação
 
 A home não mostra tudo. Mostra o próximo passo: promessa, confiança, categorias, produtos e acompanhamento.
 
-![Figura 2.1 — Hero da home: promessa da marca e chamada para o catálogo](assets/screenshots/crops/home-hero.png)
+O hero é um carrossel com exatamente duas capas: **a UFFA agora é online** e **Black Friday**. Ambas abrem o catálogo e usam uma versão vertical em telemóvel, sem cortar o logótipo nem criar deslocação horizontal.
+
+![Figura 2.1 — Hero da home: capas da campanha e chamada para o catálogo](assets/screenshots/crops/home-hero.png)
 
 <a id="cap-02-1"></a>
 
