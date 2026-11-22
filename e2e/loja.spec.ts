@@ -463,6 +463,23 @@ test.describe("Confirmação", () => {
   });
 });
 
+test.describe("Rastreio", () => {
+  test("encomenda CTT mostra atalho com o código pré-preenchido", async ({ page }) => {
+    await limparEstado(page);
+    await page.goto("/rastreio");
+    await page.getByLabel("Número da encomenda").fill("UFFA-48217");
+    await page.getByLabel("Email ou telefone").fill("demo@uffa.pt");
+    await page.getByLabel("Código de exclusividade").fill("UFFA-7K3M-9QX2");
+    await page.getByRole("button", { name: "Desbloquear encomenda" }).click();
+
+    const link = page.getByRole("link", { name: "Ver no CTT" });
+    await expect(link).toBeVisible();
+    const href = await link.getAttribute("href");
+    expect(href).toContain("objects=PT-48217-9QX2");
+    expect(href).toContain("request_locale=pt");
+  });
+});
+
 test.describe("Mobile", () => {
   test("menu mobile mostra os modelos da marca como submenu @mobile", async ({ page }) => {
     await page.goto("/");

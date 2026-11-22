@@ -515,6 +515,7 @@ Regras de proteção:
 - Estado atual e linha temporal.
 - Previsão de entrega ou data limite de recolha.
 - Transportador e código de rastreio, no envio.
+- Botão **Ver no CTT**, quando aplicável: abre a pesquisa oficial com o código já preenchido; basta carregar em **Procurar**.
 - Morada da loja e nota pública, na recolha.
 - Resumo de valores.
 - Itens da encomenda com tamanho e quantidade.

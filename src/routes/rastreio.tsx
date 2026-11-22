@@ -35,6 +35,7 @@ import { categoryNames, money, type Language } from "@/lib/shop-data";
 import { brandLabelFor } from "@/lib/brands";
 import { useShop } from "@/lib/shop-context";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
+import { cttTrackingUrl, isCttCarrier } from "@/lib/tracking";
 import {
   clearOrderSession,
   confirmOrderReceipt,
@@ -880,22 +881,36 @@ function CurrentStatusCard({ order }: { order: Order }) {
             </span>
             <code className="font-mono text-sm font-bold">{order.trackingCode}</code>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="rounded-none"
-            onClick={() =>
-              copyText(
-                order.trackingCode ?? "",
-                language,
-                tr(language, "Código de rastreio", "Tracking code", "Código de seguimiento"),
-              )
-            }
-          >
-            <Copy />
-            {tr(language, "Copiar", "Copy", "Copiar")}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            {isCttCarrier(order.carrier) && (
+              <Button asChild variant="default" size="sm" className="rounded-none">
+                <a
+                  href={cttTrackingUrl(order.trackingCode)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Navigation />
+                  {tr(language, "Ver no CTT", "Track on CTT", "Ver en CTT")}
+                </a>
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="rounded-none"
+              onClick={() =>
+                copyText(
+                  order.trackingCode ?? "",
+                  language,
+                  tr(language, "Código de rastreio", "Tracking code", "Código de seguimiento"),
+                )
+              }
+            >
+              <Copy />
+              {tr(language, "Copiar", "Copy", "Copiar")}
+            </Button>
+          </div>
         </div>
       )}
 

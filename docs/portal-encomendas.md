@@ -134,6 +134,7 @@ type OrderEvent = {
 - Previsão inicial: **3 dias** para envio, **1 dia** para recolha.
 - O número da encomenda é gerado com 5 dígitos e verificado contra duplicados.
 - O código de rastreio inicial tem o formato `PT-<5 dígitos>-<4 caracteres>`.
+- Quando o transportador for CTT, o dashboard mostra o botão **Ver no CTT**: abre a pesquisa oficial com o código de rastreio pré-preenchido (o cliente só precisa de carregar em **Procurar**).
 - A confirmação de receção só é apresentada enquanto a encomenda não estiver num estado final.
 
 ## 7. Persistência local
