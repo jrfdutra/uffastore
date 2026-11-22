@@ -19,6 +19,8 @@ function product(name: string, brand: string): Product {
 const nike = [
   product("Nike Air Force", "Nike"),
   product("Nike AIR Force Chapa Dourada S/ Rope Laces", "Nike"),
+  product("Pearl Force W/ Rope Laces", "Nike"),
+  product("Air Force Golden W/ Rope Laces", "Nike"),
   product("Nike Dunk Low", "Nike"),
   product("Nike Valentine Day Dunk", "Nike"),
   product("Nike Vomero 5 RNR", "Nike"),
@@ -30,7 +32,18 @@ const nike = [
 test("getProductModel reconhece as famílias Nike a partir do nome", () => {
   assert.deepEqual(
     nike.map((item) => getProductModel(item).id),
-    ["air-force", "air-force", "dunk", "dunk", "vomero-5", "p6000", "jordan", "air-more-uptempo"],
+    [
+      "air-force",
+      "air-force",
+      "air-force",
+      "air-force",
+      "dunk",
+      "dunk",
+      "vomero-5",
+      "p6000",
+      "jordan",
+      "air-more-uptempo",
+    ],
   );
 });
 

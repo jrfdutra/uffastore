@@ -41,12 +41,12 @@ const PRODUCT_SET = `
 `;
 
 async function main() {
-  console.log("A atualizar Nike AIR Force Chapa Dourada para incluir W/ Rope Laces...");
+  console.log("A atualizar Air Force Golden W/ Rope Laces...");
 
   // Encontrar o ID do produto atual Nike AIR Force Chapa Dourada (que tem id 15999570706780 ou similar)
   const productInput = {
     id: "gid://shopify/Product/15999570706780",
-    title: "Nike AIR Force Chapa Dourada W/ Rope Laces",
+    title: "Air Force Golden W/ Rope Laces",
     vendor: "Nike",
     productType: "Promoções - Black Friday",
     tags: ["Black Friday"],

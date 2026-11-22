@@ -14,7 +14,13 @@ type ModelRule = Model & { brand: Brand; patterns: RegExp[] };
  */
 const MODEL_RULES: ModelRule[] = [
   // Nike
-  { brand: "nike", id: "air-force", label: "Air Force", patterns: [/\bair\s+force\b/] },
+  {
+    brand: "nike",
+    id: "air-force",
+    label: "Air Force",
+    // "Pearl Force" é o nome comercial de um Air Force personalizado.
+    patterns: [/\bair\s+force\b/, /\bpearl\s+force\b/],
+  },
   { brand: "nike", id: "dunk", label: "Dunk", patterns: [/\bdunk\b/] },
   { brand: "nike", id: "vomero-5", label: "Vomero 5", patterns: [/\bvomero\s*5\b/] },
   { brand: "nike", id: "p6000", label: "P-6000", patterns: [/\bp\s*-?\s*6000\b/] },
