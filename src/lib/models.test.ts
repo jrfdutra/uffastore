@@ -83,9 +83,10 @@ test("modelsForBrand devolve apenas os modelos da marca, com contagem", () => {
 
 test("modelsForBrand ignora produtos inativos e isProductInModel filtra pelo modelo", () => {
   const inativo = { ...product("Nike Dunk Low", "Nike"), status: "inactive" as const };
+  const dunk = nike.find((item) => item.name === "Nike Dunk Low")!;
   assert.equal(modelsForBrand([inativo, ...nike], "nike").find((m) => m.id === "dunk")?.count, 2);
 
-  assert.equal(isProductInModel(nike[2]!, "dunk"), true);
-  assert.equal(isProductInModel(nike[2]!, "air-force"), false);
-  assert.equal(isProductInModel(nike[2]!, "all"), true);
+  assert.equal(isProductInModel(dunk, "dunk"), true);
+  assert.equal(isProductInModel(dunk, "air-force"), false);
+  assert.equal(isProductInModel(dunk, "all"), true);
 });

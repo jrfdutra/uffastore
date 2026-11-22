@@ -1371,9 +1371,9 @@ function DeliveryCard({ order }: { order: Order }) {
           <Hand className="size-3.5 text-primary" />
           {tr(
             language,
-            "Recolha gratuita no Porto",
-            "Free pickup in Porto",
-            "Recogida gratuita en Oporto",
+            "Recolha gratuita em NorteShopping, Maia Jardim ou MarShopping",
+            "Free pickup at NorteShopping, Maia Jardim or MarShopping",
+            "Recogida gratuita en NorteShopping, Maia Jardim o MarShopping",
           )}
         </p>
       )}

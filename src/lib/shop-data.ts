@@ -759,7 +759,7 @@ export const products: Product[] = [
 
 export const copy = {
   pt: {
-    pickup: "Recolha em mãos grátis no Porto",
+    pickup: "Recolha grátis em NorteShopping, Maia Jardim ou MarShopping",
     shop: "Comprar",
     cart: "Carrinho",
     track: "Seguir a minha encomenda",
@@ -786,7 +786,7 @@ export const copy = {
     remove: "Remover",
   },
   en: {
-    pickup: "Free hand pickup in Porto",
+    pickup: "Free pickup at NorteShopping, Maia Jardim or MarShopping",
     shop: "Shop",
     cart: "Cart",
     track: "Track my order",
@@ -813,7 +813,7 @@ export const copy = {
     remove: "Remove",
   },
   es: {
-    pickup: "Recogida en mano gratis en Oporto",
+    pickup: "Recogida gratis en NorteShopping, Maia Jardim o MarShopping",
     shop: "Comprar",
     cart: "Carrito",
     track: "Seguir mi pedido",

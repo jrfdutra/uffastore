@@ -257,18 +257,18 @@ function HelpPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             {tr(
               language,
-              "Todas as encomendas são preparadas no Porto com rigor. Podes escolher recolha em mãos grátis na zona do Porto ou envio expresso. O código de rastreio é disponibilizado após confirmação.",
-              "All orders are carefully prepared in Porto. You can choose free hand pickup in the Porto area or express shipping. Tracking is provided upon confirmation.",
-              "Todos los pedidos se preparan en Oporto con rigor. Puedes elegir recogida en mano gratuita en Oporto o envío urgente.",
+              "Todas as encomendas são preparadas no Porto com rigor. Podes escolher recolha em mãos grátis em NorteShopping, Maia Jardim ou MarShopping, ou envio expresso. O código de rastreio é disponibilizado após confirmação.",
+              "All orders are carefully prepared in Porto. You can choose free hand pickup at NorteShopping, Maia Jardim or MarShopping, or express shipping. Tracking is provided upon confirmation.",
+              "Todos los pedidos se preparan en Oporto con rigor. Puedes elegir recogida en mano gratuita en NorteShopping, Maia Jardim o MarShopping, o envío urgente.",
             )}
           </p>
           <ul className="space-y-2 text-xs text-muted-foreground list-disc pl-4">
             <li>
               {tr(
                 language,
-                "Recolha em mãos: Grátis (Porto)",
-                "Hand pickup: Free (Porto)",
-                "Recogida en mano: Gratis (Oporto)",
+                "Recolha em mãos: Grátis (NorteShopping, Maia Jardim ou MarShopping)",
+                "Hand pickup: Free (NorteShopping, Maia Jardim or MarShopping)",
+                "Recogida en mano: Gratis (NorteShopping, Maia Jardim o MarShopping)",
               )}
             </li>
             <li>

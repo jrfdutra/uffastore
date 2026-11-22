@@ -2,6 +2,7 @@ import { localeByLanguage } from "./i18n";
 import { pairCount } from "./pair-code";
 import { products, type Language, type Product } from "./shop-data";
 import { readStorage, removeStorage, writeStorage } from "./storage";
+import { DEFAULT_PICKUP_LOCATION } from "./pickup-locations";
 
 export type OrderStatus =
   | "confirmed"
@@ -141,8 +142,8 @@ export const orderStatusInfo: Record<OrderStatus, StatusInfo> = {
   ready_pickup: {
     label: { pt: "Pronta para recolha", en: "Ready for pickup", es: "Listo para recoger" },
     description: {
-      pt: "O teu par está reservado e pronto para recolha na loja no Porto.",
-      en: "Your pair is reserved and ready for pickup at the Porto store.",
+      pt: "O teu par está reservado e pronto para recolha no local selecionado.",
+      en: "Your pair is reserved and ready for pickup at the selected location.",
       es: "Tu par está reservado y listo para recoger en la tienda de Oporto.",
     },
     tone: "border-primary/30 bg-primary text-primary-foreground",
@@ -167,7 +168,7 @@ export const orderStatusInfo: Record<OrderStatus, StatusInfo> = {
   },
 };
 
-export const PICKUP_LOCATION = "UFFA Store · Rua de Santa Catarina 112, 4000-447 Porto";
+export const PICKUP_LOCATION = DEFAULT_PICKUP_LOCATION;
 export const DEFAULT_CARRIER = "CTT Expresso";
 export const OFFICIAL_SENDER = "atendimento@uffastore.pt";
 export const OFFICIAL_SENDER_NAME = "UFFA | Atendimento";

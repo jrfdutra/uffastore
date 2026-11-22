@@ -178,9 +178,10 @@ export async function createCheckoutUrl(
   delivery: string = "pickup",
   couponCode?: string,
   buyer?: { email?: string; phone?: string; firstName?: string; lastName?: string },
+  pickupLocation?: string,
 ) {
   const isPickup = delivery === "pickup";
-  let deliveryLabel = "Recolha em mão no Porto (0,00 €)";
+  let deliveryLabel = "Recolha em mão (0,00 €)";
   let portesValue = "0,00 €";
   let costText = "0,00 €";
 
@@ -207,6 +208,7 @@ export async function createCheckoutUrl(
       key: "Modalidade de Entrega",
       value: deliveryLabel,
     },
+    ...(isPickup && pickupLocation ? [{ key: "Local de Recolha", value: pickupLocation }] : []),
     {
       key: "Portes de Envio",
       value: portesValue,
@@ -221,7 +223,7 @@ export async function createCheckoutUrl(
     },
   ];
 
-  const note = `MODALIDADE DE ENTREGA SELECIONADA: ${deliveryLabel}. Portes: ${costText}.`;
+  const note = `MODALIDADE DE ENTREGA SELECIONADA: ${deliveryLabel}.${isPickup && pickupLocation ? ` LOCAL DE RECOLHA: ${pickupLocation}.` : ""} Portes: ${costText}.`;
 
   const discountCodes = couponCode ? [couponCode] : [];
   const pickupHandles = isPickup ? await fetchPickupHandles() : [];
@@ -294,8 +296,9 @@ export async function createShopifyCheckout(
   couponCode?: string,
   buyer?: { email?: string; phone?: string; firstName?: string; lastName?: string },
   returnUrl?: string,
+  pickupLocation?: string,
 ) {
-  const url = await createCheckoutUrl(items, delivery, couponCode, buyer);
+  const url = await createCheckoutUrl(items, delivery, couponCode, buyer, pickupLocation);
   const params = new URLSearchParams({ skip_shop_pay: "true" });
   if (returnUrl) params.set("return_url", returnUrl);
   const separator = url.includes("?") ? "&" : "?";

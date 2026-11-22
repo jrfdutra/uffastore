@@ -23,6 +23,11 @@ import { rotuloTamanhoDoProduto } from "@/lib/variantes";
 import { savePendingCheckout } from "@/lib/checkout-session";
 import { createShopifyCheckout } from "@/lib/shopify";
 import { pairCount } from "@/lib/pair-code";
+import {
+  DEFAULT_PICKUP_LOCATION,
+  PICKUP_LOCATIONS,
+  type PickupLocation,
+} from "@/lib/pickup-locations";
 import { PaymentBadges } from "@/components/payment-badges";
 
 export type DeliveryOption = "pickup" | "continental" | "islands" | "eu" | "switzerland";
@@ -38,9 +43,9 @@ export const deliveryRates: Record<
   pickup: {
     price: 0,
     title: {
-      pt: "Recolha em mão no Porto",
-      en: "Hand pickup in Porto",
-      es: "Recogida en mano en Oporto",
+      pt: "Recolha em mão (3 locais)",
+      en: "Hand pickup (3 locations)",
+      es: "Recogida en mano (3 lugares)",
     },
     subtitle: { pt: "Grátis (0,00 €)", en: "Free (0.00 €)", es: "Gratis (0,00 €)" },
   },
@@ -88,7 +93,8 @@ export const Route = createFileRoute("/checkout")({
       { title: "Checkout — Uffa Store" },
       {
         name: "description",
-        content: "Escolhe recolha no Porto ou envio e confirma a tua encomenda Uffa Store.",
+        content:
+          "Escolhe a recolha em NorteShopping, Maia Jardim ou MarShopping, ou envio, e confirma a tua encomenda Uffa Store.",
       },
       { property: "og:title", content: "Checkout — Uffa Store" },
       { property: "og:description", content: "Confirma a tua encomenda de sneakers selecionados." },
@@ -105,6 +111,7 @@ function Checkout() {
     t = copy[s.language];
 
   const [delivery, setDelivery] = useState<DeliveryOption>("pickup");
+  const [pickupLocation, setPickupLocation] = useState<PickupLocation>(DEFAULT_PICKUP_LOCATION);
   const [payment, setPayment] = useState<"card" | "mbway" | "paypal" | "apple">("card");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -217,6 +224,7 @@ function Checkout() {
         email,
         deliveryKey: delivery,
         deliveryLabel: deliveryRates[delivery].title[s.language],
+        ...(delivery === "pickup" ? { pickupLocation } : {}),
         items: s.cart.flatMap((item) => {
           const product = s.catalog.find((p) => p.id === item.productId);
           const pairs = pairCount(item.quantity);
@@ -247,6 +255,7 @@ function Checkout() {
           phone,
         },
         `${window.location.origin}/confirmacao`,
+        delivery === "pickup" ? pickupLocation : undefined,
       );
       window.location.href = checkout.webUrl;
     } catch (err: unknown) {
@@ -312,13 +321,32 @@ function Checkout() {
                 );
               })}
             </div>
+            {delivery === "pickup" && (
+              <div className="mt-6" data-testid="pickup-locations">
+                <h3 className="mb-3 font-display text-xl uppercase">
+                  {tr(s.language, "Local de recolha", "Pickup point", "Punto de recogida")}
+                </h3>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {PICKUP_LOCATIONS.map((location) => (
+                    <Choice
+                      key={location}
+                      active={pickupLocation === location}
+                      onClick={() => setPickupLocation(location)}
+                      icon={<MapPin />}
+                      title={location}
+                      detail={tr(s.language, "Grátis (0,00 €)", "Free (0.00 €)", "Gratis (0,00 €)")}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
             <p className="mt-3 text-[11px] text-muted-foreground">
               {delivery === "pickup"
                 ? tr(
                     s.language,
-                    "* Receber em mão no Porto não tem qualquer custo de envio (0,00 €). A entrega será combinada contigo.",
-                    "* Hand pickup in Porto has no shipping fee (0.00 €). We will coordinate handover with you.",
-                    "* Recibir en mano en Oporto no tiene gastos de envío (0,00 €).",
+                    `* Recolha em ${pickupLocation} sem custo de envio (0,00 €). A entrega será combinada contigo.`,
+                    `* Pickup at ${pickupLocation} has no shipping fee (0.00 €). We will coordinate handover with you.`,
+                    `* Recogida en ${pickupLocation} sin gastos de envío (0,00 €).`,
                   )
                 : tr(
                     s.language,
@@ -488,9 +516,9 @@ function Checkout() {
                 <span className="min-w-0 break-words">
                   {tr(
                     s.language,
-                    "Receber em mão (Porto)",
-                    "Hand pickup (Porto)",
-                    "Recibir en mano (Oporto)",
+                    `Receber em mão (${pickupLocation})`,
+                    `Hand pickup (${pickupLocation})`,
+                    `Recibir en mano (${pickupLocation})`,
                   )}
                 </span>
                 <span className="shrink-0 whitespace-nowrap font-semibold text-primary">

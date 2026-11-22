@@ -25,6 +25,7 @@ export type PendingCheckout = {
   email: string;
   deliveryKey: string;
   deliveryLabel: string;
+  pickupLocation?: string | undefined;
   items: PendingCheckoutItem[];
   subtotal: number;
   shipping: number;
@@ -53,6 +54,7 @@ function isPending(value: unknown): value is PendingCheckout {
   return (
     typeof pending.at === "string" &&
     typeof pending.deliveryLabel === "string" &&
+    (pending.pickupLocation === undefined || typeof pending.pickupLocation === "string") &&
     typeof pending.subtotal === "number" &&
     typeof pending.shipping === "number" &&
     typeof pending.total === "number" &&

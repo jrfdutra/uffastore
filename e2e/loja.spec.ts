@@ -435,6 +435,32 @@ test.describe("Checkout", () => {
     expect(dados.items.length).toBeGreaterThan(0);
     expect(dados.items[0].quantity).toBe(1);
   });
+
+  test("o local de recolha escolhido fica guardado na compra", async ({ page }) => {
+    await limparEstado(page);
+    await mockShopify(page, "ok");
+    await abrirProduto(page);
+    await adicionarAoCarrinho(page);
+    await page.goto("/checkout", { waitUntil: "networkidle" });
+
+    const locais = page.getByTestId("pickup-locations");
+    await expect(locais.getByRole("button", { name: /NorteShopping/ })).toBeVisible();
+    await expect(locais.getByRole("button", { name: /Maia Jardim/ })).toBeVisible();
+    await locais.getByRole("button", { name: /MarShopping/ }).click();
+
+    await page.getByPlaceholder("Ex: João").fill("João");
+    await page.getByPlaceholder("Ex: Silva").fill("Silva");
+    await page.getByPlaceholder("joao@exemplo.com").fill("joao@exemplo.com");
+    await page.getByPlaceholder("912 345 678").fill("912345678");
+    await page.getByRole("button", { name: "Pagar agora" }).click();
+
+    await page.waitForURL(/mock-shopify\.test/, { timeout: 30_000 });
+    const estado = await page.context().storageState();
+    const origem = estado.origins.find((item) => item.origin.includes("localhost:8080"));
+    const guardado = origem?.localStorage.find((item) => item.name === PENDING_KEY)?.value;
+    expect(guardado).toBeTruthy();
+    expect(JSON.parse(guardado as string).pickupLocation).toBe("MarShopping");
+  });
 });
 
 test.describe("Confirmação", () => {

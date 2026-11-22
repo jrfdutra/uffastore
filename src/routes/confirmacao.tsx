@@ -501,6 +501,14 @@ function ThankYou({ pending }: { pending: PendingCheckout | null }) {
                     </dt>
                     <dd className="text-right">{pending.deliveryLabel}</dd>
                   </div>
+                  {pending.deliveryKey === "pickup" && pending.pickupLocation && (
+                    <div className="flex justify-between gap-3">
+                      <dt className="text-muted-foreground">
+                        {tr(language, "Local de recolha", "Pickup point", "Punto de recogida")}
+                      </dt>
+                      <dd className="text-right font-semibold">{pending.pickupLocation}</dd>
+                    </div>
+                  )}
                   {pending.coupon && (
                     <div className="flex justify-between gap-3">
                       <dt className="text-muted-foreground">

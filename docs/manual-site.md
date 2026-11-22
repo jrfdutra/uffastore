@@ -406,11 +406,16 @@ Entrega, pagamento e confirmação — sem criação de conta.
 
 | Opção | Preço | Nota |
 | --- | --- | --- |
-| Recolha em mão no Porto | **0,00 €** | Entrega combinada com a equipa |
+| Recolha em mão (3 locais) | **0,00 €** | Escolha entre NorteShopping, Maia Jardim e MarShopping; entrega combinada com a equipa |
 | Portugal Continental | **8,94 €** | Envio expresso |
 | Portugal — Ilhas | **8,94 €** | Açores e Madeira |
 | União Europeia | **24,00 €** | Qualquer país da UE |
 | Suíça | **34,00 €** | Envio internacional |
+
+Ao escolher recolha, o checkout apresenta um segundo grupo com os três locais
+(**NorteShopping**, **Maia Jardim** e **MarShopping**). A seleção é pré-feita no
+primeiro, pode ser alterada e fica registada no pedido pendente, na confirmação
+e no atributo `Local de Recolha` do checkout da Shopify.
 
 O resumo atualiza o total assim que a modalidade muda.
 
@@ -427,6 +432,7 @@ A integração cria um checkout com:
 
 - variantes e quantidades;
 - modalidade de entrega e respetivo custo, via atributos `Modalidade de Entrega`, `Portes de Envio`, `Tipo de Envio` e `Destino / Zona`;
+- local de recolha escolhido, via atributo `Local de Recolha` (apenas quando aplicável);
 - código de desconto, quando aplicável;
 - idioma do cliente.
 
