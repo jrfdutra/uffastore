@@ -8,7 +8,9 @@ import {
   isExpectedTopic,
   verifyShopifyHmac,
 } from "./lib/webhook-core";
-import { sendNpsEmail, sendTrackingEmail } from "./lib/server-actions";
+import { sendContactEmail, sendNpsEmail, sendTrackingEmail } from "./lib/server-actions";
+import { parseContactRequest } from "./lib/contact";
+import { CONTACT_BODY_LIMIT, CONTACT_PATH } from "./lib/contact-constants";
 import {
   createTrackingLink,
   getTrackingAdminToken,
@@ -36,6 +38,27 @@ const NPS_CRON_PATH = "/api/cron/nps";
 const NPS_PATH = "/api/nps";
 const TRACKING_BODY_LIMIT = 8_192;
 const NPS_BODY_LIMIT = 4_096;
+
+async function handleContact(request: Request): Promise<Response> {
+  const declaredLength = Number.parseInt(request.headers.get("content-length") ?? "", 10);
+  if (Number.isFinite(declaredLength) && declaredLength > CONTACT_BODY_LIMIT) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+
+  const raw = await request.text();
+  if (raw.length > CONTACT_BODY_LIMIT) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+
+  const parsed = parseContactRequest(raw);
+  if (!parsed.ok) return jsonResponse(400, { success: false, reason: parsed.reason });
+
+  const result = await sendContactEmail(parsed.request);
+  return jsonResponse(result.success ? 200 : 502, {
+    success: result.success,
+    reason: result.success ? undefined : "email_failed",
+  });
+}
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -374,6 +397,21 @@ async function handleNpsPost(request: Request): Promise<Response> {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const url = new URL(request.url);
+
+    if (url.pathname === CONTACT_PATH) {
+      if (request.method !== "POST") {
+        return new Response("Method Not Allowed", {
+          status: 405,
+          headers: { allow: "POST" },
+        });
+      }
+      try {
+        return await handleContact(request);
+      } catch (error) {
+        console.error("[Contacto] Erro fatal:", error instanceof Error ? error.message : error);
+        return jsonResponse(500, { success: false, reason: "internal_error" });
+      }
+    }
 
     if (url.pathname === WEBHOOK_PATH) {
       if (request.method !== "POST") {

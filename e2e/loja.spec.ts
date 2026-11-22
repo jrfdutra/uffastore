@@ -617,6 +617,87 @@ test.describe("Pesquisa de satisfação", () => {
   });
 });
 
+test.describe("Formulário de contacto", () => {
+  const FOTO_PNG = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC",
+    "base64",
+  );
+
+  test("troca ou defeito exige fotografia do produto", async ({ page }) => {
+    let pedido: unknown = null;
+    await page.route(
+      (url) => url.pathname === "/api/contacto",
+      async (route) => {
+        pedido = await route.request().postDataJSON();
+        await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+      },
+    );
+
+    // Esperar pela hidratação do React antes de interagir com o formulário.
+    await page.goto("/ajuda", { waitUntil: "networkidle" });
+    await page.getByLabel("Motivo *").selectOption("troca_defeito");
+    await expect(page.getByText("Fotografia do produto *")).toBeVisible();
+
+    await page.getByLabel("Nome *").fill("Ana");
+    await page.getByLabel("Email *").fill("ana@exemplo.pt");
+    await page.getByLabel("Mensagem *").fill("O produto chegou com um defeito.");
+    await page.getByRole("button", { name: "Enviar mensagem" }).click();
+
+    await expect(
+      page.getByText("Para troca ou defeito, anexa uma fotografia do produto."),
+    ).toBeVisible();
+    expect(pedido).toBeNull();
+  });
+
+  test("envia a fotografia em anexo ao apoio", async ({ page }) => {
+    let pedido: {
+      reason: string;
+      image: { name: string; type: string; data: string } | null;
+    } | null = null;
+    await page.route(
+      (url) => url.pathname === "/api/contacto",
+      async (route) => {
+        pedido = (await route.request().postDataJSON()) as typeof pedido;
+        await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+      },
+    );
+
+    await page.goto("/ajuda", { waitUntil: "networkidle" });
+    await page.getByLabel("Motivo *").selectOption("troca_defeito");
+    await expect(page.getByText("Fotografia do produto *")).toBeVisible();
+
+    await page.getByLabel("Nome *").fill("Ana");
+    await page.getByLabel("Email *").fill("ana@exemplo.pt");
+    await page.getByLabel("Número de Encomenda (opcional)").fill("UFFA-48217");
+    await page.getByLabel("Mensagem *").fill("A sola descolou depois de um dia de uso.");
+
+    await page.locator("#contact-image").setInputFiles({
+      name: "defeito.png",
+      mimeType: "image/png",
+      buffer: FOTO_PNG,
+    });
+    await expect(page.getByRole("img", { name: "Pré-visualização" })).toBeVisible();
+    await expect(page.getByText("defeito", { exact: true })).toBeVisible();
+
+    await page.getByRole("button", { name: "Enviar mensagem" }).click();
+
+    await expect(page.getByRole("heading", { name: "Mensagem Enviada!" })).toBeVisible();
+    expect(pedido).not.toBeNull();
+    expect(pedido?.reason).toBe("troca_defeito");
+    expect(pedido?.image?.type).toBe("image/jpeg");
+    expect(pedido?.image?.name).toBe("defeito");
+    expect(pedido?.image?.data).toBeTruthy();
+  });
+
+  test("o servidor rejeita pedidos malformados", async ({ request }) => {
+    const response = await request.post("/api/contacto", {
+      data: { name: "", email: "invalido", message: "" },
+    });
+    expect(response.status()).toBe(400);
+    expect((await response.json()).reason).toBe("missing_fields");
+  });
+});
+
 test.describe("Mobile", () => {
   test("menu mobile mostra os modelos da marca como submenu @mobile", async ({ page }) => {
     await page.goto("/");

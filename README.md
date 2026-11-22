@@ -114,6 +114,17 @@ curl -X GET "http://localhost:8080/api/cron/nps" \
 
 Detalhes em [`docs/pesquisa-nps.md`](docs/pesquisa-nps.md).
 
+### Fotografia em caso de troca ou defeito
+
+O formulário em `/ajuda` permite anexar uma fotografia. Ao escolher o motivo
+**Troca ou defeito no produto**, a imagem passa a ser obrigatória. O browser
+comprime a foto a JPEG antes do envio; o servidor valida os bytes, rejeita ficheiros
+acima de 2 MB depois da compressão e envia o pedido para `atendimento@uffastore.pt`
+por Resend, com a imagem em anexo, através de `POST /api/contacto`.
+
+Sem `RESEND_API_KEY` o endpoint devolve `502` e o formulário mostra o e-mail direto
+em vez de confirmar falsamente o envio. A imagem não é guardada no servidor.
+
 O ficheiro [`docs/shopify/produtos-uffa.csv`](docs/shopify/produtos-uffa.csv) contém o
 catálogo de demonstração para importar no Shopify (Produtos → Importar).
 
@@ -128,7 +139,7 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 - Integração segura com a Shopify Storefront API para catálogo e checkout.
 - Portes: recolha grátis no Porto, **8,94 €** em Portugal Continental e Ilhas, **24,00 €** na União Europeia e **34,00 €** na Suíça.
 - Portal `/rastreio` com acesso por três fatores, dashboard, linha temporal e confirmação de receção/recolha.
-- Painel `/operacoes` para atualizar estado, previsão, rastreio, transportador e nota pública (gestão de estados demo).
+- Formulário de apoio em `/ajuda` com fotografia obrigatória em casos de troca ou defeito, enviada por e-mail ao apoio.
 - Aviso de versão demo no primeiro acesso de cada sessão, em PT/EN/ES.
 - Textos em PT/EN/ES, tema claro/escuro e layout mobile-first.
 
@@ -145,7 +156,7 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 | `/expedicao`                    | Registo interno de envio (não indexado).                 |
 | `/avaliar?token=…`              | Pesquisa de satisfação da encomenda (não indexada).      |
 | `/favoritos`                    | Lista de desejos persistente.                            |
-| `/ajuda`                        | Perguntas frequentes, contactos e formulário de apoio.   |
+| `/ajuda`                        | Perguntas frequentes, contactos e formulário com foto.   |
 
 ## Dados de demonstração
 
@@ -154,9 +165,7 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 | `UFFA-48217` | `demo@uffa.pt` | `UFFA-7K3M-9QX2` | Em trânsito         |
 | `UFFA-73104` | `demo@uffa.pt` | `UFFA-2P8N-5RV6` | Pronta para recolha |
 
-Painel de operações: chave `UFFA-OPS-2026`.
-
-O checkout usa a Shopify para dados e pagamento. As encomendas demo acima são as que alimentam a confirmação, o portal e o painel no browser; encomendas concluídas na Shopify não são sincronizadas automaticamente para este armazenamento local.
+O checkout usa a Shopify para dados e pagamento. As encomendas demo acima são as que alimentam a confirmação e o portal no browser; encomendas concluídas na Shopify não são sincronizadas automaticamente para este armazenamento local.
 
 O aviso de versão demo fecha uma vez por sessão e guarda a dispensa em `sessionStorage` com a chave `uffa-demo-notice-v1`.
 
@@ -182,7 +191,7 @@ O aviso de versão demo fecha uma vez por sessão e guarda a dispensa em `sessio
 - `src/components/newsletter.tsx` — subscrições enviadas para atendimento@uffastore.pt
 - `src/components/demo-notice.tsx` — aviso de versão demo com dispensa por sessão
 - `src/components/order-portal-promo.tsx` — bloco do portal na home
-- `src/routes/` — páginas (home, catálogo, produto, checkout, confirmação, rastreio, operações)
+- `src/routes/` — páginas (home, catálogo, produto, checkout, confirmação, rastreio, ajuda, avaliação)
 - `scripts/capture-screenshots.mjs` — captura automatizada das imagens da documentação
 - `scripts/build-apresentacao.mjs` — geração da apresentação do portal com `pptxgenjs`
 - `scripts/build-apresentacao-site.mjs` — geração da apresentação do site com `pptxgenjs`
@@ -202,7 +211,7 @@ npm install --no-save --package-lock=false pptxgenjs
 node scripts/build-apresentacao-site.mjs
 ```
 
-O percurso de demonstração do site está no último slide: `/`, `/catalogo`, `/produto/porto-rose-low`, `/checkout`, `/rastreio` e `/operacoes`. As capturas podem ser atualizadas com o dev server a correr:
+O percurso de demonstração do site está no último slide: `/`, `/catalogo`, `/produto/porto-rose-low`, `/checkout`, `/rastreio` e `/ajuda`. As capturas podem ser atualizadas com o dev server a correr:
 
 ```bash
 node scripts/capture-screenshots.mjs

@@ -581,6 +581,24 @@ Shopify (`uffa_nps.*`), sem base de dados nem painel novo.
 
 Consulta operacional completa: [`docs/pesquisa-nps.md`](pesquisa-nps.md).
 
+### Fotografia em caso de troca ou defeito
+
+O formulário de `/ajuda` tem um campo **Motivo**. Ao escolher **Troca ou defeito
+no produto**, passa a exigir uma fotografia do artigo:
+
+1. O cliente escolhe uma imagem JPG, PNG ou WebP até 12 MB.
+2. O browser reduz a imagem a JPEG (máx. 1600 px, qualidade 82%) e mostra uma
+   pré-visualização antes do envio.
+3. O servidor valida os bytes da imagem (não confia apenas no MIME declarado),
+   limita o corpo a 4 MB e envia o pedido por Resend para
+   `atendimento@uffastore.pt`, com a foto em anexo e `reply_to` do cliente.
+4. Sem `RESEND_API_KEY`, o pedido falha de forma explícita e o formulário mostra
+   o e-mail direto; não há confirmação falsa.
+
+O campo é opcional nos outros motivos. O endpoint é `POST /api/contacto` e
+devolve `400` para dados inválidos — incluindo troca/defeito sem foto — e `502`
+quando o envio de e-mail falha. Nenhuma imagem é guardada no servidor.
+
 > **Nota histórica.** As instruções e imagens desta secção em versões anteriores
 > do manual deixaram de se aplicar.
 

@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { cttTrackingUrl, isCttCarrier } from "./tracking";
+import { company } from "./legal";
+import type { ContactRequest } from "./contact";
 
 /** Em dev lê o .env local; em produção (Vercel) usa as env vars do painel. */
 async function loadEnv(): Promise<Record<string, string>> {
@@ -184,5 +186,79 @@ atendimento@uffastore.pt`;
   }
 
   console.log(`Convite NPS enviado para ${data.email} (Encomenda ${data.orderNumber})`);
+  return { success: true, data: resJson };
+}
+
+const CONTACT_REASON_LABELS: Record<ContactRequest["reason"], string> = {
+  geral: "Dúvida geral",
+  troca_defeito: "Troca ou defeito no produto",
+  encomenda: "Encomenda e entrega",
+  outro: "Outro",
+};
+
+/** Envia o pedido de contacto ao apoio, com a fotografia em anexo quando existe. */
+export async function sendContactEmail(data: ContactRequest) {
+  const env = await loadEnv();
+  const apiKey = env["RESEND_API_KEY"];
+  const from = env["RESEND_FROM"] || "onboarding@resend.dev";
+
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY não configurada; pedido de contacto não enviado.");
+    return { success: false, error: "Missing RESEND_API_KEY" };
+  }
+
+  const subject = `[Apoio UFFA] ${CONTACT_REASON_LABELS[data.reason]}${
+    data.subject ? ` — ${data.subject}` : ""
+  }`;
+  const body = `Novo pedido de contacto através do site uffastore.pt.
+
+Nome: ${data.name}
+Email: ${data.email}
+Motivo: ${CONTACT_REASON_LABELS[data.reason]}
+Encomenda: ${data.orderNo || "(não indicada)"}
+Assunto: ${data.subject || "(sem assunto)"}
+
+Mensagem:
+${data.message}
+
+${data.image ? `Fotografia em anexo: ${data.image.name}` : "Sem fotografia anexa."}
+
+Responder diretamente a ${data.email}.`;
+
+  const attachments = data.image
+    ? [
+        {
+          filename: data.image.name,
+          content: data.image.data,
+          content_type: data.image.type,
+        },
+      ]
+    : [];
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      from,
+      to: [company.email],
+      reply_to: data.email,
+      subject,
+      text: body,
+      attachments,
+    }),
+  });
+
+  const resJson = (await response.json()) as Record<string, unknown>;
+  if (!response.ok) {
+    console.error("Erro ao enviar pedido de contacto via Resend:", resJson);
+    return { success: false, error: resJson };
+  }
+
+  console.log(
+    `Pedido de contacto enviado para ${company.email} (${CONTACT_REASON_LABELS[data.reason]}, ${data.email})${data.image ? " com fotografia" : ""}`,
+  );
   return { success: true, data: resJson };
 }
