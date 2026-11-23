@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Search, SlidersHorizontal, Check } from "lucide-react";
+import { Search, SlidersHorizontal, Check, ChevronDown } from "lucide-react";
 import { z } from "zod";
 import { useMemo, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
@@ -180,6 +180,7 @@ function Catalog() {
   );
   const [size, setSize] = useState<number | "all">("all");
   const [selectedColor, setSelectedColor] = useState<ColorFilter | "all">("all");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   // A numeração é específica de cada marca (a Adidas usa ⅓/⅔, a Nike termina
   // em .5), por isso a lista de tamanhos tem de vir dos produtos da marca ativa.
@@ -268,6 +269,17 @@ function Catalog() {
     ],
   );
 
+  const activeFilterCount = [
+    brand !== "all",
+    model !== "all",
+    isBlackFriday,
+    query.trim().length > 0,
+    maxPrice < priceCeiling,
+    selectedSizeGroup !== "all",
+    size !== "all",
+    selectedColor !== "all",
+  ].filter(Boolean).length;
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
       <p className="text-xs font-bold uppercase text-primary">
@@ -277,199 +289,222 @@ function Catalog() {
         {language === "pt" ? "Catálogo" : language === "es" ? "Catálogo" : "Shop all"}
       </h1>
 
-      <div className="mt-10 grid gap-8 lg:grid-cols-[250px_1fr]">
-        <aside className="space-y-7">
-          <div className="flex items-center gap-2 border-b border-foreground pb-3 font-bold uppercase">
+      <div className={`mt-10 grid gap-8 ${filtersOpen ? "lg:grid-cols-[250px_1fr]" : ""}`}>
+        <aside className={filtersOpen ? "space-y-7" : "lg:justify-self-start"}>
+          <button
+            type="button"
+            onClick={() => setFiltersOpen((value) => !value)}
+            aria-expanded={filtersOpen}
+            aria-controls="catalogo-filtros"
+            aria-label={tr(
+              language,
+              filtersOpen ? "Ocultar filtros" : "Mostrar filtros",
+              filtersOpen ? "Hide filters" : "Show filters",
+              filtersOpen ? "Ocultar filtros" : "Mostrar filtros",
+            )}
+            className="flex w-full items-center gap-2 border-b border-foreground pb-3 font-bold uppercase lg:w-auto"
+          >
             <SlidersHorizontal className="size-4" />
             {t.filters}
-          </div>
+            {activeFilterCount > 0 && (
+              <span className="grid size-5 place-items-center rounded-full bg-primary text-[10px] text-primary-foreground">
+                {activeFilterCount}
+              </span>
+            )}
+            <ChevronDown
+              aria-hidden="true"
+              className={`ml-auto size-4 transition-transform lg:ml-1 ${filtersOpen ? "rotate-180" : ""}`}
+            />
+          </button>
 
-          {/* Marcas */}
-          <fieldset>
-            <legend className="mb-3 text-xs font-bold uppercase">
-              {tr(language, "Marca", "Brand", "Marca")}
-            </legend>
-            <div className="flex flex-wrap gap-2 lg:flex-col">
-              {(["all", ...BRANDS] as const).map((value) => (
-                <Button
-                  key={value}
-                  variant={brand === value ? "default" : "outline"}
-                  size="sm"
-                  className="justify-start rounded-none"
-                  aria-pressed={brand === value}
-                  onClick={() => setBrand(value)}
-                >
-                  {value === "all" ? t.all : brandNames[value][language]}
-                </Button>
-              ))}
-            </div>
-          </fieldset>
-
-          {/* Modelos dentro da marca selecionada */}
-          {brand !== "all" && (
+          <div id="catalogo-filtros" className={filtersOpen ? "space-y-7" : "hidden"}>
+            {/* Marcas */}
             <fieldset>
               <legend className="mb-3 text-xs font-bold uppercase">
-                {tr(language, "Modelo", "Model", "Modelo")}
+                {tr(language, "Marca", "Brand", "Marca")}
               </legend>
               <div className="flex flex-wrap gap-2 lg:flex-col">
-                <Button
-                  variant={model === "all" ? "default" : "outline"}
-                  size="sm"
-                  className="justify-start rounded-none"
-                  aria-pressed={model === "all"}
-                  onClick={() => setModel("all")}
-                >
-                  {t.all}
-                </Button>
-                {modelOptions.map((option) => (
+                {(["all", ...BRANDS] as const).map((value) => (
                   <Button
-                    key={option.id}
-                    variant={model === option.id ? "default" : "outline"}
+                    key={value}
+                    variant={brand === value ? "default" : "outline"}
                     size="sm"
                     className="justify-start rounded-none"
-                    aria-pressed={model === option.id}
-                    onClick={() => setModel(model === option.id ? "all" : option.id)}
+                    aria-pressed={brand === value}
+                    onClick={() => setBrand(value)}
                   >
-                    {option.label}{" "}
-                    <span className="ml-1 text-[10px] opacity-60">({option.count})</span>
+                    {value === "all" ? t.all : brandNames[value][language]}
                   </Button>
                 ))}
               </div>
             </fieldset>
-          )}
 
-          {/* Campanha: filtro transversal às marcas */}
-          <fieldset>
-            <legend className="mb-3 text-xs font-bold uppercase">
-              {tr(language, "Campanha", "Campaign", "Campaña")}
-            </legend>
-            <Button
-              variant={isBlackFriday ? "default" : "outline"}
-              size="sm"
-              className="w-full justify-start rounded-none"
-              aria-pressed={isBlackFriday}
-              onClick={() => setCategory(isBlackFriday ? "all" : "blackfriday")}
-            >
-              {categoryNames.blackfriday[language]}
-            </Button>
-          </fieldset>
-
-          {/* Agrupamento de Tamanhos */}
-          <fieldset>
-            <legend className="mb-3 text-xs font-bold uppercase">
-              {tr(language, "Escalão de Tamanho", "Size Category", "Categoría de Talla")}
-            </legend>
-            <div className="flex flex-wrap gap-2 lg:flex-col">
-              {sizeGroups.map((group) => (
-                <Button
-                  key={group.key}
-                  variant={selectedSizeGroup === group.key ? "default" : "outline"}
-                  size="sm"
-                  className="justify-start rounded-none text-xs"
-                  aria-pressed={selectedSizeGroup === group.key}
-                  onClick={() => {
-                    // Clicar no escalão ativo volta a todos os tamanhos, sem
-                    // precisar de um botão "Todos" (que gerava confusão).
-                    setSelectedSizeGroup(selectedSizeGroup === group.key ? "all" : group.key);
-                    setSize("all");
-                  }}
-                >
-                  {group.name[language]}
-                </Button>
-              ))}
-            </div>
-
-            {/* Tamanho específico numa lista dropdown */}
-            <div className="mt-3">
-              <Select
-                value={size === "all" ? "all" : String(size)}
-                onValueChange={(value) => setSize(value === "all" ? "all" : Number(value))}
-              >
-                <SelectTrigger
-                  className="h-9 w-full rounded-none border-border px-3 text-xs font-semibold"
-                  aria-label={tr(language, "Tamanho", "Size", "Talla")}
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="rounded-none">
-                  <SelectItem value="all" className="rounded-none py-2 text-xs">
-                    {tr(language, "Todos os tamanhos", "All sizes", "Todas las tallas")}
-                  </SelectItem>
-                  {(selectedSizeGroup === "all"
-                    ? sizeGroups.flatMap((group) => group.options)
-                    : (sizeGroups.find((g) => g.key === selectedSizeGroup)?.options ?? [])
-                  ).map((option) => (
-                    <SelectItem
-                      key={option.value}
-                      value={String(option.value)}
-                      className="rounded-none py-2 text-xs"
+            {/* Modelos dentro da marca selecionada */}
+            {brand !== "all" && (
+              <fieldset>
+                <legend className="mb-3 text-xs font-bold uppercase">
+                  {tr(language, "Modelo", "Model", "Modelo")}
+                </legend>
+                <div className="flex flex-wrap gap-2 lg:flex-col">
+                  <Button
+                    variant={model === "all" ? "default" : "outline"}
+                    size="sm"
+                    className="justify-start rounded-none"
+                    aria-pressed={model === "all"}
+                    onClick={() => setModel("all")}
+                  >
+                    {t.all}
+                  </Button>
+                  {modelOptions.map((option) => (
+                    <Button
+                      key={option.id}
+                      variant={model === option.id ? "default" : "outline"}
+                      size="sm"
+                      className="justify-start rounded-none"
+                      aria-pressed={model === option.id}
+                      onClick={() => setModel(model === option.id ? "all" : option.id)}
                     >
-                      {option.label}
-                    </SelectItem>
+                      {option.label}{" "}
+                      <span className="ml-1 text-[10px] opacity-60">({option.count})</span>
+                    </Button>
                   ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </fieldset>
+                </div>
+              </fieldset>
+            )}
 
-          {/* Filtro de Cores */}
-          <fieldset>
-            <legend className="mb-3 text-xs font-bold uppercase">
-              {tr(language, "Cor", "Color", "Color")}
-            </legend>
-            <div className="flex flex-wrap gap-2">
+            {/* Campanha: filtro transversal às marcas */}
+            <fieldset>
+              <legend className="mb-3 text-xs font-bold uppercase">
+                {tr(language, "Campanha", "Campaign", "Campaña")}
+              </legend>
               <Button
-                variant={selectedColor === "all" ? "default" : "outline"}
+                variant={isBlackFriday ? "default" : "outline"}
                 size="sm"
-                className="h-8 rounded-none text-xs"
-                onClick={() => setSelectedColor("all")}
+                className="w-full justify-start rounded-none"
+                aria-pressed={isBlackFriday}
+                onClick={() => setCategory(isBlackFriday ? "all" : "blackfriday")}
               >
-                {t.all}
+                {categoryNames.blackfriday[language]}
               </Button>
-              {availableColors.map((col) => (
-                <button
-                  key={col.slug}
-                  type="button"
-                  title={col.name[language]}
-                  onClick={() => setSelectedColor(selectedColor === col.slug ? "all" : col.slug)}
-                  className={`relative flex size-8 items-center justify-center border transition-all ${col.colorClass} ${
-                    selectedColor === col.slug
-                      ? "ring-2 ring-primary ring-offset-2"
-                      : "border-border"
-                  }`}
-                >
-                  {selectedColor === col.slug && (
-                    <Check
-                      className={`size-4 ${col.slug === "white" ? "text-black" : "text-white"}`}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-          </fieldset>
+            </fieldset>
 
-          {/* Filtro de Preço */}
-          <fieldset className="space-y-3">
-            <legend className="text-xs font-bold uppercase">{t.price}</legend>
-            <div className="flex items-center justify-between text-xs font-semibold">
-              <span>{minPrice} €</span>
-              <span>{maxPrice} €</span>
-            </div>
-            <div className="space-y-2">
-              <label className="block text-[11px] text-muted-foreground uppercase">
-                {tr(language, "Preço máximo:", "Max price:", "Precio máximo:")} {maxPrice} €
-                <input
-                  type="range"
-                  min="0"
-                  max={priceCeiling}
-                  step="5"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(Number(e.target.value))}
-                  className="mt-1 w-full accent-primary"
-                />
-              </label>
-            </div>
-          </fieldset>
+            {/* Agrupamento de Tamanhos */}
+            <fieldset>
+              <legend className="mb-3 text-xs font-bold uppercase">
+                {tr(language, "Escalão de Tamanho", "Size Category", "Categoría de Talla")}
+              </legend>
+              <div className="flex flex-wrap gap-2 lg:flex-col">
+                {sizeGroups.map((group) => (
+                  <Button
+                    key={group.key}
+                    variant={selectedSizeGroup === group.key ? "default" : "outline"}
+                    size="sm"
+                    className="justify-start rounded-none text-xs"
+                    aria-pressed={selectedSizeGroup === group.key}
+                    onClick={() => {
+                      // Clicar no escalão ativo volta a todos os tamanhos, sem
+                      // precisar de um botão "Todos" (que gerava confusão).
+                      setSelectedSizeGroup(selectedSizeGroup === group.key ? "all" : group.key);
+                      setSize("all");
+                    }}
+                  >
+                    {group.name[language]}
+                  </Button>
+                ))}
+              </div>
+
+              {/* Tamanho específico numa lista dropdown */}
+              <div className="mt-3">
+                <Select
+                  value={size === "all" ? "all" : String(size)}
+                  onValueChange={(value) => setSize(value === "all" ? "all" : Number(value))}
+                >
+                  <SelectTrigger
+                    className="h-9 w-full rounded-none border-border px-3 text-xs font-semibold"
+                    aria-label={tr(language, "Tamanho", "Size", "Talla")}
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-none">
+                    <SelectItem value="all" className="rounded-none py-2 text-xs">
+                      {tr(language, "Todos os tamanhos", "All sizes", "Todas las tallas")}
+                    </SelectItem>
+                    {(selectedSizeGroup === "all"
+                      ? sizeGroups.flatMap((group) => group.options)
+                      : (sizeGroups.find((g) => g.key === selectedSizeGroup)?.options ?? [])
+                    ).map((option) => (
+                      <SelectItem
+                        key={option.value}
+                        value={String(option.value)}
+                        className="rounded-none py-2 text-xs"
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </fieldset>
+
+            {/* Filtro de Cores */}
+            <fieldset>
+              <legend className="mb-3 text-xs font-bold uppercase">
+                {tr(language, "Cor", "Color", "Color")}
+              </legend>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={selectedColor === "all" ? "default" : "outline"}
+                  size="sm"
+                  className="h-8 rounded-none text-xs"
+                  onClick={() => setSelectedColor("all")}
+                >
+                  {t.all}
+                </Button>
+                {availableColors.map((col) => (
+                  <button
+                    key={col.slug}
+                    type="button"
+                    title={col.name[language]}
+                    onClick={() => setSelectedColor(selectedColor === col.slug ? "all" : col.slug)}
+                    className={`relative flex size-8 items-center justify-center border transition-all ${col.colorClass} ${
+                      selectedColor === col.slug
+                        ? "ring-2 ring-primary ring-offset-2"
+                        : "border-border"
+                    }`}
+                  >
+                    {selectedColor === col.slug && (
+                      <Check
+                        className={`size-4 ${col.slug === "white" ? "text-black" : "text-white"}`}
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            {/* Filtro de Preço */}
+            <fieldset className="space-y-3">
+              <legend className="text-xs font-bold uppercase">{t.price}</legend>
+              <div className="flex items-center justify-between text-xs font-semibold">
+                <span>{minPrice} €</span>
+                <span>{maxPrice} €</span>
+              </div>
+              <div className="space-y-2">
+                <label className="block text-[11px] text-muted-foreground uppercase">
+                  {tr(language, "Preço máximo:", "Max price:", "Precio máximo:")} {maxPrice} €
+                  <input
+                    type="range"
+                    min="0"
+                    max={priceCeiling}
+                    step="5"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(Number(e.target.value))}
+                    className="mt-1 w-full accent-primary"
+                  />
+                </label>
+              </div>
+            </fieldset>
+          </div>
         </aside>
 
         <div>
