@@ -19,6 +19,14 @@ Verificações em produção após redeploy:
   **200 `emailSent: true`** (e-mail de teste enviado para `atendimento@uffastore.pt`);
 - `GET /api/cron/nps?dryRun=1` com `CRON_SECRET` → **200**, janela calculada,
   `scanned: 0`;
+- `GET /api/cron/nps` (real, sem `dryRun`) → **200**, `dryRun: false`,
+  `scanned: 0`. O NPS está **activado** (`NPS_ENABLED=true`) e o cron diário
+  `0 9 * * *` vai disparar convites para encomendas pagas entre 8 e 30 dias
+  antes da data de execução;
+- Foram enviados 3 e-mails de teste para `atendimento@uffastore.pt`, um por
+  encomenda real (`#1001`, `#1002`, `#1003`), com links assinados válidos
+  (`/avaliar?token=…`). Os metafields `uffa_nps.invited_at` **não** foram
+  marcados — as encomendas reais continuam elegíveis quando entrarem na janela;
 - `RESEND_FROM` passou a usar o domínio verificado.
 
 Falta apenas fazer a encomenda real de teste e revogar os tokens da Vercel
