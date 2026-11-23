@@ -1,7 +1,7 @@
-import { cttTrackingUrl, isCttCarrier } from "./tracking";
-import { company } from "./legal";
-import { loadServerEnv } from "./server-env";
-import type { ContactRequest } from "./contact";
+import { cttTrackingUrl, isCttCarrier } from "./tracking.ts";
+import { company } from "./legal.ts";
+import { loadServerEnv } from "./server-env.ts";
+import type { ContactRequest } from "./contact.ts";
 
 export async function sendShopifyOrderEmail(orderData: {
   orderNumber: string;
@@ -168,6 +168,65 @@ atendimento@uffastore.pt`;
   }
 
   console.log(`Convite NPS enviado para ${data.email} (Encomenda ${data.orderNumber})`);
+  return { success: true, data: resJson };
+}
+
+export type NpsResponseNotification = {
+  email: string;
+  orderNumber: string;
+  score: number;
+  comment: string;
+};
+
+/** Texto da notificação interna; separado para poder ser testado sem rede. */
+export function buildNpsResponseEmail(data: NpsResponseNotification) {
+  const subject = `[NPS] Avaliação ${data.score}/5 — Encomenda ${data.orderNumber}`;
+  const text = `Nova avaliação recebida através do link enviado pela UFFA Store.
+
+Encomenda: ${data.orderNumber}
+Nota: ${data.score}/5
+Cliente: ${data.email || "(não indicado)"}
+Comentário: ${data.comment || "(sem comentário)"}
+
+A resposta também fica guardada nos metacampos uffa_nps da encomenda na Shopify.`;
+
+  return { subject, text };
+}
+
+/** Avisa a loja por e-mail quando um cliente responde ao NPS. Não guarda dados no servidor. */
+export async function sendNpsResponseNotification(data: NpsResponseNotification) {
+  const env = await loadServerEnv();
+  const apiKey = env["RESEND_API_KEY"];
+  const from = env["RESEND_FROM"] || "onboarding@resend.dev";
+
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY não configurada; notificação NPS não enviada.");
+    return { success: false, error: "Missing RESEND_API_KEY" };
+  }
+
+  const { subject, text } = buildNpsResponseEmail(data);
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      from,
+      to: [company.email],
+      ...(data.email ? { reply_to: data.email.slice(0, 254) } : {}),
+      subject,
+      text,
+    }),
+  });
+
+  const resJson = (await response.json()) as Record<string, unknown>;
+  if (!response.ok) {
+    console.error("Erro ao enviar notificação NPS via Resend:", resJson);
+    return { success: false, error: resJson };
+  }
+
+  console.log(`Notificação NPS enviada para ${company.email} (Encomenda ${data.orderNumber})`);
   return { success: true, data: resJson };
 }
 

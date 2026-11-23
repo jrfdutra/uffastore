@@ -12,7 +12,12 @@ import {
   verifyShopifyHmac,
 } from "./lib/webhook-core";
 import { parseFulfillmentPayload, type FulfillmentNotification } from "./lib/fulfillment-webhook";
-import { sendContactEmail, sendNpsEmail, sendTrackingEmail } from "./lib/server-actions";
+import {
+  sendContactEmail,
+  sendNpsEmail,
+  sendNpsResponseNotification,
+  sendTrackingEmail,
+} from "./lib/server-actions";
 import { parseContactRequest } from "./lib/contact";
 import { CONTACT_BODY_LIMIT, CONTACT_PATH } from "./lib/contact-constants";
 import {
@@ -509,13 +514,34 @@ async function handleNpsPost(request: Request): Promise<Response> {
   const score = parseNpsScore(body["score"]);
   if (score === null) return jsonResponse(400, { success: false, reason: "invalid_score" });
 
+  const comment = cleanNpsComment(body["comment"]);
+
   try {
     await saveNpsResponse(shopifyAdminGraphql, {
       orderId: data.orderId,
       score,
-      comment: cleanNpsComment(body["comment"]),
+      comment,
       now: Date.now(),
     });
+
+    // A notificação é best-effort: se o e-mail falhar, a resposta já está guardada
+    // e o cliente continua a ver a confirmação normal.
+    try {
+      const order = await getNpsOrder(shopifyAdminGraphql, data.orderId);
+      const notification = await sendNpsResponseNotification({
+        email: order?.email ?? "",
+        orderNumber: data.orderNumber,
+        score,
+        comment,
+      });
+      if (!notification.success) console.error("[NPS] Notificação por e-mail não enviada.");
+    } catch (error) {
+      console.error(
+        "[NPS] Erro ao notificar resposta:",
+        error instanceof Error ? error.message : error,
+      );
+    }
+
     return jsonResponse(200, { success: true, orderNumber: data.orderNumber, score });
   } catch (error) {
     console.error(

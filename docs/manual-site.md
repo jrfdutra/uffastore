@@ -559,6 +559,9 @@ Shopify (`uffa_nps.*`), sem base de dados nem painel novo.
 - `NPS_ENABLED=true` autoriza os envios; sem isso o cron responde `nps_disabled`.
 - `?dryRun=1` mostra quais as encomendas seriam convidadas, sem escrever nem enviar.
 - `uffa_nps.invited_at` impede convites duplicados; a resposta atualiza os metafields.
+- Cada resposta gera também um e-mail interno para **atendimento@uffastore.pt** com a
+  nota, o comentário, o nº da encomenda e o e-mail do cliente; se o e-mail falhar, a
+  resposta continua guardada e o cliente vê a confirmação normal.
 - O link expira após 30 dias por omissão e não contém e-mail nem código de acesso.
 
 Consulta operacional completa: [`docs/pesquisa-nps.md`](pesquisa-nps.md).

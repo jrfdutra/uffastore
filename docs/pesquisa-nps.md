@@ -23,6 +23,9 @@ própria encomenda da Shopify, como metafields.
 5. O Resend envia um link assinado `https://www.uffastore.pt/avaliar?token=…`.
 6. O cliente escolhe uma nota de **0 a 5** e, opcionalmente, escreve um comentário.
    `POST /api/nps` valida o token e grava a resposta.
+7. O Resend envia uma notificação interna para **atendimento@uffastore.pt** com o nº da
+   encomenda, a nota, o comentário e o e-mail do cliente (usado como `reply_to`). O envio é
+   best-effort: se falhar, a resposta já guardada continua válida e o erro vai para o log.
 
 ## Escala
 

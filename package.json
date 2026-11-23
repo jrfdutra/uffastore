@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --test src/lib/catalogo.test.ts src/lib/colors.test.ts src/lib/precos.test.ts src/lib/variantes.test.ts src/lib/pares.test.ts src/lib/webhook-core.test.ts src/lib/fulfillment-webhook.test.ts src/lib/brands.test.ts src/lib/cart.test.ts src/lib/models.test.ts src/lib/tracking.test.ts src/lib/tracking-link.test.ts src/lib/nps-link.test.ts src/lib/nps-core.test.ts src/lib/nps-run.test.ts src/lib/contact.test.ts src/lib/pickup-locations.test.ts src/lib/sale.test.ts",
+    "test": "node --test src/lib/catalogo.test.ts src/lib/colors.test.ts src/lib/precos.test.ts src/lib/variantes.test.ts src/lib/pares.test.ts src/lib/webhook-core.test.ts src/lib/fulfillment-webhook.test.ts src/lib/brands.test.ts src/lib/cart.test.ts src/lib/models.test.ts src/lib/tracking.test.ts src/lib/tracking-link.test.ts src/lib/nps-link.test.ts src/lib/nps-core.test.ts src/lib/nps-run.test.ts src/lib/nps-response-notification.test.ts src/lib/contact.test.ts src/lib/pickup-locations.test.ts src/lib/sale.test.ts",
     "test:e2e": "playwright test",
     "format": "prettier --write ."
   },
