@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Newsletter } from "@/components/newsletter";
 import { FeedbacksSection } from "@/components/feedbacks-section";
 import { TrustStrip } from "@/components/trust-strip";
-import { OrderPortalPromo } from "@/components/order-portal-promo";
 import { OffCarousel } from "@/components/off-carousel";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { copy, type Product } from "@/lib/shop-data";
@@ -144,10 +143,6 @@ function Home() {
       </section>
 
       <FeedbacksSection language={language} />
-
-      <section className="mx-auto max-w-7xl px-4 py-16 md:py-20 md:px-6">
-        <OrderPortalPromo />
-      </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 md:py-20 md:px-6">
         <Newsletter />

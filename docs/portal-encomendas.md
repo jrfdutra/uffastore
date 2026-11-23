@@ -208,7 +208,7 @@ Comandos de validação:
 ```bash
 npm run build
 npx tsc --noEmit
-npx eslint src/lib/orders.ts src/routes/rastreio.tsx src/routes/checkout.tsx src/routes/confirmacao.tsx src/components/order-portal-promo.tsx
+npx eslint src/lib/orders.ts src/routes/rastreio.tsx src/routes/checkout.tsx src/routes/confirmacao.tsx
 ```
 
 > O lint global ainda reporta problemas pré-existentes de formatação/CRLF em ficheiros não alterados. Os ficheiros novos e modificados estão formatados.
@@ -236,7 +236,6 @@ As capturas usadas na apresentação estão em `docs/assets/screenshots/` e os r
 | `src/routes/rastreio.tsx`               | Portal do cliente e dashboard.                                          |
 | `src/routes/checkout.tsx`               | Criação da encomenda no checkout.                                       |
 | `src/routes/confirmacao.tsx`            | Confirmação e próximos passos.                                          |
-| `src/components/order-portal-promo.tsx` | Bloco promocional na home.                                              |
 | `src/components/site-shell.tsx`         | Header, footer e menu mobile.                                           |
 | `scripts/capture-screenshots.mjs`       | Captura automatizada das imagens da documentação.                       |
 | `scripts/build-apresentacao.mjs`        | Geração da apresentação PowerPoint.                                     |

@@ -201,7 +201,6 @@ O aviso de versão demo fecha uma vez por sessão e guarda a dispensa em `sessio
 - `src/assets/` — fotografias dos produtos
 - `src/components/newsletter.tsx` — subscrições enviadas para atendimento@uffastore.pt
 - `src/components/demo-notice.tsx` — aviso de versão demo com dispensa por sessão
-- `src/components/order-portal-promo.tsx` — bloco do portal na home
 - `src/routes/` — páginas (home, catálogo, produto, checkout, confirmação, rastreio, ajuda, avaliação)
 - `scripts/capture-screenshots.mjs` — captura automatizada das imagens da documentação
 - `scripts/build-apresentacao.mjs` — geração da apresentação do portal com `pptxgenjs`
