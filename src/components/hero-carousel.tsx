@@ -4,7 +4,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 
-const AUTOPLAY_MS = 6000;
+const AUTOPLAY_MS = 9000;
 /** Black Friday 2026: a primeira imagem visível é sempre a capa da campanha. */
 const INITIAL_SLIDE_INDEX = 1;
 
