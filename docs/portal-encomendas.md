@@ -21,10 +21,9 @@ A equipa atualiza o estado e o rastreio na Shopify Admin. O código é preenchid
 
 | Rota                                    | Público | Função                                                                   |
 | --------------------------------------- | ------- | ------------------------------------------------------------------------ |
-| `/checkout`                             | Cliente | Cria a encomenda, o código exclusivo e o rastreio inicial.               |
-| `/confirmacao?order=UFFA-XXXXX`         | Cliente | Mostra o código exclusivo, o rastreio, os itens e os próximos passos.     |
+| `/checkout`                             | Cliente | Recolha ou envio; dados e pagamento no checkout da Shopify.              |
+| `/confirmacao?order=UFFA-XXXXX`         | Cliente | Mostra o resumo da compra e os próximos passos.                          |
 | `/rastreio`                             | Cliente | Campo de código que redireciona para o CTT; vista detalhada via token.    |
-| `/rastreio?order=UFFA-XXXXX`            | Cliente | Pré-preenche o código no formulário de rastreio.                         |
 | `/rastreio?token=…`                     | Cliente | Vista detalhada assinada da encomenda real (link do e-mail).             |
 
 A home, o header, o menu mobile e o footer têm ligações para `/rastreio`.
@@ -36,7 +35,7 @@ A home, o header, o menu mobile e o footer têm ligações para `/rastreio`.
 ## 3. Jornada do cliente
 
 1. **Compra** — o cliente escolhe envio ou recolha no checkout e conclui os dados e o pagamento no checkout oficial da Shopify.
-2. **Confirmação** — a Shopify envia a confirmação por email. Na demonstração, a página `/confirmacao` mostra as encomendas de exemplo guardadas localmente, com número, código exclusivo e, no envio, o código de rastreio.
+2. **Confirmação** — a Shopify envia a confirmação por email. A página `/confirmacao` mostra o resumo da compra guardado localmente e os próximos passos.
 3. **Acesso** — entra em `/rastreio`, introduz só o código de rastreio e é redirecionado para o CTT.
 4. **Acompanhamento** — abre o link mágico do e-mail para ver transportador, previsão, código e botão do CTT.
 5. **Conclusão** — o acompanhamento final é feito no CTT; o atendimento pode ser contactado por e-mail.
@@ -222,7 +221,7 @@ As capturas usadas na apresentação estão em `docs/assets/screenshots/` e os r
 | --------------------------- | ---------------------------------------------- |
 | `01-home.png`               | Home completa com o bloco de portal.           |
 | `02-home-portal-promo.png`  | Bloco “O teu par não desaparece”.              |
-| `06-confirmacao.png`        | Confirmação com código exclusivo e rastreio.   |
+| `06-confirmacao.png`        | Confirmação com número, resumo e rastreio.     |
 | `07-rastreio-acesso.png`    | Formulário de acesso ao portal.                |
 | `08-rastreio-dashboard.png` | Dashboard de envio completo.                   |
 | `15-rastreio-recolha.png`   | Dashboard de recolha pronta.                   |

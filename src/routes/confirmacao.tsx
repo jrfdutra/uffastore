@@ -101,15 +101,10 @@ function Confirmation() {
               <section className="border-2 border-dashed border-primary bg-primary/15 p-6 text-center md:p-8">
                 <LockKeyhole className="mx-auto size-7 text-primary" />
                 <p className="mt-3 text-xs font-bold uppercase text-primary">
-                  {tr(
-                    language,
-                    "Código de exclusividade",
-                    "Exclusive code",
-                    "Código de exclusividad",
-                  )}
+                  {tr(language, "Encomenda registada", "Order registered", "Pedido registrado")}
                 </p>
                 <p className="mt-2 font-mono text-3xl font-bold tracking-wider md:text-4xl">
-                  {order.accessCode}
+                  {order.number}
                 </p>
                 <Button
                   type="button"
@@ -117,18 +112,18 @@ function Confirmation() {
                   size="sm"
                   className="mt-4 rounded-none"
                   onClick={() =>
-                    copyValue(order.accessCode, tr(language, "Código", "Code", "Código"))
+                    copyValue(order.number, tr(language, "Número", "Number", "Número"))
                   }
                 >
                   <Copy />
-                  {tr(language, "Copiar código", "Copy code", "Copiar código")}
+                  {tr(language, "Copiar número", "Copy number", "Copiar número")}
                 </Button>
                 <p className="mx-auto mt-4 max-w-md text-xs text-muted-foreground">
                   {tr(
                     language,
-                    "Guarda este código. Vais precisar dele, do número da encomenda e do contacto para entrar no portal.",
-                    "Keep this code. You'll need it, the order number and the contact to open the portal.",
-                    "Guarda este código. Lo necesitarás, junto con el número de pedido y el contacto, para entrar en el portal.",
+                    "O comprovativo foi enviado pela Shopify. Quando a encomenda for expedida, recebes um e-mail com o código de rastreio e um link para acompanhar o envio, sem palavra-passe.",
+                    "The receipt was sent by Shopify. Once shipped, you'll get an email with the tracking code and a link to follow the delivery, no password needed.",
+                    "El comprobante fue enviado por Shopify. Cuando se envíe, recibirás un correo con el código de seguimiento y un enlace para seguir la entrega, sin contraseña.",
                   )}
                 </p>
               </section>
@@ -343,13 +338,8 @@ function Confirmation() {
               </section>
 
               <Button asChild size="lg" className="h-12 w-full rounded-none">
-                <Link to="/rastreio" search={{ order: order.number }}>
-                  {tr(
-                    language,
-                    "Gerir a minha encomenda",
-                    "Manage my order",
-                    "Gestionar mi pedido",
-                  )}
+                <Link to="/rastreio">
+                  {tr(language, "Rastrear encomenda", "Track your order", "Rastrear pedido")}
                   <ArrowRight />
                 </Link>
               </Button>

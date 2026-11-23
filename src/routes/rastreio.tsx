@@ -21,7 +21,7 @@ import { tr } from "@/lib/i18n";
 import { type Language } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { formatDate } from "@/lib/orders";
-import { cttTrackingUrl, type TrackingLinkData } from "@/lib/tracking";
+import { cttTrackingUrl, isCttCarrier, type TrackingLinkData } from "@/lib/tracking";
 
 export const Route = createFileRoute("/rastreio")({
   validateSearch: (search) =>
@@ -186,12 +186,14 @@ function TrackingLinkDashboard({ data }: { data: TrackingLinkData }) {
           <code className="font-mono text-sm font-bold">{data.trackingCode}</code>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button asChild size="sm" className="rounded-none">
-            <a href={cttTrackingUrl(data.trackingCode)} target="_blank" rel="noopener noreferrer">
-              <Navigation />
-              {tr(language, "Ver no CTT", "Track on CTT", "Ver en CTT")}
-            </a>
-          </Button>
+          {isCttCarrier(data.carrier) && (
+            <Button asChild size="sm" className="rounded-none">
+              <a href={cttTrackingUrl(data.trackingCode)} target="_blank" rel="noopener noreferrer">
+                <Navigation />
+                {tr(language, "Ver no CTT", "Track on CTT", "Ver en CTT")}
+              </a>
+            </Button>
+          )}
           <Button
             type="button"
             variant="outline"

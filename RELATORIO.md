@@ -156,7 +156,7 @@ Depois de comprimir imagens **e** de arquivar os 29 ficheiros órfãos de `publi
 
 ### Casos não cobertos (e porquê)
 - **Pagamento real / cancelamento na Shopify**: exigiria credenciais de sandbox da Shopify e dados de cartão de teste. O fluxo testado cobre tudo o que é nosso (criação do checkout, `return_url`, gravação da compra, página de confirmação).
-- **E-mail de confirmação**: não existe envio de e-mail no site; é a Shopify que o envia. `RESEND_API_KEY` está no `.env` mas não é usada no código do site.
+- **E-mail de confirmação**: a Shopify envia o comprovativo da compra. A `RESEND_API_KEY` é usada no código do site para contacto, links de rastreio e convites NPS (`src/lib/server-actions.ts`).
 - **Produto sem stock**: a loja atual tem stock em todas as variantes (verificado via API), por isso não há caso real para testar.
 
 ---

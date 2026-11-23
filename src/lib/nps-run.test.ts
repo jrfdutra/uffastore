@@ -96,3 +96,33 @@ test("falha no envio é contabilizada sem quebrar o resto do disparo", async () 
   assert.equal(result.failed, 1);
   assert.equal(result.invited, 1);
 });
+
+test("falha de e-mail desfaz a marcação para permitir nova tentativa", async () => {
+  const calls: string[] = [];
+  const graphql: AdminGraphql = async <T>(query: string): Promise<T> => {
+    calls.push(query);
+    if (query.includes("NpsEligibleOrders")) return eligiblePage as T;
+    if (query.includes("NpsSetMetafields")) {
+      return {
+        metafieldsSet: { metafields: [{ id: "gid://shopify/Metafield/99" }], userErrors: [] },
+      } as T;
+    }
+    if (query.includes("NpsDeleteMetafield")) {
+      return { metafieldDelete: { userErrors: [] } } as T;
+    }
+    return {} as T;
+  };
+
+  const result = await runNps({
+    graphql,
+    send: async () => ({ success: false }),
+    origin: "https://www.uffastore.pt",
+    secret: SECRET,
+    now: NOW,
+    dryRun: false,
+  });
+
+  assert.equal(result.failed, 1);
+  assert.equal(result.pendingRetry, 1);
+  assert.match(calls.join("\n"), /NpsDeleteMetafield/);
+});

@@ -359,7 +359,7 @@ function HelpPage() {
             <p className="mt-2 text-sm text-muted-foreground">
               {tr(
                 language,
-                "Obrigado pelo contacto. A nossa equipa responderá para atendimento@uffastore.pt em breve.",
+                "Obrigado pelo contacto. A nossa equipa responderá para o teu e-mail em breve.",
                 "Thank you for contacting. Our team will reply to your email shortly.",
                 "Gracias por contactar. Nuestro equipo responderá pronto.",
               )}

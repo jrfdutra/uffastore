@@ -35,6 +35,7 @@ import {
   saveNpsResponse,
 } from "./lib/nps-core";
 import { runNps } from "./lib/nps-run";
+import { loadServerEnv } from "./lib/server-env";
 
 const WEBHOOK_PATH = "/api/webhooks/shopify/orders-paid";
 const FULFILLMENT_WEBHOOK_PATH = "/api/webhooks/shopify/orders-fulfilled";
@@ -43,6 +44,12 @@ const NPS_CRON_PATH = "/api/cron/nps";
 const NPS_PATH = "/api/nps";
 const TRACKING_BODY_LIMIT = 8_192;
 const NPS_BODY_LIMIT = 4_096;
+
+/** Conta bytes UTF-8: `String.length` subestima caracteres multibyte (emoji, acentos). */
+const bodyEncoder = new TextEncoder();
+function byteLength(value: string): number {
+  return bodyEncoder.encode(value).byteLength;
+}
 
 // Dois níveis: evita reenvios do mesmo evento e de atualizações posteriores
 // com o mesmo código de rastreio (a Shopify pode gerar vários eventos).
@@ -56,7 +63,7 @@ async function handleContact(request: Request): Promise<Response> {
   }
 
   const raw = await request.text();
-  if (raw.length > CONTACT_BODY_LIMIT) {
+  if (byteLength(raw) > CONTACT_BODY_LIMIT) {
     return jsonResponse(413, { success: false, reason: "payload_too_large" });
   }
 
@@ -135,7 +142,7 @@ async function handleShopifyWebhook(request: Request): Promise<Response> {
   }
 
   const raw = await request.text();
-  if (raw.length > MAX_BODY_BYTES) {
+  if (byteLength(raw) > MAX_BODY_BYTES) {
     return jsonResponse(413, { success: false, reason: "payload_too_large" });
   }
 
@@ -282,7 +289,7 @@ async function handleTrackingRegister(request: Request): Promise<Response> {
   }
 
   const raw = await request.text();
-  if (raw.length > TRACKING_BODY_LIMIT) {
+  if (byteLength(raw) > TRACKING_BODY_LIMIT) {
     return jsonResponse(413, { success: false, reason: "payload_too_large" });
   }
 
@@ -312,7 +319,7 @@ async function handleFulfillmentWebhook(request: Request): Promise<Response> {
   }
 
   const raw = await request.text();
-  if (raw.length > MAX_BODY_BYTES) {
+  if (byteLength(raw) > MAX_BODY_BYTES) {
     return jsonResponse(413, { success: false, reason: "payload_too_large" });
   }
 
@@ -388,15 +395,31 @@ function authorizedCron(request: Request, secret: string): boolean {
   return safeEqualStrings(provided, secret);
 }
 
+/** Um só disparo de cada vez por instância: Cron e pedido manual não se sobrepõem. */
+let npsCronPromise: Promise<Response> | undefined;
+
 async function handleNpsCron(request: Request): Promise<Response> {
   const cronSecret = process.env["CRON_SECRET"]?.trim();
-  if (!cronSecret) {
+  if (!cronSecret || cronSecret.length < 16) {
     return jsonResponse(503, { success: false, reason: "cron_not_configured" });
   }
   if (!authorizedCron(request, cronSecret)) {
     return new Response("Unauthorized", { status: 401 });
   }
+  if (npsCronPromise) {
+    return jsonResponse(409, { success: false, reason: "nps_run_in_progress" });
+  }
 
+  const run = performNpsCron(request);
+  npsCronPromise = run;
+  try {
+    return await run;
+  } finally {
+    if (npsCronPromise === run) npsCronPromise = undefined;
+  }
+}
+
+async function performNpsCron(request: Request): Promise<Response> {
   const secret = getNpsSecret();
   if (!secret) {
     return jsonResponse(503, { success: false, reason: "nps_not_configured" });
@@ -467,7 +490,7 @@ async function handleNpsPost(request: Request): Promise<Response> {
     return jsonResponse(413, { success: false, reason: "payload_too_large" });
   }
   const raw = await request.text();
-  if (raw.length > NPS_BODY_LIMIT) {
+  if (byteLength(raw) > NPS_BODY_LIMIT) {
     return jsonResponse(413, { success: false, reason: "payload_too_large" });
   }
 
@@ -505,6 +528,9 @@ async function handleNpsPost(request: Request): Promise<Response> {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    // Uma única leitura do .env garante que todos os endpoints veem os mesmos
+    // segredos, quer venham do painel Vercel quer do ficheiro local.
+    await loadServerEnv();
     const url = new URL(request.url);
 
     if (url.pathname === CONTACT_PATH) {

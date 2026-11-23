@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BadgeCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Newsletter } from "@/components/newsletter";
 import { FeedbacksSection } from "@/components/feedbacks-section";
@@ -83,10 +83,7 @@ function Home() {
     <>
       <HeroCarousel srTitle={h.title}>
         <div className="pointer-events-none max-w-3xl animate-reveal">
-          <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]">
-            <BadgeCheck className="size-4 text-primary" />
-            {h.eyebrow}
-          </p>
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.16em]">{h.eyebrow}</p>
           <h1 className="font-display text-6xl uppercase leading-[.9] sm:text-7xl md:text-9xl">
             {h.title}
           </h1>

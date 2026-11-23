@@ -1,14 +1,14 @@
 # Pôr o e-mail automático a funcionar em produção
 
-Estado em 21/11/2026. O código, o deploy e o CI estão prontos. Falta apenas
-configurar credenciais — nada disso pode ser feito por API.
+Estado actual em 23/11/2026. Código, deploy, CI e credenciais principais já estão
+configurados; restam apenas as confirmações manuais indicadas neste documento.
 
 ## Configuração concluída em 23/11/2026
 
 Variáveis aplicadas na Vercel (projecto `uffastore`, 16 no total, sem duplicados):
 `PUBLIC_SITE_URL`, `ORDER_PORTAL_SECRET`, `TRACKING_ADMIN_TOKEN`,
 `TRACKING_LINK_TTL_DAYS`, `CRON_SECRET`, `NPS_SECRET`,
-`NPS_LINK_TTL_DAYS`, `NPS_ENABLED=false`, `RESEND_FROM=UFFA Store
+`NPS_LINK_TTL_DAYS`, `NPS_ENABLED=true`, `RESEND_FROM=UFFA Store
 <atendimento@uffastore.pt>`, `SHOPIFY_WEBHOOK_SECRET`,
 `SHOPIFY_ADMIN_STORE_DOMAIN` e `SHOPIFY_ADMIN_ACCESS_TOKEN`.
 
@@ -36,8 +36,8 @@ que apareceram no chat.
 
 O domínio `uffastore.pt` está **verified** na Resend (disparado pela API após
 confirmação dos registos DNS no NS autoritativo). O `RESEND_FROM` local e o
-`.env.example` já usam `UFFA Store <atendimento@uffastore.pt>`. Falta apenas
-actualizar o valor na Vercel.
+`.env.example` já usam `UFFA Store <atendimento@uffastore.pt>`. O valor está
+aplicado na Vercel (ver “Configuração concluída em 23/11/2026”).
 
 ## Diagnóstico em 23/11/2026
 

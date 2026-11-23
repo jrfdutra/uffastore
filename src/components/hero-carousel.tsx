@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import useEmblaCarousel from "embla-carousel-react";
+import { Pause, Play } from "lucide-react";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 
@@ -62,6 +63,8 @@ export function HeroCarousel({ children, srTitle }: { children: ReactNode; srTit
     startIndex: INITIAL_SLIDE_INDEX,
   });
   const [selected, setSelected] = useState(INITIAL_SLIDE_INDEX);
+  const [paused, setPaused] = useState(false);
+  const [interacting, setInteracting] = useState(false);
 
   const syncSelected = useCallback(() => {
     if (!emblaApi) return;
@@ -79,13 +82,14 @@ export function HeroCarousel({ children, srTitle }: { children: ReactNode; srTit
     };
   }, [emblaApi, syncSelected]);
 
-  // Avanço automático sempre ativo (exceto para quem prefere menos movimento).
+  // Avanço automático 9 s por capa. O timer reinicia a cada mudança de slide,
+  // pausa em hover/foco e pode ser desligado pelo botão (WCAG 2.2.2).
   useEffect(() => {
-    if (!emblaApi || slides.length < 2) return;
+    if (!emblaApi || slides.length < 2 || paused || interacting) return;
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = window.setInterval(() => emblaApi.scrollNext(), AUTOPLAY_MS);
-    return () => window.clearInterval(timer);
-  }, [emblaApi]);
+    const timer = window.setTimeout(() => emblaApi.scrollNext(), AUTOPLAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [emblaApi, paused, interacting, selected]);
 
   const hasCarousel = slides.length > 1;
   const isCover = Boolean(slides[selected]?.hideSlogan);
@@ -93,6 +97,10 @@ export function HeroCarousel({ children, srTitle }: { children: ReactNode; srTit
   return (
     <section
       className="relative pt-16 min-h-[min(720px,78svh)] overflow-hidden bg-hero text-hero-foreground"
+      onMouseEnter={() => setInteracting(true)}
+      onMouseLeave={() => setInteracting(false)}
+      onFocusCapture={() => setInteracting(true)}
+      onBlurCapture={() => setInteracting(false)}
       aria-roledescription={hasCarousel ? "carousel" : undefined}
       aria-label={
         hasCarousel
@@ -171,9 +179,29 @@ export function HeroCarousel({ children, srTitle }: { children: ReactNode; srTit
       </div>
 
       {isCover && <h1 className="sr-only">{srTitle}</h1>}
+      {hasCarousel && (
+        <span className="sr-only" aria-live="polite">
+          {tr(language, "Capa", "Slide", "Portada")} {selected + 1} / {slides.length}:{" "}
+          {slides[selected]?.name}
+        </span>
+      )}
 
       {hasCarousel && (
         <div className="pointer-events-auto absolute bottom-4 right-3 z-20 flex items-center gap-0.5 border border-hero-foreground/10 bg-hero/55 px-1.5 backdrop-blur-sm md:bottom-8 md:right-6 md:gap-1 md:px-2">
+          <button
+            type="button"
+            onClick={() => setPaused((value) => !value)}
+            aria-pressed={paused}
+            aria-label={tr(
+              language,
+              paused ? "Retomar apresentação" : "Pausar apresentação",
+              paused ? "Resume slideshow" : "Pause slideshow",
+              paused ? "Reanudar presentación" : "Pausar presentación",
+            )}
+            className="grid h-11 w-11 place-items-center text-hero-foreground"
+          >
+            {paused ? <Play className="size-3.5" /> : <Pause className="size-3.5" />}
+          </button>
           {slides.map((slide, index) => (
             <button
               key={slide.id}
@@ -186,7 +214,7 @@ export function HeroCarousel({ children, srTitle }: { children: ReactNode; srTit
                 `Ver foto ${index + 1}: ${slide.name}`,
               )}
               aria-current={selected === index}
-              className="flex h-11 items-center justify-center px-1"
+              className="flex h-11 min-w-11 items-center justify-center px-2"
             >
               <span
                 className={`block h-1.5 rounded-full transition-all ${

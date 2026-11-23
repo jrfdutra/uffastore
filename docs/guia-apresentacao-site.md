@@ -42,13 +42,12 @@ Pontos a demonstrar em qualquer ecrã:
 
 | Rota                      | O que mostrar                                                    |
 | ------------------------- | ---------------------------------------------------------------- |
-| `/`                       | Hero, categorias, mais procurados, bloco do portal e newsletter. |
+| `/`                       | Hero, categorias, feedbacks, pesquisa e newsletter.              |
 | `/catalogo`               | Filtros por linha, tamanho e preço; pesquisa instantânea.        |
-| `/produto/porto-rose-low` | Galeria 360°, tamanhos com stock e garantias.                    |
+| `/produto/porto-rose-low` | Fotos, tamanhos com stock e preço.                               |
 | `/checkout`               | Recolha grátis ou envio: 8,94 € PT Continental/Ilhas, 24 € UE, 34 € Suíça; dados e pagamento no checkout Shopify. |
-| `/confirmacao`            | Número, código exclusivo e rastreio.                             |
-| `/rastreio`               | Acesso por três fatores, estado, timeline e confirmação.         |
-| `/operacoes`              | Fila, indicadores, edição de estado e nota pública.              |
+| `/confirmacao`            | Resumo da compra e próximos passos.                              |
+| `/rastreio`               | Código CTT ou link mágico assinado; estado e atalho para o CTT.  |
 
 ### Credenciais demo
 
@@ -57,7 +56,7 @@ Pontos a demonstrar em qualquer ecrã:
 | `UFFA-48217` | `demo@uffa.pt` | `UFFA-7K3M-9QX2` | Em trânsito         |
 | `UFFA-73104` | `demo@uffa.pt` | `UFFA-2P8N-5RV6` | Pronta para recolha |
 
-Painel de operações: chave `UFFA-OPS-2026`.
+Acompanhamento: link mágico assinado enviado por e-mail (`/rastreio?token=…`) ou código CTT em `/rastreio`. O antigo painel `/operacoes` foi removido.
 
 ## 4. Guião slide a slide
 
@@ -146,7 +145,7 @@ Painel de operações: chave `UFFA-OPS-2026`.
 
 **Notas do orador:**
 
-> “Entrega — recolha grátis no Porto ou envio por 8,94 € em Portugal Continental e Ilhas, 24 € na União Europeia e 34 € na Suíça. Dados e pagamento — o cliente é redirecionado para o checkout oficial da Shopify, onde completa nome, contacto, morada e escolhe cartão, MB WAY ou Google Pay. Não é criada conta UFFA. O fluxo é curto; na demonstração, a confirmação local mostra o número e o código exclusivo de exemplo.”
+> “Entrega — recolha grátis em NorteShopping, Maia Jardim ou MarShopping, ou envio por 8,94 € em Portugal Continental e Ilhas, 24 € na União Europeia e 34 € na Suíça. Dados e pagamento — o cliente é redirecionado para o checkout oficial da Shopify. Não é criada conta UFFA. A confirmação local mostra o resumo da compra e os próximos passos.”
 
 **Transição:** “A confirmação é o início do pós-compra.”
 
@@ -155,13 +154,13 @@ Painel de operações: chave `UFFA-OPS-2026`.
 ### Slide 8 — Confirmação
 
 **Título:** O pós-compra começa aqui.  
-**Visual:** confirmação `UFFA-48217` e código `UFFA-7K3M-9QX2`.
+**Visual:** confirmação `UFFA-48217` com os próximos passos.
 
 **Notas do orador:**
 
-> “Na confirmação de demonstração, o cliente leva o número da encomenda, o código exclusivo para o portal e o rastreio. Não há conta: o código é a chave. É por isso que insistimos em guardá-lo. Numa encomenda Shopify, a confirmação equivalente é enviada pela própria Shopify.”
+> “A página de confirmação mostra o resumo da compra, a entrega escolhida e os próximos passos. Não há conta: o acompanhamento chega por e-mail, com o código CTT ou com um link mágico assinado. Numa encomenda real, a confirmação é enviada pela própria Shopify.”
 
-**Transição:** “Com o código, o par não desaparece.”
+**Transição:** “Com o e-mail de envio, o par não desaparece.”
 
 ---
 
@@ -172,20 +171,20 @@ Painel de operações: chave `UFFA-OPS-2026`.
 
 **Notas do orador:**
 
-> “O acesso exige três dados que o comprador já tem: encomenda, contacto e código exclusivo. Dentro, vê estado, timeline, previsão, transportador e rastreio. No fim, confirma a receção ou a recolha. Sessão de 30 minutos e bloqueio após cinco tentativas.”
+> “Em `/rastreio` o cliente introduz só o código CTT e é encaminhado para o site dos CTT. Quando a encomenda é expedida, o e-mail traz um link assinado com o estado do envio, a previsão e o atalho para o CTT — sem registo nem palavra-passe.”
 
-**Transição:** “Do lado da equipa, o ciclo fecha-se nas operações.”
+**Transição:** “Do lado da equipa, o ciclo fecha-se na Shopify.”
 
 ---
 
 ### Slide 10 — Operações
 
 **Título:** Gerir sem folhas de cálculo.  
-**Visual:** painel `/operacoes` com fila e editor.
+**Visual:** link mágico de rastreio e e-mails automáticos da Shopify.
 
 **Notas do orador:**
 
-> “A equipa vê os mesmos dados que o cliente. Pesquisa, filtra, edita estado, previsão, rastreio, transportador e nota pública, e avança para o estado seguinte sem saltos. Cada alteração aparece no portal. A chave demo é `UFFA-OPS-2026`.”
+> “Os webhooks da Shopify atualizam automaticamente o estado da encomenda e enviam o link de rastreio assinado ao cliente. O cliente acompanha tudo em `/rastreio?token=…`, sem registo nem palavra-passe. O antigo painel interno foi removido.”
 
 **Transição:** “Tudo isto funciona também no bolso.”
 
@@ -224,20 +223,20 @@ Painel de operações: chave `UFFA-OPS-2026`.
 
 **Notas do orador:**
 
-> “O site cobre a jornada completa, da marca à operação. O percurso sugerido está no slide: home, catálogo, produto, checkout, portal e operações. O painel usa `UFFA-OPS-2026`. Obrigado.”
+> “O site cobre a jornada completa, da marca ao pós-compra. O percurso sugerido está no slide: home, catálogo, produto, checkout, confirmação e rastreio. Os e-mails automáticos fecham o ciclo. Obrigado.”
 
 ## 5. Preparação da demo
 
 1. Confirmar que o dev server está a correr em `http://localhost:8080`.
 2. Ao abrir o site, surge o aviso de versão demo; fechar com **Entendi, continuar**. A dispensa fica em `sessionStorage` (`uffa-demo-notice-v1`) e não volta a aparecer na mesma sessão.
 3. Abrir previamente `/`, `/catalogo` e `/produto/porto-rose-low` em separadores.
-4. Ter as credenciais de `UFFA-48217` e `UFFA-73104` à mão.
+4. Ter um código CTT de exemplo à mão para demonstrar `/rastreio`.
 5. Se a rede ou o browser falharem, usar as capturas em `docs/assets/screenshots/`.
-6. Terminar sempre no painel de operações para mostrar o ciclo completo.
+6. Terminar no link mágico de rastreio para mostrar o ciclo completo.
 
 ## 6. Perguntas frequentes
 
-**É preciso criar conta?** Não. O acesso ao portal usa número, contacto e código exclusivo.
+**É preciso criar conta?** Não. O rastreio público usa o código CTT; o envio traz um link assinado.
 
 **Os pagamentos são reais?** O checkout é redirecionado para a Shopify. Os métodos disponíveis (cartão, MB WAY, Google Pay) dependem da configuração da loja; para demonstração, usar o ambiente de testes da Shopify.
 
@@ -245,4 +244,4 @@ Painel de operações: chave `UFFA-OPS-2026`.
 
 **O aviso de demo volta a aparecer?** Só numa nova sessão ou aba; na mesma sessão fica dispensado com a chave `uffa-demo-notice-v1`.
 
-**O painel é público?** Não. Exige a chave de demonstração `UFFA-OPS-2026`; em produção, autenticação e permissões.
+**O painel é público?** O antigo `/operacoes` foi removido. A equipa gere encomendas e expedição na Shopify Admin; o cliente acompanha em `/rastreio`.

@@ -35,7 +35,7 @@ Manual funcional e operacional da loja online UFFA Store, organizado em onze cap
 | [04](#cap-04) | Produto | Galeria, tamanhos, preço, serviços e relacionados |
 | [05](#cap-05) | Carrinho | Camada lateral, quantidades, cupões, partilha e persistência |
 | [06](#cap-06) | Checkout | Portes, pagamento, redirecionamento Shopify e erros |
-| [07](#cap-07) | Confirmação | Número, código exclusivo, rastreio e próximos passos |
+| [07](#cap-07) | Confirmação | Número, resumo da compra, rastreio e próximos passos |
 | [08](#cap-08) | Portal | Localizador simples com CTT e vista detalhada do envio |
 | [09](#cap-09) | Expedição | Registo de envio, link mágico e pesquisa aos 8 dias |
 | [10](#cap-10) | Mobile | Breakpoints, menu, grelhas, toque e desempenho |
@@ -192,7 +192,7 @@ Abaixo de `lg`, o menu passa para um painel lateral com logótipo, assinatura, a
 ### 2.3 Categorias e destaques
 
 - **Categorias** — Casual, Streetwear, Edições Limitadas e Promoções. Cada cartão abre o catálogo com o filtro certo.
-- **Mais procurados** — produtos em destaque com preço, tamanhos, placa PROMO e botão de compra.
+- **Feedbacks** — depoimentos de clientes antes do rodapé, no lugar da antiga secção "Mais procurados".
 - **Estado vazio** — se não houver destaques, a secção desaparece sem deixar espaço morto.
 
 <a id="cap-02-4"></a>
@@ -456,21 +456,20 @@ A integração cria um checkout com:
 
 ### O pós-compra começa aqui.
 
-A confirmação explica o que guardar e o que fazer a seguir.
+A confirmação mostra o resumo da compra e o que fazer a seguir.
 
-![Figura 7.1 — Confirmação com número, código exclusivo e próximos passos](assets/screenshots/06-confirmacao.png)
+![Figura 7.1 — Confirmação com número, resumo e próximos passos](assets/screenshots/06-confirmacao.png)
 
 <a id="cap-07-1"></a>
 
 ### 7.1 O que o cliente recebe
 
 - **Número da encomenda** — `UFFA-XXXXX`.
-- **Código exclusivo** — `UFFA-XXXX-XXXX`, a chave do portal.
 - **Código de rastreio** — nas encomendas com envio.
 - **Resumo** — artigos, entrega, subtotal, portes e total.
-- **Próximos passos** — guardar o código e acompanhar em `/rastreio`.
+- **Próximos passos** — guardar o e-mail de confirmação e, quando expedida, usar o código CTT ou o link assinado em `/rastreio`.
 
-![Figura 7.2 — Detalhe do cartão de código exclusivo e botão de cópia](assets/screenshots/crops/confirmacao-codigo-final.png)
+![Figura 7.2 — Detalhe do cartão da encomenda e botão de cópia](assets/screenshots/crops/confirmacao-codigo-final.png)
 
 <a id="cap-07-2"></a>
 
@@ -710,12 +709,9 @@ npm run build
 
 ### Acessos
 
-| Sistema | Credencial |
-| --- | --- |
-| Painel de operações | `UFFA-OPS-2026` |
-| Portal do cliente | Número + contacto + código exclusivo |
-
-> **Nota.** `Repor demo` em `/operacoes` recria as encomendas de exemplo e apaga alterações locais.
+O antigo painel de operações `/operacoes` foi removido. O acompanhamento de
+encomendas é feito pelo link mágico assinado enviado por e-mail
+(`/rastreio?token=…`) ou, de forma pública, pelo código CTT em `/rastreio`.
 
 ---
 

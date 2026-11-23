@@ -18,11 +18,11 @@ Documento de apoio à apresentação `docs/apresentacao-uffa.pptx` e à demonstr
 
 ## 2. Mensagem central
 
-> **O par não desaparece depois do checkout.** O cliente passa a ter um portal exclusivo para acompanhar o envio ou a recolha e confirmar a receção. A equipa passa a ter um painel simples para gerir estados e comunicar proativamente.
+> **O par não desaparece depois do checkout.** O cliente recebe o estado do envio por e-mail e acompanha em `/rastreio`, sem conta nem palavra-passe. A equipa gere a expedição na Shopify Admin; os webhooks enviam os e-mails automaticamente.
 
 Três ideias a repetir:
 
-1. **Exclusividade** — o acesso exige três dados que só o comprador conhece.
+1. **Acesso simples** — link assinado por e-mail ou código CTT, sem registo.
 2. **Transparência** — estado, transportador, rastreio, previsão e histórico num só lugar.
 3. **Confiança** — informação clara sobre a entrega, sem expor dados pessoais.
 
@@ -82,41 +82,41 @@ Três ideias a repetir:
 
 ### Slide 4 — Jornada: da compra à confirmação
 
-**Título:** O código nasce com a encomenda.
+**Título:** O acompanhamento nasce com a encomenda.
 **Passos:**
 
 1. Compra e escolha de envio ou recolha.
-2. Geração de número, código exclusivo e rastreio.
-3. Confirmação com próximos passos.
-4. Entrada no portal.
-5. Acompanhamento e confirmação final.
+2. Confirmação enviada pela Shopify.
+3. Expedição com código de rastreio na Shopify Admin.
+4. Webhook gera o link assinado e envia o e-mail.
+5. Cliente acompanha em `/rastreio` e responde ao NPS.
 
-**Visual:** captura da confirmação com o código `UFFA-7K3M-9QX2`.
+**Visual:** captura da página de confirmação com os próximos passos.
 
 **Notas do orador:**
 
-> “Na demonstração, a encomenda gera o número, o código exclusivo e o rastreio inicial. A página de confirmação explica ao cliente o que guardar e o que fazer a seguir. Não há criação de conta: o código exclusivo é a chave. Numa encomenda Shopify, a referência e a confirmação vêm da Shopify.”
+> “A Shopify envia a confirmação da compra. Quando a encomenda é marcada como cumprida, o webhook gera um link assinado com o estado do envio e o atalho para o CTT. Não há conta nem código exclusivo: o cliente só precisa do e-mail ou do código CTT.”
 
-**Transição:** “Esse código é o centro do modelo de acesso.”
+**Transição:** “Esse link é o centro do acompanhamento.”
 
 ---
 
-### Slide 5 — Acesso exclusivo por três fatores
+### Slide 5 — Acesso sem conta
 
-**Título:** Três dados. Zero contas.  
+**Título:** Um link. Zero passwords.
 **Tabela visual:**
 
-- Número da encomenda.
-- Contacto usado na compra.
-- Código exclusivo.
+- Link mágico assinado no e-mail de envio.
+- Código CTT em `/rastreio`.
+- Atalho directo para o site dos CTT.
 
-**Regras:** 5 tentativas, bloqueio de 60 segundos, sessão de 30 minutos.
+**Regras:** o link expira, é assinado com HMAC e não contém e-mail nem dados pessoais.
 
 **Visual:** formulário de acesso em `/rastreio`.
 
 **Notas do orador:**
 
-> “Pedimos três coisas que o comprador já tem: o número, o contacto e o código exclusivo. O número pode ser escrito só com os cinco dígitos. Ao fim de cinco tentativas falhadas, bloqueamos durante um minuto. A sessão dura 30 minutos e pode ser terminada manualmente. Isto reduz o atrito sem abrir a porta a quem não comprou.”
+> “O cliente não introduz número de encomenda, contacto nem código exclusivo. O e-mail de envio traz um link assinado com o estado do envio. Quem não tem o link introduz só o código CTT e é encaminhado para os CTT. Sem conta, sem password e sem consulta por e-mail.”
 
 **Transição:** “Depois de entrar, o cliente vê o estado real.”
 
@@ -189,23 +189,22 @@ Três ideias a repetir:
 
 ---
 
-### Slide 9 — Painel de operações
+### Slide 9 — Expedição na Shopify
 
 **Título:** Gerir sem folhas de cálculo.  
 **Pontos:**
 
-- Pesquisa por encomenda, nome ou contacto.
-- Filtro por estado.
-- Edição de estado, previsão, rastreio, transportador e nota pública.
-- Botão **Avançar para…** para o próximo estado.
-- Histórico e reposição de demo.
-- Credenciais do cliente copiáveis.
+- Pesquisa da encomenda na Shopify Admin.
+- **Marcar como cumprida** com código de rastreio e transportador.
+- Webhook `orders/fulfilled` (ou `orders/updated`) para o site.
+- Link assinado e e-mail de envio gerados automaticamente.
+- Cliente acompanha em `/rastreio`.
 
-**Visual:** painel de operações com encomenda selecionada.
+**Visual:** encomenda na Shopify Admin com o código de rastreio preenchido.
 
 **Notas do orador:**
 
-> “A equipa entra em `/operacoes` com uma chave. Vê os indicadores, pesquisa e filtra. Ao selecionar uma encomenda, atualiza o estado, a previsão, o rastreio e a nota. O botão Avançar para leva-a ao estado seguinte sem saltos. Cada alteração aparece no portal do cliente. Em demonstração, a chave é `UFFA-OPS-2026`.”
+> “A equipa trabalha na Shopify Admin: abre a encomenda, marca como cumprida e introduz o código de rastreio e o transportador. A Shopify dispara o webhook, o servidor gera o link assinado e envia o e-mail. O cliente vê o estado atualizado em `/rastreio`, sem intervenção manual.”
 
 **Transição:** “Tudo isto funciona no telemóvel.”
 
@@ -276,9 +275,9 @@ Três ideias a repetir:
 **Título:** O par não desaparece.  
 **Credenciais:**
 
-- `UFFA-48217` / `demo@uffa.pt` / `UFFA-7K3M-9QX2`
-- `UFFA-73104` / `demo@uffa.pt` / `UFFA-2P8N-5RV6`
-- Ops: `UFFA-OPS-2026`
+- `UFFA-48217` — encomenda de exemplo com link assinado
+- `UFFA-73104` — encomenda de exemplo pronta para recolha
+- Código CTT de exemplo para demonstrar `/rastreio`
 
 **Fecho:**
 
@@ -294,53 +293,53 @@ Três ideias a repetir:
 
 1. Abrir `http://localhost:8080` no browser.
 2. Confirmar que o tema está claro.
-3. Abrir três separadores: home, `/rastreio`, `/operacoes`.
-4. Ter as credenciais à mão.
+3. Abrir dois separadores: home e `/rastreio`.
+4. Ter um código CTT de exemplo e um link mágico de teste à mão.
 5. Se a demo falhar, usar as capturas em `docs/assets/screenshots/`.
 
 ### Sequência
 
 | Passo | Ação                                     | O que dizer                                                  |
 | ----- | ---------------------------------------- | ------------------------------------------------------------ |
-| 1     | Home → bloco “O teu par não desaparece”  | “O portal é apresentado no momento certo: depois da compra.” |
-| 2     | `/rastreio` → preencher dados demo       | “Três dados. Sem conta, sem password.”                       |
-| 3     | Dashboard                                | “Estado, histórico, previsão, transportador e rastreio.”     |
-| 4     | Rolar até aos itens                      | “Os pares incluídos na encomenda e o resumo da entrega.”     |
-| 5     | **Confirmar receção** no portal          | “O cliente fecha o processo.”                                |
-| 6     | `/operacoes` → chave demo                | “A equipa vê a fila e os indicadores.”                       |
-| 7     | Selecionar encomenda → avançar estado    | “Uma alteração, um evento no histórico.”                     |
-| 8     | Voltar ao portal e atualizar             | “O cliente vê a mudança em tempo real.”                      |
+| 1     | Home → bloco “O teu par não desaparece”  | “O acompanhamento é apresentado depois da compra.”           |
+| 2     | `/rastreio` → introduzir código CTT      | “Um código. Sem conta, sem password, sem consulta por e-mail.” |
+| 3     | Abrir link mágico assinado               | “Estado, previsão, transportador e atalho para o CTT.”       |
+| 4     | Ver o resumo da entrega                  | “O cliente vê os detalhes do envio num só lugar.”            |
+| 5     | Responder ao NPS                         | “O convite chega 8 dias depois e fica na encomenda.”         |
+| 6     | Shopify Admin → marcar como cumprida     | “A equipa introduz o código e o transportador.”              |
+| 7     | Webhook → e-mail automático              | “O link é gerado e enviado sem trabalho manual.”             |
+| 8     | Voltar a `/rastreio`                     | “O cliente vê o estado atualizado.”                          |
 | 9     | Abrir em mobile                          | “A mesma experiência no bolso.”                              |
 
 ### Frases de segurança
 
-- “Isto é uma demonstração local; em produção, a validação passa para o servidor.”
-- “Os dados demo podem ser repostos no painel de operações.”
-- “O portal mostra apenas os dados da encomenda, nunca os de terceiros.”
+- “Os endpoints são protegidos por segredos e assinaturas HMAC.”
+- “A expedição é feita na Shopify Admin; não existe painel interno.”
+- “O link mágico não contém e-mail nem dados pessoais.”
 
 ## 5. Perguntas frequentes
 
 **Isto substitui o email de confirmação?**  
-Não. Complementa-o. O email continua a levar o número, o código exclusivo e o link do portal.
+Não. A Shopify envia a confirmação da compra; o site envia o e-mail de envio com o link assinado.
 
 **O cliente tem de criar conta?**  
-Não. O acesso usa número, contacto e código exclusivo. Em produção, pode ser adicionado login opcional para clientes recorrentes.
+Não. Basta o link assinado ou o código CTT em `/rastreio`.
 
-**O código exclusivo pode ser partilhado?**  
-Sim, mas dá acesso à encomenda. Por isso é tratado como credencial: pode ser regenerado e o acesso pode ser revogado.
+**O link mágico pode ser partilhado?**
+Pode, mas dá acesso ao estado da encomenda. Por isso tem validade limitada e assinatura HMAC.
 
 **Como é feita a atualização do rastreio?**  
-Na demo, manualmente no painel. Em produção, via webhook/API do transportador.
+Ao marcar a encomenda como cumprida na Shopify Admin, os webhooks `orders/fulfilled` e `orders/updated` actualizam o site e enviam o e-mail.
 
-**E se o cliente perder o código?**  
-Em produção, recuperação por email/telefone com validação adicional. Na demo, a equipa pode copiar as credenciais no painel de operações.
+**E se o cliente perder o link?**
+Pode usar o código CTT em `/rastreio` ou pedir ajuda em `/ajuda`.
 
 ## 6. Checklist antes de apresentar
 
 - [ ] `npm run build` passa.
 - [ ] `npx tsc --noEmit` passa.
 - [ ] Dev server em `http://localhost:8080`.
-- [ ] Dados demo repostos em `/operacoes`.
+- [ ] Webhooks da Shopify apontam para o domínio de produção.
 - [ ] Sessões antigas limpas (ou usar janela anónima).
 - [ ] Tema claro.
 - [ ] Credenciais demo visíveis no slide final.

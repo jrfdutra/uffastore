@@ -15,9 +15,11 @@ própria encomenda da Shopify, como metafields.
    - esteja com `displayFinancialStatus = PAID` e não esteja cancelada;
    - tenha e-mail válido;
    - não tenha `uffa_nps.invited_at` nem `uffa_nps.score`.
-4. Antes de enviar, o servidor grava `uffa_nps.invited_at` (`write_orders`). Se o e-mail
-   falhar, a encomenda não volta a ser convidada — o registo evita duplicados. O falhanço
-   aparece nos logs e no campo `failed` da resposta do cron.
+4. Antes de enviar, o servidor grava `uffa_nps.invited_at` (`write_orders`). Essa marcação
+   evita duplicados; um único disparo por instância impede execuções sobrepostas
+   (`409 nps_run_in_progress`). Se o e-mail falhar, a marcação é removida e a encomenda
+   fica elegível para nova tentativa — o falhanço aparece nos logs e nos campos `failed`
+   e `pendingRetry` da resposta do cron.
 5. O Resend envia um link assinado `https://www.uffastore.pt/avaliar?token=…`.
 6. O cliente escolhe uma nota de **0 a 5** e, opcionalmente, escreve um comentário.
    `POST /api/nps` valida o token e grava a resposta.
@@ -71,7 +73,8 @@ query {
 | `/api/nps`         | POST        | Token assinado no corpo               | Guardar nota e comentário             |
 
 Respostas relevantes do cron: `nps_disabled` (falta `NPS_ENABLED=true`),
-`nps_not_configured` (falta segredo), `cron_not_configured` (falta `CRON_SECRET`),
+`nps_not_configured` (falta segredo), `cron_not_configured` (falta `CRON_SECRET`
+com pelo menos 16 caracteres), `nps_run_in_progress` (já existe um disparo em curso),
 `shopify_error` (falha na Admin API). Todas as rotas são fail-closed.
 
 ## Configuração na Vercel
@@ -86,7 +89,8 @@ Variáveis a definir no projeto (Environment Variables):
 
 - `SHOPIFY_ADMIN_STORE_DOMAIN` — domínio `*.myshopify.com`
 - `SHOPIFY_ADMIN_ACCESS_TOKEN` — token da Admin API com `read_orders` e `write_orders`
-- `CRON_SECRET` — valor longo e aleatório; a Vercel envia-o automaticamente no header
+- `CRON_SECRET` — valor aleatório com pelo menos 16 caracteres; a Vercel envia-o
+  automaticamente no header
 - `NPS_SECRET` — opcional; se omitido usa `ORDER_PORTAL_SECRET`
 - `NPS_ENABLED=true` — **só depois** de confirmar que o domínio do Resend está verificado
 - `NPS_LINK_TTL_DAYS` — opcional, 1–60 (por omissão 30)

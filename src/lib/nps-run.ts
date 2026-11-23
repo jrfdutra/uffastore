@@ -1,4 +1,10 @@
-import { findNpsCandidates, markNpsInvited, type NpsOrder, npsWindow } from "./nps-core.ts";
+import {
+  findNpsCandidates,
+  markNpsInvited,
+  type NpsOrder,
+  npsWindow,
+  unmarkNpsInvited,
+} from "./nps-core.ts";
 import { createNpsLink } from "./nps-link.ts";
 import type { AdminGraphql } from "./shopify-admin";
 
@@ -10,6 +16,8 @@ export type NpsRunResult = {
   invited: number;
   sent: number;
   failed: number;
+  /** Convites cuja marcação foi desfeita após falha de e-mail (nova tentativa possível). */
+  pendingRetry: number;
   orderNumbers: string[];
 };
 
@@ -36,6 +44,7 @@ export async function runNps(deps: NpsRunDeps): Promise<NpsRunResult> {
     invited: 0,
     sent: 0,
     failed: 0,
+    pendingRetry: 0,
     orderNumbers: [],
   };
 
@@ -56,8 +65,9 @@ export async function runNps(deps: NpsRunDeps): Promise<NpsRunResult> {
       continue;
     }
 
+    let metafieldId: string | null = null;
     try {
-      await markNpsInvited(deps.graphql, order.id, deps.now);
+      metafieldId = await markNpsInvited(deps.graphql, order.id, deps.now);
     } catch (error) {
       result.failed += 1;
       console.error(`[NPS] Falha ao marcar ${order.name}:`, error);
@@ -65,9 +75,11 @@ export async function runNps(deps: NpsRunDeps): Promise<NpsRunResult> {
     }
     result.invited += 1;
 
+    let delivered = false;
     try {
       const sent = await deps.send(order, url);
-      if (sent.success) {
+      delivered = sent.success;
+      if (delivered) {
         result.sent += 1;
         result.orderNumbers.push(order.name);
       } else {
@@ -77,6 +89,16 @@ export async function runNps(deps: NpsRunDeps): Promise<NpsRunResult> {
     } catch (error) {
       result.failed += 1;
       console.error(`[NPS] Erro ao enviar convite para ${order.name}:`, error);
+    }
+
+    // Sem e-mail, a marcação não deve impedir uma nova tentativa no próximo dia.
+    if (!delivered) {
+      try {
+        await unmarkNpsInvited(deps.graphql, order.id, metafieldId);
+        result.pendingRetry += 1;
+      } catch (error) {
+        console.error(`[NPS] Falha ao libertar ${order.name} para nova tentativa:`, error);
+      }
     }
   }
 

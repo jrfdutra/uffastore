@@ -7,6 +7,7 @@
  * os detalhes da compra quando o cliente regressa.
  */
 
+import { isPickupLocation } from "./pickup-locations";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 
 export type PendingCheckoutItem = {
@@ -72,7 +73,14 @@ export function readPendingCheckout(): PendingCheckout | null {
   if (!raw) return null;
   try {
     const parsed: unknown = JSON.parse(raw);
-    if (isPending(parsed)) return parsed;
+    if (isPending(parsed)) {
+      // Um valor antigo ou manipulado no localStorage não deve aparecer como
+      // "local de recolha" na confirmação; os locais válidos são só os três.
+      if (parsed.pickupLocation !== undefined && !isPickupLocation(parsed.pickupLocation)) {
+        return { ...parsed, pickupLocation: undefined };
+      }
+      return parsed;
+    }
   } catch {
     // Registo corrompido
   }

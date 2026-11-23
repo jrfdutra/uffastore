@@ -1,25 +1,7 @@
-import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
 import { cttTrackingUrl, isCttCarrier } from "./tracking";
 import { company } from "./legal";
+import { loadServerEnv } from "./server-env";
 import type { ContactRequest } from "./contact";
-
-/** Em dev lê o .env local; em produção (Vercel) usa as env vars do painel. */
-async function loadEnv(): Promise<Record<string, string>> {
-  const env = process.env as Record<string, string>;
-  try {
-    const raw = await readFile(resolve(process.cwd(), ".env"), "utf8");
-    for (const line of raw.split(/\r?\n/)) {
-      const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
-      if (m?.[1] && m[2] && !env[m[1]]) {
-        env[m[1]] = m[2].replace(/^["']|["']$/g, "");
-      }
-    }
-  } catch {
-    // Sem ficheiro .env em produção — usar apenas process.env.
-  }
-  return env;
-}
 
 export async function sendShopifyOrderEmail(orderData: {
   orderNumber: string;
@@ -33,7 +15,7 @@ export async function sendShopifyOrderEmail(orderData: {
   }[];
   total: number;
 }) {
-  const env = await loadEnv();
+  const env = await loadServerEnv();
   const apiKey = env["RESEND_API_KEY"];
   const from = env["RESEND_FROM"] || "onboarding@resend.dev";
 
@@ -87,7 +69,7 @@ export async function sendTrackingEmail(data: {
   trackingUrl: string;
   estimatedDelivery: string | null;
 }) {
-  const env = await loadEnv();
+  const env = await loadServerEnv();
   const apiKey = env["RESEND_API_KEY"];
   const from = env["RESEND_FROM"] || "onboarding@resend.dev";
 
@@ -145,7 +127,7 @@ export async function sendNpsEmail(data: {
   customerName: string;
   surveyUrl: string;
 }) {
-  const env = await loadEnv();
+  const env = await loadServerEnv();
   const apiKey = env["RESEND_API_KEY"];
   const from = env["RESEND_FROM"] || "onboarding@resend.dev";
 
@@ -198,7 +180,7 @@ const CONTACT_REASON_LABELS: Record<ContactRequest["reason"], string> = {
 
 /** Envia o pedido de contacto ao apoio, com a fotografia em anexo quando existe. */
 export async function sendContactEmail(data: ContactRequest) {
-  const env = await loadEnv();
+  const env = await loadServerEnv();
   const apiKey = env["RESEND_API_KEY"];
   const from = env["RESEND_FROM"] || "onboarding@resend.dev";
 

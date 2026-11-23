@@ -22,7 +22,7 @@ export type NpsOrder = {
   displayFinancialStatus: string;
   billingAddress: { firstName: string | null } | null;
   shippingAddress: { firstName: string | null } | null;
-  metafields: { nodes: { key: string; value: string }[] };
+  metafields: { nodes: { id?: string; key: string; value: string }[] };
 };
 
 export const ELIGIBLE_ORDERS_QUERY = `
@@ -37,7 +37,7 @@ export const ELIGIBLE_ORDERS_QUERY = `
         displayFinancialStatus
         billingAddress { firstName }
         shippingAddress { firstName }
-        metafields(first: 20, namespace: "${NPS_NAMESPACE}") { nodes { key value } }
+        metafields(first: 20, namespace: "${NPS_NAMESPACE}") { nodes { id key value } }
       }
       pageInfo { hasNextPage endCursor }
     }
@@ -56,7 +56,7 @@ export const ORDER_BY_ID_QUERY = `
         displayFinancialStatus
         billingAddress { firstName }
         shippingAddress { firstName }
-        metafields(first: 20, namespace: "${NPS_NAMESPACE}") { nodes { key value } }
+        metafields(first: 20, namespace: "${NPS_NAMESPACE}") { nodes { id key value } }
       }
     }
   }
@@ -65,6 +65,15 @@ export const ORDER_BY_ID_QUERY = `
 const SET_METAFIELDS_MUTATION = `
   mutation NpsSetMetafields($metafields: [MetafieldsSetInput!]!) {
     metafieldsSet(metafields: $metafields) {
+      metafields { id }
+      userErrors { field message code }
+    }
+  }
+`;
+
+const DELETE_METAFIELD_MUTATION = `
+  mutation NpsDeleteMetafield($id: ID!) {
+    metafieldDelete(input: { id: $id }) {
       userErrors { field message code }
     }
   }
@@ -162,26 +171,37 @@ export async function findNpsCandidates(graphql: AdminGraphql, now: number): Pro
   return candidates;
 }
 
+function userErrorMessages(result: Record<string, unknown> | null): string {
+  const errors = result?.["userErrors"];
+  if (!Array.isArray(errors) || errors.length === 0) return "";
+  return errors
+    .map((error) => asRecord(error)?.["message"])
+    .filter((value): value is string => typeof value === "string")
+    .join("; ");
+}
+
 async function setMetafields(
   graphql: AdminGraphql,
   metafields: Record<string, unknown>[],
-): Promise<void> {
+): Promise<string[]> {
   const data = await graphql<unknown>(SET_METAFIELDS_MUTATION, { metafields });
-  const root = asRecord(data);
-  const result = asRecord(root?.["metafieldsSet"]);
-  const errors = result?.["userErrors"];
-  if (Array.isArray(errors) && errors.length > 0) {
-    const message = errors
-      .map((error) => asRecord(error)?.["message"])
-      .filter((value): value is string => typeof value === "string")
-      .join("; ");
-    throw new Error(message || "A Shopify rejeitou os metafields");
-  }
+  const result = asRecord(asRecord(data)?.["metafieldsSet"]);
+  const message = userErrorMessages(result);
+  if (message) throw new Error(message || "A Shopify rejeitou os metafields");
+  const nodes = result?.["metafields"];
+  if (!Array.isArray(nodes)) return [];
+  return nodes
+    .map((node) => asRecord(node)?.["id"])
+    .filter((id): id is string => typeof id === "string" && id.length > 0);
 }
 
 /** Marca o convite antes do envio para que uma segunda execução não duplique e-mails. */
-export async function markNpsInvited(graphql: AdminGraphql, orderId: string, now: number) {
-  await setMetafields(graphql, [
+export async function markNpsInvited(
+  graphql: AdminGraphql,
+  orderId: string,
+  now: number,
+): Promise<string | null> {
+  const [metafieldId] = await setMetafields(graphql, [
     {
       ownerId: orderId,
       namespace: NPS_NAMESPACE,
@@ -190,6 +210,26 @@ export async function markNpsInvited(graphql: AdminGraphql, orderId: string, now
       value: new Date(now).toISOString(),
     },
   ]);
+  return metafieldId ?? null;
+}
+
+/** Se o e-mail falhar, liberta a encomenda para uma nova tentativa no próximo cron. */
+export async function unmarkNpsInvited(
+  graphql: AdminGraphql,
+  orderId: string,
+  metafieldId?: string | null,
+): Promise<void> {
+  let id = metafieldId;
+  if (!id) {
+    const order = await getNpsOrder(graphql, orderId);
+    id = order?.metafields?.nodes?.find((node) => node?.key === "invited_at")?.id ?? null;
+  }
+  if (!id) return;
+
+  const data = await graphql<unknown>(DELETE_METAFIELD_MUTATION, { id });
+  const result = asRecord(asRecord(data)?.["metafieldDelete"]);
+  const message = userErrorMessages(result);
+  if (message) throw new Error(message || "A Shopify não removeu a marcação do convite");
 }
 
 export function parseNpsScore(value: unknown): number | null {
