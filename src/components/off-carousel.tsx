@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Tag } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight, ChevronLeft, ChevronRight, Tag } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { useShop } from "@/lib/shop-context";
@@ -7,6 +8,19 @@ import { isProductInCategory } from "@/lib/shop-data";
 import { compareRopeLacesFirst } from "@/lib/brands";
 import { tr } from "@/lib/i18n";
 import useEmblaCarousel from "embla-carousel-react";
+
+function VerMaisButton() {
+  const { language } = useShop();
+
+  return (
+    <Button asChild className="h-11 rounded-none px-5 font-bold uppercase tracking-wide">
+      <Link to="/catalogo" search={{}}>
+        {tr(language, "Ver mais", "See more", "Ver más")}
+        <ArrowRight className="size-4" />
+      </Link>
+    </Button>
+  );
+}
 
 export function OffCarousel() {
   const { catalog, language } = useShop();
@@ -68,6 +82,7 @@ export function OffCarousel() {
               {tr(language, "Ofertas Especiais", "Special Offers", "Ofertas Especiales")}
             </h2>
           </div>
+          <VerMaisButton />
         </div>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {saleProducts.slice(0, 4).map((product) => (
@@ -94,27 +109,30 @@ export function OffCarousel() {
           </h2>
         </div>
 
-        <div className="hidden sm:flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={scrollPrev}
-            disabled={!canScrollPrev}
-            className="size-11 rounded-none border-border bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-30"
-            aria-label={tr(language, "Anterior", "Previous", "Anterior")}
-          >
-            <ChevronLeft className="size-5" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={scrollNext}
-            disabled={!canScrollNext}
-            className="size-11 rounded-none border-border bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-30"
-            aria-label={tr(language, "Seguinte", "Next", "Siguiente")}
-          >
-            <ChevronRight className="size-5" />
-          </Button>
+        <div className="flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={scrollPrev}
+              disabled={!canScrollPrev}
+              className="size-11 rounded-none border-border bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-30"
+              aria-label={tr(language, "Anterior", "Previous", "Anterior")}
+            >
+              <ChevronLeft className="size-5" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={scrollNext}
+              disabled={!canScrollNext}
+              className="size-11 rounded-none border-border bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-30"
+              aria-label={tr(language, "Seguinte", "Next", "Siguiente")}
+            >
+              <ChevronRight className="size-5" />
+            </Button>
+          </div>
+          <VerMaisButton />
         </div>
       </div>
 
