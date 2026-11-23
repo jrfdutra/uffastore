@@ -170,6 +170,15 @@ test.describe("Loja — navegação e catálogo", () => {
       const larguraImagem = await imagem.evaluate((img) => img.getBoundingClientRect().width);
       expect(larguraImagem, `imagem a ${width}px`).toBeGreaterThanOrEqual(width - 1);
 
+      // As duas capas partilham o mesmo recorte: centro em mobile, direita a partir de md.
+      const enquadramento = width >= 768 ? "100% 50%" : "50% 50%";
+      for (const capa of ["uffa-capa-home", "uffa-black-friday"]) {
+        await expect(hero.locator(`img[src*="${capa}"]`), `${capa} a ${width}px`).toHaveCSS(
+          "object-position",
+          enquadramento,
+        );
+      }
+
       const ponto = await page.getByRole("button", { name: /Ver foto 2/ }).boundingBox();
       expect(ponto, `pontos a ${width}px`).toBeTruthy();
       expect(ponto!.x + ponto!.width, `pontos dentro do ecrã a ${width}px`).toBeLessThanOrEqual(

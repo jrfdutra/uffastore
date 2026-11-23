@@ -22,7 +22,7 @@ type Slide = {
   href?: "/catalogo";
   /** A capa já traz o texto na própria imagem, por isso esconde o slogan por cima. */
   hideSlogan?: boolean;
-  /** Posição do recorte nas várias larguras (as capas têm texto em zonas diferentes). */
+  /** Posição do recorte nas várias larguras. Ambas as capas partilham o mesmo padrão. */
   imageClassName?: string;
 };
 
@@ -43,7 +43,8 @@ const slides: Slide[] = [
     imageMobile: CAPA_BLACK_FRIDAY_MOBILE,
     href: "/catalogo",
     hideSlogan: true,
-    imageClassName: "object-center",
+    // Mesmo enquadramento da capa rosa: em desktop o texto fica à direita.
+    imageClassName: "object-center md:object-right",
   },
 ];
 
