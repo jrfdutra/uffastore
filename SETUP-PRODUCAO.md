@@ -3,6 +3,13 @@
 Estado em 21/11/2026. O código, o deploy e o CI estão prontos. Falta apenas
 configurar credenciais — nada disso pode ser feito por API.
 
+## Resend verificado em 23/11/2026
+
+O domínio `uffastore.pt` está **verified** na Resend (disparado pela API após
+confirmação dos registos DNS no NS autoritativo). O `RESEND_FROM` local e o
+`.env.example` já usam `UFFA Store <atendimento@uffastore.pt>`. Falta apenas
+actualizar o valor na Vercel.
+
 ## Diagnóstico em 23/11/2026
 
 Verificação feita contra a produção (`www.uffastore.pt`):
