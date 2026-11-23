@@ -5,11 +5,12 @@ import { join } from "node:path";
 import sharp from "sharp";
 
 const APPLY = process.argv.includes("--apply");
+const ONLY_ADIDAS = process.argv.includes("--adidas");
 const FOTOS_DIR = "C:/Users/devel/Downloads/Fotos";
 
 // ficheiro -> { handle, cor? }. Quando "cor" é indicado, a foto é associada
 // apenas às variantes dessa cor (Shopify + site).
-const MAPA = [
+const MAPA_COMPLETO = [
   { file: "Adidas Campus 00 Offwhite.webp", handle: "adidas-campus-00-offwhite" },
   { file: "Adidas Campus 00.jpg", handle: "adidas-campus-00" },
   {
@@ -69,7 +70,45 @@ const MAPA = [
   { file: "VOMERO 5 BEGE.jpg", handle: "nike-vomero-5", cor: "BEGE" },
   { file: "VOMERO 5 BRANCO E AZUL.jpg", handle: "nike-vomero-5", cor: "BRANCA / AZUL" },
   { file: "VOMERO 5 BRANCO E AZUL BEBE.jpg", handle: "nike-vomero-5", cor: "BRANCA / AZUL BEBE" },
+
+  // Fotos Adidas: o modelo vem do nome do ficheiro e a cor, quando existe
+  // opção "Cor" na Shopify, é indicada em "cor" para associar à variante.
+  {
+    file: "Adidas Campus 00 Offwhite Verde.jpg",
+    handle: "adidas-campus-00-offwhite",
+    dir: "C:/Users/devel/Downloads/Adidas",
+  },
+  {
+    file: "ADIDAS CAMPUS 00 W DOUBLE LACES BEGE VERDE.jpg",
+    handle: "adidas-campus-00-w-double-laces",
+    dir: "C:/Users/devel/Downloads/Adidas",
+  },
+  {
+    file: "Adidas Campus 00 W Double Laces Cinza.jpg",
+    handle: "adidas-campus-00-w-double-laces",
+    dir: "C:/Users/devel/Downloads/Adidas",
+  },
+  {
+    file: "Adidas Campus 00 W Double Laces Preto e Branco.jpg",
+    handle: "adidas-campus-00-w-double-laces",
+    dir: "C:/Users/devel/Downloads/Adidas",
+  },
+  {
+    file: "ADIDAS SUPERSTAR BEGE ROSA W ROPE LACES.jpg",
+    handle: "adidas-superstar-bege-rosa",
+    cor: "Bege e Rosa",
+    dir: "C:/Users/devel/Downloads/Adidas",
+  },
+  {
+    file: "ADIDAS SUPERSTAR CRIANCA W DOUBLE LACES ROSA.jpg",
+    handle: "adidas-superstar-crianca",
+    dir: "C:/Users/devel/Downloads/Adidas",
+  },
 ];
+
+const MAPA = ONLY_ADIDAS
+  ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/Adidas")
+  : MAPA_COMPLETO;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
@@ -121,7 +160,7 @@ for (const item of MAPA) {
   }
   let meta = null;
   try {
-    meta = await sharp(join(FOTOS_DIR, item.file)).metadata();
+    meta = await sharp(join(item.dir ?? FOTOS_DIR, item.file)).metadata();
   } catch (err) {
     console.log(`ERRO: imagem ilegível: ${item.file} — ${err.message}`);
     erros++;
@@ -183,7 +222,7 @@ async function uploadFoto(item) {
     .toLowerCase();
   const filename = `${slug}.webp`;
   const outPath = join(tmp, filename);
-  await sharp(join(FOTOS_DIR, item.file))
+  await sharp(join(item.dir ?? FOTOS_DIR, item.file))
     .rotate()
     .resize({ width: 1600, withoutEnlargement: true })
     .webp({ quality: 85 })

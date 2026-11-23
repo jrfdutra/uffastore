@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
 
 const APPLY = process.argv.includes("--apply");
+const ONLY_ADIDAS = process.argv.includes("--adidas");
 
-const ITENS = [
+const ITENS_COMPLETOS = [
   {
     slug: "campus-00-preta-e-branca-crianca",
     handle: "adidas-campus-00-crianca",
@@ -24,7 +25,16 @@ const ITENS = [
   { slug: "vomero-5-bege", handle: "nike-vomero-5", cor: "BEGE" },
   { slug: "vomero-5-branco-e-azul", handle: "nike-vomero-5", cor: "BRANCA / AZUL" },
   { slug: "vomero-5-branco-e-azul-bebe", handle: "nike-vomero-5", cor: "BRANCA / AZUL BEBE" },
+  {
+    slug: "adidas-superstar-bege-rosa-w-rope-laces",
+    handle: "adidas-superstar-bege-rosa",
+    cor: "Bege e Rosa",
+  },
 ];
+
+const ITENS = ONLY_ADIDAS
+  ? ITENS_COMPLETOS.filter((item) => item.handle === "adidas-superstar-bege-rosa")
+  : ITENS_COMPLETOS;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
