@@ -149,7 +149,7 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 - Layout de checkout simplificado com opção de pagamento unificada e ícone de cartão de crédito destacado.
 - Integração segura com a Shopify Storefront API para catálogo e checkout.
 - Portes: recolha grátis em NorteShopping, Maia Jardim ou MarShopping (escolha no checkout), **8,94 €** em Portugal Continental e Ilhas, **24,00 €** na União Europeia e **34,00 €** na Suíça.
-- Rastreio simples em `/rastreio`: número de rastreio + e-mail e botão direto para o CTT; em recolhas, mostra o local escolhido. A vista detalhada do envio (transportador, previsão e CTT) continua disponível pelo link mágico enviado por e-mail.
+- Rastreio simples em `/rastreio`: basta o código de rastreio para abrir diretamente a pesquisa oficial do CTT, sem e-mail nem registo. A vista detalhada do envio (transportador, previsão e CTT) continua disponível pelo link mágico enviado por e-mail.
 - Formulário de apoio em `/ajuda` com fotografia obrigatória em casos de troca ou defeito, enviada por e-mail ao apoio.
 - Aviso de versão demo no primeiro acesso de cada sessão, em PT/EN/ES.
 - Textos em PT/EN/ES, tema claro/escuro com arranque escuro na Black Friday e layout mobile-first.
@@ -163,7 +163,7 @@ catálogo de demonstração para importar no Shopify (Produtos → Importar).
 | `/produto/:id`                  | Detalhe do produto.                                                   |
 | `/checkout`                     | Checkout, entrega e pagamento no checkout Shopify.                    |
 | `/confirmacao?order=UFFA-XXXXX` | Confirmação demo com código exclusivo e próximos passos.              |
-| `/rastreio`                     | Localizador simples (2 dados + CTT); vista detalhada via link mágico. |
+| `/rastreio`                     | Código de rastreio → CTT; vista detalhada via link mágico por e-mail. |
 | `/expedicao`                    | Registo interno de envio (fallback manual, não indexado).             |
 | `/avaliar?token=…`              | Pesquisa de satisfação da encomenda (não indexada).                   |
 | `/favoritos`                    | Lista de desejos persistente.                                         |

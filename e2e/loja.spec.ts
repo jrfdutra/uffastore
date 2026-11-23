@@ -659,40 +659,32 @@ test.describe("Expedição e link mágico", () => {
 });
 
 test.describe("Rastreio", () => {
-  test("dois dados mostram o botão CTT com o código pré-preenchido", async ({ page }) => {
+  test("o código redireciona para o CTT com o código pré-preenchido", async ({ page }) => {
     await limparEstado(page);
-    await page.goto("/rastreio");
-    await page.getByRole("button", { name: "Preencher dados demo" }).click();
-    await page.getByRole("button", { name: "Localizar encomenda" }).click();
+    await page.route("https://www.ctt.pt/**", (route) =>
+      route.fulfill({ status: 200, contentType: "text/html", body: "<h1>CTT</h1>" }),
+    );
+    await page.goto("/rastreio", { waitUntil: "networkidle" });
 
-    const link = page.getByRole("link", { name: "Ver no CTT" });
-    await expect(link).toBeVisible();
-    const href = await link.getAttribute("href");
-    expect(href).toContain("objects=PT-48217-9QX2");
-    expect(href).toContain("request_locale=pt");
-    await expect(page.getByRole("heading", { name: "UFFA-48217" })).toBeVisible();
+    await expect(page.getByLabel("E-mail da compra")).toHaveCount(0);
+    await page.getByLabel("Código de rastreio").fill("RR123456789PT");
+    await page.getByRole("button", { name: "Abrir no CTT" }).click();
+
+    await expect(page).toHaveURL(/objects=RR123456789PT/);
+    await expect(page).toHaveURL(/request_locale=pt/);
   });
 
-  test("recolha mostra o local escolhido sem botão CTT", async ({ page }) => {
+  test("o código é normalizado antes de abrir o CTT", async ({ page }) => {
     await limparEstado(page);
-    await page.goto("/rastreio");
-    await page.getByLabel("Número de rastreio").fill("UFFA-73104");
-    await page.getByLabel("E-mail da compra").fill("demo@uffa.pt");
-    await page.getByRole("button", { name: "Localizar encomenda" }).click();
+    await page.route("https://www.ctt.pt/**", (route) =>
+      route.fulfill({ status: 200, contentType: "text/html", body: "<h1>CTT</h1>" }),
+    );
+    await page.goto("/rastreio", { waitUntil: "networkidle" });
 
-    await expect(page.getByText("NorteShopping", { exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Ver no CTT" })).toHaveCount(0);
-  });
+    await page.getByLabel("Código de rastreio").fill(" rr 123456789 pt ");
+    await page.getByRole("button", { name: "Abrir no CTT" }).click();
 
-  test("dados errados apresentam erro sem confirmar a encomenda", async ({ page }) => {
-    await limparEstado(page);
-    await page.goto("/rastreio");
-    await page.getByLabel("Número de rastreio").fill("PT-48217-9QX2");
-    await page.getByLabel("E-mail da compra").fill("errado@exemplo.pt");
-    await page.getByRole("button", { name: "Localizar encomenda" }).click();
-
-    await expect(page.getByRole("alert")).toContainText("Não encontrámos essa encomenda");
-    await expect(page.getByRole("heading", { name: "UFFA-48217" })).toHaveCount(0);
+    await expect(page).toHaveURL(/objects=RR123456789PT/);
   });
 });
 

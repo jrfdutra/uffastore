@@ -2,16 +2,20 @@
 
 Documentação funcional e técnica da área de cliente criada para a UFFA Store, inspirada no modelo de portal de encomendas do OrbitTrack.
 
+> **Estado atual (23/11/2026).** O portal com os três fatores de acesso, o painel
+> `/operacoes` e o dashboard demo foram descontinuados. `/rastreio` tem agora duas
+> funções apenas: redirecionar um código de rastreio para o CTT e mostrar a vista
+> detalhada de uma encomenda real via link mágico assinado enviado por e-mail.
+> As secções abaixo descrevem o desenho histórico e servem de referência.
+
 ## 1. Objetivo
 
 Dar ao cliente que comprou um par UFFA um espaço próprio para:
 
-- acompanhar o estado de um envio ou de uma recolha na loja do Porto;
-- consultar transportador, código de rastreio, previsão e nota pública da loja;
-- confirmar a receção ou a recolha;
-- manter o acesso protegido por três fatores, sem criar uma conta tradicional.
+- introduzir o código de rastreio e abrir diretamente a pesquisa oficial do CTT;
+- consultar transportador, código de rastreio e previsão na vista do link mágico.
 
-A área interna de operações permite à equipa atualizar o estado, o rastreio, a previsão e a nota pública. Todas as alterações ficam registadas no histórico visível ao cliente.
+A equipa atualiza o estado e o rastreio na Shopify Admin. O código é preenchido em **Marcar como cumprida** (ou **Adicionar rastreio**) e um webhook envia o e-mail ao cliente.
 
 ## 2. Rotas
 
@@ -19,8 +23,9 @@ A área interna de operações permite à equipa atualizar o estado, o rastreio,
 | --------------------------------------- | ------- | ------------------------------------------------------------------------ |
 | `/checkout`                             | Cliente | Cria a encomenda, o código exclusivo e o rastreio inicial.               |
 | `/confirmacao?order=UFFA-XXXXX`         | Cliente | Mostra o código exclusivo, o rastreio, os itens e os próximos passos.     |
-| `/rastreio`                             | Cliente | Entrada no portal com número da encomenda, contacto e código exclusivo.   |
-| `/rastreio?order=UFFA-XXXXX`            | Cliente | Pré-preenche o número da encomenda no formulário de acesso.               |
+| `/rastreio`                             | Cliente | Campo de código que redireciona para o CTT; vista detalhada via token.    |
+| `/rastreio?order=UFFA-XXXXX`            | Cliente | Pré-preenche o código no formulário de rastreio.                         |
+| `/rastreio?token=…`                     | Cliente | Vista detalhada assinada da encomenda real (link do e-mail).             |
 
 A home, o header, o menu mobile e o footer têm ligações para `/rastreio`.
 
@@ -32,9 +37,9 @@ A home, o header, o menu mobile e o footer têm ligações para `/rastreio`.
 
 1. **Compra** — o cliente escolhe envio ou recolha no checkout e conclui os dados e o pagamento no checkout oficial da Shopify.
 2. **Confirmação** — a Shopify envia a confirmação por email. Na demonstração, a página `/confirmacao` mostra as encomendas de exemplo guardadas localmente, com número, código exclusivo e, no envio, o código de rastreio.
-3. **Acesso** — entra em `/rastreio` com três dados: número da encomenda, contacto usado na compra e código exclusivo.
-4. **Acompanhamento** — vê o estado atual, a linha temporal, os detalhes de entrega ou recolha, os itens e o resumo.
-5. **Conclusão** — confirma a receção (envio) ou a recolha (loja). O estado passa a `Entregue` ou `Recolhida`.
+3. **Acesso** — entra em `/rastreio`, introduz só o código de rastreio e é redirecionado para o CTT.
+4. **Acompanhamento** — abre o link mágico do e-mail para ver transportador, previsão, código e botão do CTT.
+5. **Conclusão** — o acompanhamento final é feito no CTT; o atendimento pode ser contactado por e-mail.
 
 ## 4. Modelo de acesso
 
@@ -134,8 +139,8 @@ type OrderEvent = {
 - Previsão inicial: **3 dias** para envio, **1 dia** para recolha.
 - O número da encomenda é gerado com 5 dígitos e verificado contra duplicados.
 - O código de rastreio inicial tem o formato `PT-<5 dígitos>-<4 caracteres>`.
-- Quando o transportador for CTT, o dashboard mostra o botão **Ver no CTT**: abre a pesquisa oficial com o código de rastreio pré-preenchido (o cliente só precisa de carregar em **Procurar**).
-- Para encomendas reais da Shopify existe um link mágico: a equipa regista o envio em `/expedicao`, o servidor envia um `/rastreio?token=...` assinado por Resend e o cliente vê o estado sem introduzir o código exclusivo.
+- Em `/rastreio`, qualquer código introduzido abre a pesquisa oficial do CTT com `objects=<código>&request_locale=pt`.
+- Para encomendas reais da Shopify, a Shopify envia `orders/fulfilled` (ou `orders/updated`); o servidor cria um `/rastreio?token=...` assinado por HMAC e envia-o por Resend. `/expedicao` é apenas fallback manual.
 - A confirmação de receção só é apresentada enquanto a encomenda não estiver num estado final.
 
 ## 7. Persistência local

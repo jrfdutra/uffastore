@@ -74,9 +74,8 @@ Manual funcional e operacional da loja online UFFA Store, organizado em onze cap
 | [6.3](#cap-06-3) | Cupões e erros |
 | [7.1](#cap-07-1) | O que o cliente recebe |
 | [7.2](#cap-07-2) | Âmbito da demonstração |
-| [8.1](#cap-08-1) | Localizador simples |
-| [8.2](#cap-08-2) | Dashboard do cliente |
-| [8.3](#cap-08-3) | Fluxos de estado |
+| [8.1](#cap-08-1) | Rastreio direto no CTT |
+| [8.2](#cap-08-2) | Vista detalhada pelo link mágico |
 | [10.1](#cap-10-1) | Breakpoints e menu |
 | [10.2](#cap-10-2) | Ecrãs pequenos |
 | [11.1](#cap-11-1) | Stack e ficheiros |
@@ -99,7 +98,7 @@ O site existe para responder a três perguntas antes que o cliente as faça: *o 
 
 - **Descoberta rápida** — catálogo filtrável, stock visível e preço sem ambiguidade.
 - **Compra curta** — carrinho lateral, checkout em três decisões e pagamento no ambiente seguro da Shopify.
-- **Pós-compra acompanhado** — localizador simples por rastreio + e-mail, com botão direto para o CTT; portal privado pelo link mágico.
+- **Pós-compra acompanhado** — basta o código de rastreio para abrir a pesquisa oficial do CTT; vista detalhada pelo link mágico enviado por e-mail.
 
 > **Nota.** O site não é um folheto. É a operação da marca: catálogo, encomenda e acompanhamento no mesmo domínio.
 
@@ -144,7 +143,7 @@ Home → Catálogo → Produto → Carrinho → Checkout → Confirmação
 | Carrinho | camada lateral | Público |
 | Checkout | `/checkout` | Público |
 | Confirmação | `/confirmacao?order=UFFA-XXXXX` | Cliente |
-| Portal de rastreio | `/rastreio` | Cliente com rastreio + e-mail ou link mágico |
+| Portal de rastreio | `/rastreio` | Cliente com código de rastreio ou link mágico |
 | Favoritos | `/favoritos` | Público |
 | Ajuda | `/ajuda` | Público |
 
@@ -493,68 +492,32 @@ A confirmação explica o que guardar e o que fazer a seguir.
 
 ### O par não desaparece.
 
-O cliente localiza a encomenda em dois passos e abre o CTT sem precisar de abrir o portal. Para gerir a encomenda completa, usa o link mágico recebido por e-mail.
-
-![Figura 8.1 — Acesso ao portal pelo link mágico](assets/screenshots/07-rastreio-acesso.png)
+O cliente introduz só o código de rastreio e é redirecionado para a pesquisa oficial do CTT. Para ver os dados da encomenda (transportador, previsão e código), usa o link mágico recebido por e-mail.
 
 <a id="cap-08-1"></a>
 
-### 8.1 Localizador simples
+### 8.1 Rastreio direto no CTT
 
 | Dado | Exemplo |
 | --- | --- |
-| Número de rastreio | `PT-48217-9QX2` |
-| E-mail da compra | `demo@uffa.pt` |
+| Código de rastreio | `RR123456789PT` |
 
-Ao validar, aparece de imediato o botão **Ver no CTT**, com a pesquisa oficial e o código já preenchidos. Em recolhas, basta inserir o número da encomenda (`UFFA-73104`) e o e-mail: é apresentado o local escolhido, sem botão CTT.
+Ao submeter, a página abre de imediato o **Seguir objeto** dos CTT com o código já preenchido (`?objects=<código>&request_locale=pt`). O código é normalizado: espaços são removidos e as letras passam a maiúsculas.
 
-Regras de proteção:
-
-- **5 tentativas** falhadas por código;
-- **bloqueio de 60 segundos** ao atingir o limite;
-- a vista detalhada do envio continua disponível pelo link mágico enviado por e-mail.
+Não há campo de e-mail, consulta a bases de dados nem registo — a pesquisa é feita pelo próprio CTT. O formulário antigo (código + e-mail) foi removido em 23/11/2026 porque não consultava encomendas reais.
 
 <a id="cap-08-2"></a>
 
-### 8.2 Dashboard do cliente
+### 8.2 Vista detalhada pelo link mágico
 
-![Figura 8.2 — Dashboard: estado, previsão, transportador e resumo](assets/screenshots/08-rastreio-dashboard.png)
+O e-mail de expedição enviado pela Shopify inclui um link assinado `/rastreio?token=…`, válido por 14 dias. A página mostra:
 
-- Estado atual e linha temporal.
-- Previsão de entrega ou data limite de recolha.
-- Transportador e código de rastreio, no envio.
-- Botão **Ver no CTT**, quando aplicável: abre a pesquisa oficial com o código já preenchido; basta carregar em **Procurar**.
-- Link mágico por e-mail: abre uma vista de envio sem exigir o código exclusivo; útil para encomendas reais da Shopify.
-- Morada da loja e nota pública, na recolha.
-- Resumo de valores.
-- Itens da encomenda com tamanho e quantidade.
-- Botão **Confirmar receção** ou **Confirmar recolha**.
+- número da encomenda;
+- transportador e previsão de entrega;
+- código de rastreio, com botão **Ver no CTT** e botão **Copiar**;
+- passos concluídos (pagamento confirmado e entrega ao transportador).
 
-![Figura 8.3 — Itens da encomenda no portal de rastreio](assets/screenshots/crops/rastreio-itens.png)
-
-<a id="cap-08-3"></a>
-
-### 8.3 Fluxos de estado
-
-**Envio**
-
-```text
-Confirmada → Em preparação → Enviada → Em trânsito → Entregue
-```
-
-**Recolha**
-
-```text
-Confirmada → Em preparação → Pronta para recolha → Recolhida
-```
-
-**Independente:** `Cancelada`
-
-Cada mudança cria um evento com data e hora no histórico visível ao cliente.
-
-> **Dica.** A nota pública é o único campo escrito à mão que o cliente vê. Use-a para dar contexto (“O teu par está reservado ao balcão”), não para dados internos.
-
-> **Checklist de demonstração.** Entrar com as credenciais demo, mostrar a timeline, confirmar a receção e terminar sessão.
+Se o link tiver expirado, a página indica que é inválido e oferece o formulário de rastreio direto. A vista não consulta a Shopify em tempo real: os dados viajam assinados no link.
 
 ---
 
