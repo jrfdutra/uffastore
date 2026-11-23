@@ -7,6 +7,7 @@ const ONLY_NIKE = process.argv.includes("--nike");
 const ONLY_NIKE2 = process.argv.includes("--nike-2");
 const ONLY_NIKE3 = process.argv.includes("--nike-3");
 const ONLY_LOTE4 = process.argv.includes("--lote-4");
+const ONLY_LOTE5 = process.argv.includes("--lote-5");
 
 const ITENS_COMPLETOS = [
   {
@@ -82,23 +83,45 @@ const ITENS_COMPLETOS = [
     opcao: { name: "Rope Laces", value: "Com Rope Laces" },
     lote: 4,
   },
+
+  // Quinto lote: associações Nike pelas cores reais da Shopify.
+  {
+    slug: "air-force-floral-orange",
+    handle: "air-force-floral-w-rope-laces",
+    cor: "Orange",
+    lote: 5,
+  },
+  {
+    slug: "air-force-w-pearl-diamonds-brown",
+    handle: "air-force-w-pearl-diamonds",
+    cor: "Brown",
+    lote: 5,
+  },
+  {
+    slug: "nike-air-force-w-rope-laces-branca-lanvin",
+    handle: "air-force-with-rope-laces",
+    cor: "Branca",
+    lote: 5,
+  },
 ];
 
-const ITENS = ONLY_LOTE4
-  ? ITENS_COMPLETOS.filter((item) => item.lote === 4)
-  : ONLY_ADIDAS
-    ? ITENS_COMPLETOS.filter((item) => item.handle === "adidas-superstar-bege-rosa")
-    : ONLY_PUMA
-      ? ITENS_COMPLETOS.filter((item) => item.handle === "puma-carina-street")
-      : ONLY_NIKE3
-        ? ITENS_COMPLETOS.filter((item) => item.lote === 3)
-        : ONLY_NIKE2
-          ? ITENS_COMPLETOS.filter((item) => item.lote === 2)
-          : ONLY_NIKE
-            ? ITENS_COMPLETOS.filter(
-                (item) => item.slug === "vomero-bege" || item.slug === "nike-p6000-all-black",
-              )
-            : ITENS_COMPLETOS;
+const ITENS = ONLY_LOTE5
+  ? ITENS_COMPLETOS.filter((item) => item.lote === 5)
+  : ONLY_LOTE4
+    ? ITENS_COMPLETOS.filter((item) => item.lote === 4)
+    : ONLY_ADIDAS
+      ? ITENS_COMPLETOS.filter((item) => item.handle === "adidas-superstar-bege-rosa")
+      : ONLY_PUMA
+        ? ITENS_COMPLETOS.filter((item) => item.handle === "puma-carina-street")
+        : ONLY_NIKE3
+          ? ITENS_COMPLETOS.filter((item) => item.lote === 3)
+          : ONLY_NIKE2
+            ? ITENS_COMPLETOS.filter((item) => item.lote === 2)
+            : ONLY_NIKE
+              ? ITENS_COMPLETOS.filter(
+                  (item) => item.slug === "vomero-bege" || item.slug === "nike-p6000-all-black",
+                )
+              : ITENS_COMPLETOS;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();

@@ -11,6 +11,7 @@ const ONLY_NIKE = process.argv.includes("--nike");
 const ONLY_NIKE2 = process.argv.includes("--nike-2");
 const ONLY_NIKE3 = process.argv.includes("--nike-3");
 const ONLY_LOTE4 = process.argv.includes("--lote-4");
+const ONLY_LOTE5 = process.argv.includes("--lote-5");
 const FOTOS_DIR = "C:/Users/devel/Downloads/Fotos";
 
 // ficheiro -> { handle, cor? }. Quando "cor" é indicado, a foto é associada
@@ -246,21 +247,53 @@ const MAPA_COMPLETO = [
     lote: 4,
     dir: "C:/Users/devel/Downloads/new balance",
   },
+
+  // Quinto lote: fotos Nike com modelo, marca e cor. As sem correspondência
+  // exacta na Shopify (Floral Black, Lanvin) não são adicionadas.
+  {
+    file: "nike Pearl branca.jpg",
+    handle: "nike-air-force-perolas-simbolo-w-rope-laces",
+    lote: 5,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "AIR FORCE FLORAL ORANGE.jpg",
+    handle: "air-force-floral-w-rope-laces",
+    cor: "Orange",
+    lote: 5,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "AIR FORCE W PEARL DIAMONDS brown.jpg",
+    handle: "air-force-w-pearl-diamonds",
+    cor: "Brown",
+    lote: 5,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "NIKE AIR FORCE W ROPE LACES BRANCA LANVIN.jpg",
+    handle: "air-force-with-rope-laces",
+    cor: "Branca",
+    lote: 5,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
 ];
 
-const MAPA = ONLY_LOTE4
-  ? MAPA_COMPLETO.filter((item) => item.lote === 4)
-  : ONLY_ADIDAS
-    ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/Adidas")
-    : ONLY_PUMA
-      ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/PUMA")
-      : ONLY_NIKE3
-        ? MAPA_COMPLETO.filter((item) => item.lote === 3)
-        : ONLY_NIKE2
-          ? MAPA_COMPLETO.filter((item) => item.lote === 2)
-          : ONLY_NIKE
-            ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/NIKE")
-            : MAPA_COMPLETO;
+const MAPA = ONLY_LOTE5
+  ? MAPA_COMPLETO.filter((item) => item.lote === 5)
+  : ONLY_LOTE4
+    ? MAPA_COMPLETO.filter((item) => item.lote === 4)
+    : ONLY_ADIDAS
+      ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/Adidas")
+      : ONLY_PUMA
+        ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/PUMA")
+        : ONLY_NIKE3
+          ? MAPA_COMPLETO.filter((item) => item.lote === 3)
+          : ONLY_NIKE2
+            ? MAPA_COMPLETO.filter((item) => item.lote === 2)
+            : ONLY_NIKE
+              ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/NIKE")
+              : MAPA_COMPLETO;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
@@ -351,6 +384,10 @@ async function removerFotosPadrao(productId) {
   );
   const ids = (q.product?.media?.nodes ?? [])
     .filter((m) => m.image?.url?.includes("uffa-modelo-padrao"))
+    // O Floral mantém esta imagem de propósito: como a Shopify devolve a foto
+    // principal às variantes sem imagem própria, ela evita que a cor recém-
+    // adicionada apareça em todas as outras cores.
+    .filter((m) => !m.image?.url?.includes("uffa-modelo-padrao-floral"))
     .map((m) => m.id);
   if (!ids.length) return 0;
   const deleted = await gql(
