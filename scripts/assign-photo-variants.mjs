@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 
 const APPLY = process.argv.includes("--apply");
 const ONLY_ADIDAS = process.argv.includes("--adidas");
+const ONLY_PUMA = process.argv.includes("--puma");
 
 const ITENS_COMPLETOS = [
   {
@@ -30,11 +31,18 @@ const ITENS_COMPLETOS = [
     handle: "adidas-superstar-bege-rosa",
     cor: "Bege e Rosa",
   },
+  {
+    slug: "carina-street-w-rope-laces",
+    handle: "puma-carina-street",
+    opcao: { name: "Rope Laces", value: "Com Rope Laces" },
+  },
 ];
 
 const ITENS = ONLY_ADIDAS
   ? ITENS_COMPLETOS.filter((item) => item.handle === "adidas-superstar-bege-rosa")
-  : ITENS_COMPLETOS;
+  : ONLY_PUMA
+    ? ITENS_COMPLETOS.filter((item) => item.handle === "puma-carina-street")
+    : ITENS_COMPLETOS;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
@@ -75,8 +83,10 @@ for (const item of ITENS) {
   const media = p.media.nodes.find((m) => m.image?.url?.includes(item.slug));
   const variantIds = p.variants.nodes
     .filter((v) =>
-      v.selectedOptions.some(
-        (o) => /cor|color/i.test(o.name) && o.value.trim() === item.cor.trim(),
+      v.selectedOptions.some((o) =>
+        item.opcao
+          ? o.name.trim() === item.opcao.name && o.value.trim() === item.opcao.value
+          : /cor|color/i.test(o.name) && o.value.trim() === item.cor.trim(),
       ),
     )
     .map((v) => v.id);
@@ -87,8 +97,9 @@ for (const item of ITENS) {
     continue;
   }
 
+  const alvo = item.opcao ? `${item.opcao.name}=${item.opcao.value}` : item.cor;
   if (!APPLY) {
-    console.log(`OK (dry-run): ${item.slug} [${item.cor}] -> ${variantIds.length} variantes`);
+    console.log(`OK (dry-run): ${item.slug} [${alvo}] -> ${variantIds.length} variantes`);
     ok++;
     continue;
   }
@@ -110,7 +121,7 @@ for (const item of ITENS) {
     console.error(`FALHOU: ${item.slug}: ${JSON.stringify(errs)}`);
     erros++;
   } else {
-    console.log(`OK: ${item.slug} [${item.cor}] -> ${variantIds.length} variantes`);
+    console.log(`OK: ${item.slug} [${alvo}] -> ${variantIds.length} variantes`);
     ok++;
   }
 }

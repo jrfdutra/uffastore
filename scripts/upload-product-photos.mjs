@@ -6,6 +6,7 @@ import sharp from "sharp";
 
 const APPLY = process.argv.includes("--apply");
 const ONLY_ADIDAS = process.argv.includes("--adidas");
+const ONLY_PUMA = process.argv.includes("--puma");
 const FOTOS_DIR = "C:/Users/devel/Downloads/Fotos";
 
 // ficheiro -> { handle, cor? }. Quando "cor" é indicado, a foto é associada
@@ -104,11 +105,21 @@ const MAPA_COMPLETO = [
     handle: "adidas-superstar-crianca",
     dir: "C:/Users/devel/Downloads/Adidas",
   },
+
+  // O nome do ficheiro indica a opção "Com Rope Laces".
+  {
+    file: "CARINA STREET W ROPE LACES.jpg",
+    handle: "puma-carina-street",
+    opcao: { name: "Rope Laces", value: "Com Rope Laces" },
+    dir: "C:/Users/devel/Downloads/PUMA",
+  },
 ];
 
 const MAPA = ONLY_ADIDAS
   ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/Adidas")
-  : MAPA_COMPLETO;
+  : ONLY_PUMA
+    ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/PUMA")
+    : MAPA_COMPLETO;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
@@ -146,14 +157,17 @@ for (const item of MAPA) {
     continue;
   }
   let variantes = [];
-  if (item.cor) {
+  if (item.cor || item.opcao) {
     variantes = p.variants.nodes.filter((v) =>
-      v.selectedOptions.some(
-        (o) => /cor|color/i.test(o.name) && o.value.trim() === item.cor.trim(),
+      v.selectedOptions.some((o) =>
+        item.opcao
+          ? o.name.trim() === item.opcao.name && o.value.trim() === item.opcao.value
+          : /cor|color/i.test(o.name) && o.value.trim() === item.cor.trim(),
       ),
     );
     if (!variantes.length) {
-      console.log(`ERRO: cor "${item.cor}" não encontrada em ${item.handle}`);
+      const alvo = item.opcao ? `${item.opcao.name}=${item.opcao.value}` : `cor "${item.cor}"`;
+      console.log(`ERRO: ${alvo} não encontrada em ${item.handle}`);
       erros++;
       continue;
     }
@@ -166,8 +180,9 @@ for (const item of MAPA) {
     erros++;
     continue;
   }
+  const alvo = item.opcao ? `${item.opcao.name}=${item.opcao.value}` : (item.cor ?? "");
   console.log(
-    `${item.file} -> ${item.handle}${item.cor ? ` [${item.cor}]` : ""} (${meta.width}x${meta.height})${variantes.length ? `, ${variantes.length} variantes` : ""}`,
+    `${item.file} -> ${item.handle}${alvo ? ` [${alvo}]` : ""} (${meta.width}x${meta.height})${variantes.length ? `, ${variantes.length} variantes` : ""}`,
   );
 }
 
