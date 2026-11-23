@@ -5,6 +5,7 @@ const ONLY_ADIDAS = process.argv.includes("--adidas");
 const ONLY_PUMA = process.argv.includes("--puma");
 const ONLY_NIKE = process.argv.includes("--nike");
 const ONLY_NIKE2 = process.argv.includes("--nike-2");
+const ONLY_NIKE3 = process.argv.includes("--nike-3");
 
 const ITENS_COMPLETOS = [
   {
@@ -59,19 +60,33 @@ const ITENS_COMPLETOS = [
     cor: "Bege e Rosa",
     lote: 2,
   },
+  {
+    slug: "vomero-5-rnr-bege-e-cromado",
+    handle: "nike-vomero-5-rnr",
+    cor: "Bege/Cromado",
+    lote: 3,
+  },
+  {
+    slug: "air-force-preta-w-rope-lace",
+    handle: "air-force-with-rope-laces",
+    cor: "Preta",
+    lote: 3,
+  },
 ];
 
 const ITENS = ONLY_ADIDAS
   ? ITENS_COMPLETOS.filter((item) => item.handle === "adidas-superstar-bege-rosa")
   : ONLY_PUMA
     ? ITENS_COMPLETOS.filter((item) => item.handle === "puma-carina-street")
-    : ONLY_NIKE2
-      ? ITENS_COMPLETOS.filter((item) => item.lote === 2)
-      : ONLY_NIKE
-        ? ITENS_COMPLETOS.filter(
-            (item) => item.slug === "vomero-bege" || item.slug === "nike-p6000-all-black",
-          )
-        : ITENS_COMPLETOS;
+    : ONLY_NIKE3
+      ? ITENS_COMPLETOS.filter((item) => item.lote === 3)
+      : ONLY_NIKE2
+        ? ITENS_COMPLETOS.filter((item) => item.lote === 2)
+        : ONLY_NIKE
+          ? ITENS_COMPLETOS.filter(
+              (item) => item.slug === "vomero-bege" || item.slug === "nike-p6000-all-black",
+            )
+          : ITENS_COMPLETOS;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
@@ -89,16 +104,31 @@ async function gql(query, variables) {
   return json.data;
 }
 
-const data = await gql(`{
-  products(first: 100) {
-    edges { node {
-      id handle
-      media(first: 50) { nodes { id ... on MediaImage { image { url } } } }
-      variants(first: 250) { nodes { id selectedOptions { name value } } }
-    } }
-  }
-}`);
-const produtos = new Map(data.products.edges.map((e) => [e.node.handle, e.node]));
+async function carregarProdutos() {
+  const data = await gql(`{
+    products(first: 100) {
+      edges { node {
+        id handle
+        media(first: 50) { nodes { id ... on MediaImage { image { url } } } }
+        variants(first: 250) { nodes { id selectedOptions { name value } } }
+      } }
+    }
+  }`);
+  return new Map(data.products.edges.map((e) => [e.node.handle, e.node]));
+}
+
+let produtos = await carregarProdutos();
+// As fotos recém-carregadas podem ainda estar PROCESSING; a URL só aparece
+// quando passam a READY.
+for (let tentativa = 0; tentativa < 5; tentativa++) {
+  const pendente = ITENS.some((item) => {
+    const p = produtos.get(item.handle);
+    return !p?.media.nodes.some((m) => m.image?.url?.includes(item.slug));
+  });
+  if (!pendente) break;
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  produtos = await carregarProdutos();
+}
 
 let ok = 0;
 let erros = 0;

@@ -9,6 +9,7 @@ const ONLY_ADIDAS = process.argv.includes("--adidas");
 const ONLY_PUMA = process.argv.includes("--puma");
 const ONLY_NIKE = process.argv.includes("--nike");
 const ONLY_NIKE2 = process.argv.includes("--nike-2");
+const ONLY_NIKE3 = process.argv.includes("--nike-3");
 const FOTOS_DIR = "C:/Users/devel/Downloads/Fotos";
 
 // ficheiro -> { handle, cor? }. Quando "cor" é indicado, a foto é associada
@@ -205,17 +206,35 @@ const MAPA_COMPLETO = [
     lote: 2,
     dir: "C:/Users/devel/Downloads/NIKE",
   },
+
+  // Terceiro lote Nike.
+  {
+    file: "VOMERO 5 RNR BEGE E CROMADO.jpg",
+    handle: "nike-vomero-5-rnr",
+    cor: "Bege/Cromado",
+    lote: 3,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "AIR FORCE PRETA W ROPE LACE.jpg",
+    handle: "air-force-with-rope-laces",
+    cor: "Preta",
+    lote: 3,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
 ];
 
 const MAPA = ONLY_ADIDAS
   ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/Adidas")
   : ONLY_PUMA
     ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/PUMA")
-    : ONLY_NIKE2
-      ? MAPA_COMPLETO.filter((item) => item.lote === 2)
-      : ONLY_NIKE
-        ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/NIKE")
-        : MAPA_COMPLETO;
+    : ONLY_NIKE3
+      ? MAPA_COMPLETO.filter((item) => item.lote === 3)
+      : ONLY_NIKE2
+        ? MAPA_COMPLETO.filter((item) => item.lote === 2)
+        : ONLY_NIKE
+          ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/NIKE")
+          : MAPA_COMPLETO;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
