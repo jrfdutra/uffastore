@@ -6,6 +6,7 @@ import {
   ShoppingBag,
   Sun,
   Instagram,
+  Search,
   MapPin,
   Minus,
   Plus,
@@ -46,6 +47,7 @@ import {
   useEffect,
   useState,
   type MouseEvent as ReactMouseEvent,
+  type FormEvent as ReactFormEvent,
   type ReactNode,
 } from "react";
 
@@ -362,14 +364,28 @@ function MobileNav({
 }) {
   const { language, catalog } = useShop(),
     t = copy[language];
+  const navigate = useNavigate();
   const location = useRouterState({ select: (state) => state.location });
   const close = () => onOpenChange(false);
-  const currentBrand = (location.search as { brand?: string })?.brand;
+  const currentBrand = (location.search as { brand?: (typeof BRANDS)[number] })?.brand;
   const currentCampaign = (location.search as { category?: string })?.category;
   const isBlackFridayActive =
     location.pathname === "/catalogo" &&
     (currentCampaign === "blackfriday" || currentCampaign === "promocoes");
   const [expandedBrand, setExpandedBrand] = useState<string | null>(null);
+  const [mobileQuery, setMobileQuery] = useState("");
+
+  // Pesquisa a partir do menu mobile, mantendo a marca em que estamos.
+  const submitMobileSearch = (event: ReactFormEvent) => {
+    event.preventDefault();
+    const q = mobileQuery.trim();
+    if (!q) return;
+    void navigate({
+      to: "/catalogo",
+      search: { ...(currentBrand ? { brand: currentBrand } : {}), q },
+    });
+    close();
+  };
 
   // Ao abrir o menu, mostra logo os modelos da marca em que estamos.
   useEffect(() => {
@@ -411,6 +427,33 @@ function MobileNav({
           </SheetDescription>
         </SheetHeader>
         <nav className="mt-10 flex flex-col">
+          <form onSubmit={submitMobileSearch} className="relative mb-2" role="search">
+            <Search
+              aria-hidden="true"
+              className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              type="search"
+              value={mobileQuery}
+              onChange={(e) => setMobileQuery(e.target.value)}
+              placeholder={t.search}
+              aria-label={t.search}
+              className="h-12 rounded-none pl-10"
+            />
+          </form>
+          <div className="border-b border-border">
+            <Link
+              to="/catalogo"
+              search={{ category: "blackfriday" }}
+              onClick={close}
+              aria-current={isBlackFridayActive ? "page" : undefined}
+              className={`flex py-4 text-left font-display text-3xl uppercase ${
+                isBlackFridayActive ? "text-primary font-black" : "text-foreground"
+              }`}
+            >
+              Blackfriday
+            </Link>
+          </div>
           {BRANDS.map((brand) => {
             const isMobActive =
               location.pathname === "/catalogo" &&
@@ -479,19 +522,6 @@ function MobileNav({
               </div>
             );
           })}
-          <div className="border-b border-border">
-            <Link
-              to="/catalogo"
-              search={{ category: "blackfriday" }}
-              onClick={close}
-              aria-current={isBlackFridayActive ? "page" : undefined}
-              className={`flex py-4 text-left font-display text-3xl uppercase ${
-                isBlackFridayActive ? "text-primary font-black" : "text-foreground"
-              }`}
-            >
-              Blackfriday
-            </Link>
-          </div>
           <Link
             to="/favoritos"
             onClick={close}
