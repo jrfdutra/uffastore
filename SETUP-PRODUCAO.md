@@ -3,6 +3,26 @@
 Estado em 21/11/2026. O código, o deploy e o CI estão prontos. Falta apenas
 configurar credenciais — nada disso pode ser feito por API.
 
+## Diagnóstico em 23/11/2026
+
+Verificação feita contra a produção (`www.uffastore.pt`):
+
+- `GET /api/orders/tracking?token=…` → **503 `tracking_not_configured`**:
+  falta `ORDER_PORTAL_SECRET` na Vercel. Sem isto, o webhook de expedição não
+  consegue gerar o link e o cliente não recebe o e-mail.
+- `GET /api/cron/nps` → **503 `cron_not_configured`**: falta `CRON_SECRET`.
+- Pedido assinado com o `SHOPIFY_WEBHOOK_SECRET` do `.env` local ao endpoint
+  de fulfillment → **401**: o segredo configurado em produção é outro (ou
+  não está configurado). Confirmar no painel da Shopify e copiar exactamente
+  para a Vercel.
+- `resend._domainkey.uffastore.pt` e `send.uffastore.pt` não existem no DNS.
+  O domínio foi criado na Resend (id `8c2e2abc-1216-4edd-a9fc-24592cc72c79`,
+  estado `not_started`); os registos exactos estão no passo 1 abaixo.
+
+Valores aleatórios para as variáveis em falta foram gerados em
+`C:\Users\devel\AppData\Local\Temp\opencode\vercel-variaveis-uffa.txt`
+(ficheiro local, não versionado).
+
 ## O que já está feito
 
 - Endpoint `POST /api/webhooks/shopify/orders-paid` em produção, com HMAC,
@@ -38,11 +58,21 @@ Se a encomenda já tinha sido marcada como cumprida sem código, abre a encomend
 O formulário manual continua em `https://www.uffastore.pt/expedicao`, para
 reenvios ou correções; exige o `TRACKING_ADMIN_TOKEN`.
 
-## Passo 1 — Resend: verificar o domínio (amanhã)
+## Passo 1 — Resend: verificar o domínio
 
-1. [resend.com/domains](https://resend.com/domains) → **Add Domain** → `uffastore.pt`.
-2. Copiar os registos DNS (DKIM + SPF/MX) para o gestor do domínio.
-3. Esperar por **Verified**.
+O domínio `uffastore.pt` já foi criado na Resend (23/11/2026). No gestor de DNS
+do domínio, adicionar exactamente estes quatro registos:
+
+| Tipo  | Nome                 | Valor                                            |
+| ----- | -------------------- | ------------------------------------------------ |
+| TXT   | `resend._domainkey`  | `p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC6K04bUw+QuOcyKXyzHeucx+cNLplN6vR5wQ6LtjHZJA/gQNt6iUjSsTahSCnuWTwljLZzcjGQ6osiZU22JmZJS2IDXv7FgqZnh3L9IU7AnIAazeErH85y3m7fr3/NoaCvEz/w4ordLRZwU557siTrGZ05V4fdfo6sxqxhy6dCMQIDAQAB` |
+| MX    | `send`               | `feedback-smtp.eu-west-1.amazonses.com`          |
+| TXT   | `send`               | `v=spf1 include:amazonses.com ~all`              |
+| CNAME | `rsend`              | `send.forge.rmta.net`                            |
+
+Depois carregar em **Verify** em [resend.com/domains](https://resend.com/domains)
+e esperar pelo estado **Verified**. Só então trocar `RESEND_FROM` para
+`UFFA Store <atendimento@uffastore.pt>`.
 
 > Sem isto, o Resend só entrega ao e-mail dono da conta. Para clientes é obrigatório.
 >
