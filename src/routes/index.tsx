@@ -2,19 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Newsletter } from "@/components/newsletter";
-import { ProductCard } from "@/components/product-card";
+import { FeedbacksSection } from "@/components/feedbacks-section";
 import { TrustStrip } from "@/components/trust-strip";
 import { OrderPortalPromo } from "@/components/order-portal-promo";
 import { OffCarousel } from "@/components/off-carousel";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { copy, type Product } from "@/lib/shop-data";
-import {
-  BRANDS,
-  brandNames,
-  compareRopeLacesFirst,
-  getProductBrand,
-  type Brand,
-} from "@/lib/brands";
+import { BRANDS, brandNames, getProductBrand, type Brand } from "@/lib/brands";
 import { ModelSearch } from "@/components/model-search";
 import { FOTO_PADRAO } from "@/lib/consolidated-catalog";
 import { useShop } from "@/lib/shop-context";
@@ -152,45 +146,7 @@ function Home() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-section">
-        <div className="mx-auto max-w-7xl px-4 py-16 md:py-20 md:px-6">
-          <div className="mb-8 flex items-end justify-between">
-            <div>
-              <p className="text-xs font-bold uppercase text-primary">02 / Uffa picks</p>
-              <h2 className="mt-2 font-display text-5xl uppercase md:text-7xl">
-                {language === "pt"
-                  ? "Mais procurados"
-                  : language === "es"
-                    ? "Los más buscados"
-                    : "Most wanted"}
-              </h2>
-            </div>
-            <Button asChild variant="link" className="hidden sm:inline-flex">
-              <Link to="/catalogo" search={{}}>
-                {t.shop}
-                <ArrowRight />
-              </Link>
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-10 lg:grid-cols-4">
-            {catalog
-              .filter((p) => p.featured)
-              .sort(compareRopeLacesFirst)
-              .slice(0, 4)
-              .map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-          </div>
-          <div className="mt-10 flex justify-center">
-            <Button asChild size="lg" variant="outline" className="h-12 rounded-none px-8">
-              <Link to="/catalogo">
-                {language === "pt" ? "Ver mais" : language === "es" ? "Ver más" : "See more"}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      <FeedbacksSection language={language} />
 
       <section className="mx-auto max-w-7xl px-4 py-16 md:py-20 md:px-6">
         <OrderPortalPromo />

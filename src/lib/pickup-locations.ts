@@ -19,6 +19,11 @@ export function pickupHandleForLocation(
   pickupLocation: string,
 ): string | undefined {
   const normalized = pickupLocation.trim().toLowerCase();
+  // Nunca aceitar o antigo local de expedição como ponto de recolha.
+  const isAllowed = (PICKUP_LOCATIONS as readonly string[]).some(
+    (location) => location.toLowerCase() === normalized,
+  );
+  if (!isAllowed) return undefined;
   const match = locations.find((location) => location.name.trim().toLowerCase() === normalized);
   return match?.id.split("/").pop();
 }

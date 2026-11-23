@@ -5,7 +5,7 @@ import {
   PICKUP_LOCATIONS,
   isPickupLocation,
   pickupHandleForLocation,
-} from "./pickup-locations";
+} from "./pickup-locations.ts";
 
 const locations = [
   { id: "gid://shopify/Location/123726889308", name: "Rua Alcino de Araújo" },

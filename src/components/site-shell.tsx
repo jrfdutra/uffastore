@@ -365,6 +365,10 @@ function MobileNav({
   const location = useRouterState({ select: (state) => state.location });
   const close = () => onOpenChange(false);
   const currentBrand = (location.search as { brand?: string })?.brand;
+  const currentCampaign = (location.search as { category?: string })?.category;
+  const isBlackFridayActive =
+    location.pathname === "/catalogo" &&
+    (currentCampaign === "blackfriday" || currentCampaign === "promocoes");
   const [expandedBrand, setExpandedBrand] = useState<string | null>(null);
 
   // Ao abrir o menu, mostra logo os modelos da marca em que estamos.
@@ -475,6 +479,19 @@ function MobileNav({
               </div>
             );
           })}
+          <div className="border-b border-border">
+            <Link
+              to="/catalogo"
+              search={{ category: "blackfriday" }}
+              onClick={close}
+              aria-current={isBlackFridayActive ? "page" : undefined}
+              className={`flex py-4 text-left font-display text-3xl uppercase ${
+                isBlackFridayActive ? "text-primary font-black" : "text-foreground"
+              }`}
+            >
+              Blackfriday
+            </Link>
+          </div>
           <Link
             to="/favoritos"
             onClick={close}

@@ -116,6 +116,14 @@ test.describe("Loja — navegação e catálogo", () => {
     await expect(page.locator("article").first()).toBeVisible();
   });
 
+  test("a home mostra feedbacks em vez de Mais procurados", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page.getByRole("heading", { name: /O que dizem por aí/i })).toBeVisible();
+    await expect(page.getByText("Mais procurados")).toHaveCount(0);
+    await expect(page.getByText("Mariana F.")).toBeVisible();
+  });
+
   test("a loja abre sempre escura, mesmo com preferência antiga clara", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("uffa-theme", "light"));
     await page.goto("/");
@@ -864,6 +872,32 @@ test.describe("Mobile", () => {
     await menu.getByRole("link", { name: /^Dunk/ }).click();
     await page.waitForURL(/brand=nike.*model=dunk|model=dunk.*brand=nike/);
     await expect(page.locator("article").first()).toBeVisible();
+  });
+
+  test("menu mobile inclui Blackfriday com a mesma fonte das marcas @mobile", async ({ page }) => {
+    await page.goto("/");
+    await expect(async () => {
+      await page.getByRole("button", { name: "Menu" }).click();
+      await expect(page.getByRole("dialog")).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 30_000 });
+
+    const menu = page.getByRole("dialog");
+    const nike = menu.getByRole("link", { name: "Nike", exact: true });
+    const blackfriday = menu.getByRole("link", { name: "Blackfriday", exact: true });
+    await expect(blackfriday).toBeVisible();
+
+    const [nikeFont, blackFridayFont] = await Promise.all([
+      nike.evaluate((element) => getComputedStyle(element).fontSize),
+      blackfriday.evaluate((element) => getComputedStyle(element).fontSize),
+    ]);
+    expect(blackFridayFont).toBe(nikeFont);
+
+    await blackfriday.click();
+    await page.waitForURL(/category=blackfriday/);
+    await expect(page.getByRole("button", { name: /Black Friday/ })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
   });
 
   test("menu mobile e compra completa até ao checkout @mobile", async ({ page }) => {

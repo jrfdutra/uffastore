@@ -20,6 +20,7 @@ import {
   type Language,
 } from "@/lib/shop-data";
 import { matchesColorFilter, type ColorFilter } from "@/lib/colors";
+import { isProductOnSale } from "@/lib/sale";
 import {
   BRANDS,
   brandNames,
@@ -224,7 +225,11 @@ function Catalog() {
           if (p.status === "inactive") return false;
           if (!isProductInBrand(p, brand)) return false;
           if (!isProductInModel(p, model)) return false;
-          if (category !== "all" && !isProductInCategory(p, category)) return false;
+          // A campanha Black Friday inclui também tudo o que tem desconto,
+          // mesmo quando a Shopify não marcou a categoria promocional.
+          if (category !== "all" && !isProductInCategory(p, category)) {
+            if (!(category === "blackfriday" && isProductOnSale(p))) return false;
+          }
           if (!matchesModel(p, query)) return false;
 
           // Filtro de Preço
