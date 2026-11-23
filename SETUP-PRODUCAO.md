@@ -29,8 +29,14 @@ Verificações em produção após redeploy:
   marcados — as encomendas reais continuam elegíveis quando entrarem na janela;
 - `RESEND_FROM` passou a usar o domínio verificado.
 
-Falta apenas fazer a encomenda real de teste e revogar os tokens da Vercel
-que apareceram no chat.
+**Segredos rotacionados em 23/11/2026.** `CRON_SECRET`, `NPS_SECRET`,
+`ORDER_PORTAL_SECRET` e `TRACKING_ADMIN_TOKEN` foram substituídos na Vercel
+(valores novos com 43 caracteres), com redeploy automático. Os valores antigos
+deixaram de funcionar: o cron com segredo antigo ou inventado responde `401`.
+O token temporário da Vercel usado na rotação foi removido do `.env`.
+Os novos valores ficaram num ficheiro local não versionado.
+
+Falta apenas fazer a encomenda real de teste.
 
 ## Resend verificado em 23/11/2026
 
