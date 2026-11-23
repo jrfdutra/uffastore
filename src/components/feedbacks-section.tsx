@@ -41,7 +41,7 @@ const FEEDBACKS = [
 
 export function FeedbacksSection({ language }: { language: Language }) {
   return (
-    <section className="border-y border-border bg-section">
+    <section className="border-y border-border bg-foreground text-background">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
         <div className="mb-8">
           <p className="text-xs font-bold uppercase text-primary">02 / Feedbacks</p>
@@ -53,7 +53,7 @@ export function FeedbacksSection({ language }: { language: Language }) {
           {FEEDBACKS.map((feedback) => (
             <figure
               key={feedback.name}
-              className="flex flex-col border border-border bg-background p-6"
+              className="flex flex-col border border-background/15 bg-foreground p-6"
             >
               <div
                 className="flex gap-0.5 text-primary"
@@ -67,7 +67,7 @@ export function FeedbacksSection({ language }: { language: Language }) {
               <blockquote className="mt-4 flex-1 text-base leading-relaxed">
                 “{feedback.quote[language]}”
               </blockquote>
-              <figcaption className="mt-6 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              <figcaption className="mt-6 text-xs font-bold uppercase tracking-wide text-background/60">
                 {feedback.name} · {feedback.place}
               </figcaption>
             </figure>
