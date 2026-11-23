@@ -4,6 +4,7 @@ const APPLY = process.argv.includes("--apply");
 const ONLY_ADIDAS = process.argv.includes("--adidas");
 const ONLY_PUMA = process.argv.includes("--puma");
 const ONLY_NIKE = process.argv.includes("--nike");
+const ONLY_NIKE2 = process.argv.includes("--nike-2");
 
 const ITENS_COMPLETOS = [
   {
@@ -39,17 +40,38 @@ const ITENS_COMPLETOS = [
   },
   { slug: "vomero-bege", handle: "nike-vomero-5", cor: "BEGE" },
   { slug: "nike-p6000-all-black", handle: "nike-p6000-all-black", cor: "All Black" },
+  {
+    slug: "nike-p6000-bege-e-rosa",
+    handle: "nike-p6000",
+    cor: "Bege com Logo Rosa",
+    lote: 2,
+  },
+  {
+    slug: "p6000-branco-com-logo-dourado",
+    handle: "nike-p6000",
+    cor: "Branca com Logo Dourado",
+    lote: 2,
+  },
+  { slug: "vomero-5-azul", handle: "nike-vomero-5", cor: "BRANCA / AZUL", lote: 2 },
+  {
+    slug: "air-force-bege-e-rosa-nike",
+    handle: "nike-air-force-branco-laranja",
+    cor: "Bege e Rosa",
+    lote: 2,
+  },
 ];
 
 const ITENS = ONLY_ADIDAS
   ? ITENS_COMPLETOS.filter((item) => item.handle === "adidas-superstar-bege-rosa")
   : ONLY_PUMA
     ? ITENS_COMPLETOS.filter((item) => item.handle === "puma-carina-street")
-    : ONLY_NIKE
-      ? ITENS_COMPLETOS.filter(
-          (item) => item.slug === "vomero-bege" || item.slug === "nike-p6000-all-black",
-        )
-      : ITENS_COMPLETOS;
+    : ONLY_NIKE2
+      ? ITENS_COMPLETOS.filter((item) => item.lote === 2)
+      : ONLY_NIKE
+        ? ITENS_COMPLETOS.filter(
+            (item) => item.slug === "vomero-bege" || item.slug === "nike-p6000-all-black",
+          )
+        : ITENS_COMPLETOS;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();

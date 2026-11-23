@@ -8,6 +8,7 @@ const APPLY = process.argv.includes("--apply");
 const ONLY_ADIDAS = process.argv.includes("--adidas");
 const ONLY_PUMA = process.argv.includes("--puma");
 const ONLY_NIKE = process.argv.includes("--nike");
+const ONLY_NIKE2 = process.argv.includes("--nike-2");
 const FOTOS_DIR = "C:/Users/devel/Downloads/Fotos";
 
 // ficheiro -> { handle, cor? }. Quando "cor" é indicado, a foto é associada
@@ -159,15 +160,62 @@ const MAPA_COMPLETO = [
     handle: "nike-air-force-chapa-dourada-s-rope-laces",
     dir: "C:/Users/devel/Downloads/NIKE",
   },
+
+  // Segundo lote Nike. "NIKE 2.jpg" não tem modelo/cor identificável e não
+  // corresponde a nenhum produto da Shopify, por isso não é adicionado.
+  {
+    file: "nike dunk low rosa.jpg",
+    handle: "nike-dunk-low",
+    lote: 2,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "nike p6000 bege e rosa.jpg",
+    handle: "nike-p6000",
+    cor: "Bege com Logo Rosa",
+    lote: 2,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "p6000 branco com logo dourado.jpg",
+    handle: "nike-p6000",
+    cor: "Branca com Logo Dourado",
+    lote: 2,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "vomero 5 azul.jpg",
+    handle: "nike-vomero-5",
+    cor: "BRANCA / AZUL",
+    lote: 2,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "air force bege e rosa.jpg",
+    handle: "nike-air-force-branco-laranja",
+    cor: "Bege e Rosa",
+    // Slug próprio para não confundir com a foto antiga de mesmo nome.
+    slug: "air-force-bege-e-rosa-nike",
+    lote: 2,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "JORDAN SKYLINE W ROPE LACE.jpg",
+    handle: "nike-jordan-skyline-w-rope-laces",
+    lote: 2,
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
 ];
 
 const MAPA = ONLY_ADIDAS
   ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/Adidas")
   : ONLY_PUMA
     ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/PUMA")
-    : ONLY_NIKE
-      ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/NIKE")
-      : MAPA_COMPLETO;
+    : ONLY_NIKE2
+      ? MAPA_COMPLETO.filter((item) => item.lote === 2)
+      : ONLY_NIKE
+        ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/NIKE")
+        : MAPA_COMPLETO;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
@@ -277,7 +325,7 @@ async function removerFotosPadrao(productId) {
 
 async function uploadFoto(item) {
   const p = produtos.get(item.handle);
-  const slug = item.file
+  const slug = (item.slug ?? item.file)
     .replace(/\.[^.]+$/, "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
