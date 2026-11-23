@@ -252,10 +252,13 @@ test.describe("Loja — navegação e catálogo", () => {
     }).toPass({ timeout: 30_000 });
     await expect(page.getByRole("option", { name: "36 ⅔", exact: true })).toHaveCount(0);
 
+    const totalNike = await page.locator("article").count();
     await page.getByRole("option", { name: "42", exact: true }).click();
     const com42 = page.locator("article");
     await expect(com42.first()).toBeVisible();
-    expect(await com42.count()).toBeLessThan(21);
+    const quantosCom42 = await com42.count();
+    expect(quantosCom42).toBeGreaterThan(0);
+    expect(quantosCom42).toBeLessThan(totalNike);
 
     await page.goto("/catalogo?brand=adidas");
     const escalaoAdidas = page.locator("fieldset").filter({ hasText: "Escalão de Tamanho" });
