@@ -6,6 +6,7 @@ const ONLY_PUMA = process.argv.includes("--puma");
 const ONLY_NIKE = process.argv.includes("--nike");
 const ONLY_NIKE2 = process.argv.includes("--nike-2");
 const ONLY_NIKE3 = process.argv.includes("--nike-3");
+const ONLY_LOTE4 = process.argv.includes("--lote-4");
 
 const ITENS_COMPLETOS = [
   {
@@ -72,21 +73,32 @@ const ITENS_COMPLETOS = [
     cor: "Preta",
     lote: 3,
   },
+
+  // Quarto lote: associação pelas variáveis reais de cada produto.
+  { slug: "530-vermelha", handle: "new-balance-530", cor: "Branco e Vermelho", lote: 4 },
+  {
+    slug: "puma-carina-street-w-rope-laces",
+    handle: "puma-carina-street",
+    opcao: { name: "Rope Laces", value: "Com Rope Laces" },
+    lote: 4,
+  },
 ];
 
-const ITENS = ONLY_ADIDAS
-  ? ITENS_COMPLETOS.filter((item) => item.handle === "adidas-superstar-bege-rosa")
-  : ONLY_PUMA
-    ? ITENS_COMPLETOS.filter((item) => item.handle === "puma-carina-street")
-    : ONLY_NIKE3
-      ? ITENS_COMPLETOS.filter((item) => item.lote === 3)
-      : ONLY_NIKE2
-        ? ITENS_COMPLETOS.filter((item) => item.lote === 2)
-        : ONLY_NIKE
-          ? ITENS_COMPLETOS.filter(
-              (item) => item.slug === "vomero-bege" || item.slug === "nike-p6000-all-black",
-            )
-          : ITENS_COMPLETOS;
+const ITENS = ONLY_LOTE4
+  ? ITENS_COMPLETOS.filter((item) => item.lote === 4)
+  : ONLY_ADIDAS
+    ? ITENS_COMPLETOS.filter((item) => item.handle === "adidas-superstar-bege-rosa")
+    : ONLY_PUMA
+      ? ITENS_COMPLETOS.filter((item) => item.handle === "puma-carina-street")
+      : ONLY_NIKE3
+        ? ITENS_COMPLETOS.filter((item) => item.lote === 3)
+        : ONLY_NIKE2
+          ? ITENS_COMPLETOS.filter((item) => item.lote === 2)
+          : ONLY_NIKE
+            ? ITENS_COMPLETOS.filter(
+                (item) => item.slug === "vomero-bege" || item.slug === "nike-p6000-all-black",
+              )
+            : ITENS_COMPLETOS;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();

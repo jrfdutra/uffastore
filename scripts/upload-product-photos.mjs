@@ -10,6 +10,7 @@ const ONLY_PUMA = process.argv.includes("--puma");
 const ONLY_NIKE = process.argv.includes("--nike");
 const ONLY_NIKE2 = process.argv.includes("--nike-2");
 const ONLY_NIKE3 = process.argv.includes("--nike-3");
+const ONLY_LOTE4 = process.argv.includes("--lote-4");
 const FOTOS_DIR = "C:/Users/devel/Downloads/Fotos";
 
 // ficheiro -> { handle, cor? }. Quando "cor" é indicado, a foto é associada
@@ -222,19 +223,44 @@ const MAPA_COMPLETO = [
     lote: 3,
     dir: "C:/Users/devel/Downloads/NIKE",
   },
+
+  // Quarto lote: fotos reenviadas com modelo, marca e cor. As que já estavam
+  // aplicadas (Adidas/Puma/New Balance anteriores) não são duplicadas.
+  {
+    file: "VANS SKU.jpg",
+    handle: "vans-knu-skool-w-rope-laces",
+    lote: 4,
+    dir: "C:/Users/devel/Downloads",
+  },
+  {
+    file: "PUMA CARINA STREET W ROPE LACES.jpg",
+    handle: "puma-carina-street",
+    opcao: { name: "Rope Laces", value: "Com Rope Laces" },
+    lote: 4,
+    dir: "C:/Users/devel/Downloads/PUMA",
+  },
+  {
+    file: "530 vermelha.jpg",
+    handle: "new-balance-530",
+    cor: "Branco e Vermelho",
+    lote: 4,
+    dir: "C:/Users/devel/Downloads/new balance",
+  },
 ];
 
-const MAPA = ONLY_ADIDAS
-  ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/Adidas")
-  : ONLY_PUMA
-    ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/PUMA")
-    : ONLY_NIKE3
-      ? MAPA_COMPLETO.filter((item) => item.lote === 3)
-      : ONLY_NIKE2
-        ? MAPA_COMPLETO.filter((item) => item.lote === 2)
-        : ONLY_NIKE
-          ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/NIKE")
-          : MAPA_COMPLETO;
+const MAPA = ONLY_LOTE4
+  ? MAPA_COMPLETO.filter((item) => item.lote === 4)
+  : ONLY_ADIDAS
+    ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/Adidas")
+    : ONLY_PUMA
+      ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/PUMA")
+      : ONLY_NIKE3
+        ? MAPA_COMPLETO.filter((item) => item.lote === 3)
+        : ONLY_NIKE2
+          ? MAPA_COMPLETO.filter((item) => item.lote === 2)
+          : ONLY_NIKE
+            ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/NIKE")
+            : MAPA_COMPLETO;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
