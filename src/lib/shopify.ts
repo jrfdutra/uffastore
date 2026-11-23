@@ -1,3 +1,5 @@
+import { pickupHandleForLocation } from "./pickup-locations";
+
 const domain = import.meta.env["VITE_SHOPIFY_STORE_DOMAIN"] || "uffastore.myshopify.com";
 const token = import.meta.env["VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN"] || "";
 
@@ -129,7 +131,7 @@ const CART_CREATE_MUTATION = `
 
 const PICKUP_LOCATIONS_QUERY = `
   query PickupLocations {
-    locations(first: 10) {
+    locations(first: 50) {
       nodes {
         id
         name
@@ -156,20 +158,18 @@ const CART_SHIPPING_ADDRESS_UPDATE_MUTATION = `
 `;
 
 /**
- * Devolve os identificadores das localizações com recolha em loja ativa.
+ * Devolve o identificador da localização escolhida pelo cliente.
  * A Storefront API usa o ID numérico da localização como pickupHandle.
  */
-async function fetchPickupHandles(): Promise<string[]> {
+async function fetchPickupHandle(pickupLocation: string): Promise<string | undefined> {
   try {
-    const data = await shopifyFetch<{ locations: { nodes: { id: string }[] } }>(
+    const data = await shopifyFetch<{ locations: { nodes: { id: string; name: string }[] } }>(
       PICKUP_LOCATIONS_QUERY,
     );
-    return data.locations.nodes
-      .map((location) => location.id.split("/").pop())
-      .filter((handle): handle is string => Boolean(handle));
+    return pickupHandleForLocation(data.locations.nodes, pickupLocation);
   } catch (error) {
     console.error("Não foi possível obter as localizações de recolha:", error);
-    return [];
+    return undefined;
   }
 }
 
@@ -226,7 +226,8 @@ export async function createCheckoutUrl(
   const note = `MODALIDADE DE ENTREGA SELECIONADA: ${deliveryLabel}.${isPickup && pickupLocation ? ` LOCAL DE RECOLHA: ${pickupLocation}.` : ""} Portes: ${costText}.`;
 
   const discountCodes = couponCode ? [couponCode] : [];
-  const pickupHandles = isPickup ? await fetchPickupHandles() : [];
+  const pickupHandle =
+    isPickup && pickupLocation ? await fetchPickupHandle(pickupLocation) : undefined;
 
   const buyerIdentity: {
     countryCode?: string;
@@ -243,7 +244,7 @@ export async function createCheckoutUrl(
     preferences: {
       delivery: {
         deliveryMethod: [isPickup ? "PICK_UP" : "SHIPPING"],
-        ...(isPickup && pickupHandles.length > 0 ? { pickupHandle: pickupHandles } : {}),
+        ...(pickupHandle ? { pickupHandle: [pickupHandle] } : {}),
       },
     },
   };

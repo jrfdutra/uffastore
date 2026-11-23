@@ -102,6 +102,30 @@ só recebes tu os e-mails. O cron da pesquisa corre às 09:00 UTC e, sem
 > e-mail. As restantes devem ser definidas em **Environment Variables** ou
 > adicionadas ao array `vars` desse script.
 
+## Passo 3b — Locais de recolha na Shopify
+
+Os três pontos de recolha do checkout (**NorteShopping**, **Maia Jardim**,
+**MarShopping**) passam a existir como localizações da Shopify, para o cliente
+ver o local escolhido no checkout oficial. O antigo local de expedição
+(**Rua Alcino de Araújo**) deixa de ser ponto de recolha, mas mantém-se ativo
+para não partir o stock que lá está.
+
+A app da Shopify precisa do scope `write_locations` (o token atual só tem
+`read_locations`). Em **Shopify Admin → Definições → Apps → [app UFFA] →
+Permissões/Scopes**, ativa `write_locations`, reinstala a app e copia o novo
+token para `SHOPIFY_ADMIN_ACCESS_TOKEN` no `.env`. Depois:
+
+```bash
+node scripts/setup-pickup-locations.mjs --dry-run  # mostra o que vai fazer
+node scripts/setup-pickup-locations.mjs            # cria/ativa os três e desativa a recolha antiga
+```
+
+O script é idempotente: se os locais já existirem, só garante que a recolha está
+ativa neles. Também podes criar os três em **Shopify Admin → Definições →
+Localizações** com as moradas públicas dos centros comerciais e ativar
+**Local pickup** em cada um — o site encontra-os pelo nome e usa o ID numérico
+de cada um como `pickupHandle` do local que o cliente escolheu.
+
 ## Passo 4 — Redeploy
 
 **Deployments → ⋯ → Redeploy** (sem cache). As variáveis só entram num deploy novo.

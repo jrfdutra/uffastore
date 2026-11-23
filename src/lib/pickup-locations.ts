@@ -9,3 +9,16 @@ export const DEFAULT_PICKUP_LOCATION: PickupLocation = PICKUP_LOCATIONS[0];
 export function isPickupLocation(value: unknown): value is PickupLocation {
   return typeof value === "string" && (PICKUP_LOCATIONS as readonly string[]).includes(value);
 }
+
+/**
+ * Transforma o nome escolhido no checkout no `pickupHandle` da localização
+ * correspondente na Shopify (o ID numérico no final do GID).
+ */
+export function pickupHandleForLocation(
+  locations: readonly { id: string; name: string }[],
+  pickupLocation: string,
+): string | undefined {
+  const normalized = pickupLocation.trim().toLowerCase();
+  const match = locations.find((location) => location.name.trim().toLowerCase() === normalized);
+  return match?.id.split("/").pop();
+}
