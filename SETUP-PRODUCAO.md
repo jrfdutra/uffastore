@@ -3,6 +3,27 @@
 Estado em 21/11/2026. O código, o deploy e o CI estão prontos. Falta apenas
 configurar credenciais — nada disso pode ser feito por API.
 
+## Configuração concluída em 23/11/2026
+
+Variáveis aplicadas na Vercel (projecto `uffastore`, 16 no total, sem duplicados):
+`PUBLIC_SITE_URL`, `ORDER_PORTAL_SECRET`, `TRACKING_ADMIN_TOKEN`,
+`TRACKING_LINK_TTL_DAYS`, `CRON_SECRET`, `NPS_SECRET`,
+`NPS_LINK_TTL_DAYS`, `NPS_ENABLED=false`, `RESEND_FROM=UFFA Store
+<atendimento@uffastore.pt>`, `SHOPIFY_WEBHOOK_SECRET`,
+`SHOPIFY_ADMIN_STORE_DOMAIN` e `SHOPIFY_ADMIN_ACCESS_TOKEN`.
+
+Verificações em produção após redeploy:
+
+- `GET /api/orders/tracking?token=…` → **200** com os dados da encomenda;
+- `POST /api/webhooks/shopify/orders-fulfilled` com assinatura válida →
+  **200 `emailSent: true`** (e-mail de teste enviado para `atendimento@uffastore.pt`);
+- `GET /api/cron/nps?dryRun=1` com `CRON_SECRET` → **200**, janela calculada,
+  `scanned: 0`;
+- `RESEND_FROM` passou a usar o domínio verificado.
+
+Falta apenas fazer a encomenda real de teste e revogar os tokens da Vercel
+que apareceram no chat.
+
 ## Resend verificado em 23/11/2026
 
 O domínio `uffastore.pt` está **verified** na Resend (disparado pela API após
