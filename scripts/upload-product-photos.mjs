@@ -7,6 +7,7 @@ import sharp from "sharp";
 const APPLY = process.argv.includes("--apply");
 const ONLY_ADIDAS = process.argv.includes("--adidas");
 const ONLY_PUMA = process.argv.includes("--puma");
+const ONLY_NIKE = process.argv.includes("--nike");
 const FOTOS_DIR = "C:/Users/devel/Downloads/Fotos";
 
 // ficheiro -> { handle, cor? }. Quando "cor" é indicado, a foto é associada
@@ -113,13 +114,60 @@ const MAPA_COMPLETO = [
     opcao: { name: "Rope Laces", value: "Com Rope Laces" },
     dir: "C:/Users/devel/Downloads/PUMA",
   },
+
+  // Fotos Nike: o modelo e a cor vêm do nome do ficheiro. Quando o produto
+  // não tem opção "Cor", a foto fica na galeria e aparece em todos os tamanhos.
+  {
+    file: "AIR FORCE LOW 1.jpg",
+    handle: "nike-air-force-branca-com-cinza",
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "VOMERO BEGE.jpg",
+    handle: "nike-vomero-5",
+    cor: "BEGE",
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "Air Jordan 1 Low PRIMEIRO PAR DA LOJA.jpg",
+    handle: "nike-jordan-1º-par-da-loja",
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "AIR FORCE UPTEMPO CASTANHAS.jpg",
+    handle: "nike-air-more-uptempo-low",
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "VALENTINE DAY DUNK.jpg",
+    handle: "nike-valentine-day-dunk",
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "nike p6000 all black.jpg",
+    handle: "nike-p6000-all-black",
+    cor: "All Black",
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "AIR FORCE GOLDEN (Chapa Dourada).jpg",
+    handle: "nike-air-force-chapa-dourada",
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
+  {
+    file: "AIR FORCE GOLDEN (Chapa Dourada).jpg",
+    handle: "nike-air-force-chapa-dourada-s-rope-laces",
+    dir: "C:/Users/devel/Downloads/NIKE",
+  },
 ];
 
 const MAPA = ONLY_ADIDAS
   ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/Adidas")
   : ONLY_PUMA
     ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/PUMA")
-    : MAPA_COMPLETO;
+    : ONLY_NIKE
+      ? MAPA_COMPLETO.filter((item) => item.dir === "C:/Users/devel/Downloads/NIKE")
+      : MAPA_COMPLETO;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();

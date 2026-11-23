@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 const APPLY = process.argv.includes("--apply");
 const ONLY_ADIDAS = process.argv.includes("--adidas");
 const ONLY_PUMA = process.argv.includes("--puma");
+const ONLY_NIKE = process.argv.includes("--nike");
 
 const ITENS_COMPLETOS = [
   {
@@ -36,13 +37,19 @@ const ITENS_COMPLETOS = [
     handle: "puma-carina-street",
     opcao: { name: "Rope Laces", value: "Com Rope Laces" },
   },
+  { slug: "vomero-bege", handle: "nike-vomero-5", cor: "BEGE" },
+  { slug: "nike-p6000-all-black", handle: "nike-p6000-all-black", cor: "All Black" },
 ];
 
 const ITENS = ONLY_ADIDAS
   ? ITENS_COMPLETOS.filter((item) => item.handle === "adidas-superstar-bege-rosa")
   : ONLY_PUMA
     ? ITENS_COMPLETOS.filter((item) => item.handle === "puma-carina-street")
-    : ITENS_COMPLETOS;
+    : ONLY_NIKE
+      ? ITENS_COMPLETOS.filter(
+          (item) => item.slug === "vomero-bege" || item.slug === "nike-p6000-all-black",
+        )
+      : ITENS_COMPLETOS;
 
 const envRaw = await readFile(".env", "utf8");
 const get = (key) => envRaw.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
@@ -108,7 +115,7 @@ for (const item of ITENS) {
     `mutation($productId: ID!, $variantMedia: [ProductVariantAppendMediaInput!]!) {
       productVariantAppendMedia(productId: $productId, variantMedia: $variantMedia) {
         productVariants { id }
-        userErrors { field message }
+        userErrors { code field message }
       }
     }`,
     {
@@ -117,12 +124,34 @@ for (const item of ITENS) {
     },
   );
   const errs = result.productVariantAppendMedia.userErrors;
-  if (errs.length) {
-    console.error(`FALHOU: ${item.slug}: ${JSON.stringify(errs)}`);
-    erros++;
-  } else {
+  if (!errs.length) {
     console.log(`OK: ${item.slug} [${alvo}] -> ${variantIds.length} variantes`);
     ok++;
+  } else if (errs.every((e) => e.code === "PRODUCT_VARIANT_ALREADY_HAS_MEDIA")) {
+    // O Shopify permite uma imagem por variante. Quando já existe, substitui.
+    const atualizado = await gql(
+      `mutation($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+        productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+          productVariants { id }
+          userErrors { field message }
+        }
+      }`,
+      {
+        productId: p.id,
+        variants: variantIds.map((id) => ({ id, mediaId: media.id })),
+      },
+    );
+    const errs2 = atualizado.productVariantsBulkUpdate.userErrors;
+    if (errs2.length) {
+      console.error(`FALHOU: ${item.slug}: ${JSON.stringify(errs2)}`);
+      erros++;
+    } else {
+      console.log(`OK (substituída): ${item.slug} [${alvo}] -> ${variantIds.length} variantes`);
+      ok++;
+    }
+  } else {
+    console.error(`FALHOU: ${item.slug}: ${JSON.stringify(errs)}`);
+    erros++;
   }
 }
 
