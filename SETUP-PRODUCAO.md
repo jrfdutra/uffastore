@@ -170,27 +170,32 @@ só recebes tu os e-mails. O cron da pesquisa corre às 09:00 UTC e, sem
 
 ## Passo 3b — Locais de recolha na Shopify
 
-Os três pontos de recolha do checkout (**NorteShopping**, **Maia Jardim**,
-**MarShopping**) passam a existir como localizações da Shopify, para o cliente
-ver o local escolhido no checkout oficial. O antigo local de expedição
-(**Rua Alcino de Araújo**) deixa de ser ponto de recolha, mas mantém-se ativo
-para não partir o stock que lá está.
+**Concluído em 23/11/2026.** Os três pontos de recolha do checkout
+(**NorteShopping**, **Maia Jardim**, **MarShopping**) existem como localizações
+da Shopify, com **Recolha local** activa, para o cliente ver o local escolhido
+no checkout oficial. Foram criados manualmente em **Shopify Admin → Definições
+→ Localizações**, com as moradas públicas dos centros comerciais, e activados
+em **Definições → Envio e entrega → Recolha local** (preparação em 24 horas).
 
-A app da Shopify precisa do scope `write_locations` (o token atual só tem
-`read_locations`). Em **Shopify Admin → Definições → Apps → [app UFFA] →
-Permissões/Scopes**, ativa `write_locations`, reinstala a app e copia o novo
-token para `SHOPIFY_ADMIN_ACCESS_TOKEN` no `.env`. Depois:
+A antiga localização **Rua Alcino de Araújo** foi renomeada para
+**NorteShopping** e já não aparece como opção de recolha. O stock continua
+associado a essa localização, agora com o nome do centro comercial. A Shopify
+normalizou as localidades para `Matosinhos` em dois casos; isso não afecta o
+checkout, que identifica os pontos pelo nome exacto da localização.
 
-```bash
-node scripts/setup-pickup-locations.mjs --dry-run  # mostra o que vai fazer
-node scripts/setup-pickup-locations.mjs            # cria/ativa os três e desativa a recolha antiga
-```
+O site encontra-os pelo nome e usa o ID numérico de cada um como `pickupHandle`
+do local escolhido. Validação feita nas Admin e Storefront APIs:
 
-O script é idempotente: se os locais já existirem, só garante que a recolha está
-ativa neles. Também podes criar os três em **Shopify Admin → Definições →
-Localizações** com as moradas públicas dos centros comerciais e ativar
-**Local pickup** em cada um — o site encontra-os pelo nome e usa o ID numérico
-de cada um como `pickupHandle` do local que o cliente escolheu.
+| Localização   | ID numérico  | Recolha |
+| ------------- | ------------ | ------- |
+| NorteShopping | 123726889308 | activa  |
+| Maia Jardim   | 124273492316 | activa  |
+| MarShopping   | 124273557852 | activa  |
+
+O script `scripts/setup-pickup-locations.mjs` fica como alternativa
+idempotente, mas **só é necessário se o token tiver o scope `write_locations`**
+(o token actual tem `read_locations`). Como as localizações já existem e estão
+activas, não é preciso voltar a executá-lo nem alterar scopes.
 
 ## Passo 4 — Redeploy
 
