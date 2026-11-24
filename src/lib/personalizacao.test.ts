@@ -6,6 +6,7 @@ import {
   atributosPersonalizacao,
   mesmaPersonalizacao,
   personalizacaoCompleta,
+  temFio,
   temPersonalizacao,
   textoPersonalizacao,
 } from "./personalizacao.ts";
@@ -27,10 +28,17 @@ test("só os Air Force W Rope Lace personalizáveis têm Corda/Fio", () => {
   assert.equal(temPersonalizacao("air-force-floral-w-rope-laces-gs"), false);
 });
 
-test("a escolha só está completa quando corda e fio são válidos", () => {
-  assert.equal(personalizacaoCompleta({ corda: "bege", fio: "rosa" }), true);
-  assert.equal(personalizacaoCompleta({ corda: "bege" }), false);
-  assert.equal(personalizacaoCompleta({ corda: "bege", fio: "amarelo" }), false);
+test("a cor do fio só existe no anúncio OffWhite", () => {
+  assert.equal(temFio("air-force-w-rope-lace-offwhite"), true);
+  assert.equal(temFio("nike-air-force-chapa-dourada"), false);
+});
+
+test("a escolha só está completa quando a corda (e o fio, quando aplicável) são válidos", () => {
+  assert.equal(personalizacaoCompleta({ corda: "bege", fio: "rosa" }, true), true);
+  assert.equal(personalizacaoCompleta({ corda: "bege" }, true), false);
+  assert.equal(personalizacaoCompleta({ corda: "bege", fio: "amarelo" }, true), false);
+  assert.equal(personalizacaoCompleta({ corda: "bege" }), true);
+  assert.equal(personalizacaoCompleta({ corda: "bege", fio: "amarelo" }), true);
 });
 
 test("artigos com personalizações diferentes não se juntam no carrinho", () => {

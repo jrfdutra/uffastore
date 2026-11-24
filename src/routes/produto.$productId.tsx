@@ -33,6 +33,7 @@ import {
   CORDAS,
   FIOS,
   personalizacaoCompleta,
+  temFio,
   temPersonalizacao,
   type Personalizacao,
 } from "@/lib/personalizacao";
@@ -94,6 +95,7 @@ function ProductDetail() {
 
   const cords = p.cords ?? [];
   const personalizavel = temPersonalizacao(p.id);
+  const comFio = temFio(p.id);
   const defaultCord =
     cords.find((cord) => /^sem\b|^without\b/i.test(cord.name))?.slug ?? cords[0]?.slug;
   const activeCord =
@@ -419,47 +421,56 @@ function ProductDetail() {
                     })}
                   </div>
                 </div>
-                <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-bold uppercase">
-                      {tr(s.language, "Fio", "Thread", "Hilo")}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {personalizacao.fio ?? ""}
-                    </span>
+                {comFio && (
+                  <div>
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-sm font-bold uppercase">
+                        {tr(s.language, "Fio", "Thread", "Hilo")}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {personalizacao.fio ?? ""}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {FIOS.map((opcao) => {
+                        const isActive = personalizacao.fio === opcao.slug;
+                        return (
+                          <button
+                            key={opcao.slug}
+                            type="button"
+                            onClick={() => {
+                              setPersonalizacao((atual) => ({ ...atual, fio: opcao.slug }));
+                              setErroPersonalizacao(false);
+                            }}
+                            aria-pressed={isActive}
+                            className={`border px-3.5 py-2 text-xs font-bold uppercase tracking-wide transition ${
+                              isActive
+                                ? "border-foreground bg-foreground text-background"
+                                : "border-border text-foreground hover:border-foreground"
+                            }`}
+                          >
+                            {opcao.name}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {FIOS.map((opcao) => {
-                      const isActive = personalizacao.fio === opcao.slug;
-                      return (
-                        <button
-                          key={opcao.slug}
-                          type="button"
-                          onClick={() => {
-                            setPersonalizacao((atual) => ({ ...atual, fio: opcao.slug }));
-                            setErroPersonalizacao(false);
-                          }}
-                          aria-pressed={isActive}
-                          className={`border px-3.5 py-2 text-xs font-bold uppercase tracking-wide transition ${
-                            isActive
-                              ? "border-foreground bg-foreground text-background"
-                              : "border-border text-foreground hover:border-foreground"
-                          }`}
-                        >
-                          {opcao.name}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                )}
                 {erroPersonalizacao && (
                   <p role="alert" className="text-xs font-semibold text-destructive">
-                    {tr(
-                      s.language,
-                      "Escolhe a corda e o fio para personalizar a tua encomenda.",
-                      "Choose the rope and thread to customise your order.",
-                      "Elige la cuerda y el hilo para personalizar tu pedido.",
-                    )}
+                    {comFio
+                      ? tr(
+                          s.language,
+                          "Escolhe a corda e o fio para personalizar a tua encomenda.",
+                          "Choose the rope and thread to customise your order.",
+                          "Elige la cuerda y el hilo para personalizar tu pedido.",
+                        )
+                      : tr(
+                          s.language,
+                          "Escolhe a corda para personalizar a tua encomenda.",
+                          "Choose the rope to customise your order.",
+                          "Elige la cuerda para personalizar tu pedido.",
+                        )}
                   </p>
                 )}
               </div>
@@ -564,7 +575,7 @@ function ProductDetail() {
                     {personalizavel && personalizacao.corda
                       ? `Corda: ${personalizacao.corda} · `
                       : ""}
-                    {personalizavel && personalizacao.fio ? `Fio: ${personalizacao.fio} · ` : ""}
+                    {comFio && personalizacao.fio ? `Fio: ${personalizacao.fio} · ` : ""}
                     {activeEscalao ? `${ESCALAO_ETIQUETA[activeEscalao][s.language]} · ` : ""}
                     {selectedVariant.label ?? selectedVariant.size}
                   </span>
@@ -602,7 +613,7 @@ function ProductDetail() {
                 setError(true);
                 return;
               }
-              if (personalizavel && !personalizacaoCompleta(personalizacao)) {
+              if (personalizavel && !personalizacaoCompleta(personalizacao, comFio)) {
                 setErroPersonalizacao(true);
                 return;
               }

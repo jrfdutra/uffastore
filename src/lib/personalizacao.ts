@@ -22,6 +22,9 @@ export const PRODUTOS_PERSONALIZAVEIS = [
 
 export const PRODUTO_PERSONALIZAVEL = PRODUTOS_PERSONALIZAVEIS[0];
 
+/** Só o anúncio OffWhite tem a opção de cor do fio. */
+export const PRODUTO_COM_FIO = "air-force-w-rope-lace-offwhite";
+
 export const CORDAS: readonly OpcaoPersonalizacao[] = [
   { slug: "bege", name: "bege" },
   { slug: "cinza", name: "cinza" },
@@ -41,6 +44,10 @@ export function temPersonalizacao(productId: string): boolean {
   return (PRODUTOS_PERSONALIZAVEIS as readonly string[]).includes(productId);
 }
 
+export function temFio(productId: string): boolean {
+  return productId === PRODUTO_COM_FIO;
+}
+
 function normalizar(personalizacao?: Personalizacao): Personalizacao {
   return {
     ...(personalizacao?.corda ? { corda: personalizacao.corda } : {}),
@@ -55,13 +62,12 @@ export function mesmaPersonalizacao(a?: Personalizacao, b?: Personalizacao): boo
   return esq.corda === dir.corda && esq.fio === dir.fio;
 }
 
-export function personalizacaoCompleta(personalizacao?: Personalizacao): boolean {
+export function personalizacaoCompleta(personalizacao?: Personalizacao, comFio = false): boolean {
   const escolha = normalizar(personalizacao);
   return (
     Boolean(escolha.corda) &&
-    Boolean(escolha.fio) &&
     CORDAS.some((opcao) => opcao.slug === escolha.corda) &&
-    FIOS.some((opcao) => opcao.slug === escolha.fio)
+    (!comFio || (Boolean(escolha.fio) && FIOS.some((opcao) => opcao.slug === escolha.fio)))
   );
 }
 
