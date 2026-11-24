@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
-import { Hand, PackageCheck, Play, Rotate3D } from "lucide-react";
+import { AlertTriangle, Hand, PackageCheck, Play, Rotate3D } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -491,23 +491,34 @@ function ProductDetail() {
             )}
 
             {selectedVariant && (
-              <p className="text-xs text-muted-foreground">
-                {tr(s.language, "Selecionado:", "Selected:", "Seleccionado:")}{" "}
-                <span className="font-semibold text-foreground">
-                  {activeColor
-                    ? `${colors.find((color) => color.slug === activeColor)?.name ?? activeColor} · `
-                    : ""}
-                  {activeCord
-                    ? `${cords.find((cord) => cord.slug === activeCord)?.name ?? activeCord} · `
-                    : ""}
-                  {activeEscalao ? `${ESCALAO_ETIQUETA[activeEscalao][s.language]} · ` : ""}
-                  {selectedVariant.label ?? selectedVariant.size}
-                </span>
-                {" — "}
-                {selectedVariant.stock > 0
-                  ? tr(s.language, "Em stock", "In stock", "En stock")
-                  : t.soldOut}
-              </p>
+              <>
+                <p className="text-xs text-muted-foreground">
+                  {tr(s.language, "Selecionado:", "Selected:", "Seleccionado:")}{" "}
+                  <span className="font-semibold text-foreground">
+                    {activeColor
+                      ? `${colors.find((color) => color.slug === activeColor)?.name ?? activeColor} · `
+                      : ""}
+                    {activeCord
+                      ? `${cords.find((cord) => cord.slug === activeCord)?.name ?? activeCord} · `
+                      : ""}
+                    {activeEscalao ? `${ESCALAO_ETIQUETA[activeEscalao][s.language]} · ` : ""}
+                    {selectedVariant.label ?? selectedVariant.size}
+                  </span>
+                  {" — "}
+                  {selectedVariant.stock > 0
+                    ? tr(s.language, "Em stock", "In stock", "En stock")
+                    : t.soldOut}
+                </p>
+                {selectedVariant.note && (
+                  <p
+                    role="status"
+                    className="mt-2 flex items-start gap-2 border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-900 dark:text-amber-200"
+                  >
+                    <AlertTriangle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+                    <span>{selectedVariant.note}</span>
+                  </p>
+                )}
+              </>
             )}
 
             {error && <p className="text-sm font-semibold text-destructive">{t.selectSize}</p>}

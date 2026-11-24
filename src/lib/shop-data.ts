@@ -30,6 +30,8 @@ export type ProductSize = {
    * peça única ("Único"), que não têm escala de tamanhos na Shopify.
    */
   label?: string;
+  /** Observação específica da variante (ex.: aviso de defeito). */
+  note?: string;
 };
 
 export type ProductColor = {

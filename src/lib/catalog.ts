@@ -24,6 +24,9 @@ export const LEGACY_CATALOG_STORAGE_KEY = "uffa-custom-catalog-v3";
 
 const categories: Category[] = ["lifestyle", "running", "limited", "personalizacao", "blackfriday"];
 
+/** Aviso mostrado quando a variante seleccionada tem defeito (SKU terminado em -DEFEITO). */
+const NOTA_DEFEITO = "Atenção: este par tem um defeito.";
+
 function toCategory(value: string): Category {
   const normalized = value.trim().toLowerCase();
   if (normalized.includes("person") || normalized.includes("custom")) return "personalizacao";
@@ -173,6 +176,7 @@ function toProduct(node: ShopifyProductNode): Product {
         ...(slug ? { color: slug } : {}),
         ...(cordSlug ? { cord: cordSlug } : {}),
         ...(variant.sku ? { sku: variant.sku } : {}),
+        ...(variant.sku && /-DEFEITO$/i.test(variant.sku) ? { note: NOTA_DEFEITO } : {}),
         variantId: variant.id,
         price: Number.parseFloat(variant.price.amount),
         ...(variant.compareAtPrice
