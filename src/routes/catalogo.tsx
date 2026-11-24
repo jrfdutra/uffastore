@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Search, SlidersHorizontal, Check, ChevronDown } from "lucide-react";
+import { ArrowUp, Search, SlidersHorizontal, Check, ChevronDown } from "lucide-react";
 import { z } from "zod";
 import { useMemo, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
@@ -175,6 +175,15 @@ function Catalog() {
   useEffect(() => {
     setQuery(search.q ?? "");
   }, [search.q]);
+
+  // Botão "voltar ao topo": só aparece depois de o catálogo começar a descer.
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShowBackToTop(window.scrollY > 600);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   const [selectedSizeGroup, setSelectedSizeGroup] = useState<"all" | "crianca" | "gs" | "senior">(
     "all",
   );
@@ -509,18 +518,20 @@ function Catalog() {
 
         <div>
           {category !== "personalizacao" && (
-            <div className="relative mb-8">
-              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t.search}
-                aria-label={t.search}
-                className="h-12 rounded-none pl-10"
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-                {list.length} {t.results}
-              </span>
+            <div className="sticky top-16 z-30 mb-8 bg-background py-3 md:top-20">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t.search}
+                  aria-label={t.search}
+                  className="h-12 rounded-none pl-10"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                  {list.length} {t.results}
+                </span>
+              </div>
             </div>
           )}
 
@@ -571,6 +582,18 @@ function Catalog() {
           )}
         </div>
       </div>
+
+      {showBackToTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label={tr(language, "Voltar ao topo", "Back to top", "Volver arriba")}
+          title={tr(language, "Voltar ao topo", "Back to top", "Volver arriba")}
+          className="fixed bottom-6 right-6 z-30 grid size-11 place-items-center rounded-full border border-primary bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        >
+          <ArrowUp aria-hidden="true" className="size-5" />
+        </button>
+      )}
     </div>
   );
 }
