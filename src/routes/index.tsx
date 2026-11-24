@@ -11,6 +11,7 @@ import { BRANDS, brandNames, getProductBrand, type Brand } from "@/lib/brands";
 import { ModelSearch } from "@/components/model-search";
 import { FOTO_PADRAO } from "@/lib/consolidated-catalog";
 import { useShop } from "@/lib/shop-context";
+import { ProductRequestCard } from "@/components/product-request-card";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -131,7 +132,7 @@ function Home() {
                 width={1664}
                 height={2080}
                 loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                className={`brand-cover brand-cover--${brand} absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105`}
               />
               <div className="absolute inset-0 bg-category-overlay" />
               <span className="absolute bottom-4 left-4 font-display text-3xl uppercase text-hero-foreground md:text-4xl">
@@ -139,6 +140,7 @@ function Home() {
               </span>
             </Link>
           ))}
+          <ProductRequestCard />
         </div>
       </section>
 

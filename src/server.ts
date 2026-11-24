@@ -16,10 +16,13 @@ import {
   sendContactEmail,
   sendNpsEmail,
   sendNpsResponseNotification,
+  sendProductRequestEmail,
   sendTrackingEmail,
 } from "./lib/server-actions";
 import { parseContactRequest } from "./lib/contact";
 import { CONTACT_BODY_LIMIT, CONTACT_PATH } from "./lib/contact-constants";
+import { parseProductRequest } from "./lib/product-request";
+import { PRODUCT_REQUEST_BODY_LIMIT, PRODUCT_REQUEST_PATH } from "./lib/product-request-constants";
 import {
   createTrackingLink,
   getTrackingAdminToken,
@@ -76,6 +79,27 @@ async function handleContact(request: Request): Promise<Response> {
   if (!parsed.ok) return jsonResponse(400, { success: false, reason: parsed.reason });
 
   const result = await sendContactEmail(parsed.request);
+  return jsonResponse(result.success ? 200 : 502, {
+    success: result.success,
+    reason: result.success ? undefined : "email_failed",
+  });
+}
+
+async function handleProductRequest(request: Request): Promise<Response> {
+  const declaredLength = Number.parseInt(request.headers.get("content-length") ?? "", 10);
+  if (Number.isFinite(declaredLength) && declaredLength > PRODUCT_REQUEST_BODY_LIMIT) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+
+  const raw = await request.text();
+  if (byteLength(raw) > PRODUCT_REQUEST_BODY_LIMIT) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+
+  const parsed = parseProductRequest(raw);
+  if (!parsed.ok) return jsonResponse(400, { success: false, reason: parsed.reason });
+
+  const result = await sendProductRequestEmail(parsed.request);
   return jsonResponse(result.success ? 200 : 502, {
     success: result.success,
     reason: result.success ? undefined : "email_failed",
@@ -558,6 +582,24 @@ export default {
     // segredos, quer venham do painel Vercel quer do ficheiro local.
     await loadServerEnv();
     const url = new URL(request.url);
+
+    if (url.pathname === PRODUCT_REQUEST_PATH) {
+      if (request.method !== "POST") {
+        return new Response("Method Not Allowed", {
+          status: 405,
+          headers: { allow: "POST" },
+        });
+      }
+      try {
+        return await handleProductRequest(request);
+      } catch (error) {
+        console.error(
+          "[Pedido de produto] Erro fatal:",
+          error instanceof Error ? error.message : error,
+        );
+        return jsonResponse(500, { success: false, reason: "internal_error" });
+      }
+    }
 
     if (url.pathname === CONTACT_PATH) {
       if (request.method !== "POST") {

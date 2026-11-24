@@ -6,6 +6,7 @@ import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { copy } from "@/lib/shop-data";
 import { compareRopeLacesFirst } from "@/lib/brands";
+import { ProductRequestCard } from "@/components/product-request-card";
 
 export const Route = createFileRoute("/favoritos")({
   head: () => ({
@@ -70,6 +71,9 @@ function WishlistPage() {
                   <ArrowRight className="ml-2 size-4" />
                 </Link>
               </Button>
+              <div className="mx-auto mt-10 w-full max-w-[220px]">
+                <ProductRequestCard />
+              </div>
             </div>
           </div>
         ) : (
@@ -82,6 +86,7 @@ function WishlistPage() {
               {favoriteProducts.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
+              <ProductRequestCard />
             </div>
           </div>
         )}

@@ -131,6 +131,36 @@
 @utility bg-category-overlay {
   background: var(--category-overlay);
 }
+
+/*
+ * Capas "Escolhe a tua marca": aproxima o fundo das fotografias ao tom da Vans
+ * sem alterar as fotos dos produtos no catálogo.
+ */
+.brand-cover {
+  filter: saturate(var(--brand-saturate, 1)) hue-rotate(var(--brand-hue, 0deg))
+    brightness(var(--brand-brightness, 1));
+}
+.brand-cover--nike {
+  --brand-saturate: 1.35;
+  --brand-hue: -6deg;
+  --brand-brightness: 0.94;
+}
+.brand-cover--adidas {
+  --brand-saturate: 1.35;
+  --brand-hue: -6deg;
+  --brand-brightness: 0.96;
+}
+.brand-cover--puma {
+  --brand-saturate: 1.75;
+  --brand-hue: -6deg;
+  --brand-brightness: 0.96;
+}
+.brand-cover--new-balance {
+  --brand-saturate: 1.2;
+  --brand-hue: -6deg;
+  --brand-brightness: 0.92;
+}
+
 @utility animate-reveal {
   animation: reveal 0.7s ease-out both;
 }

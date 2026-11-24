@@ -2,6 +2,7 @@ import { cttTrackingUrl, isCttCarrier } from "./tracking.ts";
 import { company } from "./legal.ts";
 import { loadServerEnv } from "./server-env.ts";
 import type { ContactRequest } from "./contact.ts";
+import type { ProductRequest } from "./product-request.ts";
 
 export async function sendShopifyOrderEmail(orderData: {
   orderNumber: string;
@@ -301,5 +302,55 @@ Responder diretamente a ${data.email}.`;
   console.log(
     `Pedido de contacto enviado para ${company.email} (${CONTACT_REASON_LABELS[data.reason]}, ${data.email})${data.image ? " com fotografia" : ""}`,
   );
+  return { success: true, data: resJson };
+}
+
+/** Envia o pedido de um produto não encontrado para a UFFA responder diretamente. */
+export async function sendProductRequestEmail(data: ProductRequest) {
+  const env = await loadServerEnv();
+  const apiKey = env["RESEND_API_KEY"];
+  const from = env["RESEND_FROM"] || "onboarding@resend.dev";
+
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY não configurada; pedido de produto não enviado.");
+    return { success: false, error: "Missing RESEND_API_KEY" };
+  }
+
+  const subject = `[Pedido UFFA] ${data.product} — ${data.brand}`;
+  const body = `Novo pedido de produto através do site uffastore.pt.
+
+Produto procurado: ${data.product}
+Marca: ${data.brand}
+
+Descrição:
+${data.description}
+
+Email: ${data.email}
+Telemóvel: ${data.phone}
+
+Responder diretamente a ${data.email} ou ligar para ${data.phone}.`;
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      from,
+      to: [company.email],
+      reply_to: data.email,
+      subject,
+      text: body,
+    }),
+  });
+
+  const resJson = (await response.json()) as Record<string, unknown>;
+  if (!response.ok) {
+    console.error("Erro ao enviar pedido de produto via Resend:", resJson);
+    return { success: false, error: resJson };
+  }
+
+  console.log(`Pedido de produto enviado para ${company.email} (${data.product}, ${data.email})`);
   return { success: true, data: resJson };
 }
