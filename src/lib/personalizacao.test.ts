@@ -21,8 +21,9 @@ test("as opções pedidas para corda e fio são exactamente estas", () => {
   );
 });
 
-test("só a Air Force W Rope Lace é personalizável", () => {
+test("só os Air Force W Rope Lace personalizáveis têm Corda/Fio", () => {
   assert.equal(temPersonalizacao("nike-air-force-chapa-dourada"), true);
+  assert.equal(temPersonalizacao("air-force-w-rope-lace-offwhite"), true);
   assert.equal(temPersonalizacao("air-force-floral-w-rope-laces-gs"), false);
 });
 

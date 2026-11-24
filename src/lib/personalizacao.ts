@@ -15,7 +15,12 @@ export type Personalizacao = {
   fio?: string;
 };
 
-export const PRODUTO_PERSONALIZAVEL = "nike-air-force-chapa-dourada";
+export const PRODUTOS_PERSONALIZAVEIS = [
+  "nike-air-force-chapa-dourada",
+  "air-force-w-rope-lace-offwhite",
+] as const;
+
+export const PRODUTO_PERSONALIZAVEL = PRODUTOS_PERSONALIZAVEIS[0];
 
 export const CORDAS: readonly OpcaoPersonalizacao[] = [
   { slug: "bege", name: "bege" },
@@ -33,7 +38,7 @@ export const FIOS: readonly OpcaoPersonalizacao[] = [
 ];
 
 export function temPersonalizacao(productId: string): boolean {
-  return productId === PRODUTO_PERSONALIZAVEL;
+  return (PRODUTOS_PERSONALIZAVEIS as readonly string[]).includes(productId);
 }
 
 function normalizar(personalizacao?: Personalizacao): Personalizacao {
