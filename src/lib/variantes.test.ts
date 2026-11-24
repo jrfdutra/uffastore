@@ -72,7 +72,7 @@ test("Tamanhos por escalão", () => {
 
 test("O preço acompanha o escalão selecionado (Dunk)", () => {
   const gs = produto("nike-dunk-w-rope-laces-gs");
-  assert.ok(gs.sizes.every((variante) => variante.price === 149.99));
+  assert.ok(gs.sizes.every((variante) => variante.price === 139.99));
 
   const senior = produto("nike-dunk-w-rope-laces-senior");
   assert.ok(senior.sizes.every((variante) => variante.price === 164.99));
@@ -135,7 +135,7 @@ test("O preço mínimo apresentado por cor está correto", () => {
   assert.equal(precoApresentado(floralSenior.sizes, "orange", 0), 189.99);
 
   const dunk = produto("nike-dunk-w-rope-laces-gs");
-  assert.equal(precoApresentado(dunk.sizes, "black", 0), 149.99);
+  assert.equal(precoApresentado(dunk.sizes, "black", 0), 139.99);
 
   const crianca = produto("air-force-crianca");
   assert.equal(precoApresentado(crianca.sizes, "white", 0), 129.99);

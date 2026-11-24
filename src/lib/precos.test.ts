@@ -19,14 +19,14 @@ test("Air Force Criança só tem preço de criança (129,99 €)", () => {
   assert.throws(() => precoPorTamanho("air-force-crianca", 42), /Preço não definido/);
 });
 
-test("Air Force w/ Rope Laces tem preços GS (149,99 €) e Senior (164,99 €)", () => {
-  assert.equal(precoPorTamanho("air-force-rope", 38), 149.99);
+test("Air Force w/ Rope Laces tem preços GS (139,99 €) e Senior (164,99 €)", () => {
+  assert.equal(precoPorTamanho("air-force-rope", 38), 139.99);
   assert.equal(precoPorTamanho("air-force-rope", 42), 164.99);
   assert.throws(() => precoPorTamanho("air-force-rope", 30), /Preço não definido/);
 });
 
 test("Nike Dunk w/ Rope Laces segue exatamente os preços de Air Force w/ Rope Laces", () => {
-  assert.equal(precoPorTamanho("nike-dunk-rope", 38), 149.99);
+  assert.equal(precoPorTamanho("nike-dunk-rope", 38), 139.99);
   assert.equal(precoPorTamanho("nike-dunk-rope", 41), 164.99);
   assert.equal(precoPorTamanho("nike-dunk-rope", 36), precoPorTamanho("air-force-rope", 36));
   assert.equal(precoPorTamanho("nike-dunk-rope", 45), precoPorTamanho("air-force-rope", 45));
