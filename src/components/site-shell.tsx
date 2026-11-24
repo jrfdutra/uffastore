@@ -41,6 +41,7 @@ import { modelsForBrand } from "@/lib/models";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
+import { textoPersonalizacao } from "@/lib/personalizacao";
 import { company } from "@/lib/legal";
 import {
   useCallback,
@@ -131,7 +132,7 @@ function CartDrawer() {
               if (!p) {
                 return (
                   <div
-                    key={`${item.productId}-${item.size}-${item.color ?? "unica"}-${item.cord ?? "cord"}`}
+                    key={`${item.productId}-${item.size}-${item.color ?? "unica"}-${item.cord ?? "cord"}-${item.personalizacao?.corda ?? ""}-${item.personalizacao?.fio ?? ""}`}
                     className="flex items-center justify-between gap-3 border-b border-border pb-5"
                   >
                     <div className="min-w-0">
@@ -150,7 +151,13 @@ function CartDrawer() {
                       size="icon"
                       className="size-8 shrink-0"
                       onClick={() =>
-                        s.removeFromCart(item.productId, item.size, item.color, item.cord)
+                        s.removeFromCart(
+                          item.productId,
+                          item.size,
+                          item.color,
+                          item.cord,
+                          item.personalizacao,
+                        )
                       }
                       aria-label={t.remove}
                     >
@@ -170,7 +177,7 @@ function CartDrawer() {
               const cordName = p.cords?.find((c) => c.slug === item.cord)?.name;
               return (
                 <div
-                  key={`${item.productId}-${item.size}-${item.color ?? "unica"}-${item.cord ?? "cord"}`}
+                  key={`${item.productId}-${item.size}-${item.color ?? "unica"}-${item.cord ?? "cord"}-${item.personalizacao?.corda ?? ""}-${item.personalizacao?.fio ?? ""}`}
                   className="grid grid-cols-[84px_1fr] gap-3 border-b border-border pb-5"
                 >
                   <img
@@ -189,6 +196,11 @@ function CartDrawer() {
                           {cordName ? `${cordName} · ` : ""}
                           {t.size} {rotuloTamanhoDoProduto(p, item.size)}
                         </p>
+                        {textoPersonalizacao(item.personalizacao) && (
+                          <p className="mt-1 text-[11px] font-bold uppercase text-primary">
+                            {textoPersonalizacao(item.personalizacao)}
+                          </p>
+                        )}
                       </div>
                       <p className="font-bold">{money(unitPrice * item.quantity)}</p>
                     </div>
@@ -205,6 +217,7 @@ function CartDrawer() {
                               item.quantity - 1,
                               item.color,
                               item.cord,
+                              item.personalizacao,
                             )
                           }
                           aria-label={tr(
@@ -228,6 +241,7 @@ function CartDrawer() {
                               item.quantity + 1,
                               item.color,
                               item.cord,
+                              item.personalizacao,
                             )
                           }
                           aria-label={tr(
@@ -245,7 +259,13 @@ function CartDrawer() {
                         size="icon"
                         className="size-8"
                         onClick={() =>
-                          s.removeFromCart(item.productId, item.size, item.color, item.cord)
+                          s.removeFromCart(
+                            item.productId,
+                            item.size,
+                            item.color,
+                            item.cord,
+                            item.personalizacao,
+                          )
                         }
                         aria-label={t.remove}
                       >

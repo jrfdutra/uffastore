@@ -174,7 +174,7 @@ async function fetchPickupHandle(pickupLocation: string): Promise<string | undef
 }
 
 export async function createCheckoutUrl(
-  items: { variantId: string; quantity: number }[],
+  items: { variantId: string; quantity: number; attributes?: { key: string; value: string }[] }[],
   delivery: string = "pickup",
   couponCode?: string,
   buyer?: { email?: string; phone?: string; firstName?: string; lastName?: string },
@@ -276,6 +276,7 @@ export async function createCheckoutUrl(
       lines: items.map((item) => ({
         merchandiseId: item.variantId,
         quantity: item.quantity,
+        ...(item.attributes?.length ? { attributes: item.attributes } : {}),
       })),
       attributes,
       note,
@@ -292,7 +293,7 @@ export async function createCheckoutUrl(
 }
 
 export async function createShopifyCheckout(
-  items: { variantId: string; quantity: number }[],
+  items: { variantId: string; quantity: number; attributes?: { key: string; value: string }[] }[],
   delivery: string = "pickup",
   couponCode?: string,
   buyer?: { email?: string; phone?: string; firstName?: string; lastName?: string },

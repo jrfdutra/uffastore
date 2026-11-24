@@ -20,6 +20,7 @@ import { copy, money } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
+import { atributosPersonalizacao } from "@/lib/personalizacao";
 import { savePendingCheckout } from "@/lib/checkout-session";
 import { createShopifyCheckout } from "@/lib/shopify";
 import { pairCount } from "@/lib/pair-code";
@@ -213,7 +214,11 @@ function Checkout() {
         if (!variantId) {
           throw new Error(`Variant not found for ${item.productId} size ${item.size}`);
         }
-        return { variantId, quantity: item.quantity };
+        return {
+          variantId,
+          quantity: item.quantity,
+          attributes: atributosPersonalizacao(item.personalizacao),
+        };
       });
 
       // Guarda os detalhes da compra antes de sair para a Shopify, para os poder
@@ -234,6 +239,7 @@ function Checkout() {
             size: item.size,
             color: item.color,
             cord: item.cord,
+            personalizacao: item.personalizacao,
             quantity: 1,
             unitPrice: product?.price ?? item.unitPrice ?? 0,
           }));

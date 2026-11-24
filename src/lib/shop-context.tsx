@@ -14,6 +14,7 @@ import { loadCatalog, resetCatalogToDefault } from "./catalog";
 import { tr } from "./i18n";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 import { sanitizeCart } from "./cart";
+import { mesmaPersonalizacao, type Personalizacao } from "./personalizacao";
 
 export type CartItem = {
   productId: string;
@@ -22,6 +23,8 @@ export type CartItem = {
   color?: string;
   /** Slug da opção Cute Cord escolhida (quando o produto tem essa opção). */
   cord?: string;
+  /** Corda e fio escolhidos para personalizar a encomenda. */
+  personalizacao?: Personalizacao;
   quantity: number;
   /** Preço unitário da variante no momento da compra. */
   unitPrice?: number;
@@ -39,14 +42,27 @@ type ShopContextValue = {
   cart: CartItem[];
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
-  addToCart: (productId: string, size: number, color?: string, cord?: string) => void;
-  removeFromCart: (productId: string, size: number, color?: string, cord?: string) => void;
+  addToCart: (
+    productId: string,
+    size: number,
+    color?: string,
+    cord?: string,
+    personalizacao?: Personalizacao,
+  ) => void;
+  removeFromCart: (
+    productId: string,
+    size: number,
+    color?: string,
+    cord?: string,
+    personalizacao?: Personalizacao,
+  ) => void;
   updateQuantity: (
     productId: string,
     size: number,
     quantity: number,
     color?: string,
     cord?: string,
+    personalizacao?: Personalizacao,
   ) => void;
   clearCart: () => void;
   count: number;
@@ -95,6 +111,11 @@ function isCartItem(value: unknown): value is CartItem {
     item.quantity > 0 &&
     (item.color === undefined || typeof item.color === "string") &&
     (item.cord === undefined || typeof item.cord === "string") &&
+    (item.personalizacao === undefined ||
+      (typeof item.personalizacao === "object" &&
+        (item.personalizacao.corda === undefined ||
+          typeof item.personalizacao.corda === "string") &&
+        (item.personalizacao.fio === undefined || typeof item.personalizacao.fio === "string"))) &&
     (item.unitPrice === undefined || typeof item.unitPrice === "number") &&
     (item.variantId === undefined || typeof item.variantId === "string")
   );
@@ -210,7 +231,13 @@ export function ShopProvider({
   }, []);
 
   const addToCart = useCallback(
-    (productId: string, size: number, color?: string, cord?: string) => {
+    (
+      productId: string,
+      size: number,
+      color?: string,
+      cord?: string,
+      personalizacao?: Personalizacao,
+    ) => {
       const product = catalog.find((p) => p.id === productId);
       if (!product) return;
 
@@ -243,7 +270,8 @@ export function ShopProvider({
         item.productId === productId &&
         item.size === size &&
         item.color === variantColor &&
-        item.cord === variantCord;
+        item.cord === variantCord &&
+        mesmaPersonalizacao(item.personalizacao, personalizacao);
 
       const existingItem = cart.find(matches);
       const currentQty = existingItem?.quantity ?? 0;
@@ -268,6 +296,7 @@ export function ShopProvider({
                 size,
                 ...(variantColor ? { color: variantColor } : {}),
                 ...(variantCord ? { cord: variantCord } : {}),
+                ...(personalizacao ? { personalizacao } : {}),
                 quantity: 1,
                 unitPrice,
                 ...(variant.variantId ? { variantId: variant.variantId } : {}),
@@ -285,7 +314,13 @@ export function ShopProvider({
   );
 
   const removeFromCart = useCallback(
-    (productId: string, size: number, color?: string, cord?: string) => {
+    (
+      productId: string,
+      size: number,
+      color?: string,
+      cord?: string,
+      personalizacao?: Personalizacao,
+    ) => {
       setCart((items) =>
         items.filter(
           (item) =>
@@ -293,7 +328,8 @@ export function ShopProvider({
               item.productId === productId &&
               item.size === size &&
               item.color === color &&
-              item.cord === cord
+              item.cord === cord &&
+              mesmaPersonalizacao(item.personalizacao, personalizacao)
             ),
         ),
       );
@@ -302,9 +338,16 @@ export function ShopProvider({
   );
 
   const updateQuantity = useCallback(
-    (productId: string, size: number, quantity: number, color?: string, cord?: string) => {
+    (
+      productId: string,
+      size: number,
+      quantity: number,
+      color?: string,
+      cord?: string,
+      personalizacao?: Personalizacao,
+    ) => {
       if (quantity < 1) {
-        removeFromCart(productId, size, color, cord);
+        removeFromCart(productId, size, color, cord, personalizacao);
         return;
       }
 
@@ -329,7 +372,8 @@ export function ShopProvider({
           item.productId === productId &&
           item.size === size &&
           item.color === color &&
-          item.cord === cord
+          item.cord === cord &&
+          mesmaPersonalizacao(item.personalizacao, personalizacao)
             ? { ...item, quantity: targetQty }
             : item,
         ),

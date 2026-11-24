@@ -18,6 +18,7 @@ import { tr } from "@/lib/i18n";
 import { formatDate, getOrderByNumber, type Order } from "@/lib/orders";
 import { readPendingCheckout, type PendingCheckout } from "@/lib/checkout-session";
 import { money } from "@/lib/shop-data";
+import { textoPersonalizacao } from "@/lib/personalizacao";
 import { useShop } from "@/lib/shop-context";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
 
@@ -439,6 +440,11 @@ function ThankYou({ pending }: { pending: PendingCheckout | null }) {
                               {rotuloTamanhoDoProduto(product, item.size)}
                               {item.quantity > 1 ? ` · ${item.quantity}x` : ""}
                             </p>
+                            {textoPersonalizacao(item.personalizacao) && (
+                              <p className="mt-1 text-[11px] font-bold uppercase text-primary">
+                                {textoPersonalizacao(item.personalizacao)}
+                              </p>
+                            )}
                           </div>
                           <p className="text-sm font-bold">
                             {money(item.unitPrice * item.quantity)}

@@ -8,6 +8,7 @@
  */
 
 import { isPickupLocation } from "./pickup-locations";
+import type { Personalizacao } from "./personalizacao";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 
 export type PendingCheckoutItem = {
@@ -16,6 +17,7 @@ export type PendingCheckoutItem = {
   size: number;
   color?: string | undefined;
   cord?: string | undefined;
+  personalizacao?: Personalizacao | undefined;
   quantity: number;
   unitPrice: number;
 };
@@ -45,6 +47,11 @@ function isItem(value: unknown): value is PendingCheckoutItem {
     typeof item.size === "number" &&
     typeof item.quantity === "number" &&
     item.quantity > 0 &&
+    (item.personalizacao === undefined ||
+      (typeof item.personalizacao === "object" &&
+        (item.personalizacao.corda === undefined ||
+          typeof item.personalizacao.corda === "string") &&
+        (item.personalizacao.fio === undefined || typeof item.personalizacao.fio === "string"))) &&
     typeof item.unitPrice === "number"
   );
 }
