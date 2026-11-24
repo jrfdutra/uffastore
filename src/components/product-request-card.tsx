@@ -40,7 +40,7 @@ export function ProductRequestCard() {
 
   const title = tr(
     language,
-    "Não encontrou o que procura? Comenta connosco.",
+    "Não encontrou o que procura e comenta conosco.",
     "Didn't find what you're looking for? Tell us.",
     "¿No encontraste lo que buscas? Cuéntanos.",
   );
