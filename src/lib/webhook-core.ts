@@ -15,9 +15,32 @@ export const MAX_BODY_BYTES = 1_000_000;
 const BASE64_SHA256 = /^[A-Za-z0-9+/]{43}=$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+/**
+ * Segredos que a Shopify pode usar para assinar webhooks.
+ *
+ * Subscrições criadas pela Admin API são assinadas com o client secret da app
+ * (`SHOPIFY_ADMIN_CLIENT_SECRET`); subscrições antigas/manuais podem usar o
+ * segredo dedicado (`SHOPIFY_WEBHOOK_SECRET`). Aceitar ambos evita 401 após
+ * rotação de segredos ou migração entre apps.
+ */
+const WEBHOOK_SECRET_ENV_KEYS = [
+  "SHOPIFY_WEBHOOK_SECRET",
+  "SHOPIFY_ADMIN_CLIENT_SECRET",
+  "SHOPIFY_CLIENT_SECRET",
+  "SHOPIFY_API_SECRET",
+] as const;
+
 /** Lido em tempo de execução para funcionar com env vars da Vercel e com testes. */
+export function getWebhookSecrets(): string[] {
+  const secrets = WEBHOOK_SECRET_ENV_KEYS.map((key) => (process.env[key] ?? "").trim()).filter(
+    (secret) => secret.length > 0,
+  );
+  return [...new Set(secrets)];
+}
+
+/** Mantém a API antiga: devolve o primeiro segredo configurado. */
 export function getWebhookSecret(): string {
-  return (process.env["SHOPIFY_WEBHOOK_SECRET"] ?? "").trim();
+  return getWebhookSecrets()[0] ?? "";
 }
 
 /**
@@ -25,17 +48,18 @@ export function getWebhookSecret(): string {
  * Fail-closed: sem segredo configurado, nenhuma assinatura é aceite.
  */
 export function verifyShopifyHmac(rawBody: string, hmacHeader: string | null): boolean {
-  const secret = getWebhookSecret();
-  if (!secret) return false;
+  const secrets = getWebhookSecrets();
+  if (secrets.length === 0) return false;
   if (!hmacHeader) return false;
 
   const header = hmacHeader.trim();
   if (!BASE64_SHA256.test(header)) return false;
 
-  const expected = createHmac("sha256", secret).update(rawBody, "utf8").digest();
   const received = Buffer.from(header, "base64");
-  if (received.length !== expected.length) return false;
-  return timingSafeEqual(received, expected);
+  return secrets.some((secret) => {
+    const expected = createHmac("sha256", secret).update(rawBody, "utf8").digest();
+    return received.length === expected.length && timingSafeEqual(received, expected);
+  });
 }
 
 /**

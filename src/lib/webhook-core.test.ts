@@ -19,16 +19,32 @@ function sign(body: string, secret = SECRET): string {
   return createHmac("sha256", secret).update(body, "utf8").digest("base64");
 }
 
+const SECRET_ENV_KEYS = [
+  "SHOPIFY_WEBHOOK_SECRET",
+  "SHOPIFY_ADMIN_CLIENT_SECRET",
+  "SHOPIFY_CLIENT_SECRET",
+  "SHOPIFY_API_SECRET",
+] as const;
+
 function withSecret<T>(secret: string | undefined, fn: () => T): T {
-  const previous = process.env["SHOPIFY_WEBHOOK_SECRET"];
-  if (secret === undefined) delete process.env["SHOPIFY_WEBHOOK_SECRET"];
-  else process.env["SHOPIFY_WEBHOOK_SECRET"] = secret;
+  const previous = new Map(SECRET_ENV_KEYS.map((key) => [key, process.env[key]]));
+  for (const key of SECRET_ENV_KEYS) delete process.env[key];
+  if (secret !== undefined) process.env["SHOPIFY_WEBHOOK_SECRET"] = secret;
   try {
     return fn();
   } finally {
-    if (previous === undefined) delete process.env["SHOPIFY_WEBHOOK_SECRET"];
-    else process.env["SHOPIFY_WEBHOOK_SECRET"] = previous;
+    for (const [key, value] of previous) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
   }
+}
+
+function withAppSecret<T>(secret: string, fn: () => T): T {
+  return withSecret(undefined, () => {
+    process.env["SHOPIFY_ADMIN_CLIENT_SECRET"] = secret;
+    return fn();
+  });
 }
 
 // ---------------- HMAC ----------------
@@ -36,6 +52,13 @@ function withSecret<T>(secret: string | undefined, fn: () => T): T {
 test("HMAC: assinatura correta é aceite", () => {
   const body = JSON.stringify({ name: "#1001" });
   withSecret(SECRET, () => {
+    assert.equal(verifyShopifyHmac(body, sign(body)), true);
+  });
+});
+
+test("HMAC: assinatura com o client secret da app é aceite", () => {
+  const body = JSON.stringify({ name: "#1001" });
+  withAppSecret(SECRET, () => {
     assert.equal(verifyShopifyHmac(body, sign(body)), true);
   });
 });
