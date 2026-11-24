@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { BRANDS, brandNames } from "@/lib/brands";
-import { FOTO_PADRAO } from "@/lib/consolidated-catalog";
 import { tr } from "@/lib/i18n";
 import { PRODUCT_REQUEST_LIMITS, PRODUCT_REQUEST_PATH } from "@/lib/product-request-constants";
 import { useShop } from "@/lib/shop-context";
@@ -108,10 +107,10 @@ export function ProductRequestCard() {
           className="group relative block aspect-[4/5] w-full cursor-pointer overflow-hidden bg-primary text-left"
         >
           <img
-            src={FOTO_PADRAO}
+            src="/produtos/uffa-teaser-nike-coberto.webp"
             alt=""
             width={1200}
-            height={1500}
+            height={1218}
             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
           />
