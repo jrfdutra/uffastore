@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { BRANDS, brandNames } from "@/lib/brands";
+import { FOTO_PADRAO } from "@/lib/consolidated-catalog";
 import { tr } from "@/lib/i18n";
 import { PRODUCT_REQUEST_LIMITS, PRODUCT_REQUEST_PATH } from "@/lib/product-request-constants";
 import { useShop } from "@/lib/shop-context";
@@ -104,8 +105,16 @@ export function ProductRequestCard() {
         <button
           type="button"
           aria-label={title}
-          className="group relative block aspect-[4/5] w-full cursor-pointer overflow-hidden bg-[linear-gradient(135deg,#e9498d_0%,#c8236f_100%)] text-left"
+          className="group relative block aspect-[4/5] w-full cursor-pointer overflow-hidden bg-primary text-left"
         >
+          <img
+            src={FOTO_PADRAO}
+            alt=""
+            width={1200}
+            height={1500}
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          />
           <div className="absolute inset-0 bg-category-overlay" />
           <MessageCircle className="absolute left-1/2 top-1/2 size-14 -translate-x-1/2 -translate-y-1/2 text-hero-foreground transition duration-500 group-hover:scale-110" />
           <span className="absolute bottom-4 left-4 right-4 font-display text-2xl uppercase leading-tight text-hero-foreground md:text-3xl">
