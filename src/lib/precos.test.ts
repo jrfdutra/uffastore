@@ -33,9 +33,9 @@ test("Nike Dunk w/ Rope Laces segue exatamente os preços de Air Force w/ Rope L
   assert.throws(() => precoPorTamanho("nike-dunk-rope", 32), /Preço não definido/);
 });
 
-test("Floral Air Force w/ Rope Laces tem preço 179,99 € em GS e Senior", () => {
+test("Floral Air Force w/ Rope Laces: GS 179,99 € e Senior 189,99 €", () => {
   assert.equal(precoPorTamanho("air-force-floral-rope", 36), 179.99);
-  assert.equal(precoPorTamanho("air-force-floral-rope", 44), 179.99);
+  assert.equal(precoPorTamanho("air-force-floral-rope", 44), 189.99);
   assert.throws(() => precoPorTamanho("air-force-floral-rope", 31), /Preço não definido/);
 });
 

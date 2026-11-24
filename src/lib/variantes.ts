@@ -89,3 +89,19 @@ export function precoApresentado(
   if (!variantes.length) return precoBase;
   return Math.min(...variantes.map((variante) => variante.price ?? precoBase));
 }
+
+/**
+ * Preço do escalão (GS, Sénior…) já escolhido, mesmo sem tamanho selecionado.
+ * Permite atualizar o preço no momento em que a categoria muda.
+ */
+export function precoDoEscalao(
+  sizes: ProductSize[],
+  color: string | undefined,
+  escalao: Escalao | undefined,
+  precoBase: number,
+  cord?: string,
+): number {
+  const variantes = tamanhosDoEscalao(variantesPorCor(sizes, color, cord), escalao);
+  if (!variantes.length) return precoApresentado(sizes, color, precoBase, cord);
+  return Math.min(...variantes.map((variante) => variante.price ?? precoBase));
+}

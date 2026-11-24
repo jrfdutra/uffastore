@@ -137,7 +137,7 @@ test("O preço de cada variante corresponde ao escalão do tamanho", () => {
   const esperados: Record<string, Record<string, number>> = {
     "nike-dunk-rope": { gs: 149.99, senior: 164.99 },
     "air-force-lanvin": { gs: 179.99, senior: 189.99 },
-    "air-force-floral-rope": { gs: 179.99, senior: 179.99 },
+    "air-force-floral-rope": { gs: 179.99, senior: 189.99 },
     "floral-black": { gs: 179.99, senior: 189.99 },
     "air-force-crianca": { crianca: 129.99 },
     "air-force-rope": { gs: 149.99, senior: 164.99 },

@@ -25,6 +25,7 @@ import { type Escalao } from "@/lib/precos";
 import {
   escaloesDisponiveis as escaloesComStock,
   precoApresentado,
+  precoDoEscalao,
   tamanhosDoEscalao,
   variantesPorCor,
 } from "@/lib/variantes";
@@ -127,10 +128,11 @@ function ProductDetail() {
     (size) => size.size === selected,
   );
   const displayPrice =
-    selectedVariant?.price ?? precoApresentado(p.sizes, activeColor, p.price, activeCord);
-  // Preço antigo riscado: acompanha a variante (cor + Cute Cord) escolhida ou,
-  // sem tamanho escolhido, a variante mais barata dessa combinação.
-  const cheapestVariant = [...sizesForColor].sort(
+    selectedVariant?.price ??
+    precoDoEscalao(p.sizes, activeColor, activeEscalao, p.price, activeCord);
+  // Preço antigo riscado: acompanha a variante do escalão escolhido (ou a mais
+  // barata desse escalão quando ainda não há tamanho selecionado).
+  const cheapestVariant = [...sizesForEscalao].sort(
     (a, b) => (a.price ?? p.price) - (b.price ?? p.price),
   )[0];
   const compareAtPrice =

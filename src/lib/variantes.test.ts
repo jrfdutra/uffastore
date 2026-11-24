@@ -4,6 +4,7 @@ import { consolidatedProducts } from "./consolidated-catalog.ts";
 import {
   escaloesDisponiveis,
   precoApresentado,
+  precoDoEscalao,
   tamanhosDoEscalao,
   varianteSelecionavel,
   variantesPorCor,
@@ -117,14 +118,21 @@ test("Uma variante sem stock não é selecionável", () => {
   assert.ok(varianteSelecionavel(semStock, "white", "gs", 36.5));
 });
 
+test("O preço acompanha a categoria de tamanho escolhida, mesmo sem tamanho", () => {
+  const floral = produto("air-force-floral-w-rope-laces-gs");
+  const senior = produto("air-force-floral-w-rope-laces-senior");
+  assert.equal(precoDoEscalao(floral.sizes, "pink", "gs", 0), 179.99);
+  assert.equal(precoDoEscalao(senior.sizes, "pink", "senior", 0), 189.99);
+});
+
 test("O preço mínimo apresentado por cor está correto", () => {
   const floralGs = produto("air-force-floral-w-rope-laces-gs");
   assert.equal(precoApresentado(floralGs.sizes, "pink", 0), 179.99);
   assert.equal(precoApresentado(floralGs.sizes, "orange", 0), 179.99);
 
   const floralSenior = produto("air-force-floral-w-rope-laces-senior");
-  assert.equal(precoApresentado(floralSenior.sizes, "pink", 0), 179.99);
-  assert.equal(precoApresentado(floralSenior.sizes, "orange", 0), 179.99);
+  assert.equal(precoApresentado(floralSenior.sizes, "pink", 0), 189.99);
+  assert.equal(precoApresentado(floralSenior.sizes, "orange", 0), 189.99);
 
   const dunk = produto("nike-dunk-w-rope-laces-gs");
   assert.equal(precoApresentado(dunk.sizes, "black", 0), 149.99);
