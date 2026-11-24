@@ -391,41 +391,43 @@ function ProductDetail() {
               </div>
             )}
 
-            {personalizavel && (
+            {(personalizavel || comCorAirForce) && (
               <div className="space-y-4">
-                <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-bold uppercase">
-                      {tr(s.language, "Corda", "Rope", "Cuerda")}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {personalizacao.corda ?? ""}
-                    </span>
+                {personalizavel && (
+                  <div>
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-sm font-bold uppercase">
+                        {tr(s.language, "Corda", "Rope", "Cuerda")}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {personalizacao.corda ?? ""}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {CORDAS.map((opcao) => {
+                        const isActive = personalizacao.corda === opcao.slug;
+                        return (
+                          <button
+                            key={opcao.slug}
+                            type="button"
+                            onClick={() => {
+                              setPersonalizacao((atual) => ({ ...atual, corda: opcao.slug }));
+                              setErroPersonalizacao(false);
+                            }}
+                            aria-pressed={isActive}
+                            className={`border px-3.5 py-2 text-xs font-bold uppercase tracking-wide transition ${
+                              isActive
+                                ? "border-foreground bg-foreground text-background"
+                                : "border-border text-foreground hover:border-foreground"
+                            }`}
+                          >
+                            {opcao.name}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {CORDAS.map((opcao) => {
-                      const isActive = personalizacao.corda === opcao.slug;
-                      return (
-                        <button
-                          key={opcao.slug}
-                          type="button"
-                          onClick={() => {
-                            setPersonalizacao((atual) => ({ ...atual, corda: opcao.slug }));
-                            setErroPersonalizacao(false);
-                          }}
-                          aria-pressed={isActive}
-                          className={`border px-3.5 py-2 text-xs font-bold uppercase tracking-wide transition ${
-                            isActive
-                              ? "border-foreground bg-foreground text-background"
-                              : "border-border text-foreground hover:border-foreground"
-                          }`}
-                        >
-                          {opcao.name}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                )}
                 {comFio && (
                   <div>
                     <div className="mb-2 flex items-center justify-between">
