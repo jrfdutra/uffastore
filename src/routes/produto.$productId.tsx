@@ -505,12 +505,7 @@ function ProductDetail() {
                 </span>
                 {" — "}
                 {selectedVariant.stock > 0
-                  ? tr(
-                      s.language,
-                      `${selectedVariant.stock} em stock`,
-                      `${selectedVariant.stock} in stock`,
-                      `${selectedVariant.stock} en stock`,
-                    )
+                  ? tr(s.language, "Em stock", "In stock", "En stock")
                   : t.soldOut}
               </p>
             )}
