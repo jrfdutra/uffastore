@@ -59,7 +59,9 @@ export function temFio(productId: string): boolean {
 }
 
 export function temCorAirForce(productId: string): boolean {
-  return productId === PRODUTO_COM_COR_AIR_FORCE;
+  return (
+    productId === PRODUTO_COM_COR_AIR_FORCE || productId.startsWith(`${PRODUTO_COM_COR_AIR_FORCE}-`)
+  );
 }
 
 function normalizar(personalizacao?: Personalizacao): Personalizacao {

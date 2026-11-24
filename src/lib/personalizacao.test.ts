@@ -36,6 +36,8 @@ test("só os Air Force W Rope Lace personalizáveis têm Corda/Fio", () => {
 
 test("a cor da Air Force só existe no AIR FORCE FLORAL", () => {
   assert.equal(temCorAirForce("air-force-floral-w-rope-laces"), true);
+  assert.equal(temCorAirForce("air-force-floral-w-rope-laces-gs"), true);
+  assert.equal(temCorAirForce("air-force-floral-w-rope-laces-senior"), true);
   assert.equal(temCorAirForce("nike-air-force-chapa-dourada"), false);
   assert.equal(temCorAirForce("air-force-w-rope-lace-offwhite"), false);
 });
