@@ -158,9 +158,9 @@ function TrackingLinkDashboard({ data }: { data: TrackingLinkData }) {
       <p className="mt-4 max-w-2xl text-sm text-muted-foreground">
         {tr(
           language,
-          "A tua encomenda já foi entregue ao transportador. Podes acompanhar o percurso e consultar o CTT quando o código estiver ativo.",
-          "Your order is now with the carrier. You can follow its progress and check CTT once the code is active.",
-          "Tu pedido ya está con el transportista. Puedes seguir su recorrido y consultar CTT cuando el código esté activo.",
+          "A tua encomenda já foi entregue ao transportador. Podes acompanhar o percurso com o código de rastreio.",
+          "Your order is now with the carrier. You can follow its progress with the tracking code.",
+          "Tu pedido ya está con el transportista. Puedes seguir su recorrido con el código de seguimiento.",
         )}
       </p>
 
