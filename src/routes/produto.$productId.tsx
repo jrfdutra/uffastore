@@ -377,7 +377,7 @@ function ProductDetail() {
             {cords.length > 1 && (
               <div>
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-bold uppercase">Cute Cord</span>
+                  <span className="text-sm font-bold uppercase">{p.cordLabel ?? "Cute Cord"}</span>
                   <span className="text-xs text-muted-foreground">
                     {cords.find((cord) => cord.slug === activeCord)?.name ?? ""}
                   </span>

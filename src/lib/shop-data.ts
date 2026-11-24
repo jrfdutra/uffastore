@@ -66,6 +66,8 @@ export type Product = {
   colors?: ProductColor[];
   /** Opções de Cute Cord. Vazio ou ausente quando o modelo não tem essa opção. */
   cords?: ProductColor[];
+  /** Nome da opção de cordão na Shopify (ex.: "Cute Cord" ou "Rope Laces"). */
+  cordLabel?: string;
   status?: ProductStatus;
   featured?: boolean;
 };

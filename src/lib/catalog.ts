@@ -120,10 +120,11 @@ function toProduct(node: ShopifyProductNode): Product {
   const colorValues =
     node.options?.find((option) => /^cor(es)?$|^colou?r$/i.test(option.name.trim()))?.values ?? [];
 
-  // Opção Cute Cord (ex.: "Com Cute Cord" / "Sem Cute Cord").
-  const cordValues =
-    node.options?.find((option) => /cute\s*cord|^cord(ão|ao|ões|oes)?$/i.test(option.name.trim()))
-      ?.values ?? [];
+  // Opção de cordão: "Cute Cord" ou "Rope Laces" (ex.: "Com Rope Laces" / "Sem Rope Laces").
+  const cordOption = node.options?.find((option) =>
+    /cute\s*cord|^cord(ão|ao|ões|oes)?$|^rope\s*laces?$/i.test(option.name.trim()),
+  );
+  const cordValues = cordOption?.values ?? [];
 
   // Fotografia própria de cada variante (na Shopify, a imagem é associada à variante).
   // Isto permite que o seletor de cor troque a fotografia para o par certo.
@@ -165,7 +166,10 @@ function toProduct(node: ShopifyProductNode): Product {
     const colorValue = optionValue(variant.selectedOptions, /^cor(es)?$|^colou?r$/i);
     const slug = colorValue ? colorSlug(colorValue) : undefined;
 
-    const cordValue = optionValue(variant.selectedOptions, /cute\s*cord|^cord(ão|ao|ões|oes)?$/i);
+    const cordValue = optionValue(
+      variant.selectedOptions,
+      /cute\s*cord|^cord(ão|ao|ões|oes)?$|^rope\s*laces?$/i,
+    );
     const cordSlug = cordValue ? colorSlug(cordValue) : undefined;
 
     return [
@@ -242,6 +246,7 @@ function toProduct(node: ShopifyProductNode): Product {
     description: { pt: description, en: description, es: description },
     colors,
     ...(cords.length ? { cords } : {}),
+    ...(cordOption?.name ? { cordLabel: cordOption.name } : {}),
     sizes: sizes.length ? sizes : (fallback?.sizes ?? []),
     ...(fallback?.featured ? { featured: true } : {}),
   };
