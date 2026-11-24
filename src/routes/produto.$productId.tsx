@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { useMemo, useRef, useState } from "react";
-import { AlertTriangle, Hand, PackageCheck, Play, Rotate3D } from "lucide-react";
+import { useMemo, useState } from "react";
+import { AlertTriangle, Hand, PackageCheck, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -83,10 +83,8 @@ function ProductDetail() {
   const [erroPersonalizacao, setErroPersonalizacao] = useState(false);
   const [selectedEscalao, setSelectedEscalao] = useState<Escalao | undefined>(undefined);
   const [selected, setSelected] = useState<number>();
-  const [angle, setAngle] = useState(0);
   const [activeImage, setActiveImage] = useState(0);
   const [error, setError] = useState(false);
-  const drag = useRef<number | null>(null);
 
   const colors = p.colors ?? [];
   const activeColor =
@@ -142,7 +140,6 @@ function ProductDetail() {
   const isComingSoon = effectiveStatus === "comingsoon";
   const isInactive = p.status === "inactive";
 
-  const transform = `perspective(1000px) rotateY(${angle}deg)`;
   const colorGallery = colors.find((color) => color.slug === activeColor)?.images;
   const gallery = colorGallery?.length ? colorGallery : p.images?.length ? p.images : [p.image];
   const currentImage = gallery[activeImage] ?? gallery[0] ?? p.image;
@@ -187,22 +184,7 @@ function ProductDetail() {
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-16">
       <div className="grid gap-10 lg:grid-cols-[1.15fr_.85fr]">
         <div>
-          <div
-            className="relative overflow-hidden bg-product touch-none"
-            onPointerDown={(e) => {
-              if (showingVideo) return;
-              drag.current = e.clientX;
-              (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-            }}
-            onPointerMove={(e) => {
-              const start = drag.current;
-              if (start === null) return;
-              setAngle((a) => a + (e.clientX - start) * 0.35);
-              drag.current = e.clientX;
-            }}
-            onPointerUp={() => (drag.current = null)}
-            onPointerCancel={() => (drag.current = null)}
-          >
+          <div className="relative overflow-hidden bg-product">
             {showingVideo ? (
               <video
                 src={currentMedia}
@@ -216,19 +198,8 @@ function ProductDetail() {
                 alt={p.name}
                 width={1664}
                 height={2080}
-                className="aspect-[4/5] h-full w-full object-cover transition-transform duration-75"
-                style={{ transform }}
+                className="aspect-[4/5] h-full w-full object-cover"
               />
-            )}
-            {!showingVideo && (
-              <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-background px-3 py-2 text-xs font-bold uppercase text-foreground">
-                <Rotate3D className="size-4 text-primary" />
-                {s.language === "pt"
-                  ? "Arrasta para rodar 360°"
-                  : s.language === "es"
-                    ? "Arrastra para girar 360°"
-                    : "Drag to rotate 360°"}
-              </div>
             )}
           </div>
           <div className="mt-3 grid grid-cols-3 gap-3">
@@ -239,7 +210,6 @@ function ProductDetail() {
                 className={`h-auto rounded-none bg-product p-0 ${i === activeImage ? "ring-2 ring-primary" : ""}`}
                 onClick={() => {
                   setActiveImage(i);
-                  setAngle(0);
                 }}
                 aria-label={`${p.name} — ${i + 1}`}
                 aria-pressed={i === activeImage}
@@ -260,7 +230,6 @@ function ProductDetail() {
                 className={`h-auto rounded-none bg-product p-0 ${showingVideo ? "ring-2 ring-primary" : ""}`}
                 onClick={() => {
                   setActiveImage(gallery.length);
-                  setAngle(0);
                 }}
                 aria-label={`${p.name} — ${s.language === "pt" ? "vídeo" : "video"}`}
                 aria-pressed={showingVideo}
