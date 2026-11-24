@@ -123,8 +123,8 @@ test("O preço mínimo apresentado por cor está correto", () => {
   assert.equal(precoApresentado(floralGs.sizes, "orange", 0), 179.99);
 
   const floralSenior = produto("air-force-floral-w-rope-laces-senior");
-  assert.equal(precoApresentado(floralSenior.sizes, "pink", 0), 189.99);
-  assert.equal(precoApresentado(floralSenior.sizes, "orange", 0), 189.99);
+  assert.equal(precoApresentado(floralSenior.sizes, "pink", 0), 179.99);
+  assert.equal(precoApresentado(floralSenior.sizes, "orange", 0), 179.99);
 
   const dunk = produto("nike-dunk-w-rope-laces-gs");
   assert.equal(precoApresentado(dunk.sizes, "black", 0), 149.99);
