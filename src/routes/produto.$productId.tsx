@@ -31,8 +31,10 @@ import {
 import { tr } from "@/lib/i18n";
 import {
   CORDAS,
+  CORES_AIR_FORCE,
   FIOS,
   personalizacaoCompleta,
+  temCorAirForce,
   temFio,
   temPersonalizacao,
   type Personalizacao,
@@ -96,6 +98,7 @@ function ProductDetail() {
   const cords = p.cords ?? [];
   const personalizavel = temPersonalizacao(p.id);
   const comFio = temFio(p.id);
+  const comCorAirForce = temCorAirForce(p.id);
   const defaultCord =
     cords.find((cord) => /^sem\b|^without\b/i.test(cord.name))?.slug ?? cords[0]?.slug;
   const activeCord =
@@ -456,21 +459,68 @@ function ProductDetail() {
                     </div>
                   </div>
                 )}
+                {comCorAirForce && (
+                  <div>
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-sm font-bold uppercase">
+                        {tr(
+                          s.language,
+                          "Cor da Air Force",
+                          "Air Force colour",
+                          "Color de Air Force",
+                        )}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {personalizacao.corAirForce ?? ""}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {CORES_AIR_FORCE.map((opcao) => {
+                        const isActive = personalizacao.corAirForce === opcao.slug;
+                        return (
+                          <button
+                            key={opcao.slug}
+                            type="button"
+                            onClick={() => {
+                              setPersonalizacao((atual) => ({ ...atual, corAirForce: opcao.slug }));
+                              setErroPersonalizacao(false);
+                            }}
+                            aria-pressed={isActive}
+                            className={`border px-3.5 py-2 text-xs font-bold uppercase tracking-wide transition ${
+                              isActive
+                                ? "border-foreground bg-foreground text-background"
+                                : "border-border text-foreground hover:border-foreground"
+                            }`}
+                          >
+                            {opcao.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
                 {erroPersonalizacao && (
                   <p role="alert" className="text-xs font-semibold text-destructive">
-                    {comFio
+                    {comCorAirForce
                       ? tr(
                           s.language,
-                          "Escolhe a corda e o fio para personalizar a tua encomenda.",
-                          "Choose the rope and thread to customise your order.",
-                          "Elige la cuerda y el hilo para personalizar tu pedido.",
+                          "Escolhe a cor da Air Force para personalizar a tua encomenda.",
+                          "Choose the Air Force colour to customise your order.",
+                          "Elige el color de Air Force para personalizar tu pedido.",
                         )
-                      : tr(
-                          s.language,
-                          "Escolhe a corda para personalizar a tua encomenda.",
-                          "Choose the rope to customise your order.",
-                          "Elige la cuerda para personalizar tu pedido.",
-                        )}
+                      : comFio
+                        ? tr(
+                            s.language,
+                            "Escolhe a corda e o fio para personalizar a tua encomenda.",
+                            "Choose the rope and thread to customise your order.",
+                            "Elige la cuerda y el hilo para personalizar tu pedido.",
+                          )
+                        : tr(
+                            s.language,
+                            "Escolhe a corda para personalizar a tua encomenda.",
+                            "Choose the rope to customise your order.",
+                            "Elige la cuerda para personalizar tu pedido.",
+                          )}
                   </p>
                 )}
               </div>
@@ -576,6 +626,9 @@ function ProductDetail() {
                       ? `Corda: ${personalizacao.corda} · `
                       : ""}
                     {comFio && personalizacao.fio ? `Fio: ${personalizacao.fio} · ` : ""}
+                    {comCorAirForce && personalizacao.corAirForce
+                      ? `Cor: ${personalizacao.corAirForce} · `
+                      : ""}
                     {activeEscalao ? `${ESCALAO_ETIQUETA[activeEscalao][s.language]} · ` : ""}
                     {selectedVariant.label ?? selectedVariant.size}
                   </span>
@@ -613,7 +666,7 @@ function ProductDetail() {
                 setError(true);
                 return;
               }
-              if (personalizavel && !personalizacaoCompleta(personalizacao, comFio)) {
+              if (!personalizacaoCompleta(personalizacao, personalizavel, comFio, comCorAirForce)) {
                 setErroPersonalizacao(true);
                 return;
               }
@@ -622,7 +675,7 @@ function ProductDetail() {
                 selectedVariant.size,
                 selectedVariant.color,
                 selectedVariant.cord,
-                personalizavel ? personalizacao : undefined,
+                personalizavel || comCorAirForce ? personalizacao : undefined,
               );
             }}
           >

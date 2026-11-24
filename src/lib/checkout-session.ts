@@ -51,7 +51,9 @@ function isItem(value: unknown): value is PendingCheckoutItem {
       (typeof item.personalizacao === "object" &&
         (item.personalizacao.corda === undefined ||
           typeof item.personalizacao.corda === "string") &&
-        (item.personalizacao.fio === undefined || typeof item.personalizacao.fio === "string"))) &&
+        (item.personalizacao.fio === undefined || typeof item.personalizacao.fio === "string") &&
+        (item.personalizacao.corAirForce === undefined ||
+          typeof item.personalizacao.corAirForce === "string"))) &&
     typeof item.unitPrice === "number"
   );
 }

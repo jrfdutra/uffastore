@@ -115,7 +115,9 @@ function isCartItem(value: unknown): value is CartItem {
       (typeof item.personalizacao === "object" &&
         (item.personalizacao.corda === undefined ||
           typeof item.personalizacao.corda === "string") &&
-        (item.personalizacao.fio === undefined || typeof item.personalizacao.fio === "string"))) &&
+        (item.personalizacao.fio === undefined || typeof item.personalizacao.fio === "string") &&
+        (item.personalizacao.corAirForce === undefined ||
+          typeof item.personalizacao.corAirForce === "string"))) &&
     (item.unitPrice === undefined || typeof item.unitPrice === "number") &&
     (item.variantId === undefined || typeof item.variantId === "string")
   );
