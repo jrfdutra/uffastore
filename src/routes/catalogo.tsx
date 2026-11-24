@@ -35,6 +35,13 @@ import { tr } from "@/lib/i18n";
 import { escalaoPorTamanho, type Escalao } from "@/lib/precos";
 import { ORDEM_ESCALOES } from "@/lib/variantes";
 
+/** Modelo que deve abrir sempre as listagens onde aparece (Nike / Black Friday). */
+const PRODUTO_EM_DESTAQUE = "air-force-floral-w-rope-laces";
+
+function compareDestaquePrimeiro<T extends { id: string }>(a: T, b: T): number {
+  return Number(b.id === PRODUTO_EM_DESTAQUE) - Number(a.id === PRODUTO_EM_DESTAQUE);
+}
+
 const searchSchema = z.object({
   // Marcas são o filtro principal. "category" mantém-se apenas para links
   // antigos e para a campanha Black Friday.
@@ -261,8 +268,8 @@ function Catalog() {
 
           return true;
         })
-        // Rope laces primeiro, em qualquer filtro ou pesquisa.
-        .sort(compareRopeLacesFirst),
+        // Destaque da Nike primeiro, depois rope laces, em qualquer filtro ou pesquisa.
+        .sort((a, b) => compareDestaquePrimeiro(a, b) || compareRopeLacesFirst(a, b)),
     [
       catalog,
       brand,
