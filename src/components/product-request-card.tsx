@@ -40,9 +40,9 @@ export function ProductRequestCard() {
 
   const title = tr(
     language,
-    "Não encontrou o que procura e comenta conosco.",
-    "Didn't find what you're looking for? Tell us.",
-    "¿No encontraste lo que buscas? Cuéntanos.",
+    "Não encontrou o que procura? encomenda aqui!",
+    "Didn't find what you're looking for? Order here!",
+    "¿No encontraste lo que buscas? ¡Pide aquí!",
   );
 
   function resetForm() {
