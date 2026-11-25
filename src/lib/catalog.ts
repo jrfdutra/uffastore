@@ -5,8 +5,10 @@ import {
   type ProductColor,
   type ProductSize,
 } from "./shop-data";
+import { brandFromText } from "./brands.ts";
 import { FOTO_PADRAO } from "./consolidated-catalog";
 import { getConsolidatedAsProducts } from "./catalog-adapter";
+import { ocultarTamanhosNike } from "./variantes.ts";
 import { removeStorage } from "./storage";
 import {
   fetchShopifyProductByHandle,
@@ -157,7 +159,7 @@ function toProduct(node: ShopifyProductNode): Product {
     images,
   }));
 
-  const sizes: ProductSize[] = (node.variants?.nodes ?? []).flatMap((variant) => {
+  const todasAsVariantes: ProductSize[] = (node.variants?.nodes ?? []).flatMap((variant) => {
     const sizeValue = optionValue(variant.selectedOptions, /tamanho|size|escal/i);
     const parsed = parseTamanho(sizeValue);
     // Sem tamanho numérico na Shopify, a variante não entra no catálogo.
@@ -189,6 +191,12 @@ function toProduct(node: ShopifyProductNode): Product {
       },
     ];
   });
+
+  // A escala comercial da Nike exclui 37 e 41,5 em todos os modelos.
+  const sizes = ocultarTamanhosNike(
+    todasAsVariantes,
+    brandFromText(node.vendor, node.title, node.handle),
+  );
 
   const priceValues = sizes.map((size) => size.price ?? 0).filter((price) => price > 0);
 

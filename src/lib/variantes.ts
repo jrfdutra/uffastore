@@ -1,8 +1,21 @@
+import { type Brand } from "./brands.ts";
 import { escalaoPorTamanho, type Escalao } from "./precos.ts";
 import type { ProductSize } from "./shop-data";
 
 /** Ordem de apresentação dos escalões no seletor. */
 export const ORDEM_ESCALOES: Escalao[] = ["crianca", "gs", "senior"];
+
+/** Números que a UFFA não comercializa em nenhum modelo Nike. */
+export const TAMANHOS_NIKE_OCULTOS = [37, 41.5] as const;
+
+/**
+ * Esconde da loja os tamanhos Nike fora da escala comercial.
+ * Não apaga variantes na Shopify, para não invalidar carrinhos/encomendas.
+ */
+export function ocultarTamanhosNike<T extends { size: number }>(sizes: T[], brand?: Brand): T[] {
+  if (brand !== "nike") return sizes;
+  return sizes.filter((size) => !TAMANHOS_NIKE_OCULTOS.some((oculto) => oculto === size.size));
+}
 
 /**
  * Variantes reais de uma cor (e, quando indicado, de uma opção Cute Cord).

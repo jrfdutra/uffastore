@@ -3,6 +3,7 @@ import test from "node:test";
 import { consolidatedProducts } from "./consolidated-catalog.ts";
 import {
   escaloesDisponiveis,
+  ocultarTamanhosNike,
   precoApresentado,
   precoDoEscalao,
   tamanhosDoEscalao,
@@ -15,6 +16,18 @@ const produto = (handle: string) => {
   assert.ok(item, `Produto ${handle} não existe`);
   return item;
 };
+
+test("A Nike não mostra os tamanhos 37 e 41,5", () => {
+  const tamanhos = [36, 37, 37.5, 40, 41, 41.5, 42].map((size) => ({ size }));
+  assert.deepEqual(
+    ocultarTamanhosNike(tamanhos, "nike").map((item) => item.size),
+    [36, 37.5, 40, 41, 42],
+  );
+  assert.deepEqual(
+    ocultarTamanhosNike(tamanhos, "adidas").map((item) => item.size),
+    [36, 37, 37.5, 40, 41, 41.5, 42],
+  );
+});
 
 test("Cada cor tem apenas as variantes dessa cor", () => {
   const dunk = produto("nike-dunk-w-rope-laces-gs");

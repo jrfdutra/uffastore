@@ -1,16 +1,28 @@
 import { brandFromText, brandNames } from "./brands";
 import { consolidatedProducts } from "./consolidated-catalog";
 import { type Product } from "./shop-data";
+import { ocultarTamanhosNike } from "./variantes.ts";
 
 export function getConsolidatedAsProducts(): Product[] {
   return consolidatedProducts.map((cp) => {
-    const allPrices = cp.sizes.map((s) => s.price);
-    const minPrice = Math.min(...allPrices);
-    const primaryColor = cp.colors[0];
-    const primaryImage = primaryColor?.images[0] ?? "/produtos/uffa-modelo-padrao.webp";
     // A Shopify é a fonte de verdade; este valor só serve quando o catálogo
     // local é usado (sem rede / fallback).
     const brand = brandFromText(cp.name, cp.handle);
+    const sizes = ocultarTamanhosNike(
+      cp.sizes.map((s) => ({
+        size: s.size,
+        stock: s.stock,
+        sku: s.sku,
+        ...(s.color ? { color: s.color } : {}),
+        ...(s.variantId ? { variantId: s.variantId } : {}),
+        price: s.price,
+      })),
+      brand,
+    );
+    const allPrices = sizes.map((s) => s.price);
+    const minPrice = Math.min(...allPrices);
+    const primaryColor = cp.colors[0];
+    const primaryImage = primaryColor?.images[0] ?? "/produtos/uffa-modelo-padrao.webp";
 
     const product: Product = {
       id: cp.handle,
@@ -30,14 +42,7 @@ export function getConsolidatedAsProducts(): Product[] {
         slug: color.colorSlug,
         images: color.images,
       })),
-      sizes: cp.sizes.map((s) => ({
-        size: s.size,
-        stock: s.stock,
-        sku: s.sku,
-        ...(s.color ? { color: s.color } : {}),
-        ...(s.variantId ? { variantId: s.variantId } : {}),
-        price: s.price,
-      })),
+      sizes,
     };
 
     return product;
