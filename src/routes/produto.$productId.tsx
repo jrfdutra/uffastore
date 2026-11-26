@@ -128,8 +128,13 @@ function ProductDetail() {
     [p.sizes, activeColor, activeCord],
   );
 
-  // Escalões que existem efetivamente nesta cor, pela ordem Criança → GS → Senior.
-  const escaloesDisponiveis = useMemo(() => escaloesComStock(sizesForColor), [sizesForColor]);
+  // Escalões com stock nesta cor, pela ordem Criança → GS → Senior.
+  // Sem este filtro, um escalão sem stock podia ficar ativo e esconder os
+  // tamanhos disponíveis noutro escalão (ex.: só o 40,5 disponível).
+  const escaloesDisponiveis = useMemo(
+    () => escaloesComStock(sizesForColor.filter((size) => size.stock > 0)),
+    [sizesForColor],
+  );
 
   const activeEscalao =
     selectedEscalao && escaloesDisponiveis.includes(selectedEscalao)
