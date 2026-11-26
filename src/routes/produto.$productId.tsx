@@ -58,6 +58,11 @@ const GALERIAS_POR_VARIANTE: Record<string, Record<string, string[]>> = {
   },
 };
 
+/** Combinação apresentada por omissão ao abrir cada produto. */
+const SELECAO_INICIAL: Record<string, { cor?: string; corda?: string }> = {
+  "nike-air-force-chapa-dourada": { cor: "branca", corda: "branco" },
+};
+
 export const Route = createFileRoute("/produto/$productId")({
   loader: async ({ params }) => {
     const product = await loadProduct(params.productId);
@@ -98,9 +103,12 @@ function ProductDetail() {
     t = copy[s.language];
   const p = s.catalog.find((item) => item.id === loaderProduct.id) ?? loaderProduct;
 
-  const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
+  const selecaoInicial = SELECAO_INICIAL[p.id] ?? {};
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(selecaoInicial.cor);
   const [selectedCord, setSelectedCord] = useState<string | undefined>(undefined);
-  const [personalizacao, setPersonalizacao] = useState<Personalizacao>({});
+  const [personalizacao, setPersonalizacao] = useState<Personalizacao>(() =>
+    selecaoInicial.corda ? { corda: selecaoInicial.corda } : {},
+  );
   const [erroPersonalizacao, setErroPersonalizacao] = useState(false);
   const [selectedEscalao, setSelectedEscalao] = useState<Escalao | undefined>(undefined);
   const [selected, setSelected] = useState<number>();

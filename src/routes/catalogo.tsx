@@ -36,7 +36,7 @@ import { escalaoPorTamanho, type Escalao } from "@/lib/precos";
 import { ORDEM_ESCALOES } from "@/lib/variantes";
 
 /** Modelo que deve abrir sempre as listagens onde aparece (Nike / Black Friday). */
-const PRODUTO_EM_DESTAQUE = "air-force-floral-w-rope-laces";
+const PRODUTO_EM_DESTAQUE = "nike-air-force-chapa-dourada";
 
 function compareDestaquePrimeiro<T extends { id: string }>(a: T, b: T): number {
   return Number(b.id === PRODUTO_EM_DESTAQUE) - Number(a.id === PRODUTO_EM_DESTAQUE);
