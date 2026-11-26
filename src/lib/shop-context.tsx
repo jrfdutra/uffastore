@@ -281,8 +281,8 @@ export function ShopProvider({
       if (currentQty + 1 > variant.stock) {
         toast.error(
           language === "pt"
-            ? `Apenas existem ${variant.stock} unidades disponíveis no tamanho ${size}.`
-            : `Only ${variant.stock} units available in size ${size}.`,
+            ? `Não há mais stock disponível no tamanho ${size}.`
+            : `No more stock available in size ${size}.`,
         );
         return;
       }
@@ -363,8 +363,8 @@ export function ShopProvider({
       if (variant && quantity > variant.stock) {
         toast.error(
           language === "pt"
-            ? `Stock máximo atingido (${variant.stock} unidades disponíveis).`
-            : `Maximum stock reached (${variant.stock} units available).`,
+            ? "Stock máximo atingido para este tamanho."
+            : "Maximum stock reached for this size.",
         );
         targetQty = variant.stock;
       }

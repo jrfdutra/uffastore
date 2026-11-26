@@ -40,6 +40,21 @@ import {
   temPersonalizacao,
   type Personalizacao,
 } from "@/lib/personalizacao";
+import airForceBrancaBege from "@/assets/air-force-w-rope-lace-branca-bege.jpg";
+import airForceBrancaCinza from "@/assets/air-force-w-rope-lace-branca-cinza.jpg";
+import airForceBrancaPreto from "@/assets/air-force-w-rope-lace-branca-preto.jpg";
+import airForcePrincipal from "@/assets/air-force-w-rope-lace-principal.jpg";
+
+/** Galerias próprias de cada combinação cor + corda do AIR FORCE W ROPE LACE. */
+const GALERIAS_POR_VARIANTE: Record<string, Record<string, string[]>> = {
+  "nike-air-force-chapa-dourada": {
+    // Sem corda selecionada, mantém a nova imagem principal.
+    "branca-": [airForcePrincipal],
+    "branca-bege": [airForceBrancaBege, airForcePrincipal],
+    "branca-cinza": [airForceBrancaCinza, airForcePrincipal],
+    "branca-preto": [airForceBrancaPreto, airForcePrincipal],
+  },
+};
 
 export const Route = createFileRoute("/produto/$productId")({
   loader: async ({ params }) => {
@@ -147,7 +162,11 @@ function ProductDetail() {
   const isComingSoon = effectiveStatus === "comingsoon";
   const isInactive = p.status === "inactive";
 
-  const colorGallery = colors.find((color) => color.slug === activeColor)?.images;
+  // Fotografia específica da combinação cor + corda (quando existe).
+  const galeriaDaVariante =
+    GALERIAS_POR_VARIANTE[p.id]?.[`${activeColor ?? ""}-${personalizacao.corda ?? ""}`];
+  const colorGallery =
+    galeriaDaVariante ?? colors.find((color) => color.slug === activeColor)?.images;
   const gallery = colorGallery?.length ? colorGallery : p.images?.length ? p.images : [p.image];
   const currentImage = gallery[activeImage] ?? gallery[0] ?? p.image;
 
@@ -167,6 +186,7 @@ function ProductDetail() {
     setSelectedCord(slug);
     setSelected(undefined);
     setError(false);
+    setActiveImage(0);
   };
 
   const handleEscalaoChange = (escalao: string) => {
@@ -413,6 +433,7 @@ function ProductDetail() {
                             onClick={() => {
                               setPersonalizacao((atual) => ({ ...atual, corda: opcao.slug }));
                               setErroPersonalizacao(false);
+                              setActiveImage(0);
                             }}
                             aria-pressed={isActive}
                             className={`border px-3.5 py-2 text-xs font-bold uppercase tracking-wide transition ${
@@ -589,26 +610,17 @@ function ProductDetail() {
                       <SelectValue placeholder={t.selectSize} />
                     </SelectTrigger>
                     <SelectContent className="rounded-none">
-                      {sizesForEscalao.map((size) => {
-                        const disponivel = size.stock > 0;
-                        return (
+                      {sizesForEscalao
+                        .filter((size) => size.stock > 0)
+                        .map((size) => (
                           <SelectItem
                             key={size.size}
                             value={String(size.size)}
-                            disabled={!disponivel}
                             className="rounded-none py-2.5"
                           >
-                            <span className="flex w-full items-center justify-between gap-4">
-                              <span>{size.label ?? size.size}</span>
-                              {!disponivel && (
-                                <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                                  {t.soldOut}
-                                </span>
-                              )}
-                            </span>
+                            {size.label ?? size.size}
                           </SelectItem>
-                        );
-                      })}
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
