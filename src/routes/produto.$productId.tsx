@@ -50,9 +50,11 @@ const GALERIAS_POR_VARIANTE: Record<string, Record<string, string[]>> = {
   "nike-air-force-chapa-dourada": {
     // Sem corda selecionada, mantém a nova imagem principal.
     "branca-": [airForcePrincipal],
-    "branca-bege": [airForceBrancaBege, airForcePrincipal],
-    "branca-cinza": [airForceBrancaCinza, airForcePrincipal],
-    "branca-preto": [airForceBrancaPreto, airForcePrincipal],
+    "branca-bege": [airForceBrancaBege],
+    "branca-cinza": [airForceBrancaCinza],
+    "branca-preto": [airForceBrancaPreto],
+    // A fotografia branca pertence à corda Branca, não às restantes.
+    "branca-branco": [airForcePrincipal],
   },
 };
 
