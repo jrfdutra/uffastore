@@ -61,6 +61,8 @@ const GALERIAS_POR_VARIANTE: Record<string, Record<string, string[]>> = {
 /** Combinação apresentada por omissão ao abrir cada produto. */
 const SELECAO_INICIAL: Record<string, { cor?: string; corda?: string }> = {
   "nike-air-force-chapa-dourada": { cor: "branca", corda: "branco" },
+  // Abre na combinação a 69,99 € que o cliente pretende ver primeiro.
+  "nike-air-force-branco-laranja": { cor: "bege-e-rosa" },
 };
 
 export const Route = createFileRoute("/produto/$productId")({
