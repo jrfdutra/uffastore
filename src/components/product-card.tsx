@@ -103,12 +103,19 @@ export function ProductCard({ product }: { product: Product }) {
               }`}
             />
 
-            <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5 items-start z-10">
-              {isBlackFriday && !isSoldOut && (
-                <span className="border border-white/25 bg-black px-3 py-1 font-display text-xs uppercase tracking-widest font-black text-white shadow-md sm:text-sm">
+            {isBlackFriday && !isSoldOut && (
+              <div className="absolute inset-x-0 top-0 z-10">
+                <span className="block w-full border border-white/25 bg-black px-3 py-1 text-center font-display text-xs uppercase tracking-widest font-black text-white shadow-md sm:text-sm">
                   {tr(language, "BLACK FRIDAY", "BLACK FRIDAY", "BLACK FRIDAY")}
                 </span>
-              )}
+              </div>
+            )}
+
+            <div
+              className={`absolute left-2.5 z-10 flex flex-col gap-1.5 items-start ${
+                isBlackFriday && !isSoldOut ? "top-10" : "top-2.5"
+              }`}
+            >
               {isSale && !isSoldOut && (
                 <span className="bg-promo text-promo-foreground border-2 border-promo rounded-[4px] px-3 py-1 font-display text-xs sm:text-sm uppercase tracking-widest font-black shadow-md">
                   {tr(language, "PROMO", "PROMO", "PROMO")}
