@@ -42,6 +42,7 @@ import { useShop } from "@/lib/shop-context";
 import { tr } from "@/lib/i18n";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
 import { textoPersonalizacao } from "@/lib/personalizacao";
+import { imagemDoItem } from "@/lib/imagem-produto";
 import { company } from "@/lib/legal";
 import {
   useCallback,
@@ -132,7 +133,7 @@ function CartDrawer() {
               if (!p) {
                 return (
                   <div
-                    key={`${item.productId}-${item.size}-${item.color ?? "unica"}-${item.cord ?? "cord"}-${item.personalizacao?.corda ?? ""}-${item.personalizacao?.fio ?? ""}`}
+                    key={`${item.productId}-${item.size}-${item.color ?? "unica"}-${item.cord ?? "cord"}-${item.personalizacao?.corda ?? ""}-${item.personalizacao?.fio ?? ""}-${item.personalizacao?.corAirForce ?? ""}`}
                     className="flex items-center justify-between gap-3 border-b border-border pb-5"
                   >
                     <div className="min-w-0">
@@ -177,11 +178,11 @@ function CartDrawer() {
               const cordName = p.cords?.find((c) => c.slug === item.cord)?.name;
               return (
                 <div
-                  key={`${item.productId}-${item.size}-${item.color ?? "unica"}-${item.cord ?? "cord"}-${item.personalizacao?.corda ?? ""}-${item.personalizacao?.fio ?? ""}`}
+                  key={`${item.productId}-${item.size}-${item.color ?? "unica"}-${item.cord ?? "cord"}-${item.personalizacao?.corda ?? ""}-${item.personalizacao?.fio ?? ""}-${item.personalizacao?.corAirForce ?? ""}`}
                   className="grid grid-cols-[84px_1fr] gap-3 border-b border-border pb-5"
                 >
                   <img
-                    src={p.image}
+                    src={imagemDoItem(p, item)}
                     alt=""
                     width={1664}
                     height={2080}

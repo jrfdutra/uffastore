@@ -40,19 +40,7 @@ import {
   temPersonalizacao,
   type Personalizacao,
 } from "@/lib/personalizacao";
-import airForceBrancaNova from "@/assets/air-force-w-rope-lace-branca-nova.jpg";
-
-/** Galerias próprias de cada combinação cor + corda do AIR FORCE W ROPE LACE. */
-const GALERIAS_POR_VARIANTE: Record<string, Record<string, string[]>> = {
-  "nike-air-force-chapa-dourada": {
-    // A cor Branca mostra sempre a mesma fotografia, independentemente do cordão.
-    "branca-": [airForceBrancaNova],
-    "branca-bege": [airForceBrancaNova],
-    "branca-cinza": [airForceBrancaNova],
-    "branca-preto": [airForceBrancaNova],
-    "branca-branco": [airForceBrancaNova],
-  },
-};
+import { galeriaDaCor } from "@/lib/imagem-produto";
 
 /** Combinação apresentada por omissão ao abrir cada produto. */
 const SELECAO_INICIAL: Record<string, { cor?: string; corda?: string }> = {
@@ -175,12 +163,9 @@ function ProductDetail() {
   const isComingSoon = effectiveStatus === "comingsoon";
   const isInactive = p.status === "inactive";
 
-  // Fotografia específica da combinação cor + corda (quando existe).
-  const galeriaDaVariante =
-    GALERIAS_POR_VARIANTE[p.id]?.[`${activeColor ?? ""}-${personalizacao.corda ?? ""}`];
-  const colorGallery =
-    galeriaDaVariante ?? colors.find((color) => color.slug === activeColor)?.images;
-  const gallery = colorGallery?.length ? colorGallery : p.images?.length ? p.images : [p.image];
+  // A galeria acompanha a cor da Shopify. É a mesma fonte usada pelo cartão do
+  // catálogo, pelo carrinho e pela confirmação, para não haver fotos divergentes.
+  const gallery = galeriaDaCor(p, activeColor);
   const currentImage = gallery[activeImage] ?? gallery[0] ?? p.image;
 
   // O vídeo só aparece na cor a que pertence (ex.: Floral Orange).

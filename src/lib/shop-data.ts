@@ -19,6 +19,8 @@ export type ProductSize = {
   color?: string;
   /** Slug da opção Cute Cord da variante (quando o modelo tem essa opção). */
   cord?: string;
+  /** Fotografia associada a esta variante na Shopify. */
+  image?: string;
   sku?: string;
   variantId?: string;
   /** Preço unitário da variante já com IVA. */

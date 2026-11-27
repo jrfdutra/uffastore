@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { tr } from "@/lib/i18n";
+import { imagemDaCor } from "@/lib/imagem-produto";
 
 export function ProductCard({ product }: { product: Product }) {
   const { language, addToCart, wishlist, toggleWishlist } = useShop();
@@ -57,8 +58,7 @@ export function ProductCard({ product }: { product: Product }) {
     : undefined;
 
   // A fotografia acompanha a cor escolhida (cada variante tem a sua imagem na Shopify).
-  const colorImage = colors.find((color) => color.slug === activeColor)?.images?.[0];
-  const cardImage = colorImage ?? product.image;
+  const cardImage = imagemDaCor(product, activeColor);
 
   // Só variantes reais da cor (e Cute Cord) ativa; sem opção, todas contam.
   const variants = product.sizes.filter(

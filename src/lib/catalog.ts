@@ -181,6 +181,9 @@ function toProduct(node: ShopifyProductNode): Product {
         ...(parsed.label ? { label: parsed.label } : {}),
         ...(slug ? { color: slug } : {}),
         ...(cordSlug ? { cord: cordSlug } : {}),
+        // A foto própria da variante permite mostrar a miniatura certa no
+        // carrinho (ex.: Air Force Preta vs. Branca no mesmo anúncio).
+        ...(variant.image?.url ? { image: variant.image.url } : {}),
         ...(variant.sku ? { sku: variant.sku } : {}),
         ...(variant.sku && /-DEFEITO$/i.test(variant.sku) ? { note: NOTA_DEFEITO } : {}),
         variantId: variant.id,

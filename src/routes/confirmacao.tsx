@@ -21,6 +21,7 @@ import { money } from "@/lib/shop-data";
 import { textoPersonalizacao } from "@/lib/personalizacao";
 import { useShop } from "@/lib/shop-context";
 import { rotuloTamanhoDoProduto } from "@/lib/variantes";
+import { imagemDaCor, imagemDoItem } from "@/lib/imagem-produto";
 
 export const Route = createFileRoute("/confirmacao")({
   validateSearch: (search) => z.object({ order: z.string().optional() }).parse(search),
@@ -208,7 +209,7 @@ function Confirmation() {
                       >
                         {product && (
                           <img
-                            src={product.image}
+                            src={imagemDaCor(product)}
                             alt={item.name}
                             width={1200}
                             height={900}
@@ -419,12 +420,12 @@ function ThankYou({ pending }: { pending: PendingCheckout | null }) {
                   const product = catalog.find((candidate) => candidate.id === item.productId);
                   return (
                     <div
-                      key={`${item.productId}-${item.size}-${index}`}
+                      key={`${item.productId}-${item.size}-${item.color ?? ""}-${item.cord ?? ""}-${item.personalizacao?.corda ?? ""}-${item.personalizacao?.fio ?? ""}-${item.personalizacao?.corAirForce ?? ""}-${index}`}
                       className="grid grid-cols-[64px_1fr] gap-3 border-b border-border py-4 last:border-b-0"
                     >
                       {product && (
                         <img
-                          src={product.image}
+                          src={imagemDoItem(product, item)}
                           alt={item.name}
                           width={1200}
                           height={900}
