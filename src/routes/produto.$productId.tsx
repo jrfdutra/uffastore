@@ -40,21 +40,17 @@ import {
   temPersonalizacao,
   type Personalizacao,
 } from "@/lib/personalizacao";
-import airForceBrancaBege from "@/assets/air-force-w-rope-lace-branca-bege.jpg";
-import airForceBrancaCinza from "@/assets/air-force-w-rope-lace-branca-cinza.jpg";
-import airForceBrancaPreto from "@/assets/air-force-w-rope-lace-branca-preto.jpg";
-import airForcePrincipal from "@/assets/air-force-w-rope-lace-principal.jpg";
+import airForceBrancaNova from "@/assets/air-force-w-rope-lace-branca-nova.jpg";
 
 /** Galerias próprias de cada combinação cor + corda do AIR FORCE W ROPE LACE. */
 const GALERIAS_POR_VARIANTE: Record<string, Record<string, string[]>> = {
   "nike-air-force-chapa-dourada": {
-    // Sem corda selecionada, mantém a nova imagem principal.
-    "branca-": [airForcePrincipal],
-    "branca-bege": [airForceBrancaBege],
-    "branca-cinza": [airForceBrancaCinza],
-    "branca-preto": [airForceBrancaPreto],
-    // A fotografia branca pertence à corda Branca, não às restantes.
-    "branca-branco": [airForcePrincipal],
+    // A cor Branca mostra sempre a mesma fotografia, independentemente do cordão.
+    "branca-": [airForceBrancaNova],
+    "branca-bege": [airForceBrancaNova],
+    "branca-cinza": [airForceBrancaNova],
+    "branca-preto": [airForceBrancaNova],
+    "branca-branco": [airForceBrancaNova],
   },
 };
 
