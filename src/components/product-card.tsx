@@ -148,7 +148,9 @@ export function ProductCard({ product }: { product: Product }) {
                 e.stopPropagation();
                 toggleWishlist(product.id);
               }}
-              className="absolute right-2.5 top-2.5 z-20 grid size-10 place-items-center bg-background/85 backdrop-blur-sm text-foreground transition hover:bg-background hover:scale-110 active:scale-95 shadow-sm"
+              className={`absolute right-2.5 z-20 grid size-10 place-items-center bg-background/85 backdrop-blur-sm text-foreground transition hover:bg-background hover:scale-110 active:scale-95 shadow-sm ${
+                isBlackFriday && !isSoldOut ? "top-11" : "top-2.5"
+              }`}
               aria-label={tr(
                 language,
                 "Adicionar aos favoritos",
