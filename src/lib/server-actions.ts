@@ -3,6 +3,7 @@ import { company } from "./legal.ts";
 import { loadServerEnv } from "./server-env.ts";
 import type { ContactRequest } from "./contact.ts";
 import type { ProductRequest } from "./product-request.ts";
+import type { NewsletterRequest } from "./newsletter.ts";
 
 export async function sendShopifyOrderEmail(orderData: {
   orderNumber: string;
@@ -56,9 +57,7 @@ atendimento@uffastore.pt`;
     return { success: false, error: resJson };
   }
 
-  console.log(
-    `E-mail de confirmação enviado para ${orderData.email} (Encomenda ${orderData.orderNumber})`,
-  );
+  console.log(`E-mail de confirmação enviado (Encomenda ${orderData.orderNumber})`);
   return { success: true, data: resJson };
 }
 
@@ -118,7 +117,7 @@ atendimento@uffastore.pt`;
     return { success: false, error: resJson };
   }
 
-  console.log(`E-mail de envio enviado para ${data.email} (Encomenda ${data.orderNumber})`);
+  console.log(`E-mail de envio enviado (Encomenda ${data.orderNumber})`);
   return { success: true, data: resJson };
 }
 
@@ -168,7 +167,7 @@ atendimento@uffastore.pt`;
     return { success: false, error: resJson };
   }
 
-  console.log(`Convite NPS enviado para ${data.email} (Encomenda ${data.orderNumber})`);
+  console.log(`Convite NPS enviado (Encomenda ${data.orderNumber})`);
   return { success: true, data: resJson };
 }
 
@@ -300,7 +299,7 @@ Responder diretamente a ${data.email}.`;
   }
 
   console.log(
-    `Pedido de contacto enviado para ${company.email} (${CONTACT_REASON_LABELS[data.reason]}, ${data.email})${data.image ? " com fotografia" : ""}`,
+    `Pedido de contacto enviado para ${company.email} (${CONTACT_REASON_LABELS[data.reason]})${data.image ? " com fotografia" : ""}`,
   );
   return { success: true, data: resJson };
 }
@@ -351,6 +350,52 @@ Responder diretamente a ${data.email} ou ligar para ${data.phone}.`;
     return { success: false, error: resJson };
   }
 
-  console.log(`Pedido de produto enviado para ${company.email} (${data.product}, ${data.email})`);
+  console.log(`Pedido de produto enviado para ${company.email} (${data.product})`);
+  return { success: true, data: resJson };
+}
+
+/** Regista uma subscrição de newsletter via Resend, sem expor a caixa no cliente. */
+export async function sendNewsletterEmail(data: NewsletterRequest) {
+  const env = await loadServerEnv();
+  const apiKey = env["RESEND_API_KEY"];
+  const from = env["RESEND_FROM"] || "onboarding@resend.dev";
+
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY não configurada; subscrição não enviada.");
+    return { success: false, error: "Missing RESEND_API_KEY" };
+  }
+
+  const languageName = { pt: "Português", en: "English", es: "Español" }[data.language];
+  const originName = data.origin === "footer" ? "Rodapé do site" : "Página inicial";
+  const subject = "Nova subscrição da newsletter — Uffa Store";
+  const text = `Nova subscrição através do site uffastore.pt.
+
+Email: ${data.email}
+Idioma: ${languageName}
+Origem: ${originName}
+
+Responder diretamente a ${data.email}.`;
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      from,
+      to: [company.email],
+      reply_to: data.email,
+      subject,
+      text,
+    }),
+  });
+
+  const resJson = (await response.json()) as Record<string, unknown>;
+  if (!response.ok) {
+    console.error("Erro ao enviar subscrição via Resend:", resJson);
+    return { success: false, error: resJson };
+  }
+
   return { success: true, data: resJson };
 }

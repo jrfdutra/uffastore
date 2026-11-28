@@ -22,6 +22,7 @@ export const Route = createFileRoute("/manual")({
       },
       { property: "og:title", content: "Manual Oficial — Uffa Store" },
       { property: "og:type", content: "website" },
+      { name: "robots", content: "noindex, nofollow" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/manual" }],
@@ -123,9 +124,9 @@ function ManualPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             {tr(
               language,
-              "Adicionar ao carrinho aciona um toast com ação não intrusiva 'Ver carrinho'. Gestão de quantidades, cupões de desconto (ex: PORTO20) e persistência local.",
-              "Adding to cart triggers a toast with a non-intrusive 'View cart' action. Quantity management, discount coupons (e.g. PORTO20), and local persistence.",
-              "Añadir al carrito activa un toast con acción no intrusiva 'Ver carrito'. Gestión de cantidades y cupones.",
+              "Adicionar ao carrinho aciona um toast com ação não intrusiva 'Ver carrinho'. Gestão de quantidades e persistência local; códigos de desconto são validados pela Shopify.",
+              "Adding to cart triggers a non-intrusive 'View cart' toast. Quantity management and local persistence; discount codes are validated by Shopify.",
+              "Añadir al carrito activa un toast no intrusivo 'Ver carrito'. Gestión de cantidades y persistencia local; los códigos de descuento los valida Shopify.",
             )}
           </p>
         </div>

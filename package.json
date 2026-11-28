@@ -1,5 +1,5 @@
 {
-  "name": "tanstack_start_ts",
+  "name": "uffa-store",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -10,13 +10,14 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --test src/lib/imagem-produto.test.ts src/lib/catalogo.test.ts src/lib/colors.test.ts src/lib/precos.test.ts src/lib/variantes.test.ts src/lib/pares.test.ts src/lib/webhook-core.test.ts src/lib/fulfillment-webhook.test.ts src/lib/brands.test.ts src/lib/cart.test.ts src/lib/models.test.ts src/lib/tracking.test.ts src/lib/tracking-link.test.ts src/lib/nps-link.test.ts src/lib/nps-core.test.ts src/lib/nps-run.test.ts src/lib/nps-response-notification.test.ts src/lib/contact.test.ts src/lib/product-request.test.ts src/lib/pickup-locations.test.ts src/lib/personalizacao.test.ts src/lib/sale.test.ts",
+    "test": "node --test src/lib/newsletter.test.ts src/lib/rate-limit.test.ts src/lib/imagem-produto.test.ts src/lib/catalogo.test.ts src/lib/colors.test.ts src/lib/precos.test.ts src/lib/variantes.test.ts src/lib/pares.test.ts src/lib/webhook-core.test.ts src/lib/fulfillment-webhook.test.ts src/lib/brands.test.ts src/lib/cart.test.ts src/lib/models.test.ts src/lib/tracking.test.ts src/lib/tracking-link.test.ts src/lib/nps-link.test.ts src/lib/nps-core.test.ts src/lib/nps-run.test.ts src/lib/nps-response-notification.test.ts src/lib/contact.test.ts src/lib/product-request.test.ts src/lib/pickup-locations.test.ts src/lib/personalizacao.test.ts src/lib/sale.test.ts",
     "test:e2e": "playwright test",
     "format": "prettier --write ."
   },
   "overrides": {
     "rolldown": "1.2.1",
-    "@tanstack/router-core": "1.171.35"
+    "@tanstack/router-core": "1.171.35",
+    "image-size": "2.2.0"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -39,12 +40,10 @@
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.1",
     "tw-animate-css": "^1.3.4",
-    "vite-tsconfig-paths": "^6.0.2",
-    "zod": "^3.25.76"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
-    "@lovable.dev/vite-tanstack-config": "^2.23.1",
     "@playwright/test": "^1.65.1",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
@@ -58,10 +57,11 @@
     "globals": "^15.15.0",
     "heic-convert": "^2.1.0",
     "nitro": "3.0.260603-beta",
+    "pptxgenjs": "^4.0.1",
     "prettier": "^3.7.3",
     "sharp": "^0.35.5",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
-    "vite": "8.1.5"
+    "vite": "^8.4.0"
   }
 }

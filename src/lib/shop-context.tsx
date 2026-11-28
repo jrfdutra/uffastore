@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { toast } from "sonner";
-import { copy, products as fallbackProducts, type Language, type Product } from "./shop-data";
+import { copy, type Language, type Product } from "./shop-data";
 import { getConsolidatedAsProducts } from "./catalog-adapter";
 import { loadCatalog, resetCatalogToDefault } from "./catalog";
 import { tr } from "./i18n";
@@ -31,7 +31,8 @@ export type CartItem = {
   /** ID da variante na Shopify, usado no checkout. */
   variantId?: string;
 };
-export type Coupon = { code: string; discountPercent: number };
+/** O código é enviado à Shopify, que é a única entidade que valida e aplica descontos. */
+export type Coupon = { code: string };
 
 type ShopContextValue = {
   catalog: Product[];
@@ -75,8 +76,6 @@ type ShopContextValue = {
   coupon: Coupon | null;
   applyCoupon: (code: string) => boolean;
   removeCoupon: () => void;
-  discountAmount: number;
-  finalTotal: number;
   // Catalog / Model Management
   saveProduct: (product: Product) => void;
   deleteProduct: (productId: string) => void;
@@ -89,11 +88,7 @@ const CART_KEY = "uffa-cart";
 const WISHLIST_KEY = "uffa-wishlist";
 const LANGUAGES: Language[] = ["pt", "en", "es"];
 
-const VALID_COUPONS: Record<string, number> = {
-  UFFA10: 10,
-  PORTO20: 20,
-  VIP15: 15,
-};
+const COUPON_MAX_LENGTH = 40;
 
 const ShopContext = createContext<ShopContextValue | null>(null);
 
@@ -454,16 +449,14 @@ export function ShopProvider({
   const isInWishlist = useCallback((productId: string) => wishlist.includes(productId), [wishlist]);
 
   const applyCoupon = useCallback((code: string) => {
-    const clean = code.trim().toUpperCase();
-    const percent = VALID_COUPONS[clean];
-    if (percent) {
-      setCoupon({ code: clean, discountPercent: percent });
-      toast.success(`Cupão ${clean} aplicado (${percent}% desc.)!`);
-      return true;
-    } else {
-      toast.error("Cupão inválido ou expirado.");
+    const clean = code.trim().toUpperCase().slice(0, COUPON_MAX_LENGTH);
+    if (!clean || !/^[A-Z0-9_-]+$/.test(clean)) {
+      toast.error("Código de desconto inválido.");
       return false;
     }
+    setCoupon({ code: clean });
+    toast.success("Código guardado. A Shopify aplica-o no checkout.");
+    return true;
   }, []);
 
   const removeCoupon = useCallback(() => {
@@ -489,9 +482,6 @@ export function ShopProvider({
     return sum + unitPrice * item.quantity;
   }, 0);
 
-  const discountAmount = coupon ? (subtotal * coupon.discountPercent) / 100 : 0;
-  const finalTotal = Math.max(0, subtotal - discountAmount);
-
   const value = useMemo(
     () => ({
       catalog,
@@ -514,8 +504,6 @@ export function ShopProvider({
       coupon,
       applyCoupon,
       removeCoupon,
-      discountAmount,
-      finalTotal,
       saveProduct,
       deleteProduct,
       updateStock,
@@ -541,8 +529,6 @@ export function ShopProvider({
       coupon,
       applyCoupon,
       removeCoupon,
-      discountAmount,
-      finalTotal,
       saveProduct,
       deleteProduct,
       updateStock,

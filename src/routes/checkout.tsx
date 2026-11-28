@@ -30,63 +30,7 @@ import {
   type PickupLocation,
 } from "@/lib/pickup-locations";
 import { PaymentBadges } from "@/components/payment-badges";
-
-export type DeliveryOption = "pickup" | "continental" | "islands" | "eu" | "switzerland";
-
-export const deliveryRates: Record<
-  DeliveryOption,
-  {
-    price: number;
-    title: { pt: string; en: string; es: string };
-    subtitle: { pt: string; en: string; es: string };
-  }
-> = {
-  pickup: {
-    price: 0,
-    title: {
-      pt: "Recolha em mão (3 locais)",
-      en: "Hand pickup (3 locations)",
-      es: "Recogida en mano (3 lugares)",
-    },
-    subtitle: { pt: "Grátis (0,00 €)", en: "Free (0.00 €)", es: "Gratis (0,00 €)" },
-  },
-  continental: {
-    price: 8.94,
-    title: { pt: "Portugal Continental", en: "Portugal Mainland", es: "Portugal Continental" },
-    subtitle: {
-      pt: "Envio expresso · 8,94 €",
-      en: "Express shipping · 8.94 €",
-      es: "Envío expreso · 8,94 €",
-    },
-  },
-  islands: {
-    price: 8.94,
-    title: { pt: "Portugal - Ilhas", en: "Portugal Islands", es: "Portugal - Islas" },
-    subtitle: {
-      pt: "Açores e Madeira · 8,94 €",
-      en: "Azores & Madeira · 8.94 €",
-      es: "Azores y Madeira · 8,94 €",
-    },
-  },
-  eu: {
-    price: 24.0,
-    title: { pt: "União Europeia", en: "European Union", es: "Unión Europea" },
-    subtitle: {
-      pt: "Qualquer país da UE · 24,00 €",
-      en: "Any EU country · 24.00 €",
-      es: "Cualquier país de la UE · 24,00 €",
-    },
-  },
-  switzerland: {
-    price: 34.0,
-    title: { pt: "Suíça", en: "Switzerland", es: "Suiza" },
-    subtitle: {
-      pt: "Envio internacional · 34,00 €",
-      en: "International shipping · 34.00 €",
-      es: "Envío internacional · 34,00 €",
-    },
-  },
-};
+import { deliveryRates, type DeliveryOption } from "@/lib/delivery-rates";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -123,7 +67,7 @@ function Checkout() {
   const [error, setError] = useState("");
 
   const shipping = deliveryRates[delivery].price;
-  const grandTotal = s.finalTotal + shipping;
+  const grandTotal = s.subtotal + shipping;
 
   const handleShareWhatsApp = () => {
     const itemsText = s.cart
@@ -499,12 +443,6 @@ function Checkout() {
               <span className="min-w-0">{t.subtotal}</span>
               <span className="shrink-0 whitespace-nowrap">{money(s.subtotal)}</span>
             </div>
-            {s.discountAmount > 0 && (
-              <div className="flex min-w-0 justify-between gap-3 text-primary font-semibold">
-                <span className="min-w-0 break-words">Desconto ({s.coupon?.code})</span>
-                <span className="shrink-0 whitespace-nowrap">-{money(s.discountAmount)}</span>
-              </div>
-            )}
             {delivery !== "pickup" ? (
               <div className="flex min-w-0 justify-between gap-3">
                 <span className="min-w-0 break-words">
@@ -566,9 +504,10 @@ function Checkout() {
               </Button>
             </div>
             {s.coupon && (
-              <div className="mt-2 flex items-center justify-between text-[11px] bg-primary/10 text-primary px-2.5 py-1 font-bold">
-                <span>
-                  Cupão {s.coupon.code} (-{s.coupon.discountPercent}%)
+              <div className="mt-2 flex items-center justify-between gap-2 text-[11px] bg-primary/10 text-primary px-2.5 py-1 font-bold">
+                <span className="min-w-0 break-all">
+                  Código: {s.coupon.code}
+                  <span className="block font-normal">Validado no checkout da Shopify</span>
                 </span>
                 <button type="button" onClick={s.removeCoupon} className="underline">
                   {tr(s.language, "Remover", "Remove", "Eliminar")}

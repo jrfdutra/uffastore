@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Newsletter } from "@/components/newsletter";
-import { FeedbacksSection } from "@/components/feedbacks-section";
 import { TrustStrip } from "@/components/trust-strip";
 import { OffCarousel } from "@/components/off-carousel";
 import { HeroCarousel } from "@/components/hero-carousel";
@@ -143,8 +142,6 @@ function Home() {
           <ProductRequestCard />
         </div>
       </section>
-
-      <FeedbacksSection language={language} />
 
       <section className="mx-auto max-w-7xl px-4 py-16 md:py-20 md:px-6">
         <Newsletter />

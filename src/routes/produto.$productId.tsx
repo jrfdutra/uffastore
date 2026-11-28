@@ -597,7 +597,7 @@ function ProductDetail() {
                     <span className="text-xs text-muted-foreground">EU</span>
                   </div>
                   <Select
-                    value={selected ? String(selected) : undefined}
+                    value={selected === undefined ? "" : String(selected)}
                     onValueChange={handleSizeChange}
                     disabled={isSoldOut || isComingSoon || sizesForEscalao.length === 0}
                   >

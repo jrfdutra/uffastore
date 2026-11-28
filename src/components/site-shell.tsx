@@ -77,7 +77,7 @@ function CartDrawer() {
         return `${item.quantity}x ${p?.name || item.productId} (Tam: ${sizeLabel(p, item.size)})`;
       })
       .join(", ");
-    const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.finalTotal)}\nVisita: ${window.location.origin}`;
+    const text = `🛒 Carrinho UFFA Store:\n${itemsText}\nTotal: ${money(s.subtotal)}\nVisita: ${window.location.origin}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -88,7 +88,7 @@ function CartDrawer() {
         return `${item.quantity}x ${p?.name || item.productId} (Tam: ${sizeLabel(p, item.size)})`;
       })
       .join(", ");
-    const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(s.finalTotal)}`;
+    const text = `🛒 Carrinho UFFA Store: ${itemsText} — Total: ${money(s.subtotal)}`;
     try {
       await navigator.clipboard.writeText(text);
       toast.success(tr(s.language, "Carrinho copiado!", "Cart copied!", "¡Carrito copiado!"));
@@ -309,9 +309,10 @@ function CartDrawer() {
             </div>
 
             {s.coupon && (
-              <div className="flex items-center justify-between text-xs bg-primary/10 text-primary px-3 py-1.5 font-bold">
-                <span>
-                  Cupão: {s.coupon.code} (-{s.coupon.discountPercent}%)
+              <div className="flex items-center justify-between gap-2 text-xs bg-primary/10 text-primary px-3 py-1.5 font-bold">
+                <span className="min-w-0 break-all">
+                  Código: {s.coupon.code}
+                  <span className="block font-normal">Aplicado no checkout da Shopify</span>
                 </span>
                 <button
                   type="button"
@@ -326,16 +327,7 @@ function CartDrawer() {
             <div className="flex justify-between text-lg font-bold">
               <span>{t.subtotal}</span>
               <div className="text-right">
-                {s.discountAmount > 0 ? (
-                  <div>
-                    <span className="text-xs text-muted-foreground line-through block">
-                      {money(s.subtotal)}
-                    </span>
-                    <span className="text-primary price-outline">{money(s.finalTotal)}</span>
-                  </div>
-                ) : (
-                  <span className="price-outline">{money(s.subtotal)}</span>
-                )}
+                <span className="price-outline">{money(s.subtotal)}</span>
               </div>
             </div>
 

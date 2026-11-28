@@ -1,15 +1,52 @@
-// A config base já inclui: tanstackStart, viteReact, tailwindcss, tsconfig paths,
-// nitro (build), alias "@" e dedupe de React/TanStack. Não adicionar estes plugins
-// manualmente para evitar duplicados. Config extra via defineConfig({ vite: { ... } }).
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { defineConfig, loadEnv } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { nitro } from "nitro/vite";
+import { fileURLToPath } from "node:url";
 
-export default defineConfig({
-  tanstackStart: {
-    // Usa src/server.ts como entrada do servidor (wrapper de erros SSR).
-    server: { entry: "server" },
-  },
-  nitro: {
-    // Garante o preset correto para o Vercel (sem depender de auto-deteção).
-    preset: "vercel",
-  },
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "VITE_");
+  const define = Object.fromEntries(
+    Object.entries(env).map(([key, value]) => [`import.meta.env.${key}`, JSON.stringify(value)]),
+  );
+
+  return {
+    server: { host: "::", port: 8080 },
+    define,
+    css: { transformer: "lightningcss" },
+    resolve: {
+      alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+      tsconfigPaths: true,
+      dedupe: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+        "@tanstack/react-query",
+        "@tanstack/query-core",
+      ],
+    },
+    optimizeDeps: {
+      include: [
+        "react",
+        "react-dom",
+        "react-dom/client",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+      ],
+    },
+    plugins: [
+      tailwindcss(),
+      tanstackStart({
+        server: { entry: "server" },
+        importProtection: {
+          behavior: "error",
+          client: { files: ["**/server/**"], specifiers: ["server-only"] },
+        },
+      }),
+      react(),
+      ...(mode === "production" ? [nitro({ preset: "vercel" })] : []),
+    ],
+  };
 });

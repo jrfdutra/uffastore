@@ -14,6 +14,7 @@ import {
 import { parseFulfillmentPayload, type FulfillmentNotification } from "./lib/fulfillment-webhook";
 import {
   sendContactEmail,
+  sendNewsletterEmail,
   sendNpsEmail,
   sendNpsResponseNotification,
   sendProductRequestEmail,
@@ -23,6 +24,9 @@ import { parseContactRequest } from "./lib/contact";
 import { CONTACT_BODY_LIMIT, CONTACT_PATH } from "./lib/contact-constants";
 import { parseProductRequest } from "./lib/product-request";
 import { PRODUCT_REQUEST_BODY_LIMIT, PRODUCT_REQUEST_PATH } from "./lib/product-request-constants";
+import { parseNewsletterRequest } from "./lib/newsletter";
+import { NEWSLETTER_BODY_LIMIT, NEWSLETTER_PATH } from "./lib/newsletter-constants";
+import { RateLimiter, clientIp, hasAllowedOrigin } from "./lib/rate-limit";
 import {
   createTrackingLink,
   getTrackingAdminToken,
@@ -53,10 +57,19 @@ const NPS_PATH = "/api/nps";
 const TRACKING_BODY_LIMIT = 8_192;
 const NPS_BODY_LIMIT = 4_096;
 
+// No máximo 6 mensagens por IP em 10 minutos, por endpoint público de e-mail.
+const publicEmailLimiter = new RateLimiter(6, 10 * 60_000);
+
 /** Conta bytes UTF-8: `String.length` subestima caracteres multibyte (emoji, acentos). */
 const bodyEncoder = new TextEncoder();
 function byteLength(value: string): number {
   return bodyEncoder.encode(value).byteLength;
+}
+
+function rejectForeignOrigin(request: Request): Response | null {
+  return hasAllowedOrigin(request)
+    ? null
+    : jsonResponse(403, { success: false, reason: "invalid_origin" });
 }
 
 // Dois níveis: evita reenvios do mesmo evento e de atualizações posteriores
@@ -65,6 +78,11 @@ const fulfillmentEventDeduplicator = new WebhookDeduplicator();
 const fulfillmentTrackingDeduplicator = new WebhookDeduplicator(60 * 60_000, 10_000);
 
 async function handleContact(request: Request): Promise<Response> {
+  const originError = rejectForeignOrigin(request);
+  if (originError) return originError;
+  if (!publicEmailLimiter.allows(clientIp(request))) {
+    return jsonResponse(429, { success: false, reason: "rate_limited" });
+  }
   const declaredLength = Number.parseInt(request.headers.get("content-length") ?? "", 10);
   if (Number.isFinite(declaredLength) && declaredLength > CONTACT_BODY_LIMIT) {
     return jsonResponse(413, { success: false, reason: "payload_too_large" });
@@ -86,6 +104,11 @@ async function handleContact(request: Request): Promise<Response> {
 }
 
 async function handleProductRequest(request: Request): Promise<Response> {
+  const originError = rejectForeignOrigin(request);
+  if (originError) return originError;
+  if (!publicEmailLimiter.allows(clientIp(request))) {
+    return jsonResponse(429, { success: false, reason: "rate_limited" });
+  }
   const declaredLength = Number.parseInt(request.headers.get("content-length") ?? "", 10);
   if (Number.isFinite(declaredLength) && declaredLength > PRODUCT_REQUEST_BODY_LIMIT) {
     return jsonResponse(413, { success: false, reason: "payload_too_large" });
@@ -100,6 +123,36 @@ async function handleProductRequest(request: Request): Promise<Response> {
   if (!parsed.ok) return jsonResponse(400, { success: false, reason: parsed.reason });
 
   const result = await sendProductRequestEmail(parsed.request);
+  return jsonResponse(result.success ? 200 : 502, {
+    success: result.success,
+    reason: result.success ? undefined : "email_failed",
+  });
+}
+
+async function handleNewsletter(request: Request): Promise<Response> {
+  const originError = rejectForeignOrigin(request);
+  if (originError) return originError;
+  if (!publicEmailLimiter.allows(clientIp(request))) {
+    return jsonResponse(429, { success: false, reason: "rate_limited" });
+  }
+
+  const declaredLength = Number.parseInt(request.headers.get("content-length") ?? "", 10);
+  if (Number.isFinite(declaredLength) && declaredLength > NEWSLETTER_BODY_LIMIT) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+  const raw = await request.text();
+  if (byteLength(raw) > NEWSLETTER_BODY_LIMIT) {
+    return jsonResponse(413, { success: false, reason: "payload_too_large" });
+  }
+
+  const parsed = parseNewsletterRequest(raw);
+  if (!parsed.ok) {
+    return jsonResponse(400, { success: false, reason: parsed.reason });
+  }
+  // Honeypot preenchido: resposta idêntica à real, sem enviar e-mail.
+  if ("ignored" in parsed) return jsonResponse(200, { success: true });
+
+  const result = await sendNewsletterEmail(parsed.request);
   return jsonResponse(result.success ? 200 : 502, {
     success: result.success,
     reason: result.success ? undefined : "email_failed",
@@ -582,6 +635,21 @@ export default {
     // segredos, quer venham do painel Vercel quer do ficheiro local.
     await loadServerEnv();
     const url = new URL(request.url);
+
+    if (url.pathname === NEWSLETTER_PATH) {
+      if (request.method !== "POST") {
+        return new Response("Method Not Allowed", {
+          status: 405,
+          headers: { allow: "POST" },
+        });
+      }
+      try {
+        return await handleNewsletter(request);
+      } catch (error) {
+        console.error("[Newsletter] Erro fatal:", error instanceof Error ? error.message : error);
+        return jsonResponse(500, { success: false, reason: "internal_error" });
+      }
+    }
 
     if (url.pathname === PRODUCT_REQUEST_PATH) {
       if (request.method !== "POST") {

@@ -1,10 +1,4 @@
-import {
-  products as fallbackProducts,
-  type Category,
-  type Product,
-  type ProductColor,
-  type ProductSize,
-} from "./shop-data";
+import type { Category, Product, ProductColor, ProductSize } from "./shop-data";
 import { brandFromText } from "./brands.ts";
 import { FOTO_PADRAO } from "./consolidated-catalog";
 import { getConsolidatedAsProducts } from "./catalog-adapter";
@@ -315,5 +309,3 @@ export async function loadCatalog(): Promise<Product[]> {
     return consolidatedList;
   }
 }
-
-export { fallbackProducts };

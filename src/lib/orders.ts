@@ -1,6 +1,7 @@
 import { localeByLanguage } from "./i18n";
 import { pairCount } from "./pair-code";
-import { products, type Language, type Product } from "./shop-data";
+import type { Language } from "./shop-data";
+import { getConsolidatedAsProducts } from "./catalog-adapter";
 import { readStorage, removeStorage, writeStorage } from "./storage";
 import { DEFAULT_PICKUP_LOCATION } from "./pickup-locations";
 
@@ -70,7 +71,6 @@ export type Order = {
   notes: string | null;
   events: OrderEvent[];
   notifications: EmailNotification[];
-  isDemo: boolean;
 };
 
 export type OrderPatch = {
@@ -173,13 +173,6 @@ export const DEFAULT_CARRIER = "CTT Expresso";
 export const OFFICIAL_SENDER = "atendimento@uffastore.pt";
 export const OFFICIAL_SENDER_NAME = "UFFA | Atendimento";
 
-export const demoAccess = {
-  orderNumber: "UFFA-48217",
-  contact: "demo@uffa.pt",
-  accessCode: "UFFA-7K3M-9QX2",
-  trackingCode: "PT-48217-9QX2",
-} as const;
-
 const ORDERS_KEY = "uffa-orders-v1";
 const ATTEMPTS_KEY = "uffa-order-attempts-v1";
 const SESSION_KEY = "uffa-order-session-v1";
@@ -222,26 +215,6 @@ function makeId() {
     return crypto.randomUUID();
   }
   return `${Date.now()}-${randomToken(10)}`;
-}
-
-// As encomendas de demonstração devem usar sempre o catálogo atual.
-// Escolhe por índice para nunca referenciar produtos que já não existem.
-function productAt(index: number): Product {
-  const product = products[index] ?? products[0];
-  if (!product) {
-    throw new Error("Catálogo vazio: não é possível gerar encomendas de demonstração.");
-  }
-  return product;
-}
-
-function at(daysAgo: number, hour: number, minute = 0) {
-  const date = new Date(Date.now() - daysAgo * DAY);
-  date.setHours(hour, minute, 0, 0);
-  return date.toISOString();
-}
-
-function hoursAgo(hours: number) {
-  return new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 }
 
 function inDays(days: number) {
@@ -303,144 +276,6 @@ export function resendEmailNotification(orderNumber: string, notificationId: str
   return updated;
 }
 
-function seedOrders(): Order[] {
-  const rose = productAt(0);
-  const court = productAt(1);
-  const invicta = productAt(2);
-
-  const orders: Order[] = [
-    {
-      id: "demo-order-in-transit",
-      number: demoAccess.orderNumber,
-      accessCode: demoAccess.accessCode,
-      contact: demoAccess.contact,
-      customerName: "Marta Silva",
-      createdAt: at(5, 10, 12),
-      updatedAt: at(1, 18, 10),
-      delivery: "shipping",
-      address: "Rua de Cedofeita 120, 4050-174 Porto",
-      payment: "mbway",
-      items: [
-        {
-          productId: rose.id,
-          name: rose.name,
-          size: 39,
-          quantity: 1,
-          unitPrice: rose.price,
-        },
-        {
-          productId: court.id,
-          name: court.name,
-          size: 40,
-          quantity: 1,
-          unitPrice: court.price,
-        },
-      ],
-      subtotal: rose.price + court.price,
-      shipping: 8.94,
-      total: rose.price + court.price + 8.94,
-      status: "in_transit",
-      trackingCode: demoAccess.trackingCode,
-      carrier: DEFAULT_CARRIER,
-      estimatedDelivery: inDays(2),
-      pickupLocation: null,
-      notes: "A encomenda segue para distribuição no Porto. Entrega prevista até às 18h.",
-      events: [
-        {
-          id: "e1",
-          status: "confirmed",
-          at: at(5, 10, 12),
-          message: null,
-          location: "UFFA Store · Porto",
-        },
-        {
-          id: "e2",
-          status: "preparing",
-          at: at(4, 15, 40),
-          message: null,
-          location: "UFFA Store · Porto",
-        },
-        {
-          id: "e3",
-          status: "shipped",
-          at: at(2, 9, 25),
-          message: null,
-          location: "CTT Expresso · Porto",
-        },
-        {
-          id: "e4",
-          status: "in_transit",
-          at: at(1, 18, 10),
-          message: null,
-          location: "Centro de distribuição · Lisboa",
-        },
-      ],
-      notifications: [],
-      isDemo: true,
-    },
-    {
-      id: "demo-order-ready-pickup",
-      number: "UFFA-73104",
-      accessCode: "UFFA-2P8N-5RV6",
-      contact: "demo@uffa.pt",
-      customerName: "João Pereira",
-      createdAt: at(2, 9, 30),
-      updatedAt: hoursAgo(5),
-      delivery: "pickup",
-      address: null,
-      payment: "mbway",
-      items: [
-        {
-          productId: invicta.id,
-          name: invicta.name,
-          size: 42,
-          quantity: 1,
-          unitPrice: invicta.price,
-        },
-      ],
-      subtotal: invicta.price,
-      shipping: 0,
-      total: invicta.price,
-      status: "ready_pickup",
-      trackingCode: null,
-      carrier: null,
-      estimatedDelivery: inDays(1),
-      pickupLocation: PICKUP_LOCATION,
-      notes: "O teu par está reservado na loja. Traz o número da encomenda e o código exclusivo.",
-      events: [
-        {
-          id: "e5",
-          status: "confirmed",
-          at: at(2, 9, 30),
-          message: null,
-          location: "UFFA Store · Porto",
-        },
-        {
-          id: "e6",
-          status: "preparing",
-          at: at(1, 11, 0),
-          message: null,
-          location: "UFFA Store · Porto",
-        },
-        {
-          id: "e7",
-          status: "ready_pickup",
-          at: hoursAgo(5),
-          message: null,
-          location: PICKUP_LOCATION,
-        },
-      ],
-      notifications: [],
-      isDemo: true,
-    },
-  ];
-
-  return orders.map((o) => ({
-    ...o,
-    notifications: [sendEmailNotification(o, o.status)],
-  }));
-}
-
 export function loadOrders(): Order[] {
   if (!isBrowser()) return [];
   try {
@@ -452,27 +287,13 @@ export function loadOrders(): Order[] {
   } catch {
     removeStorage("local", ORDERS_KEY);
   }
-  try {
-    const seeded = seedOrders();
-    saveOrders(seeded);
-    return seeded;
-  } catch (error) {
-    // Nunca deixar o painel rebentar por causa das encomendas de demonstração.
-    console.error("Não foi possível gerar encomendas de demonstração:", error);
-    return [];
-  }
+  return [];
 }
 
 export function saveOrders(orders: Order[]) {
   if (!isBrowser()) return;
   writeStorage("local", ORDERS_KEY, JSON.stringify(orders));
   window.dispatchEvent(new Event("uffa-orders-changed"));
-}
-
-export function resetDemoOrders() {
-  const seeded = seedOrders();
-  saveOrders(seeded);
-  return seeded;
 }
 
 export function getOrderByNumber(number: string) {
@@ -495,7 +316,9 @@ export function createOrder(input: {
   // Um par físico = uma linha. Se a linha do carrinho tiver quantidade 2,
   // geramos dois itens para manter os subtotais e as quantidades corretos.
   const items: OrderItem[] = input.cart.flatMap((line) => {
-    const product = products.find((candidate) => candidate.id === line.productId);
+    const product = getConsolidatedAsProducts().find(
+      (candidate) => candidate.id === line.productId,
+    );
     if (!product) return [];
     const pairs = pairCount(line.quantity);
     const sizeLabel = product.sizes.find((variant) => variant.size === line.size)?.label;
@@ -546,7 +369,6 @@ export function createOrder(input: {
       },
     ],
     notifications: [],
-    isDemo: false,
   };
 
   const initialNotification = sendEmailNotification(order, "confirmed");

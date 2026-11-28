@@ -11,26 +11,29 @@ const PENDING_KEY = "uffa-pending-checkout-v1";
 const CART_KEY = "uffa-cart";
 const MOCK_CHECKOUT_URL = "https://mock-shopify.test/checkout?token=abc123";
 
-/** Produto real da loja com todas as variantes em stock (confirmado via API). */
-const PRODUTO_COM_STOCK = "nike-air-force-branco-laranja";
+/** Produto real da loja com várias unidades por tamanho (confirmado via API). */
+const PRODUTO_COM_STOCK = "nike-air-force-chapa-dourada";
 
 /**
- * O aviso de "versão demo" abre como modal na primeira visita e bloqueia
- * cliques. Marcamo-lo como visto antes de cada teste.
+ * Navegação robusta: o HTML vem do SSR e os recursos externos (fotos da Shopify)
+ * podem abortar o evento `load`. `domcontentloaded` é suficiente para as asserções.
  */
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => {
-    try {
-      window.sessionStorage.setItem("uffa-demo-notice-v1", "1");
-    } catch {
-      /* ignorar */
-    }
-  });
-});
+async function irPara(
+  page: Page,
+  url: string,
+  options?: { waitUntil?: "load" | "domcontentloaded" | "networkidle"; timeout?: number },
+) {
+  await expect(async () => {
+    await page.goto(url, {
+      waitUntil: options?.waitUntil ?? "domcontentloaded",
+      timeout: options?.timeout ?? 30_000,
+    });
+  }).toPass({ timeout: 60_000 });
+}
 
 /** Limpa o estado local da loja (carrinho, cupão, encomenda pendente). */
 async function limparEstado(page: Page) {
-  await page.goto("/");
+  await irPara(page, "/");
   await page.evaluate(() => window.localStorage.clear());
 }
 
@@ -69,7 +72,7 @@ async function mockShopify(page: Page, mode: "ok" | "erro" = "ok") {
 
 /** Abre a página de um produto que se sabe ter stock. */
 async function abrirProduto(page: Page, handle = PRODUTO_COM_STOCK) {
-  await page.goto(`/produto/${handle}`);
+  await irPara(page, `/produto/${handle}`);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 }
 
@@ -82,14 +85,18 @@ async function adicionarAoCarrinho(page: Page) {
   await expect(seletorTamanho).toBeEnabled();
 
   await expect(async () => {
+    // A hidratação do SSR pode atrasar a abertura; repetimos até estabilizar.
+    const lista = page.getByRole("listbox");
+    if (await lista.isVisible().catch(() => false)) await page.keyboard.press("Escape");
     await seletorTamanho.click();
-    await expect(page.getByRole("listbox")).toBeVisible({ timeout: 2000 });
+    await expect(lista).toBeVisible({ timeout: 2000 });
+    // O foco tem de estar no contentor do Radix; sem isto as teclas são
+    // enviadas para o trigger e o dropdown reabre em vez de selecionar.
+    await lista.focus();
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await expect(lista).toBeHidden({ timeout: 2000 });
   }).toPass({ timeout: 30_000 });
-
-  // Teclado em vez de clique: evita problemas de estabilidade/scroll do dropdown.
-  await page.keyboard.press("ArrowDown");
-  await page.keyboard.press("Enter");
-  await expect(page.getByRole("listbox")).toBeHidden();
 
   await expect(async () => {
     await page.getByRole("button", { name: "Adicionar ao carrinho" }).click();
@@ -104,9 +111,18 @@ async function abrirCarrinho(page: Page) {
   await expect(page.getByRole("dialog")).toBeVisible();
 }
 
+/** Abre o painel de filtros do catálogo (fechado por default). */
+async function abrirFiltros(page: Page) {
+  await expect(async () => {
+    const botao = page.getByRole("button", { name: /Mostrar filtros|Ocultar filtros/i });
+    if ((await botao.getAttribute("aria-expanded")) !== "true") await botao.click();
+    await expect(page.locator("#catalogo-filtros")).toBeVisible();
+  }).toPass({ timeout: 30_000 });
+}
+
 test.describe("Loja — navegação e catálogo", () => {
   test("a homepage carrega e o menu leva ao catálogo", async ({ page }) => {
-    await page.goto("/");
+    await irPara(page, "/");
     await expect(page).toHaveTitle(/Uffa/i);
     await expect(page.getByRole("link", { name: "UFFA Store — Início" }).first()).toBeVisible();
 
@@ -116,17 +132,18 @@ test.describe("Loja — navegação e catálogo", () => {
     await expect(page.locator("article").first()).toBeVisible();
   });
 
-  test("a home mostra feedbacks em vez de Mais procurados", async ({ page }) => {
-    await page.goto("/");
+  test("a home não mostra sinais de demonstração", async ({ page }) => {
+    await irPara(page, "/");
 
-    await expect(page.getByRole("heading", { name: /O que dizem por aí/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Escolhe a tua marca/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /O que dizem por aí/i })).toHaveCount(0);
     await expect(page.getByText("Mais procurados")).toHaveCount(0);
-    await expect(page.getByText("Mariana F.")).toBeVisible();
+    await expect(page.getByText("Mariana F.")).toHaveCount(0);
   });
 
   test("a loja abre sempre escura, mesmo com preferência antiga clara", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("uffa-theme", "light"));
-    await page.goto("/");
+    await irPara(page, "/");
 
     await expect(page.locator("html")).toHaveClass(/dark/);
     await expect(page.locator("html")).toHaveCSS("color-scheme", "dark");
@@ -142,7 +159,7 @@ test.describe("Loja — navegação e catálogo", () => {
   });
 
   test("o carousel da home mostra apenas as capas online e Black Friday", async ({ page }) => {
-    await page.goto("/");
+    await irPara(page, "/");
 
     const slides = page.getByRole("group", { name: /^\d \/ 2$/ });
     await expect(slides).toHaveCount(2);
@@ -166,7 +183,7 @@ test.describe("Loja — navegação e catálogo", () => {
   test("o hero adapta-se a todas as larguras sem overflow", async ({ page }) => {
     for (const width of [320, 375, 768, 1024, 1440]) {
       await page.setViewportSize({ width, height: 800 });
-      await page.goto("/");
+      await irPara(page, "/");
 
       const hero = page.locator('section[aria-roledescription="carousel"]');
       const heroOverflow = await hero.evaluate(
@@ -196,7 +213,8 @@ test.describe("Loja — navegação e catálogo", () => {
   });
 
   test("o filtro de cores encontra sapatilhas com as cores da Shopify", async ({ page }) => {
-    await page.goto("/catalogo");
+    await irPara(page, "/catalogo");
+    await abrirFiltros(page);
 
     // A Shopify guarda cores como "Preta", "Branco e Laranja" ou "All Black".
     // O filtro tem de as reconhecer através dos botões Preto e Branco.
@@ -210,7 +228,7 @@ test.describe("Loja — navegação e catálogo", () => {
   });
 
   test("a pesquisa de modelos na homepage encontra resultados", async ({ page }) => {
-    await page.goto("/");
+    await irPara(page, "/");
     const pesquisa = page.getByPlaceholder(/Pesquisar modelos/);
     await expect(pesquisa).toBeVisible();
 
@@ -224,7 +242,7 @@ test.describe("Loja — navegação e catálogo", () => {
   });
 
   test("a Nike aparece em primeiro lugar nas marcas", async ({ page }) => {
-    await page.goto("/");
+    await irPara(page, "/");
     const navegacao = page.getByRole("navigation").first();
     const marcas = await navegacao.getByRole("link").allTextContents();
     expect(marcas.indexOf("Nike")).toBe(0);
@@ -235,13 +253,13 @@ test.describe("Loja — navegação e catálogo", () => {
   });
 
   test("a numeração dos tamanhos acompanha a marca selecionada", async ({ page }) => {
-    await page.goto("/catalogo?brand=nike");
+    await irPara(page, "/catalogo?brand=nike");
+    await abrirFiltros(page);
     const escalaoNike = page.locator("fieldset").filter({ hasText: "Escalão de Tamanho" });
     await expect(escalaoNike.getByRole("button", { name: "Todos", exact: true })).toHaveCount(0);
     await expect(escalaoNike.getByRole("button", { name: /Criança/ })).toBeVisible();
     await expect(escalaoNike.getByRole("button", { name: /GS/ })).toBeVisible();
     await expect(escalaoNike.getByRole("button", { name: /Sénior/ })).toBeVisible();
-    await expect(escalaoNike.getByRole("button", { name: "36.5", exact: true })).toHaveCount(0);
 
     // O dropdown só responde depois da hidratação (o HTML vem do SSR).
     await expect(async () => {
@@ -250,6 +268,8 @@ test.describe("Loja — navegação e catálogo", () => {
         timeout: 2000,
       });
     }).toPass({ timeout: 30_000 });
+    await expect(page.getByRole("option", { name: "37", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("option", { name: "41.5", exact: true })).toHaveCount(0);
     await expect(page.getByRole("option", { name: "36 ⅔", exact: true })).toHaveCount(0);
 
     const totalNike = await page.locator("article").count();
@@ -260,7 +280,8 @@ test.describe("Loja — navegação e catálogo", () => {
     expect(quantosCom42).toBeGreaterThan(0);
     expect(quantosCom42).toBeLessThan(totalNike);
 
-    await page.goto("/catalogo?brand=adidas");
+    await irPara(page, "/catalogo?brand=adidas");
+    await abrirFiltros(page);
     const escalaoAdidas = page.locator("fieldset").filter({ hasText: "Escalão de Tamanho" });
     await expect(async () => {
       await escalaoAdidas.getByRole("combobox", { name: "Tamanho" }).click();
@@ -274,7 +295,8 @@ test.describe("Loja — navegação e catálogo", () => {
   test("cada marca mostra as suas subcategorias de modelo e filtra os produtos", async ({
     page,
   }) => {
-    await page.goto("/catalogo?brand=nike");
+    await irPara(page, "/catalogo?brand=nike");
+    await abrirFiltros(page);
     const modelosNike = page.locator("fieldset").filter({ hasText: "Modelo" });
     await expect(modelosNike.getByRole("button", { name: /^Air Force/ })).toBeVisible();
     await expect(modelosNike.getByRole("button", { name: /^Dunk/ })).toBeVisible();
@@ -288,34 +310,37 @@ test.describe("Loja — navegação e catálogo", () => {
 
     const dunks = page.locator("article");
     await expect(dunks.first()).toBeVisible();
-    expect(await dunks.count()).toBe(5);
+    const titulosDunk = await dunks.allTextContents();
+    expect(titulosDunk.length).toBeGreaterThan(0);
+    for (const titulo of titulosDunk) expect(titulo).toMatch(/Dunk/i);
 
-    await page.goto("/catalogo?brand=adidas");
+    await irPara(page, "/catalogo?brand=adidas");
+    await abrirFiltros(page);
     const modelosAdidas = page.locator("fieldset").filter({ hasText: "Modelo" });
     await expect(modelosAdidas.getByRole("button", { name: /^Campus 00/ })).toBeVisible();
     await expect(modelosAdidas.getByRole("button", { name: /^Superstar/ })).toBeVisible();
     await expect(modelosAdidas.getByRole("button", { name: /^Dunk/ })).toHaveCount(0);
   });
 
-  test("sapatilhas com rope laces aparecem sempre em primeiro", async ({ page }) => {
-    await page.goto("/catalogo");
-    await expect(page.locator("article").first()).toContainText(/Rope Laces/i);
+  test("modelos com rope lace lideram as listagens", async ({ page }) => {
+    await irPara(page, "/catalogo");
+    await expect(page.locator("article").first()).toContainText(/Rope Lace/i);
 
-    await page.goto("/catalogo?brand=nike&model=dunk");
-    await expect(page.locator("article").first()).toContainText(/Rope Laces/i);
+    await irPara(page, "/catalogo?brand=nike&model=dunk");
+    await expect(page.locator("article").first()).toContainText(/Rope Lace/i);
 
-    await page.goto("/");
+    await irPara(page, "/");
     const pesquisa = page.getByPlaceholder(/Pesquisar modelos/);
     await expect(async () => {
       await pesquisa.fill("air force");
       await expect(page.locator('#pesquisa a[href^="/produto/"]').first()).toContainText(
-        /Rope Laces/i,
+        /Rope Lace/i,
       );
     }).toPass({ timeout: 30_000 });
   });
 
   test("o catálogo lista produtos e a pesquisa filtra resultados", async ({ page }) => {
-    await page.goto("/catalogo");
+    await irPara(page, "/catalogo");
     const cartoes = page.locator("article");
     await expect(cartoes.first()).toBeVisible();
     const total = await cartoes.count();
@@ -347,7 +372,7 @@ test.describe("Loja — navegação e catálogo", () => {
   });
 
   test("produto inexistente não rebenta a aplicação", async ({ page }) => {
-    await page.goto("/produto/nao-existe-este-produto");
+    await irPara(page, "/produto/nao-existe-este-produto");
     await expect(page.locator("body")).toBeVisible();
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   });
@@ -361,8 +386,10 @@ test.describe("Carrinho", () => {
 
     await abrirCarrinho(page);
     const dialog = page.getByRole("dialog");
-    await dialog.getByRole("button", { name: "Aumentar quantidade" }).click();
-    await expect(dialog.locator("span.w-8").first()).toHaveText("2");
+    await expect(async () => {
+      await dialog.getByRole("button", { name: "Aumentar quantidade" }).click();
+      await expect(dialog.locator("span.w-8").first()).toHaveText("2", { timeout: 2000 });
+    }).toPass({ timeout: 30_000 });
 
     await dialog.getByRole("button", { name: "Remover" }).click();
     await expect(dialog.getByText("O teu carrinho está vazio.")).toBeVisible();
@@ -393,7 +420,7 @@ test.describe("Carrinho", () => {
       );
     }, CART_KEY);
 
-    await page.goto("/");
+    await irPara(page, "/");
     await expect(page.getByRole("button", { name: /^Carrinho \(0\)/ })).toBeVisible();
     await expect
       .poll(() => page.evaluate((key) => window.localStorage.getItem(key), CART_KEY))
@@ -404,8 +431,10 @@ test.describe("Carrinho", () => {
   });
 });
 
-test.describe("Cupões", () => {
-  test("cupão inválido é rejeitado e cupão válido aplica 10%", async ({ page }) => {
+test.describe("Códigos de desconto", () => {
+  test("formato inválido é rejeitado; código válido é apenas guardado para a Shopify", async ({
+    page,
+  }) => {
     await limparEstado(page);
     await abrirProduto(page);
     await adicionarAoCarrinho(page);
@@ -414,21 +443,23 @@ test.describe("Cupões", () => {
     const dialog = page.getByRole("dialog");
     const campo = dialog.getByPlaceholder("Código de desconto");
 
-    await campo.fill("NAOEXISTE");
+    await campo.fill("CÓDIGO INVÁLIDO!");
     await dialog.getByRole("button", { name: "Aplicar" }).click();
-    await expect(page.getByText("Cupão inválido ou expirado.")).toBeVisible();
-    await expect(dialog.getByText(/Cupão:/)).toHaveCount(0);
+    await expect(page.getByText("Código de desconto inválido.")).toBeVisible();
+    await expect(dialog.getByText(/Código:/)).toHaveCount(0);
 
-    await campo.fill("UFFA10");
+    await campo.fill("BLACK2026");
     await dialog.getByRole("button", { name: "Aplicar" }).click();
-    await expect(dialog.getByText("Cupão: UFFA10 (-10%)")).toBeVisible();
+    await expect(dialog.getByText(/Código: BLACK2026/)).toBeVisible();
+    await expect(dialog.getByText(/Aplicado no checkout da Shopify/)).toBeVisible();
+    await expect(dialog.getByText(/line-through/)).toHaveCount(0);
   });
 });
 
 test.describe("Checkout", () => {
   test("carrinho vazio mostra o estado vazio e não permite pagar", async ({ page }) => {
     await limparEstado(page);
-    await page.goto("/checkout");
+    await irPara(page, "/checkout");
     await expect(page.getByText("O teu carrinho está vazio.")).toBeVisible();
     await expect(page.getByRole("button", { name: "Pagar agora" })).toHaveCount(0);
   });
@@ -437,7 +468,7 @@ test.describe("Checkout", () => {
     await limparEstado(page);
     await abrirProduto(page);
     await adicionarAoCarrinho(page);
-    await page.goto("/checkout");
+    await irPara(page, "/checkout");
 
     await expect(page.getByRole("button", { name: "Pagar agora" })).toBeVisible();
     await page.getByRole("button", { name: "Pagar agora" }).click();
@@ -455,7 +486,7 @@ test.describe("Checkout", () => {
     await limparEstado(page);
     await abrirProduto(page);
     await adicionarAoCarrinho(page);
-    await page.goto("/checkout");
+    await irPara(page, "/checkout");
 
     await page.getByPlaceholder("Ex: João").fill("João");
     await page.getByPlaceholder("Ex: Silva").fill("Silva");
@@ -476,7 +507,7 @@ test.describe("Checkout", () => {
     await mockShopify(page, "erro");
     await abrirProduto(page);
     await adicionarAoCarrinho(page);
-    await page.goto("/checkout");
+    await irPara(page, "/checkout");
 
     await page.getByPlaceholder("Ex: João").fill("João");
     await page.getByPlaceholder("Ex: Silva").fill("Silva");
@@ -494,7 +525,7 @@ test.describe("Checkout", () => {
     await mockShopify(page, "ok");
     await abrirProduto(page);
     await adicionarAoCarrinho(page);
-    await page.goto("/checkout");
+    await irPara(page, "/checkout");
 
     await page.getByPlaceholder("Ex: João").fill("João");
     await page.getByPlaceholder("Ex: Silva").fill("Silva");
@@ -523,7 +554,7 @@ test.describe("Checkout", () => {
     await mockShopify(page, "ok");
     await abrirProduto(page);
     await adicionarAoCarrinho(page);
-    await page.goto("/checkout", { waitUntil: "networkidle" });
+    await irPara(page, "/checkout", { waitUntil: "networkidle" });
 
     const locais = page.getByTestId("pickup-locations");
     await expect(locais.getByRole("button", { name: /NorteShopping/ })).toBeVisible();
@@ -572,7 +603,7 @@ test.describe("Confirmação", () => {
       JSON.stringify(pendente),
     ] as const);
 
-    await page.goto("/confirmacao");
+    await irPara(page, "/confirmacao");
     await expect(page.getByText("Maria Teste")).toBeVisible();
     await expect(page.getByText("Nike Air Force 1")).toBeVisible();
     await expect(page.getByText(/120,00/).first()).toBeVisible();
@@ -580,14 +611,14 @@ test.describe("Confirmação", () => {
 
   test("sem compra pendente a página continua a funcionar", async ({ page }) => {
     await limparEstado(page);
-    await page.goto("/confirmacao");
+    await irPara(page, "/confirmacao");
     await expect(page.getByRole("heading", { name: /Obrigado/i })).toBeVisible();
   });
 });
 
 test.describe("Expedição e link mágico", () => {
   test("a página indica que o código entra primeiro na Shopify", async ({ page }) => {
-    await page.goto("/expedicao");
+    await irPara(page, "/expedicao");
     await expect(page.getByText(/Marcar como cumprida/)).toBeVisible();
     await expect(page.getByText(/Usa este formulário apenas para reenviar/)).toBeVisible();
   });
@@ -615,7 +646,7 @@ test.describe("Expedição e link mágico", () => {
       });
     });
 
-    await page.goto("/expedicao");
+    await irPara(page, "/expedicao");
     await expect(async () => {
       await page.getByLabel("Token interno").fill("segredo-local");
       await page.getByLabel("Número da encomenda").fill("UFFA-48217");
@@ -652,7 +683,7 @@ test.describe("Expedição e link mágico", () => {
       });
     });
 
-    await page.goto("/rastreio?token=token-de-teste");
+    await irPara(page, "/rastreio?token=token-de-teste");
     await expect(page.getByRole("heading", { name: "UFFA-48217" })).toBeVisible();
 
     const link = page.getByRole("link", { name: "Ver no CTT" });
@@ -667,7 +698,7 @@ test.describe("Rastreio", () => {
     await page.route("https://www.ctt.pt/**", (route) =>
       route.fulfill({ status: 200, contentType: "text/html", body: "<h1>CTT</h1>" }),
     );
-    await page.goto("/rastreio", { waitUntil: "networkidle" });
+    await irPara(page, "/rastreio", { waitUntil: "networkidle" });
 
     await expect(page.getByLabel("E-mail da compra")).toHaveCount(0);
     await page.getByLabel("Código de rastreio").fill("RR123456789PT");
@@ -682,7 +713,7 @@ test.describe("Rastreio", () => {
     await page.route("https://www.ctt.pt/**", (route) =>
       route.fulfill({ status: 200, contentType: "text/html", body: "<h1>CTT</h1>" }),
     );
-    await page.goto("/rastreio", { waitUntil: "networkidle" });
+    await irPara(page, "/rastreio", { waitUntil: "networkidle" });
 
     await page.getByLabel("Código de rastreio").fill(" rr 123456789 pt ");
     await page.getByRole("button", { name: "Abrir no CTT" }).click();
@@ -693,7 +724,7 @@ test.describe("Rastreio", () => {
 
 test.describe("Pesquisa de satisfação", () => {
   test("sem token a página de avaliação indica que o link não é válido", async ({ page }) => {
-    await page.goto("/avaliar");
+    await irPara(page, "/avaliar");
     await expect(page.getByRole("heading", { name: "Link indisponível" })).toBeVisible();
   });
 
@@ -734,7 +765,7 @@ test.describe("Pesquisa de satisfação", () => {
       },
     );
 
-    await page.goto("/avaliar?token=token-de-teste");
+    await irPara(page, "/avaliar?token=token-de-teste");
     await expect(page.getByRole("heading", { name: "Como correu?" })).toBeVisible();
 
     await page.getByRole("button", { name: "Nota 4 de 5" }).click();
@@ -767,7 +798,7 @@ test.describe("Formulário de contacto", () => {
     );
 
     // Esperar pela hidratação do React antes de interagir com o formulário.
-    await page.goto("/ajuda", { waitUntil: "networkidle" });
+    await irPara(page, "/ajuda", { waitUntil: "networkidle" });
     await page.getByLabel("Motivo *").selectOption("troca_defeito");
     await expect(page.getByText("Fotografia do produto *")).toBeVisible();
 
@@ -795,7 +826,7 @@ test.describe("Formulário de contacto", () => {
       },
     );
 
-    await page.goto("/ajuda", { waitUntil: "networkidle" });
+    await irPara(page, "/ajuda", { waitUntil: "networkidle" });
     await page.getByLabel("Motivo *").selectOption("troca_defeito");
     await expect(page.getByText("Fotografia do produto *")).toBeVisible();
 
@@ -833,7 +864,7 @@ test.describe("Formulário de contacto", () => {
 
 test.describe("Mobile", () => {
   test("o carousel usa a capa vertical e não cria overflow @mobile", async ({ page }) => {
-    await page.goto("/");
+    await irPara(page, "/");
 
     const slides = page.getByRole("group", { name: /^\d \/ 2$/ });
     await expect(slides).toHaveCount(2);
@@ -850,7 +881,7 @@ test.describe("Mobile", () => {
   });
 
   test("menu mobile mostra os modelos da marca como submenu @mobile", async ({ page }) => {
-    await page.goto("/");
+    await irPara(page, "/");
     await expect(async () => {
       await page.getByRole("button", { name: "Menu" }).click();
       await expect(page.getByRole("dialog")).toBeVisible({ timeout: 2000 });
@@ -870,7 +901,7 @@ test.describe("Mobile", () => {
   });
 
   test("menu mobile inclui Blackfriday com a mesma fonte das marcas @mobile", async ({ page }) => {
-    await page.goto("/");
+    await irPara(page, "/");
     await expect(async () => {
       await page.getByRole("button", { name: "Menu" }).click();
       await expect(page.getByRole("dialog")).toBeVisible({ timeout: 2000 });
@@ -889,6 +920,7 @@ test.describe("Mobile", () => {
 
     await blackfriday.click();
     await page.waitForURL(/category=blackfriday/);
+    await abrirFiltros(page);
     await expect(page.getByRole("button", { name: /Black Friday/ })).toHaveAttribute(
       "aria-pressed",
       "true",

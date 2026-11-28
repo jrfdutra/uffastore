@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<title>Carrossel instrutivo — Uffa Store</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e9dfe0; font-family: "Segoe UI", Arial, sans-serif; }
+  .slide { width: 1080px; height: 1350px; position: relative; overflow: hidden; background: #fdf6f3; color: #201a1c; margin-bottom: 40px; }
+  .pink { background: #c97899; color: #fff; }
+  .tag { position: absolute; top: 70px; left: 72px; font-size: 18px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #9e4e6a; }
+  .pink .tag { color: #fff; }
+  h1 { font-family: Impact, "Arial Narrow", sans-serif; font-size: 92px; line-height: .96; letter-spacing: 2px; text-transform: uppercase; }
+  h2 { font-family: Impact, "Arial Narrow", sans-serif; font-size: 70px; line-height: 1.02; letter-spacing: 1px; text-transform: uppercase; }
+  p { font-size: 28px; line-height: 1.38; }
+  .small { font-size: 20px; color: #7c6e6a; }
+  .pink .small { color: #f7e8ee; }
+  .num { font-family: Impact, "Arial Narrow", sans-serif; font-size: 150px; color: #f4e2e9; line-height: 1; }
+  .box { position: absolute; left: 72px; right: 72px; background: #fff; border: 2px solid #e5d6d0; border-radius: 18px; padding: 36px 40px; }
+  .footer { position: absolute; left: 72px; right: 72px; bottom: 54px; display: flex; justify-content: space-between; font-size: 20px; color: #9e4e6a; font-weight: 700; }
+  .pink .footer { color: #fff; }
+  img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+
+  /* 1 */
+  #s1 { padding: 0; }
+  #s1 .heroimg { position: absolute; inset: 0; }
+  #s1 .overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(201,120,153,.96) 0%, rgba(201,120,153,.84) 55%, rgba(32,26,28,.88) 100%); }
+  #s1 .content { position: absolute; left: 72px; right: 72px; top: 210px; color: #fff; }
+  #s1 h1 { font-size: 96px; }
+  #s1 p { color: #fff; font-size: 30px; margin-top: 28px; max-width: 850px; }
+  #s1 .brand { position: absolute; top: 70px; left: 72px; font-size: 22px; font-weight: 800; letter-spacing: .28em; color: #fff; }
+
+  /* 2 */
+  #s2 .flow { position: absolute; top: 330px; left: 72px; right: 72px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  #s2 .step { background: #fff; border: 2px solid #e5d6d0; border-radius: 16px; padding: 26px 28px; }
+  #s2 .step b { display: block; font-family: Impact, sans-serif; font-size: 30px; color: #9e4e6a; letter-spacing: 1px; }
+  #s2 .step span { font-size: 21px; color: #7c6e6a; }
+
+  /* 3 */
+  #s3 .copy { position: absolute; top: 250px; left: 72px; right: 72px; }
+  #s3 .copy p { margin-top: 20px; max-width: 900px; }
+  #s3 .shot { position: absolute; left: 72px; right: 72px; top: 560px; height: 620px; border: 2px solid #e5d6d0; border-radius: 18px; overflow: hidden; }
+
+  /* 4 */
+  #s4 .copy { position: absolute; top: 240px; left: 72px; right: 72px; }
+  #s4 .copy p { margin-top: 18px; max-width: 900px; }
+  #s4 .gallery { position: absolute; left: 72px; right: 72px; top: 540px; height: 650px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  #s4 .gallery div { overflow: hidden; border: 2px solid #e5d6d0; border-radius: 18px; }
+
+  /* 5 */
+  #s5 .copy { position: absolute; top: 240px; left: 72px; right: 72px; }
+  #s5 .copy p { margin-top: 18px; max-width: 900px; }
+  #s5 .shot { position: absolute; left: 72px; right: 72px; top: 540px; height: 650px; border: 2px solid #e5d6d0; border-radius: 18px; overflow: hidden; }
+
+  /* 6 */
+  #s6 .copy { position: absolute; top: 230px; left: 72px; right: 72px; }
+  #s6 .copy p { margin-top: 18px; max-width: 900px; }
+  #s6 .list { position: absolute; top: 560px; left: 72px; right: 72px; }
+  #s6 .item { background: #fff; border: 2px solid #e5d6d0; border-radius: 14px; padding: 24px 30px; margin-bottom: 18px; font-size: 25px; }
+  #s6 .item b { color: #9e4e6a; }
+
+  /* 7 */
+  #s7 { padding: 0; }
+  #s7 .content { position: absolute; left: 72px; right: 72px; top: 230px; color: #fff; }
+  #s7 h2 { color: #fff; font-size: 82px; }
+  #s7 p { color: #fff; font-size: 30px; margin-top: 30px; max-width: 850px; }
+  #s7 .url { position: absolute; left: 72px; bottom: 160px; font-family: Impact, sans-serif; font-size: 62px; letter-spacing: 1px; color: #fff; }
+</style>
+</head>
+<body>
+
+<section class="slide pink" id="s1">
+  <img class="heroimg" src="../docs/assets/screenshots/23-home-hero.png" alt="Home da Uffa Store">
+  <div class="overlay"></div>
+  <div class="brand">UFFA STORE · PORTO</div>
+  <div class="content">
+    <h1>COMPRA SEM<br>DÚVIDAS.</h1>
+    <p>Guia rápido para escolher o teu par, pagar com segurança e acompanhar a entrega — tudo no mesmo site.</p>
+  </div>
+  <div class="footer"><span>DESLIZA PARA SABER COMO</span><span>01 / 07</span></div>
+</section>
+
+<section class="slide" id="s2">
+  <div class="tag">O PERCURSO</div>
+  <h2 style="position:absolute;top:120px;left:72px;right:72px;">Sete passos. Zero complicação.</h2>
+  <div class="flow">
+    <div class="step"><b>01 · HOME</b><span>Descobre a campanha atual</span></div>
+    <div class="step"><b>02 · CATÁLOGO</b><span>Filtra por marca, cor e preço</span></div>
+    <div class="step"><b>03 · PRODUTO</b><span>Escolhe cor e tamanho disponível</span></div>
+    <div class="step"><b>04 · CARRINHO</b><span>Confere o resumo</span></div>
+    <div class="step"><b>05 · CHECKOUT</b><span>Pagamento seguro Shopify</span></div>
+    <div class="step"><b>06 · CONFIRMAÇÃO</b><span>Guarda o número da encomenda</span></div>
+    <div class="step"><b>07 · RASTREIO</b><span>Acompanha até à entrega</span></div>
+    <div class="step" style="background:#c97899;border-color:#c97899;color:#fff;"><b style="color:#fff;">SIMPLES</b><span style="color:#fff;">Sem conta. Sem formulários longos.</span></div>
+  </div>
+  <div class="footer"><span>UFFA STORE</span><span>02 / 07</span></div>
+</section>
+
+<section class="slide" id="s3">
+  <div class="tag">PASSO 01 E 02</div>
+  <div class="copy">
+    <h2>Encontra o teu par.</h2>
+    <p>Usa os filtros por marca, campanha, escalão de tamanho, cor e preço. O catálogo mostra apenas os tamanhos que existem — nunca quantidades de stock.</p>
+  </div>
+  <div class="shot"><img src="../docs/assets/screenshots/03-catalogo.png" alt="Catálogo Uffa Store"></div>
+  <div class="footer"><span>Descoberta rápida</span><span>03 / 07</span></div>
+</section>
+
+<section class="slide" id="s4">
+  <div class="tag">PASSO 03</div>
+  <div class="copy">
+    <h2>Escolhe cor e tamanho.</h2>
+    <p>A página de produto reúne galeria, preço, variedades e tamanhos disponíveis. Se um tamanho não aparece, está esgotado.</p>
+  </div>
+  <div class="gallery">
+    <div><img src="../docs/assets/screenshots/04-produto.png" alt="Página de produto"></div>
+    <div><img src="../docs/assets/screenshots/22-cart-drawer.png" alt="Carrinho lateral"></div>
+  </div>
+  <div class="footer"><span>Decisão sem ambiguidade</span><span>04 / 07</span></div>
+</section>
+
+<section class="slide" id="s5">
+  <div class="tag">PASSO 04 E 05</div>
+  <div class="copy">
+    <h2>Paga no seguro.</h2>
+    <p>Escolhe recolha gratuita no Porto ou envio. O pagamento é concluído no checkout oficial da Shopify — a Uffa nunca guarda dados de cartão.</p>
+  </div>
+  <div class="shot"><img src="../docs/assets/screenshots/05-checkout.png" alt="Checkout Uffa Store"></div>
+  <div class="footer"><span>Cartão · MB WAY · Google Pay</span><span>05 / 07</span></div>
+</section>
+
+<section class="slide" id="s6">
+  <div class="tag">PASSO 06 E 07</div>
+  <div class="copy">
+    <h2>Depois de pagar.</h2>
+    <p>Recebes confirmação por e-mail. Quando a encomenda for expedida, chega o código de rastreio e um link direto para o estado do envio.</p>
+  </div>
+  <div class="list">
+    <div class="item"><b>Recolha em mãos:</b> NorteShopping, Maia Jardim ou MarShopping.</div>
+    <div class="item"><b>Envio:</b> Portugal, ilhas, União Europeia e Suíça.</div>
+    <div class="item"><b>Rastreio:</b> código CTT ou link assinado recebido por e-mail.</div>
+    <div class="item"><b>Ajuda:</b> formulário em /ajuda com fotografia quando é preciso.</div>
+  </div>
+  <div class="footer"><span>Acompanhamento real</span><span>06 / 07</span></div>
+</section>
+
+<section class="slide pink" id="s7">
+  <div class="tag">PRONTO PARA COMEÇAR?</div>
+  <div class="content">
+    <h2>O TEU PRÓXIMO PAR ESTÁ AQUI.</h2>
+    <p>Seleção Uffa · sapatilhas escolhidas uma a uma · atendimento direto pelo Instagram e e-mail.</p>
+  </div>
+  <div class="url">WWW.UFFASTORE.PT</div>
+  <div class="footer"><span>@UFFASTORE.LEGIT</span><span>07 / 07</span></div>
+</section>
+
+</body>
+</html>

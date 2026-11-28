@@ -5,17 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { copy } from "@/lib/shop-data";
 import { useShop } from "@/lib/shop-context";
-
-// Email que recebe todas as subscrições da newsletter.
-const NEWSLETTER_INBOX = "atendimento@uffastore.pt";
+import { NEWSLETTER_PATH } from "@/lib/newsletter-constants";
 
 const messages = {
   pt: { ok: "Estás no radar.", error: "Não foi possível subscrever. Tenta novamente." },
   es: { ok: "Ya estás en el radar.", error: "No se pudo suscribir. Inténtalo de nuevo." },
   en: { ok: "You're on the radar.", error: "Couldn't subscribe. Please try again." },
 } as const;
-
-const languageNames = { pt: "Português", es: "Español", en: "English" } as const;
 
 export function Newsletter({ compact = false }: { compact?: boolean }) {
   const { language } = useShop();
@@ -32,26 +28,17 @@ export function Newsletter({ compact = false }: { compact?: boolean }) {
 
     setSending(true);
     try {
-      const res = await fetch(`https://formsubmit.co/ajax/${NEWSLETTER_INBOX}`, {
+      const res = await fetch(NEWSLETTER_PATH, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          _subject: "Nova subscrição da newsletter — Uffa Store",
-          _template: "table",
-          _captcha: "false",
-          email: email,
-          _replyto: email,
-          Idioma: languageNames[language],
-          Origem: compact ? "Rodapé do site" : "Página inicial",
-          Página: window.location.href,
-          Data: new Date().toLocaleString("pt-PT", { timeZone: "Europe/Lisbon" }),
+          email,
+          language,
+          origin: compact ? "footer" : "home",
+          _honey: honey,
         }),
       });
-      const data = await res.json().catch(() => null);
-      // O FormSubmit responde 200 mesmo quando falha; temos de ler o campo "success".
-      if (!res.ok || (data && String(data.success) === "false")) {
-        throw new Error(data?.message ?? `HTTP ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       toast.success(messages[language].ok);
       setEmail("");
     } catch {

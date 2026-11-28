@@ -109,7 +109,8 @@ function PrivacyPage() {
                 <strong>Vercel</strong> — alojamento do site e registos técnicos.
               </li>
               <li>
-                <strong>FormSubmit</strong> — entrega das subscrições da newsletter por email.
+                <strong>Resend</strong> - entrega de emails transacionais e subscrições da
+                newsletter.
               </li>
               <li>
                 <strong>Google Fonts</strong> — carregamento de tipos de letra.
